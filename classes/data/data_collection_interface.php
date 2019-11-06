@@ -43,6 +43,13 @@ interface data_collection_interface
     public function add_data(field_interface $field);
 
     /**
+     * Add raw data to collection.
+     *
+     * @param array $data Associative array of data
+     */
+    public function add_data_associative($data);
+
+    /**
      * Get child data collections.
      *
      * @param string $type Name of collection type to return. Null returns all.

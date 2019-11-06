@@ -1,8 +1,9 @@
 <?php
 
 
-namespace block_dash\data;
+namespace block_dash\source;
 
+use block_dash\data\data_collection_interface;
 
 interface data_source_interface
 {

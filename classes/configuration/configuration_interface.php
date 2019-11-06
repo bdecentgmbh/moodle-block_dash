@@ -3,7 +3,7 @@
 
 namespace block_dash\configuration;
 
-use block_dash\data\data_source_interface;
+use block_dash\source\data_source_interface;
 
 interface configuration_interface
 {

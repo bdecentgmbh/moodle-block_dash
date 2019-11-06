@@ -25,5 +25,7 @@
 
 $string['coursesummary'] = 'Course summary';
 $string['dash:addinstance'] = 'Add a new InfoDash block';
+$string['pagination_summary'] = 'Showing {$a->limit_from} - {$a->limit_to} of {$a->total}';
+$string['parseerror'] = 'Parse error. The content cannot be displayed.';
 $string['pluginname'] = 'InfoDash';
 $string['privacy:metadata'] = 'The InfoDash block only shows information about courses and does not store data itself.';

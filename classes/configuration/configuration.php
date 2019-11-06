@@ -3,7 +3,9 @@
 
 namespace block_dash\configuration;
 
-use block_dash\data\testing_data_source;
+use block_dash\source\sql_data_source;
+use block_dash\source\testing_data_source;
+use block_dash\table\course_table;
 
 class configuration extends abstract_configuration
 {
@@ -11,6 +13,8 @@ class configuration extends abstract_configuration
     {
         $config = $block_instance->config;
 
-        return new configuration($block_instance->context, new testing_data_source(), 'block_dash/layout_grid');
+        $data_source = new sql_data_source(new course_table());
+
+        return new configuration($block_instance->context, $data_source, $config->mustache);
     }
 }

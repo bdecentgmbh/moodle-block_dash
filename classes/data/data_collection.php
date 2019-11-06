@@ -37,6 +37,18 @@ class data_collection implements data_collection_interface, \ArrayAccess
     }
 
     /**
+     * Add raw data to collection.
+     *
+     * @param array $data Associative array of data
+     */
+    public function add_data_associative($data)
+    {
+        foreach ($data as $key => $value) {
+            $this->data[$key] = new field($key, $value);
+        }
+    }
+
+    /**
      * Get child data collections.
      *
      * @param string $type Name of collection type to return. Null returns all.

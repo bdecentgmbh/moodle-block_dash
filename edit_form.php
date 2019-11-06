@@ -36,9 +36,10 @@ class block_dash_edit_form extends block_edit_form {
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
-        $mform->addElement('text', 'config_test', 'Test');
-        $mform->setType('config_test', PARAM_TEXT);
+        $mform->addElement('textarea', 'config_sql', 'SQL');
+        $mform->setType('config_sql', PARAM_RAW);
 
-        //$mform->addElement('')
+        $mform->addElement('textarea', 'config_mustache', 'Mustache');
+        $mform->setType('config_mustache', PARAM_RAW);
     }
 }

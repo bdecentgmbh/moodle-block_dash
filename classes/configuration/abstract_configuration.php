@@ -2,7 +2,7 @@
 
 namespace block_dash\configuration;
 
-use block_dash\data\data_source_interface;
+use block_dash\source\data_source_interface;
 
 abstract class abstract_configuration implements configuration_interface
 {

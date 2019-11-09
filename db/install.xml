@@ -8,6 +8,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Template name"/>
+        <FIELD NAME="idnumber" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Unique ID for template"/>
         <FIELD NAME="available_field_definitions" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Field definitions that this template will display"/>
         <FIELD NAME="query_template" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="layout_type" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Layout type"/>
@@ -17,6 +18,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="idnumber" UNIQUE="true" FIELDS="idnumber"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

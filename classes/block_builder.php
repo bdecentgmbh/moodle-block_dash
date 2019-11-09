@@ -18,29 +18,9 @@ class block_builder
      */
     private $configuration;
 
-    /**
-     * @var \block_base
-     */
-    private $block_instance;
-
-    /**
-     * @var data_grid_interface
-     */
-    private $data_grid;
-
     protected function __construct(\block_base $block_instance)
     {
         $this->configuration = configuration::create_from_instance($block_instance);
-    }
-
-    public function build_data_grid()
-    {
-        $filter_collection = new filter_collection();
-
-        $this->data_grid = new configurable_data_grid($filter_collection, $this->configuration->get_context());
-        $this->data_grid->set_query_template($this->configuration->get_sql());
-        $this->data_grid->set_field_definitions(self::get_all_field_definitions());
-        $this->data_grid->init();
     }
 
     /**
@@ -48,42 +28,10 @@ class block_builder
      */
     public function get_block_content()
     {
-        global $OUTPUT, $PAGE, $CFG;
-
         $text = '';
 
         if ($this->configuration->is_fully_configured()) {
-
-            $this->build_data_grid();
-
-            try {
-                $data = $this->data_grid->get_data();
-            } catch (\Exception $e) {
-                $error = \html_writer::tag('p', get_string('databaseerror', 'block_dash'));
-                if (is_siteadmin()) {
-                    $error .= \html_writer::tag('p', $e->getMessage());
-                }
-
-                $text .= $OUTPUT->notification($error, 'error');
-            }
-
-            /** @var renderer $renderer */
-            $renderer = $PAGE->get_renderer('block_dash');
-
-            if (isset($data)) {
-                try {
-                    $text .= $OUTPUT->render_from_template('block_dash/layout_grid', [
-                        'data' => $data
-                    ]);
-                } catch (\Exception $e) {
-                    $error = \html_writer::tag('p', get_string('parseerror', 'block_dash'));
-                    if (is_siteadmin()) {
-                        $error .= \html_writer::tag('p', $e->getMessage());
-                    }
-
-                    $text .= $OUTPUT->notification($error, 'error');
-                }
-            }
+            $text .= $this->configuration->get_template()->render();
         }
 
         $content = new \stdClass();
@@ -119,6 +67,24 @@ class block_builder
                         $field_definitions[] = $field_definition;
                     }
                 }
+            }
+        }
+
+        return $field_definitions;
+    }
+
+    /**
+     * @param string[] $names Field definition names to retrieve.
+     * @return field_definition_interface[]
+     * @throws \coding_exception
+     */
+    public static function get_field_definitions(array $names)
+    {
+        $field_definitions = [];
+
+        foreach (self::get_all_field_definitions() as $field_definition) {
+            if (in_array($field_definition->get_name(), $names)) {
+                $field_definitions[] = $field_definition;
             }
         }
 

@@ -2,6 +2,8 @@
 
 namespace block_dash\configuration;
 
+use block_dash\template\template_interface;
+
 abstract class abstract_configuration implements configuration_interface
 {
     /**
@@ -12,17 +14,11 @@ abstract class abstract_configuration implements configuration_interface
     /**
      * @var string
      */
-    private $sql;
-
-    /**
-     * @var string
-     */
     private $template;
 
-    protected function __construct(\context $context, $sql, $template)
+    protected function __construct(\context $context, template_interface $template)
     {
         $this->context = $context;
-        $this->sql = $sql;
         $this->template = $template;
     }
 
@@ -35,15 +31,7 @@ abstract class abstract_configuration implements configuration_interface
     }
 
     /**
-     * @return string
-     */
-    public function get_sql()
-    {
-        return $this->sql;
-    }
-
-    /**
-     * @return string
+     * @return template_interface
      */
     public function get_template()
     {
@@ -57,6 +45,6 @@ abstract class abstract_configuration implements configuration_interface
      */
     public function is_fully_configured()
     {
-        return !empty($this->sql) && !empty($this->template);
+        return !empty($this->template);
     }
 }

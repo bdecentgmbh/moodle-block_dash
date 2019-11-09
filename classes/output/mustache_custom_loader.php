@@ -15,29 +15,39 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing InfoDash block instances.
- *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace block_dash\output;
+
+use core\output\mustache_template_finder;
 
 /**
- * Form for editing InfoDash block instances.
+ * Perform some custom name mapping for template file names.
  *
- * @package    block_dash
- * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      2.9
  */
-class block_dash_edit_form extends block_edit_form {
-    protected function specific_definition($mform) {
-        global $CFG, $DB;
+class mustache_custom_loader extends \Mustache_Loader_FilesystemLoader {
 
-        // Fields for editing HTML block title and contents.
-        $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
+    /**
+     * Provide a default no-args constructor (we don't really need anything).
+     */
+    public function __construct() {
+    }
 
-        $mform->addElement('select', 'config_template', get_string('template', 'block_dash'),
-            $DB->get_records_menu('dash_template', null, '', 'idnumber, name'));
-        $mform->setType('config_template', PARAM_INT);
+    /**
+     * Helper function for getting a Mustache template file name.
+     * Uses the leading component to restrict us specific directories.
+     *
+     * @param string $name
+     * @return string Template file name
+     */
+    protected function getFileName($name) {
+        // Call the Moodle template finder.
+        return mustache_template_finder::get_template_filepath($name);
     }
 }

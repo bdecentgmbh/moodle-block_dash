@@ -59,5 +59,29 @@ function xmldb_block_dash_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2019110900, 'dash');
     }
 
+    if ($oldversion < 2019110902) {
+
+        // Define field idnumber to be added to dash_template.
+        $table = new xmldb_table('dash_template');
+        $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'name');
+
+        // Conditionally launch add field idnumber.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index idnumber (unique) to be added to dash_template.
+        $table = new xmldb_table('dash_template');
+        $index = new xmldb_index('idnumber', XMLDB_INDEX_UNIQUE, ['idnumber']);
+
+        // Conditionally launch add index idnumber.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Dash savepoint reached.
+        upgrade_block_savepoint(true, 2019110902, 'dash');
+    }
+
     return true;
 }

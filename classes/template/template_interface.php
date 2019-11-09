@@ -24,13 +24,44 @@
 
 namespace block_dash\template;
 
+use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
+use block_dash\data_grid\filter\filter_collection_interface;
 
 interface template_interface
 {
+    /**
+     * @return \context
+     */
+    public function get_context();
+
+    /**
+     * @return string
+     */
+    public function get_query_template();
+
     /**
      * @return field_definition_interface[]
      */
     public function get_available_field_definitions();
 
+    /**
+     * @return filter_collection_interface
+     */
+    public function get_filter_collection();
+
+    /**
+     * @return string
+     */
+    public function get_mustache_template_name();
+
+    /**
+     * @return string
+     */
+    public function render();
+
+    /**
+     * @return data_grid_interface
+     */
+    public function get_data_grid();
 }

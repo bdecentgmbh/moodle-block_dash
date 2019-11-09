@@ -2,6 +2,8 @@
 
 namespace block_dash\configuration;
 
+use block_dash\template\template_interface;
+
 interface configuration_interface
 {
     /**
@@ -10,12 +12,7 @@ interface configuration_interface
     public function get_context();
 
     /**
-     * @return string
-     */
-    public function get_sql();
-
-    /**
-     * @return string
+     * @return template_interface
      */
     public function get_template();
 

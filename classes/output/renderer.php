@@ -22,9 +22,6 @@
 
 namespace block_dash\output;
 
-use core\output\mustache_filesystem_loader;
-use core\output\mustache_template_source_loader;
-
 defined('MOODLE_INTERNAL') || die();
 
 class renderer extends \plugin_renderer_base {
@@ -61,6 +58,7 @@ class renderer extends \plugin_renderer_base {
                 }
             }
 
+            $loader = new mustache_custom_loader();
             $stringhelper = new \core\output\mustache_string_helper();
             $quotehelper = new \core\output\mustache_quote_helper();
             $jshelper = new \core\output\mustache_javascript_helper($this->page);
@@ -83,6 +81,7 @@ class renderer extends \plugin_renderer_base {
             $this->mustache = new \core\output\mustache_engine(array(
                 'cache' => $cachedir,
                 'escape' => 's',
+                'loader' => $loader,
                 'helpers' => $helpers,
                 'pragmas' => [\Mustache_Engine::PRAGMA_BLOCKS],
                 // Don't allow the JavaScript helper to be executed from within another

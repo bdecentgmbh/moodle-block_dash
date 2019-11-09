@@ -107,7 +107,6 @@ class renderer extends \plugin_renderer_base {
      * @return string|boolean
      */
     public function render_from_template_string($templatestring, $context) {
-        $mustache = $this->get_mustache();
         return trim($this->get_mustache()->render($templatestring, $context));
     }
 }

@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    coursebit
- * @subpackage local_coursebit
- * @copyright  2019 CourseBit LLC <http://www.coursebit.net>
- * @authors    Joseph Conradt <joseph.conradt@coursebit.net>
+ * @package    block_dash
+ * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace block_dash\data_grid;
 
+use block_dash\data_grid\data\data_collection;
+use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\data_grid\filter\filter_interface;
@@ -88,12 +88,18 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      */
     private $paginator;
 
+    /**
+     * @var data_collection_interface
+     */
+    private $data_collection;
+
     #endregion
 
     /**
+     * @param filter_collection_interface $filter_collection
      * @param \context $context
      * @param \stdClass $user User displaying data (logged in user).
-     * @throws \Exception
+     * @throws \coding_exception
      */
     public function __construct(filter_collection_interface $filter_collection,
                                 \context $context, \stdClass $user = null)
@@ -108,7 +114,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
 
         $this->filter_collection = $filter_collection;
 
-        $this->paginator = new paginator($this->get_per_page_default(), function () {
+        $this->paginator = new paginator(paginator::PER_PAGE_DEFAULT, function () {
             return $this->get_records_count();
         });
     }
@@ -120,7 +126,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      */
     public function get_template()
     {
-        return 'local_coursebit/data_grid';
+        return 'block_dash/data_grid';
     }
 
     /**
@@ -168,7 +174,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     public function set_field_definitions($field_definitions)
     {
         // We don't want field definitions to be set multiple times, it should be done during init only.
-        if ($this->has_any_fields()) {
+        if ($this->has_any_field_definitions()) {
             throw new \coding_exception('Setting field definitions multiple times is not allowed.');
         }
 
@@ -277,7 +283,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     protected function get_query_select()
     {
         $selects = array();
-        $fields = $this->get_fields();
+        $fields = $this->get_field_definitions();
 
         foreach ($fields as $field) {
             if (is_null($field->get_select())) {
@@ -308,7 +314,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     {
         global $DB;
 
-        if (!$this->has_any_fields()) {
+        if (!$this->has_any_field_definitions()) {
             throw new \moodle_exception('Grid initialized without any fields. Did you forget to call report::init()?');
         }
 
@@ -316,7 +322,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
             throw new \Exception('Missing required filters');
         }
 
-        if ($this->has_filters()) {
+        if ($this->get_filter_collection()->has_filters()) {
             list ($filter_sql, $filter_params) = $this->filter_collection->get_sql_and_params();
         } else {
             $filter_sql = '';
@@ -334,9 +340,9 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
             $order_by = $this->get_sort_sql();
         }
 
+        $query = str_replace('%%SELECT%%', $selects, $query);
         $query = str_replace('%%FILTERS%%', $filter_sql, $query);
         $query = str_replace('%%ORDERBY%%', $order_by, $query);
-        $query = sprintf('SELECT %s %s', $selects, $query);
 
         return [$query, $filter_params];
     }
@@ -349,14 +355,13 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * Call method to handle sort params.
      *
      * @throws \coding_exception
-     * @throws user_not_set_exception
      */
     protected function handle_sort_params()
     {
         $sort = optional_param('sort', null, PARAM_TEXT);
         $sort_direction = optional_param('sort_dir', 'asc', PARAM_TEXT);
 
-        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'local_coursebit', 'data_grid_sort');
+        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'block_dash', 'data_grid_sort');
 
         if ($sort) {
             $cache->set($this->get_user()->get_id() . '_' . $this->get_name(), [
@@ -374,7 +379,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
         }
 
         if ($sort) {
-            foreach ($this->get_fields() as $field) {
+            foreach ($this->get_field_definitions() as $field) {
                 if ($field->get_name() == $sort) {
                     $field->set_sort(true);
                     $field->set_sort_direction($sort_direction);
@@ -394,7 +399,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
         $sql = '';
         $sorts = [];
 
-        foreach ($this->get_fields() as $field) {
+        foreach ($this->get_field_definitions() as $field) {
             if ($field->get_sort()) {
                 $sorts[] = $field->get_sort_select() . ' ' . strtoupper($field->get_sort_direction());
             }
@@ -427,42 +432,28 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
 
         $records = $this->get_records();
 
-        $grid_data = new simple_data_collection($this);
+        $grid_data = new data_collection();
 
-        $fields = $this->get_fields();
-
-        // Only get section headers once, since they don't change at this time
-        foreach ($fields as $field) {
-            if ($field->is_visible()) {
-                $grid_data->add_header($field);
-            }
-        }
+        $field_definitions = $this->get_field_definitions();
 
         foreach ($records as $record) {
-            $id = array_values((array)$record)[0];
-
-            $row = [
-                'id' => $id,
-                'selected' => $this->is_selected($id),
-                'fields' => []
-            ];
-
-            foreach ($fields as $field) {
-                if (!$field->is_visible()) {
+            $row = new data_collection();
+            foreach ($field_definitions as $field_definition) {
+                if (!$field_definition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
                     continue;
                 }
 
-                $name = $field->get_name();
-                $row['fields'][] = [
-                    'name' => $field->get_name(),
-                    'data' => $field->transform_data($record->$name, $record)
-                ];
+                $name = $field_definition->get_name();
+
+                $record->$name = $field_definition->transform_data($record->$name, $record);
             }
 
-            $grid_data->add_row($row);
+            $row->add_data_associative($record);
+            $grid_data->add_child_collection('rows', $row);
         }
 
         $this->data_collection = $grid_data;
+
         return $this->data_collection;
     }
 
@@ -535,7 +526,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      */
     protected function get_count_select()
     {
-        return 'COUNT(' . $this->get_fields()[0]->get_select() . ')';
+        return 'COUNT(' . $this->get_field_definitions()[0]->get_select() . ')';
     }
 
     #endregion
@@ -614,7 +605,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     public function get_filter_data()
     {
         $filtersdata = [];
-        if ($this->filter_collection->has_filters()) {
+        if ($this->get_filter_collection()->has_filters()) {
             foreach ($this->filter_collection->get_applied_filters() as $filter) {
                 $filtersdata[] = [
                     'field_name' => $filter->get_field_name(),
@@ -666,6 +657,54 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
         }
 
         $this->cache_filters();
+    }
+
+    #endregion
+
+    #region Pagination methods
+
+    /**
+     * Override to disable pagination for this grid.
+     *
+     * @return bool
+     */
+    public function supports_pagination()
+    {
+        return true;
+    }
+
+    /**
+     * @return int
+     */
+    protected function get_per_page_default()
+    {
+        return paginator::PER_PAGE_DEFAULT;
+    }
+
+    /**
+     * Disable pagination grid.
+     */
+    public function disabled_pagination()
+    {
+        $this->disable_pagination = true;
+    }
+
+    /**
+     * Enable pagination on grid.
+     */
+    public function enable_pagination()
+    {
+        $this->disable_pagination = false;
+    }
+
+    /**
+     * Check if all pagination is disabled.
+     *
+     * @return bool
+     */
+    public function is_pagination_disabled()
+    {
+        return $this->disable_pagination;
     }
 
     #endregion
@@ -741,7 +780,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     {
         global $PAGE;
 
-        $PAGE->requires->js_call_amd('local_coursebit/data_grid', 'init');
+        $PAGE->requires->js_call_amd('block_dash/data_grid', 'init');
 
         $this->add_component('paginator', $this->paginator);
 
@@ -759,7 +798,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
             $PAGE->set_url($url);
         }
 
-        if ($this->has_filters()) {
+        if ($this->get_filter_collection()->has_filters()) {
             $this->handle_filter_submission();
 
             ob_start();
@@ -783,7 +822,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
             throw new \Exception('Data grid expected HTML format.');
         }
 
-        if ($this->has_filters()) {
+        if ($this->get_filter_collection()->has_filters()) {
             $applied_filter_count = count($this->get_applied_filters());
         } else {
             $applied_filter_count = 0;
@@ -822,7 +861,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
             'selection_count' => count($this->get_selections()),
             'grid_html' => $grid_html,
             'filter_form_html' => $formhtml,
-            'has_filters' => $this->has_filters(),
+            'has_filters' => $this->get_filter_collection()->has_filters(),
             'applied_filter_count' => $applied_filter_count,
             'has_required_filters_applied' => $this->has_required_filters_applied(),
             'grid_actions_html' => $grid_actions_html,

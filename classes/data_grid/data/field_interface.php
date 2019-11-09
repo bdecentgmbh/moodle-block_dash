@@ -15,15 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace block_dash\data_grid\data;
 
-$plugin->version   = 2019110901;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;        // Requires this Moodle version
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics)
+/**
+ * Class field_interface
+ * @package block_dash\data
+ */
+interface field_interface
+{
+    /**
+     * @return string
+     */
+    public function get_name();
+
+    /**
+     * @return mixed
+     */
+    public function get_value();
+}

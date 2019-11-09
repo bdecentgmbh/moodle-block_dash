@@ -20,7 +20,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\data;
+namespace block_dash\data_grid\data;
 
 /**
  * Interface data_collection_interface

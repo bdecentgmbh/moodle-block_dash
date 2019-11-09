@@ -1,9 +1,6 @@
 <?php
 
-
 namespace block_dash\configuration;
-
-use block_dash\source\data_source_interface;
 
 interface configuration_interface
 {
@@ -13,14 +10,21 @@ interface configuration_interface
     public function get_context();
 
     /**
-     * @return data_source_interface
+     * @return string
      */
-    public function get_data_source();
+    public function get_sql();
 
     /**
      * @return string
      */
     public function get_template();
+
+    /**
+     * Check if block is ready to display content.
+     *
+     * @return bool
+     */
+    public function is_fully_configured();
 
     /**
      * Create new configuration instance

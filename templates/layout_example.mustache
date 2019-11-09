@@ -1,4 +1,9 @@
 {{< block_dash/layout }}
+    {{$header}}
+        <h1>This is an example template.</h1>
+        <p>This is a Mustache template. Read more on it <a href="https://docs.moodle.org/dev/Templates">here</a></p>
+    {{/header}}
+
     {{$body}}
         <div class="table-responsive">
             <table class="table">
@@ -12,8 +17,4 @@
             </table>
         </div>
     {{/body}}
-
-    {{$footer}}
-        The footer is overridden
-    {{/footer}}
 {{/ block_dash/layout }}

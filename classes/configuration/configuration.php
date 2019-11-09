@@ -3,18 +3,19 @@
 
 namespace block_dash\configuration;
 
-use block_dash\source\sql_data_source;
-use block_dash\source\testing_data_source;
-use block_dash\table\course_table;
-
 class configuration extends abstract_configuration
 {
     public static function create_from_instance(\block_base $block_instance)
     {
-        $config = $block_instance->config;
+        $sql = null;
+        $mustache = null;
+        if (isset($block_instance->config->sql)) {
+            $sql = $block_instance->config->sql;
+        }
+        if (isset($block_instance->config->mustache)) {
+            $mustache = $block_instance->config->mustache;
+        }
 
-        $data_source = new sql_data_source(new course_table());
-
-        return new configuration($block_instance->context, $data_source, $config->mustache);
+        return new configuration($block_instance->context, $sql, $mustache);
     }
 }

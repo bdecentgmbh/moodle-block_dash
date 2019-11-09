@@ -3,7 +3,7 @@
 
 namespace block_dash\source;
 
-use block_dash\data\data_collection_interface;
+use block_dash\data_grid\data\data_collection_interface;
 
 interface data_source_interface
 {

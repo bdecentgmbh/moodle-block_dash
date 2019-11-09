@@ -15,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Plugin administration pages are defined here.
  *
- * @package    block_dash
- * @copyright  2019 bdecent gmbh <https://bdecent.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     mod_videotime
+ * @category    admin
+ * @copyright   2018 bdecent gmbh <https://bdecent.de>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019110901;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;        // Requires this Moodle version
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics)
+$ADMIN->add('blocksettings', new admin_category('blockdashfolder', new lang_string('pluginname', 'block_dash')));
+
+//$ADMIN->add('blockdashfolder', $settings);
+//// Tell core we already added the settings structure.
+$settings = null;
+
+$ADMIN->add('blockdashfolder', new admin_externalpage(
+    'blockdashmanagetemplates',
+    get_string('managetemplates', 'block_dash'),
+    new moodle_url('/blocks/dash/templates.php'),
+    'moodle/site:config'));

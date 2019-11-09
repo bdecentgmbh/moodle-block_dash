@@ -6,6 +6,11 @@ namespace block_dash\data_grid\field;
 
 interface field_definition_interface
 {
+    const VISIBILITY_VISIBLE = 1;
+    const VISIBILITY_HIDDEN = 2;
+
+    const DEFAULT_EMPTY_VALUE = '-';
+
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format

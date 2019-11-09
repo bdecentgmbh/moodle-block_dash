@@ -38,4 +38,21 @@ $capabilities = [
 
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ],
+    'block/dash:myaddinstance' => [
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype'      => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'user' => CAP_PROHIBIT,
+        ],
+        'clonepermissionsfrom' => 'moodle/my:manageblocks'
+    ],
+    'block/dash:managetemplates' => [
+        'riskbitmask'  => RISK_MANAGETRUST,
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'manager' => CAP_ALLOW
+        ]
+    ],
 ];

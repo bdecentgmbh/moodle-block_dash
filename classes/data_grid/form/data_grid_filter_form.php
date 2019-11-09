@@ -60,7 +60,7 @@ class data_grid_filter_form extends \moodleform
         $this->data_grid->get_filter_collection()->create_form_elements($mform);
 
         $buttonarray=array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('filter', 'local_coursebit'));
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('filter', 'block_dash'));
         $buttonarray[] = &$mform->createElement('cancel', 'cancelbutton', 'Clear filters');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');

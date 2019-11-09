@@ -5,10 +5,10 @@ namespace block_dash\data_grid\field;
 
 class field_definition implements field_definition_interface
 {
-    const VISIBILITY_VISIBLE = 1;
-    const VISIBILITY_HIDDEN = 2;
-
-    const DEFAULT_EMPTY_VALUE = '-';
+    /**
+     * @var array
+     */
+    private $tables;
 
     /**
      * @var string Unique name of field (e.g. u_firstname).
@@ -51,8 +51,9 @@ class field_definition implements field_definition_interface
      */
     private $sort_select;
 
-    protected function __construct($name, $select, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
+    protected function __construct($tables, $name, $select, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
     {
+        $this->tables = $tables;
         $this->name = $name;
         $this->title = $title;
         $this->select = $select;
@@ -61,6 +62,7 @@ class field_definition implements field_definition_interface
     }
 
     /**
+     * @param array $tables Required tables for this field to display.
      * @param $name
      * @param $select
      * @param $title
@@ -68,9 +70,9 @@ class field_definition implements field_definition_interface
      * @param array $options
      * @return field_definition
      */
-    public static function create($name, $select, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
+    public static function create($tables, $name, $select, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
     {
-        return new field_definition($name, $select, $title, $visibility, $options);
+        return new field_definition($tables, $name, $select, $title, $visibility, $options);
     }
 
     /**

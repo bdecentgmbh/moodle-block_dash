@@ -2,8 +2,6 @@
 
 namespace block_dash\configuration;
 
-use block_dash\source\data_source_interface;
-
 abstract class abstract_configuration implements configuration_interface
 {
     /**
@@ -12,19 +10,19 @@ abstract class abstract_configuration implements configuration_interface
     private $context;
 
     /**
-     * @var data_source_interface
+     * @var string
      */
-    private $data_source;
+    private $sql;
 
     /**
      * @var string
      */
     private $template;
 
-    protected function __construct(\context $context, data_source_interface $data_source, $template)
+    protected function __construct(\context $context, $sql, $template)
     {
         $this->context = $context;
-        $this->data_source = $data_source;
+        $this->sql = $sql;
         $this->template = $template;
     }
 
@@ -37,11 +35,11 @@ abstract class abstract_configuration implements configuration_interface
     }
 
     /**
-     * @return data_source_interface
+     * @return string
      */
-    public function get_data_source()
+    public function get_sql()
     {
-        return $this->data_source;
+        return $this->sql;
     }
 
     /**
@@ -50,5 +48,15 @@ abstract class abstract_configuration implements configuration_interface
     public function get_template()
     {
         return $this->template;
+    }
+
+    /**
+     * Check if block is ready to display content.
+     *
+     * @return bool
+     */
+    public function is_fully_configured()
+    {
+        return !empty($this->sql) && !empty($this->template);
     }
 }

@@ -15,28 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * InfoDash block
+ * Version details
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\data;
+namespace block_dash\template;
 
-/**
- * Class field_interface
- * @package block_dash\data
- */
-interface field_interface
+use block_dash\data_grid\field\field_definition_interface;
+
+interface template_interface
 {
     /**
-     * @return string
+     * @return field_definition_interface[]
      */
-    public function get_name();
+    public function get_available_field_definitions();
 
-    /**
-     * @return mixed
-     */
-    public function get_value();
 }

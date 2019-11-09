@@ -13,9 +13,10 @@ class configuration extends abstract_configuration
         global $DB;
 
         $template = null;
-        if (isset($block_instance->config->template)) {
-            $record = $DB->get_record('dash_template', ['idnumber' => $block_instance->config->template]);
-            $template = custom_template::create($record, $block_instance->context);
+        if (isset($block_instance->config->template_idnumber)) {
+            if ($record = $DB->get_record('dash_template', ['idnumber' => $block_instance->config->template_idnumber])) {
+                $template = custom_template::create($record, $block_instance->context);
+            }
         }
 
         if (is_null($template)) {

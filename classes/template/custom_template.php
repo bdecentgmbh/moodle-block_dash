@@ -11,6 +11,9 @@ use block_dash\data_grid\filter\filter_collection_interface;
 
 class custom_template extends abstract_template
 {
+    const LAYOUT_TYPE_PATH = 1;
+    const LAYOUT_TYPE_RAW_MUSTACHE = 2;
+
     /**
      * @var \stdClass
      */
@@ -54,6 +57,31 @@ class custom_template extends abstract_template
         }
 
         return $field_definitions;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_mustache_template_name()
+    {
+        global $CFG;
+
+        if ($this->record->layout_type == self::LAYOUT_TYPE_PATH) {
+            return $this->record->layout_path;
+        } else if ($this->record->layout_type == self::LAYOUT_TYPE_RAW_MUSTACHE) {
+
+            make_localcache_directory('block_dash/templates');
+
+            $path = "$CFG->localcachedir/block_dash/templates/" . $this->record->idnumber;
+
+            if (!file_exists($path) || md5(file_get_contents($path)) != md5($this->record->layout_mustache)) {
+                file_put_contents($path, $this->record->layout_mustache);
+            }
+
+            return '_custom/' . $this->record->idnumber;
+        }
+
+        return 'block_dash/layout_missing';
     }
 
     public static function create(\stdClass $record, \context $context)

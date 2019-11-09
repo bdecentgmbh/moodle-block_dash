@@ -23,6 +23,7 @@
 namespace block_dash\template\form;
 
 use block_dash\block_builder;
+use block_dash\template\custom_template;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -46,6 +47,10 @@ class template_form extends \moodleform
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', get_string('required'), 'required');
 
+        $mform->addElement('text', 'idnumber', get_string('idnumber'));
+        $mform->setType('idnumber', PARAM_TEXT);
+        $mform->addRule('idnumber', get_string('required'), 'required');
+
         $options = [];
         foreach (block_builder::get_all_field_definitions() as $field_definition) {
             $options[$field_definition->get_name()] = $field_definition->get_title();
@@ -61,8 +66,10 @@ class template_form extends \moodleform
         $mform->addRule('query_template', get_string('required'), 'required');
 
         $radioarray = [];
-        $radioarray[] = $mform->createElement('radio', 'layout_type', '', get_string('standard'), 1);
-        $radioarray[] = $mform->createElement('radio', 'layout_type', '', get_string('custom', 'block_dash'), 2);
+        $radioarray[] = $mform->createElement('radio', 'layout_type', '', get_string('standard'),
+            custom_template::LAYOUT_TYPE_PATH);
+        $radioarray[] = $mform->createElement('radio', 'layout_type', '', get_string('custom', 'block_dash'),
+            custom_template::LAYOUT_TYPE_RAW_MUSTACHE);
         $mform->addGroup($radioarray, 'layout_type', get_string('layouttype', 'block_dash'), [' '], false);
         $mform->setDefault('layout_type', 1);
         $mform->addGroupRule('layout_type', get_string('required'), 'required');

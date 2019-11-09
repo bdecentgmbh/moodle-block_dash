@@ -23,6 +23,7 @@
  */
 
 use block_dash\data_grid\field\field_definition;
+use block_dash\data_grid\field\user_profile_link_field_definition;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -49,6 +50,7 @@ function block_dash_register_field_definitions() {
         field_definition::create(['user'], 'u_firstaccess', 'u.firstaccess', get_string('firstaccess')),
         field_definition::create(['user'], 'u_description', 'u.description', get_string('description')),
         field_definition::create(['user'], 'u_picture', 'u.picture', get_string('pictureofuser')),
+        user_profile_link_field_definition::create(['user'], 'u_profile_url', 'u.id', 'User profile URL')
     ];
 
     $i = 0;

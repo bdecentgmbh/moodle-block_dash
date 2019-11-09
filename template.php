@@ -54,6 +54,7 @@ switch ($action) {
         $form = new template_form($PAGE->url);
 
         if ($data = $form->get_data()) {
+            $data->available_field_definitions = json_encode($data->available_field_definitions);
             $DB->insert_record('dash_template', $data);
 
             \core\notification::success(get_string('templatecreated', 'block_dash', $data));

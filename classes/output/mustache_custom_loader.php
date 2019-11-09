@@ -47,6 +47,12 @@ class mustache_custom_loader extends \Mustache_Loader_FilesystemLoader {
      * @return string Template file name
      */
     protected function getFileName($name) {
+        global $CFG;
+
+        if (strpos($name, '_custom') === 0) {
+            return "$CFG->localcachedir/block_dash/templates/" . str_replace('_custom/', '', $name);
+        }
+
         // Call the Moodle template finder.
         return mustache_template_finder::get_template_filepath($name);
     }

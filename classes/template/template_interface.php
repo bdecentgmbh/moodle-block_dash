@@ -31,6 +31,20 @@ use block_dash\data_grid\filter\filter_collection_interface;
 interface template_interface
 {
     /**
+     * Get unique idnumber for this template.
+     *
+     * @return string
+     */
+    public function get_idnumber();
+
+    /**
+     * Get human readable name of template.
+     *
+     * @return string
+     */
+    public function get_name();
+
+    /**
      * @return \context
      */
     public function get_context();

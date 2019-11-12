@@ -27,6 +27,26 @@ class custom_template extends abstract_template
     }
 
     /**
+     * Get unique idnumber for this template.
+     *
+     * @return string
+     */
+    public function get_idnumber()
+    {
+        return $this->record->idnumber;
+    }
+
+    /**
+     * Get human readable name of template.
+     *
+     * @return string
+     */
+    public function get_name()
+    {
+        return $this->record->name;
+    }
+
+    /**
      * @return string
      */
     public function get_query_template()

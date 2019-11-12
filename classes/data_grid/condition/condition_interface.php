@@ -26,5 +26,5 @@ interface condition_interface
 {
     public function get_field_name();
 
-    public function get_
+    public function get_sql_condition();
 }

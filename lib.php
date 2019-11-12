@@ -24,6 +24,7 @@
 
 use block_dash\data_grid\field\field_definition;
 use block_dash\data_grid\field\user_profile_link_field_definition;
+use block_dash\template\users_template;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -65,4 +66,10 @@ function block_dash_register_field_definitions() {
     }
 
     return $definitions;
+}
+
+function block_dash_register_templates() {
+    return [
+        new users_template(context_system::instance())
+    ];
 }

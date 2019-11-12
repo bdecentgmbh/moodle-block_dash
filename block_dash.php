@@ -34,6 +34,14 @@ class block_dash extends block_base {
         return true;
     }
 
+    function specialization() {
+        if (isset($this->config->title)) {
+            $this->title = $this->title = format_string($this->config->title, true, ['context' => $this->context]);
+        } else {
+            $this->title = get_string('newblock', 'block_dash');
+        }
+    }
+
     function instance_allow_multiple() {
         return true;
     }

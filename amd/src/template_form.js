@@ -63,7 +63,7 @@ define([
         }
     });
 
-    $(".delete-field").on('click', function(e) {
+    $("#field_edits").on("click", ".delete-field", function(e) {
         e.preventDefault();
         $(this).closest('.field').remove();
     });

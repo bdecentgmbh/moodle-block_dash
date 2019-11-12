@@ -105,7 +105,7 @@ class renderer extends \plugin_renderer_base {
      * @param array|\stdClass $context Context containing data for the template.
      * @return string|boolean
      */
-    public function render_from_template_string($templatestring, $context) {
+    public function render_from_template($templatestring, $context) {
         return trim($this->get_mustache()->render($templatestring, $context));
     }
 

@@ -3,6 +3,7 @@
 
 namespace block_dash\configuration;
 
+use block_dash\block_builder;
 use block_dash\template\custom_template;
 use block_dash\template\placeholder_template;
 
@@ -17,6 +18,10 @@ class configuration extends abstract_configuration
             if ($record = $DB->get_record('dash_template', ['idnumber' => $block_instance->config->template_idnumber])) {
                 $template = custom_template::create($record, $block_instance->context);
             }
+        }
+
+        if (is_null($template)) {
+            $template = block_builder::get_template($block_instance->config->template_idnumber);
         }
 
         if (is_null($template)) {

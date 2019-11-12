@@ -13,7 +13,7 @@ abstract class abstract_template implements template_interface
      */
     private $context;
 
-    protected function __construct(\context $context)
+    public function __construct(\context $context)
     {
         $this->context = $context;
     }
@@ -64,7 +64,7 @@ abstract class abstract_template implements template_interface
 
         if (isset($data)) {
             try {
-                $output .= $renderer->render_from_template_string($this->get_mustache_template_name(), [
+                $output .= $renderer->render_from_template($this->get_mustache_template_name(), [
                     'data' => $data
                 ]);
             } catch (\Exception $e) {
@@ -86,5 +86,15 @@ abstract class abstract_template implements template_interface
     public function get_mustache_template_name()
     {
         return 'block_dash/layout_missing';
+    }
+
+    /**
+     * Get unique idnumber for this template.
+     *
+     * @return string
+     */
+    public function get_idnumber()
+    {
+        return self::class;
     }
 }

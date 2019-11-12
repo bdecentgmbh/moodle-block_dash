@@ -108,4 +108,21 @@ class renderer extends \plugin_renderer_base {
     public function render_from_template_string($templatestring, $context) {
         return trim($this->get_mustache()->render($templatestring, $context));
     }
+
+    public function render_editing_tabs($templateid, $currentsection = 'general')
+    {
+        global $OUTPUT;
+
+        $tabs = [];
+        $tabs[] = new \tabobject('general',
+            new \moodle_url('/blocks/dash/template.php',
+                ['action' => 'edit', 'section' => 'general', 'id' => $templateid]),
+            get_string('general'));
+        $tabs[] = new \tabobject('fields',
+            new \moodle_url('/blocks/dash/template.php',
+                ['action' => 'edit', 'section' => 'fields', 'id' => $templateid]),
+            get_string('fields', 'block_dash'));
+
+        return $OUTPUT->tabtree($tabs, $currentsection);
+    }
 }

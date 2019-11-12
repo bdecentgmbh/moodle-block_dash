@@ -2,7 +2,17 @@
     border: 1px solid #eee;
     height: auto !important;
     width: 100%;
+    z-index: 0;
 }
 .CodeMirror .CodeMirror-scroll {
     min-height: 150px;
+}
+
+/** Fix width when dragging table row. **/
+body#page-blocks-dash-template .ui-sortable-helper {
+    display: table;
+}
+
+body#page-blocks-dash-template .drag-handle {
+    cursor: pointer;
 }

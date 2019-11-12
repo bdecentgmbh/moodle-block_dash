@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
-class template_form extends \moodleform
+class template_general_form extends \moodleform
 {
     /**
      * Form definition. Abstract method - always override!
@@ -50,16 +50,6 @@ class template_form extends \moodleform
         $mform->addElement('text', 'idnumber', get_string('idnumber'));
         $mform->setType('idnumber', PARAM_TEXT);
         $mform->addRule('idnumber', get_string('required'), 'required');
-
-        $options = [];
-        foreach (block_builder::get_all_field_definitions() as $field_definition) {
-            $options[$field_definition->get_name()] = $field_definition->get_title();
-        }
-
-        $mform->addElement('autocomplete', 'available_field_definitions', get_string('availablefields', 'block_dash'),
-            $options, ['multiple' => true]);
-        $mform->addHelpButton('available_field_definitions', 'availablefields', 'block_dash');
-        $mform->addRule('available_field_definitions', get_string('required'), 'required');
 
         $mform->addElement('textarea', 'query_template', get_string('querytemplate', 'block_dash'));
         $mform->setType('query_template', PARAM_RAW);

@@ -50,9 +50,15 @@ class custom_template extends abstract_template
     {
         $field_definitions = [];
 
-        foreach (block_builder::get_all_field_definitions() as $field_definition) {
-            if (in_array($field_definition->get_name(), $this->record->available_field_definitions)) {
-                $field_definitions[] = $field_definition;
+        if ($this->record->available_field_definitions) {
+            foreach ($this->record->available_field_definitions as $fieldname => $field_definition) {
+                if ($field = block_builder::get_field_definition($fieldname)) {
+                    if (isset($field_definition['options'])) {
+                        $field->set_options($field_definition['options']);
+                    }
+
+                    $field_definitions[] = $field;
+                }
             }
         }
 

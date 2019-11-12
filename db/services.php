@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,6 +22,23 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019111002;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;        // Requires this Moodle version
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics)
+$functions = [
+    'block_dash_get_database_schema_structure' => [
+        'classname'     => 'block_dash\external',
+        'classpath'     => '',
+        'methodname'    => 'get_database_schema_structure',
+        'description'   => 'Get database schema structure info, tables and fields.',
+        'type'          => 'read',
+        'ajax'          => true,
+        'loginrequired' => true,
+    ],
+    'block_dash_get_field_edit_row' => [
+        'classname'     => 'block_dash\external',
+        'classpath'     => '',
+        'methodname'    => 'get_field_edit_row',
+        'description'   => 'Get HTML for new field edit row.',
+        'type'          => 'read',
+        'ajax'          => true,
+        'loginrequired' => true,
+    ],
+];

@@ -22,7 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_dash\template\form\template_form;
+use block_dash\output\renderer;
+use block_dash\template\form\template_general_form;
+use block_dash\template\custom_template;
 
 require_once(__DIR__.'/../../config.php');
 require_once("$CFG->libdir/adminlib.php");
@@ -38,6 +40,8 @@ $PAGE->set_url(new moodle_url('/blocks/dash/template.php', ['action' => $action]
 $PAGE->navbar->add(get_string('managetemplates', 'block_dash'),
     new moodle_url('/blocks/dash/templates.php'));
 
+/** @var renderer $renderer */
+$renderer = $PAGE->get_renderer('block_dash');
 
 require_login();
 require_capability('block/dash:managetemplates', $context);
@@ -50,8 +54,9 @@ switch ($action) {
 
         $PAGE->requires->js_call_amd('block_dash/template_form');
         $PAGE->requires->css('/blocks/dash/codemirror.css');
+        $PAGE->requires->css('/blocks/dash/codemirror-show-hint.css');
 
-        $form = new template_form($PAGE->url);
+        $form = new template_general_form($PAGE->url);
 
         if ($data = $form->get_data()) {
             $data->available_field_definitions = json_encode($data->available_field_definitions);
@@ -63,6 +68,8 @@ switch ($action) {
             redirect(new moodle_url('/blocks/dash/templates.php'));
         }
 
+        echo $OUTPUT->header();
+
         break;
 
     case 'edit':
@@ -72,30 +79,38 @@ switch ($action) {
 
         $PAGE->requires->js_call_amd('block_dash/template_form');
         $PAGE->requires->css('/blocks/dash/codemirror.css');
+        $PAGE->requires->css('/blocks/dash/codemirror-show-hint.css');
 
         $id = required_param('id', PARAM_INT);
+        $section = optional_param('section', 'general', PARAM_TEXT);
+        $url = clone $PAGE->url;
+        $url->params(['id' => $id, 'section' => $section]);
 
-        $template = $DB->get_record('dash_template', ['id' => $id], '*', MUST_EXIST);
+        $templaterecord = $DB->get_record('dash_template', ['id' => $id], '*', MUST_EXIST);
+        $template = custom_template::create($templaterecord, context_system::instance());
 
-        $form = new template_form($PAGE->url);
+        $formclass = sprintf('\block_dash\template\form\template_%s_form', $section);
+        $form = new $formclass($url, ['template' => $template]);
 
         if ($data = $form->get_data()) {
-            $data->available_field_definitions = json_encode($data->available_field_definitions);
+            if (isset($_POST['available_field_definitions'])) {
+                $data->available_field_definitions = json_encode($_POST['available_field_definitions']);
+            }
             $DB->update_record('dash_template', $data);
 
-            \core\notification::success(get_string('templateedited', 'block_dash', $data));
+            \core\notification::success(get_string('templateedited', 'block_dash', $template));
             redirect(new moodle_url('/blocks/dash/templates.php'));
         } else if ($form->is_cancelled()) {
             redirect(new moodle_url('/blocks/dash/templates.php'));
         } else {
-            $template->available_field_definitions = json_decode($template->available_field_definitions, true);
-
-            $form->set_data($template);
+            $form->set_data($templaterecord);
         }
+
+        echo $OUTPUT->header();
+        echo $renderer->render_editing_tabs($id, $section);
 
         break;
 }
 
-echo $OUTPUT->header();
 $form->display();
 echo $OUTPUT->footer();

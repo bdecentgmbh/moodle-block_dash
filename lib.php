@@ -33,24 +33,23 @@ function block_dash_register_field_definitions() {
     require_once("$CFG->dirroot/user/profile/lib.php");
 
     $definitions = [
-        field_definition::create(['user'], 'u_id', 'u.id', get_string('user') . ' ID'),
-        field_definition::create(['user'], 'u_firstname', 'u.firstname', get_string('firstname')),
-        field_definition::create(['user'], 'u_lastname', 'u.lastname', get_string('lastname')),
-        field_definition::create(['user'], 'u_email', 'u.email', get_string('email')),
-        field_definition::create(['user'], 'u_username', 'u.username', get_string('username')),
-        field_definition::create(['user'], 'u_idnumber', 'u.idnumber', get_string('idnumber')),
-        field_definition::create(['user'], 'u_idnumber', 'u.idnumber', get_string('idnumber')),
-        field_definition::create(['user'], 'u_city', 'u.city', get_string('city')),
-        field_definition::create(['user'], 'u_country', 'u.country', get_string('country')),
-        field_definition::create(['user'], 'u_lastlogin', 'u.lastlogin', get_string('lastlogin')),
-        field_definition::create(['user'], 'u_department', 'u.department', get_string('department')),
-        field_definition::create(['user'], 'u_institution', 'u.institution', get_string('institution')),
-        field_definition::create(['user'], 'u_address', 'u.address', get_string('address')),
-        field_definition::create(['user'], 'u_alternatename', 'u.alternatename', get_string('alternatename')),
-        field_definition::create(['user'], 'u_firstaccess', 'u.firstaccess', get_string('firstaccess')),
-        field_definition::create(['user'], 'u_description', 'u.description', get_string('description')),
-        field_definition::create(['user'], 'u_picture', 'u.picture', get_string('pictureofuser')),
-        user_profile_link_field_definition::create(['user'], 'u_profile_url', 'u.id', 'User profile URL')
+        new field_definition(['user'], 'u_id', 'u.id', get_string('user') . ' ID'),
+        new field_definition(['user'], 'u_firstname', 'u.firstname', get_string('firstname')),
+        new field_definition(['user'], 'u_lastname', 'u.lastname', get_string('lastname')),
+        new field_definition(['user'], 'u_email', 'u.email', get_string('email')),
+        new field_definition(['user'], 'u_username', 'u.username', get_string('username')),
+        new field_definition(['user'], 'u_idnumber', 'u.idnumber', get_string('idnumber')),
+        new field_definition(['user'], 'u_city', 'u.city', get_string('city')),
+        new field_definition(['user'], 'u_country', 'u.country', get_string('country')),
+        new field_definition(['user'], 'u_lastlogin', 'u.lastlogin', get_string('lastlogin')),
+        new field_definition(['user'], 'u_department', 'u.department', get_string('department')),
+        new field_definition(['user'], 'u_institution', 'u.institution', get_string('institution')),
+        new field_definition(['user'], 'u_address', 'u.address', get_string('address')),
+        new field_definition(['user'], 'u_alternatename', 'u.alternatename', get_string('alternatename')),
+        new field_definition(['user'], 'u_firstaccess', 'u.firstaccess', get_string('firstaccess')),
+        new field_definition(['user'], 'u_description', 'u.description', get_string('description')),
+        new field_definition(['user'], 'u_picture', 'u.picture', get_string('pictureofuser')),
+        new user_profile_link_field_definition(['user'], 'u_profile_url', 'u.id', 'User profile URL')
     ];
 
     $i = 0;

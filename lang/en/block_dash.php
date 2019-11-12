@@ -22,7 +22,7 @@
  * @copyright 2019 bdecent gmbh <https://bdecent.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+$string['addnewfield'] = 'Add new field';
 $string['availablefields'] = 'Available fields';
 $string['availablefields_help'] = 'Choose all possible fields this template will utilize. The user will be able to select which fields to include for their own purposes. For example, if you are displaying user information, try to include as many user fields as possible.';
 $string['coursesummary'] = 'Course summary';
@@ -35,6 +35,8 @@ $string['databaseerror'] = 'Database error. The content cannot be displayed.';
 $string['delete'] = 'Delete';
 $string['edit'] = 'Edit';
 $string['edittemplate'] = 'Edit template';
+$string['fieldnotfound'] = 'Field not found.';
+$string['fields'] = 'Fields';
 $string['layout'] = 'Layout';
 $string['layoutgrid'] = 'Grid layout';
 $string['layouttype'] = 'Layout type';
@@ -46,6 +48,7 @@ $string['parseerror'] = 'Parse error. The content cannot be displayed.';
 $string['pluginname'] = 'InfoDash';
 $string['privacy:metadata'] = 'The InfoDash block only shows information about courses and does not store data itself.';
 $string['querytemplate'] = 'Query template';
+$string['sqlfield'] = 'SQL field';
 $string['template'] = 'Template';
 $string['templatecreated'] = 'Template <b>{$a->name}</b> successfully created.';
 $string['templateedited'] = 'Template <b>{$a->name}</b> successfully edited.';

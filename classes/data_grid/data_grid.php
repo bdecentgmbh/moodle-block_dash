@@ -315,7 +315,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
         global $DB;
 
         if (!$this->has_any_field_definitions()) {
-            throw new \moodle_exception('Grid initialized without any fields. Did you forget to call report::init()?');
+            throw new \moodle_exception('Grid initialized without any fields. Did you forget to call data_grid::init()?');
         }
 
         if (!$this->has_required_filters_applied()) {

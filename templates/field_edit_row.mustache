@@ -1,0 +1,19 @@
+<tr class="field">
+    <td>
+        <span class="drag-handle">{{#pix}}i/dragdrop, core{{/pix}}</span>
+    </td>
+    <td>
+        {{#get_tables}}
+            <span class="badge badge-dark">{{.}}</span>
+        {{/get_tables}}
+    </td>
+    <td>
+        <span>{{get_title}}</span>
+    </td>
+    <td class="custom-form">
+        {{{get_custom_form}}}
+    </td>
+    <td>
+        <a href="#" class="btn btn-danger delete-field">{{#str}}remove{{/str}}</a>
+    </td>
+</tr>

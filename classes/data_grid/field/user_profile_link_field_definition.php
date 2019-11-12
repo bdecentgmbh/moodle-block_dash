@@ -21,18 +21,4 @@ class user_profile_link_field_definition extends field_definition
 
         return '';
     }
-
-    /**
-     * @param array $tables Required tables for this field to display.
-     * @param $name
-     * @param $select
-     * @param $title
-     * @param int $visibility
-     * @param array $options
-     * @return field_definition
-     */
-    public static function create($tables, $name, $select, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
-    {
-        return new user_profile_link_field_definition($tables, $name, $select, $title, $visibility, $options);
-    }
 }

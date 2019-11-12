@@ -51,7 +51,7 @@ class field_definition implements field_definition_interface
      */
     private $sort_select;
 
-    protected function __construct($tables, $name, $select, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
+    public function __construct($tables, $name, $select, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
     {
         $this->tables = $tables;
         $this->name = $name;
@@ -59,20 +59,6 @@ class field_definition implements field_definition_interface
         $this->select = $select;
         $this->visibility = $visibility;
         $this->options = $options;
-    }
-
-    /**
-     * @param array $tables Required tables for this field to display.
-     * @param $name
-     * @param $select
-     * @param $title
-     * @param int $visibility
-     * @param array $options
-     * @return field_definition
-     */
-    public static function create($tables, $name, $select, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
-    {
-        return new field_definition($tables, $name, $select, $title, $visibility, $options);
     }
 
     /**
@@ -132,6 +118,14 @@ class field_definition implements field_definition_interface
         $this->visibility = $visibility;
     }
 
+    /**
+     * @return array
+     */
+    public function get_tables()
+    {
+        return $this->tables;
+    }
+
     #region Options
 
     /**
@@ -154,6 +148,18 @@ class field_definition implements field_definition_interface
     public function set_option($name, $value)
     {
         $this->options[$name] = $value;
+    }
+
+    /**
+     * Set options on field.
+     *
+     * @param array $options
+     */
+    public function set_options($options)
+    {
+        foreach ($options as $name => $value) {
+            $this->set_option($name, $value);
+        }
     }
 
     /**
@@ -259,4 +265,13 @@ class field_definition implements field_definition_interface
     }
 
     #endregion
+
+    /**
+     * @return string
+     */
+    public function get_custom_form()
+    {
+        return '<input type="text" name="available_field_definitions[' . $this->get_name()
+            . '][options][title_override]" value="' . $this->get_option('title_override') .'">';
+    }
 }

@@ -42,6 +42,11 @@ interface field_definition_interface
     public function get_visibility();
 
     /**
+     * @return array
+     */
+    public function get_tables();
+
+    /**
      * @param int $visibility
      */
     public function set_visibility($visibility);
@@ -61,6 +66,13 @@ interface field_definition_interface
      * @param $value
      */
     public function set_option($name, $value);
+
+    /**
+     * Set options on field.
+     *
+     * @param array $options
+     */
+    public function set_options($options);
 
     /**
      * Get all options for this field.
@@ -121,4 +133,9 @@ interface field_definition_interface
      * @return bool
      */
     public function supports_sorting();
+
+    /**
+     * @return string
+     */
+    public function get_custom_form();
 }

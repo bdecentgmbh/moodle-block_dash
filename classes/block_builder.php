@@ -90,4 +90,20 @@ class block_builder
 
         return $field_definitions;
     }
+
+    /**
+     * @param string $name Field definition name to retrieve.
+     * @return field_definition_interface
+     * @throws \coding_exception
+     */
+    public static function get_field_definition($name)
+    {
+        foreach (self::get_all_field_definitions() as $field_definition) {
+            if ($field_definition->get_name() == $name) {
+                return $field_definition;
+            }
+        }
+
+        return null;
+    }
 }

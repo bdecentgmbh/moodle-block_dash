@@ -142,10 +142,12 @@ interface filter_interface
      * Override this method and call it after creating a form element.
      *
      * @param \MoodleQuickForm $form
+     * @param filter_collection_interface $filter_collection
      * @param string $element_name_prefix
      * @throws \coding_exception
      */
-    public function create_form_element(\MoodleQuickForm &$form, $element_name_prefix = '');
+    public function create_form_element(\MoodleQuickForm &$form, filter_collection_interface $filter_collection,
+                                        $element_name_prefix = '');
 
     /**
      * Override if filter supports querying filter results. Typically user input from a searchable dropdown.

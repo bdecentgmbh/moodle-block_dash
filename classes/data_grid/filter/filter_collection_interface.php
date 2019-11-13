@@ -35,6 +35,11 @@ interface filter_collection_interface
     public function init();
 
     /**
+     * @return string
+     */
+    public function get_unique_identifier();
+
+    /**
      * Map a single field name to a database column.
      *
      * @param string $field_name
@@ -43,17 +48,17 @@ interface filter_collection_interface
     public function add_column_mapping($field_name, $database_column);
 
     /**
-     * @param filter $filter
+     * @param filter_interface $filter
      */
-    public function add_filter(filter $filter);
+    public function add_filter(filter_interface $filter);
 
     /**
      * Remove filter from collection. Careful doing this.
      *
-     * @param filter $filter
+     * @param filter_interface $filter
      * @return bool
      */
-    public function remove_filter(filter $filter);
+    public function remove_filter(filter_interface $filter);
 
     /**
      * Check if collection has any filters added.
@@ -93,7 +98,6 @@ interface filter_collection_interface
      * @return bool
      */
     public function apply_filter($field_name, $value);
-
     /**
      * Get filters with user submitted values.
      *
@@ -139,25 +143,22 @@ interface filter_collection_interface
      * Cache filter data.
      *
      * @param \stdClass $user User to cache filter preferences for.
-     * @param string $unique_identifier Unique name for cache.
      */
-    public function cache(\stdClass $user, $unique_identifier);
+    public function cache(\stdClass $user);
 
     /**
      * Get cached filter data.
      *
      * @param \stdClass $user
-     * @param $unique_identifier
      * @return array|false|mixed
      * @throws \coding_exception
      */
-    public function get_cache(\stdClass $user, $unique_identifier);
+    public function get_cache(\stdClass $user);
 
     /**
      * Delete filter cache.
      *
      * @param \stdClass $user
-     * @param string $unique_identifier
      */
-    public function delete_cache(\stdClass $user, $unique_identifier);
+    public function delete_cache(\stdClass $user);
 }

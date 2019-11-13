@@ -30,7 +30,7 @@ namespace block_dash\data_grid\filter;
 class filter_collection implements filter_collection_interface
 {
     /**
-     * @var filter_interface[]
+     * @var filter_interface[] Every filter that belongs to this collection.
      */
     private $filters = [];
 
@@ -40,6 +40,19 @@ class filter_collection implements filter_collection_interface
     private $column_mapping = [];
 
     /**
+     * @var string
+     */
+    private $unique_identifier;
+
+    /**
+     * @param string $unique_identifier
+     */
+    public function __construct($unique_identifier)
+    {
+        $this->unique_identifier = $unique_identifier;
+    }
+
+    /**
      * Initialize all filters.
      */
     public function init()
@@ -47,6 +60,14 @@ class filter_collection implements filter_collection_interface
         foreach ($this->get_filters() as $filter) {
             $filter->init();
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function get_unique_identifier()
+    {
+        return $this->unique_identifier;
     }
 
     /**
@@ -61,9 +82,9 @@ class filter_collection implements filter_collection_interface
     }
 
     /**
-     * @param filter $filter
+     * @param filter_interface $filter
      */
-    public function add_filter(filter $filter)
+    public function add_filter(filter_interface $filter)
     {
         $this->filters[] = $filter;
     }
@@ -71,10 +92,10 @@ class filter_collection implements filter_collection_interface
     /**
      * Remove filter from collection. Careful doing this.
      *
-     * @param filter $filter
+     * @param filter_interface $filter
      * @return bool
      */
-    public function remove_filter(filter $filter)
+    public function remove_filter(filter_interface $filter)
     {
         foreach ($this->filters as $key => $_filter) {
             if ($filter->get_field_name() == $_filter->get_field_name()) {
@@ -247,22 +268,6 @@ class filter_collection implements filter_collection_interface
     }
 
     /**
-     * @param \MoodleQuickForm $form
-     * @param string $element_name_prefix
-     * @throws \coding_exception
-     */
-    public function create_form_elements(\MoodleQuickForm &$form, $element_name_prefix = '')
-    {
-        if (!$this->has_filters()) {
-            return;
-        }
-
-        foreach ($this->get_filters() as $filter) {
-            $filter->create_form_element($form, $element_name_prefix);
-        }
-    }
-
-    /**
      * Create a cache object store.
      *
      * @return \cache_session
@@ -276,9 +281,8 @@ class filter_collection implements filter_collection_interface
      * Cache filter data.
      *
      * @param \stdClass $user User to cache filter preferences for.
-     * @param string $unique_identifier Unique name for cache.
      */
-    public function cache(\stdClass $user, $unique_identifier)
+    public function cache(\stdClass $user)
     {
         $filter_data = [];
 
@@ -286,7 +290,7 @@ class filter_collection implements filter_collection_interface
             $filter_data[$filter->get_field_name()] = $filter->get_raw_value();
         }
 
-        $identifier = sprintf('%s-%s', $user->id, $unique_identifier);
+        $identifier = sprintf('%s-%s', $user->id, $this->get_unique_identifier());
 
         $this->create_cache()->set($identifier, $filter_data);
     }
@@ -295,15 +299,14 @@ class filter_collection implements filter_collection_interface
      * Get cached filter data.
      *
      * @param \stdClass $user
-     * @param $unique_identifier
      * @return array|false|mixed
      * @throws \coding_exception
      */
-    public function get_cache(\stdClass $user, $unique_identifier)
+    public function get_cache(\stdClass $user)
     {
         $cache = $this->create_cache();
 
-        $identifer = sprintf('%s-%s', $user->id, $unique_identifier);
+        $identifer = sprintf('%s-%s', $user->id, $this->get_unique_identifier());
 
         if (!$cache->has($identifer)) {
             return [];
@@ -315,13 +318,12 @@ class filter_collection implements filter_collection_interface
      * Delete filter cache.
      *
      * @param \stdClass $user
-     * @param string $unique_identifier
      */
-    public function delete_cache(\stdClass $user, $unique_identifier)
+    public function delete_cache(\stdClass $user)
     {
         $cache = $this->create_cache();
 
-        $identifier = sprintf('%s-%s', $user->id, $unique_identifier);
+        $identifier = sprintf('%s-%s', $user->id, $this->get_unique_identifier());
 
         $cache->delete($identifier);
     }

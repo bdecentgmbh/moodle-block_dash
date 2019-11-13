@@ -22,8 +22,6 @@
 
 namespace block_dash\data_grid\filter;
 
-use block_dash\data_grid\data_grid_interface;
-
 abstract class filter implements filter_interface
 {
     /**
@@ -97,6 +95,8 @@ abstract class filter implements filter_interface
         $this->required = $required;
         $this->user = $user;
         $this->operation = $operation;
+
+        $this->init();
     }
 
     /**
@@ -315,10 +315,12 @@ abstract class filter implements filter_interface
      * Override this method and call it after creating a form element.
      *
      * @param \MoodleQuickForm $form
+     * @param filter_collection_interface $filter_collection
      * @param string $element_name_prefix
      * @throws \Exception
      */
-    public function create_form_element(\MoodleQuickForm &$form, $element_name_prefix = '')
+    public function create_form_element(\MoodleQuickForm &$form, filter_collection_interface $filter_collection,
+                                        $element_name_prefix = '')
     {
         $name = $element_name_prefix.$this->get_field_name();
 

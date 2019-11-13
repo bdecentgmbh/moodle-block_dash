@@ -25,9 +25,9 @@ namespace block_dash\data_grid;
 use block_dash\data_grid\data\data_collection;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\field\field_definition_interface;
+use block_dash\data_grid\filter\filter_collection;
 use block_dash\data_grid\filter\filter_collection_interface;
-use block_dash\data_grid\filter\filter_interface;
-use block_dash\data_grid\form\data_grid_filter_form;
+use ClassesWithParents\F;
 
 /**
  * Get data to be displayed in a grid or downloaded as a formatted file.
@@ -39,7 +39,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     #region Properties
 
     /**
-     * @var bool If the data grid definition has been built yet (fields, filters, etc)
+     * @var bool If the data grid definition has been built yet.
      */
     private $initialized = false;
 
@@ -54,11 +54,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     private $field_definitions = [];
 
     /**
-     * @var filter_collection_interface
-     */
-    private $filter_collection;
-
-    /**
      * @var string
      */
     private $url = null;
@@ -67,11 +62,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @var \stdClass $user User displaying data (logged in user).
      */
     private $user;
-
-    /**
-     * @var data_grid_filter_form
-     */
-    private $form;
 
     /**
      * @var int Store record count so we don't have to query it multiple times.
@@ -96,13 +86,11 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     #endregion
 
     /**
-     * @param filter_collection_interface $filter_collection
      * @param \context $context
      * @param \stdClass $user User displaying data (logged in user).
      * @throws \coding_exception
      */
-    public function __construct(filter_collection_interface $filter_collection,
-                                \context $context, \stdClass $user = null)
+    public function __construct(\context $context, \stdClass $user = null)
     {
         global $USER;
 
@@ -111,8 +99,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
         }
 
         $this->context = $context;
-
-        $this->filter_collection = $filter_collection;
 
         $this->paginator = new paginator(paginator::PER_PAGE_DEFAULT, function () {
             return $this->get_records_count();
@@ -228,14 +214,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      */
     public function init()
     {
-        if ($this->get_filter_collection()->get_filters()) {
-            foreach ($this->get_field_definitions() as $field_definition) {
-                $this->filter_collection->add_column_mapping(
-                    $field_definition->get_name(),
-                    $field_definition->get_select());
-            }
-            $this->filter_collection->init();
-        }
         $this->initialized = true;
     }
 
@@ -310,20 +288,14 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @throws \Exception
      * @throws \moodle_exception
      */
-    protected function get_sql_and_params($count = false)
+    protected function get_sql_and_params(filter_collection_interface $filter_collection, $count = false)
     {
-        global $DB;
-
         if (!$this->has_any_field_definitions()) {
             throw new \moodle_exception('Grid initialized without any fields. Did you forget to call data_grid::init()?');
         }
 
-        if (!$this->has_required_filters_applied()) {
-            throw new \Exception('Missing required filters');
-        }
-
-        if ($this->get_filter_collection()->has_filters()) {
-            list ($filter_sql, $filter_params) = $this->filter_collection->get_sql_and_params();
+        if ($filter_collection->has_filters()) {
+            list ($filter_sql, $filter_params) = $filter_collection->get_sql_and_params();
         } else {
             $filter_sql = '';
             $filter_params = [];
@@ -424,13 +396,13 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @since 2.2
      *
      */
-    public function get_data()
+    public function get_data(filter_collection_interface $filter_collection)
     {
         if ($this->data_collection) {
             return $this->data_collection;
         }
 
-        $records = $this->get_records();
+        $records = $this->get_records($filter_collection);
 
         $grid_data = new data_collection();
 
@@ -473,7 +445,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     public function reset()
     {
         $this->data_collection = null;
-        $this->filter_collection = new filter_collection($this);
         $this->fields = [];
         $this->record_count = null;
         $this->bulk_actions = [];
@@ -488,14 +459,15 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @throws \moodle_exception
      * @since 2.2
      */
-    protected function get_records()
+    protected function get_records(filter_collection_interface $filter_collection)
     {
         global $DB;
 
-        list($query, $filter_params) = $this->get_sql_and_params(false);
+        list($query, $filter_params) = $this->get_sql_and_params($filter_collection, false);
 
         if ($this->supports_pagination() && !$this->is_pagination_disabled()) {
-            return $DB->get_records_sql($query, $filter_params, $this->paginator->get_limit_from(), $this->paginator->get_per_page());
+            return $DB->get_records_sql($query, $filter_params, $this->paginator->get_limit_from(),
+                $this->paginator->get_per_page());
         }
 
         return $DB->get_records_sql($query, $filter_params);
@@ -527,136 +499,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     protected function get_count_select()
     {
         return 'COUNT(' . $this->get_field_definitions()[0]->get_select() . ')';
-    }
-
-    #endregion
-
-    #region Filtering methods
-
-    /**
-     * @return filter_collection_interface
-     */
-    public function get_filter_collection()
-    {
-        return $this->filter_collection;
-    }
-
-    /**
-     * Get all filters that are required for grid to run.
-     *
-     * @return filter_interface[]
-     */
-    public function get_required_filters()
-    {
-        return $this->filter_collection->get_required_filters();
-    }
-
-    /**
-     * Check if grid has all required filters applied in order to run
-     *
-     * @return bool
-     */
-    public function has_required_filters_applied()
-    {
-        if (!$this->filter_collection->has_required_filters()) {
-            return true;
-        }
-
-        $requiredfilters = $this->get_required_filters();
-        $requiredfilter_names = [];
-
-        foreach ($requiredfilters as $requiredfilter) {
-            $requiredfilter_names[] = $requiredfilter->get_field_name();
-        }
-
-        $matches = 0;
-
-        foreach ($this->filter_collection->get_applied_filters() as $filter) {
-            if (in_array($filter->get_field_name(), $requiredfilter_names)) {
-                $matches++;
-            }
-        }
-
-        return $matches == count($requiredfilters);
-    }
-
-    /**
-     * Clear user submitted filter values.
-     *
-     * @param \stdClass $data
-     * @return \stdClass
-     */
-    protected function clean_filter_data(\stdClass $data)
-    {
-        foreach ($data as $key => $value) {
-            if (is_null($value) || $value == '') {
-                unset($data->$key);
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Get filter data.
-     *
-     * @return array
-     */
-    public function get_filter_data()
-    {
-        $filtersdata = [];
-        if ($this->get_filter_collection()->has_filters()) {
-            foreach ($this->filter_collection->get_applied_filters() as $filter) {
-                $filtersdata[] = [
-                    'field_name' => $filter->get_field_name(),
-                    'value' => $filter->get_raw_value()
-                ];
-            }
-        }
-
-        return $filtersdata;
-    }
-
-    /**
-     * Handle filter form submission by user.
-     */
-    public function handle_filter_submission()
-    {
-        $form = $this->get_form();
-
-        // Handle user clearing filters. Essentially a "cancel" relabeled.
-        if ($form->is_cancelled()) {
-            $this->clear_filters();
-            redirect($this->get_url());
-        }
-
-        $filter_values = new \stdClass();
-
-        if ($data = $form->get_data()) {
-            // Clear any old filter values.
-            $this->clear_filters();
-            $filter_values = $this->clean_filter_data($data);
-        } else {
-            if ($filter_data = $this->get_cached_filter_data()) {
-                $filter_values = (object)$filter_data;
-            }
-        }
-
-        foreach ($_GET as $param => $value) {
-            if (strpos($param, 'filter_') == 0) {
-                $filter_name = str_replace('filter_', '', $param);
-                $filter_values->$filter_name = $value;
-            }
-        }
-
-        // Set data on form now that everything is aggregated.
-        $form->set_data($filter_values);
-
-        foreach ($filter_values as $key => $data) {
-            $this->apply_filter($key, $data);
-        }
-
-        $this->cache_filters();
     }
 
     #endregion
@@ -745,130 +587,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
         if ($this->url) return $this->url;
 
         return $PAGE->url;
-    }
-
-    /**
-     * @return data_grid_filter_form
-     * @throws \Exception
-     */
-    public function get_form()
-    {
-        global $PAGE;
-
-        if (!$this->form) {
-            $url = clone $PAGE->url;
-            // Ensure pagination goes back to 0 when submitting filters. The new result could be less than before.
-            if ($this->paginator && !$this->is_pagination_disabled()) {
-                $url->param($this->paginator->get_param_name(), 0);
-            }
-            $this->form = new data_grid_filter_form($this, $url->out(false));
-        }
-        return $this->form;
-    }
-
-    /**
-     * Function to export the renderer data in a format that is suitable for a
-     * mustache template. This means:
-     * 1. No complex types - only stdClass, array, int, string, float, bool
-     * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
-     *
-     * @param \renderer_base $output Used to do a final render of any components that need to be rendered for export.
-     * @throws \Exception
-     * @return \stdClass|array
-     */
-    public function export_for_template(\renderer_base $output)
-    {
-        global $PAGE;
-
-        $PAGE->requires->js_call_amd('block_dash/data_grid', 'init');
-
-        $this->add_component('paginator', $this->paginator);
-
-        $formhtml = '';
-
-        if (optional_param('clear_selection', false, PARAM_BOOL)) {
-            $this->clear_selections();
-            $PAGE->url->param('clear_selection', '');
-            redirect($PAGE->url);
-        }
-
-        if ($p = optional_param('p', null, PARAM_INT)) {
-            $url = clone $PAGE->url;
-            $url->param('p', $p);
-            $PAGE->set_url($url);
-        }
-
-        if ($this->get_filter_collection()->has_filters()) {
-            $this->handle_filter_submission();
-
-            ob_start();
-            $this->get_form()->display();
-            $formhtml = ob_get_clean();
-        }
-
-        $this->handle_sort_params();
-
-        // Ensure grid has everything it needs to run. Otherwise don't display grid html.
-        // If there's missing required filters, display form in page rather than popup.
-        if ($this->has_required_filters_applied()) {
-            $data_collection = $this->get_data();
-            $grid_html = $this->format($data_collection, 'html', '', '');
-        } else {
-            $grid_html = '';
-        }
-
-
-        if (!is_string($grid_html)) {
-            throw new \Exception('Data grid expected HTML format.');
-        }
-
-        if ($this->get_filter_collection()->has_filters()) {
-            $applied_filter_count = count($this->get_applied_filters());
-        } else {
-            $applied_filter_count = 0;
-        }
-
-        if (!$this->has_data() || !$this->supports_pagination()) {
-            $this->remove_component('paginator');
-        }
-
-        $url = clone $PAGE->url;
-        $url->param('clear_selection', true);
-
-        $bulk_actions_html = '';
-        foreach ($this->get_bulk_actions() as $bulk_action) {
-            if ($bulk_action->is_allowed($this->get_user())) {
-                $bulk_actions_html .= $bulk_action->render();
-            }
-        }
-
-        $grid_actions_html = '';
-        foreach ($this->get_grid_actions() as $grid_action) {
-            if ($grid_action->is_allowed($this->get_user())) {
-                $grid_actions_html .= $grid_action->render();
-            }
-        }
-
-        $name = str_replace('.', '_', $this->get_name());
-
-        return [
-            'name' => $name,
-            'data' => json_encode($this->jsonSerialize()),
-            'has_data' => $this->has_data(),
-            'supports_pagination' => $this->supports_pagination(),
-            'supports_selection' => $this->supports_selection(),
-            'clear_selection_url' => $url,
-            'selection_count' => count($this->get_selections()),
-            'grid_html' => $grid_html,
-            'filter_form_html' => $formhtml,
-            'has_filters' => $this->get_filter_collection()->has_filters(),
-            'applied_filter_count' => $applied_filter_count,
-            'has_required_filters_applied' => $this->has_required_filters_applied(),
-            'grid_actions_html' => $grid_actions_html,
-            'has_grid_actions' => !empty($grid_actions_html),
-            'bulk_actions_html' => $bulk_actions_html,
-            'has_bulk_actions' => !empty($bulk_actions_html)
-        ];
     }
 
     public function jsonSerialize()

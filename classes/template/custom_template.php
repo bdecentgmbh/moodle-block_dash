@@ -19,7 +19,7 @@ class custom_template extends abstract_template
      */
     private $record;
 
-    protected function __construct(\stdClass $record, \context $context)
+    public function __construct(\stdClass $record, \context $context)
     {
         parent::__construct($context);
         $this->record = $record;
@@ -59,7 +59,7 @@ class custom_template extends abstract_template
      */
     public function get_filter_collection()
     {
-        return new filter_collection();
+        return new filter_collection('filter' . $this->record->id);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace block_dash\template;
 
 use block_dash\block_builder;
 use block_dash\data_grid\field\field_definition_interface;
+use block_dash\data_grid\filter\choice_filter;
 use block_dash\data_grid\filter\filter_collection;
 use block_dash\data_grid\filter\filter_collection_interface;
 
@@ -32,7 +33,8 @@ class users_template extends abstract_template
      */
     public function get_query_template()
     {
-        return 'SELECT %%SELECT%% FROM {user} u';
+        return 'SELECT %%SELECT%% FROM {user} u
+                WHERE 1 %%FILTERS%%';
     }
 
     /**
@@ -65,6 +67,15 @@ class users_template extends abstract_template
      */
     public function get_filter_collection()
     {
-        return new filter_collection();
+        global $USER;
+
+        $filter_collection = new filter_collection('123');
+        $filter_collection->add_filter(new choice_filter($USER, [
+            'admin' => 'Admin User',
+            'Guest' => 'guest'
+        ], 'u_username', get_string('user')));
+        $filter_collection->add_column_mapping('u_username', 'u.username');
+
+        return $filter_collection;
     }
 }

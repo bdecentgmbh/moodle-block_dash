@@ -50,7 +50,8 @@ class external extends external_api
     {
         return new \external_function_parameters([
             'block_instance_id' => new \external_value(PARAM_INT),
-            'filter_form_data' => new \external_value(PARAM_RAW)
+            'filter_form_data' => new \external_value(PARAM_RAW),
+            'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0)
         ]);
     }
 
@@ -60,11 +61,12 @@ class external extends external_api
      * @return array
      * @throws \invalid_parameter_exception
      */
-    public static function get_block_content($block_instance_id, $filter_form_data)
+    public static function get_block_content($block_instance_id, $filter_form_data, $page)
     {
         $params = self::validate_parameters(self::get_block_content_parameters(), [
             'block_instance_id' => $block_instance_id,
-            'filter_form_data' => $filter_form_data
+            'page' => $page,
+            'filter_form_data' => $filter_form_data,
         ]);
 
         $block = null;
@@ -84,6 +86,8 @@ class external extends external_api
                     ->get_filter_collection()
                     ->apply_filter($filter['name'], $filter['value']);
             }
+
+            $bb->get_configuration()->get_template()->get_data_grid()->get_paginator()->set_current_page($params['page']);
 
             return ['html' => $bb->get_configuration()->get_template()->render()];
         }

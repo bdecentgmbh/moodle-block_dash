@@ -5,7 +5,7 @@
 <nav>
     <ul class="pagination">
         {{#pages}}
-            <li class="page-item {{#active}}active{{/active}} {{#disabled}}disabled{{/disabled}}"><a class="page-link" {{^disabled}}href="{{{url}}}"{{/disabled}}>{{label}}</a></li>
+            <li class="page-item {{#active}}active{{/active}} {{#disabled}}disabled{{/disabled}}"><a class="page-link" data-page="{{page}}" {{^disabled}}href="#"{{/disabled}}>{{label}}</a></li>
         {{/pages}}
     </ul>
 </nav>

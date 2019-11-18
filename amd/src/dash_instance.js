@@ -3,6 +3,7 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification'], function($, Log
     var DashInstance = function(root, blockInstanceId) {
         this.root = $(root);
         this.blockInstanceId = blockInstanceId;
+        this.currentPage = 0;
 
         this.init();
     };
@@ -20,8 +21,19 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification'], function($, Log
             Log.debug(e);
             Log.debug($(e.target).serializeArray());
 
+            // Filter results, go back to first page.
+            this.currentPage = 0;
+
             this.refresh();
         }.bind(this));
+
+        this.getBlockContentArea().on('click', '.page-link', function(e) {
+            e.preventDefault();
+            this.currentPage = $(e.target).data('page');
+            this.refresh();
+        }.bind(this));
+
+        this.refresh();
     };
 
     /**
@@ -58,7 +70,8 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification'], function($, Log
             methodname: 'block_dash_get_block_content',
             args: {
                 block_instance_id: this.blockInstanceId,
-                filter_form_data: JSON.stringify(this.getFilterForm().serializeArray())
+                filter_form_data: JSON.stringify(this.getFilterForm().serializeArray()),
+                page: this.currentPage
             }
         };
 
@@ -68,7 +81,6 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification'], function($, Log
     DashInstance.prototype.refresh = function() {
         this.getBlockContent()
             .then(function(response) {
-                console.log("RESPONSEEEEEEE", response);
                 this.getBlockContentArea().html(response.html);
             }.bind(this))
             .catch(Notification.exception);

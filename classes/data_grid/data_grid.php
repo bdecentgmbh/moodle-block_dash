@@ -103,7 +103,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
 
         $this->context = $context;
 
-        $this->paginator = new paginator(paginator::PER_PAGE_DEFAULT, function () {
+        $this->paginator = new paginator(function () {
             return $this->get_records_count();
         });
     }

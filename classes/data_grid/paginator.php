@@ -34,14 +34,9 @@ class paginator
     protected $per_page;
 
     /**
-     * @var \moodle_url URL to paginate to.
+     * @var int
      */
-    protected $url;
-
-    /**
-     * @var string URL param to use for 'page' number.
-     */
-    protected $param = 'p';
+    protected $current_page;
 
     /**
      * @var callable Provided function to get count of items.
@@ -55,20 +50,21 @@ class paginator
 
     /**
      * paginator constructor.
-     * @param $per_page
      * @param callable $count_function
-     * @param string $param
+     * @param int $current_page
+     * @param int $per_page
      * @param bool $show_page_summary If true, a human readable summary will be displayed above paginator (Showing x of x out of x).
      * @throws \coding_exception
      */
-    public function __construct($per_page, callable $count_function, $param = 'p', $show_page_summary = true)
+    public function __construct(callable $count_function, $current_page = 0, $per_page = self::PER_PAGE_DEFAULT,
+                                $show_page_summary = true)
     {
         if (!is_int($per_page)) {
             throw new \coding_exception('Per page value must be an integer.');
         }
 
         $this->per_page = $per_page;
-        $this->param = $param;
+        $this->current_page = $current_page;
         $this->count_function = $count_function;
         $this->show_page_summary = $show_page_summary;
     }
@@ -76,42 +72,6 @@ class paginator
     public function get_template()
     {
         return self::TEMPLATE;
-    }
-
-    /**
-     * Get name of paginator page param.
-     *
-     * @return string
-     */
-    public function get_param_name()
-    {
-        return $this->param;
-    }
-
-    /**
-     * Set url to paginate to.
-     *
-     * @param \moodle_url $url
-     */
-    public function set_url(\moodle_url $url)
-    {
-        $this->url = $url;
-    }
-
-    /**
-     * Get url to paginate to.
-     *
-     * @return \moodle_url
-     */
-    public function get_url()
-    {
-        global $PAGE;
-
-        if (!$this->url) {
-            $this->set_url($PAGE->url);
-        }
-
-        return $this->url;
     }
 
     public function get_limit_from()
@@ -129,7 +89,12 @@ class paginator
      */
     public function get_current_page()
     {
-        return optional_param($this->param, 0, PARAM_INT);
+        return $this->current_page;
+    }
+
+    public function set_current_page($page)
+    {
+        $this->current_page = $page;
     }
 
     /**
@@ -167,12 +132,10 @@ class paginator
 
         $items = [];
         for ($i = 0; $i < $count; $i++) {
-            $url = clone $this->get_url();
-            $url->param($this->param, $i);
             $items[$i] = [
                 'index' => $i,
+                'page' => $i,
                 'label' => $i+1,
-                'url' => $url,
                 'active' => $this->get_current_page() == $i
             ];
         }
@@ -211,22 +174,16 @@ class paginator
         }
 
         // Add previous and next buttons
-        $url = clone $this->get_url();
-        $url->param($this->param, $this->get_current_page()-1);
-
         array_unshift($items, [
             'label' => get_string('previous'),
-            'url' => $url,
+            'page' => $this->get_current_page()-1,
             'disabled' => $this->get_current_page() == 0
         ]);
 
         // Next button
-        $url = clone $this->get_url();
-        $url->param($this->param, $this->get_current_page()+1);
-
         $items[] = [
             'label' => get_string('next'),
-            'url' => $url,
+            'page' => $this->get_current_page()+1,
             'disabled' => $this->get_current_page() == $count-1 || empty($count)
         ];
 

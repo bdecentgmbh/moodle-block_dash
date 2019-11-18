@@ -259,6 +259,25 @@ class filter_collection implements filter_collection_interface
     }
 
     /**
+     * @param string $element_name_prefix
+     * @throws \Exception
+     */
+    public function create_form_elements($element_name_prefix = '')
+    {
+        if (!$this->has_filters()) {
+            return;
+        }
+
+        $html = '';
+
+        foreach ($this->get_filters() as $filter) {
+            $html .= $filter->create_form_element($this, $element_name_prefix);
+        }
+
+        return $html;
+    }
+
+    /**
      * Create a cache object store.
      *
      * @return \cache_session

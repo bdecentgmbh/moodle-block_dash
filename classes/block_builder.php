@@ -5,7 +5,6 @@ namespace block_dash;
 use block_dash\configuration\configuration_interface;
 use block_dash\configuration\configuration;
 use block_dash\data_grid\field\field_definition_interface;
-use block_dash\data_grid\filter\form\filter_form;
 
 class block_builder
 {
@@ -45,15 +44,11 @@ class block_builder
         $text = '';
 
         if ($this->configuration->is_fully_configured()) {
-            $form = new filter_form($this->configuration->get_template()->get_filter_collection(), null, null, 'post',
-                '', ['class' => 'filter-form']);
-
-            ob_start();
-            $form->display();
-            $formhtml = ob_get_clean();
+            $formhtml = $this->configuration->get_template()->get_filter_collection()->create_form_elements();
 
             $text .= $OUTPUT->render_from_template('block_dash/block', [
                 'filter_form_html' => $formhtml,
+                'filters' => $this->configuration->get_template()->get_filter_collection()->get_filters(),
                 'block_instance_id' => $this->block_instance->instance->id
             ]);
         }

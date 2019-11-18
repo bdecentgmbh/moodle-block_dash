@@ -14,7 +14,7 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification'], function($, Log
     DashInstance.prototype.init = function() {
         Log.debug('Initializing dash instance', this);
 
-        this.getFilterForm().on('submit', function(e) {
+        this.getFilterForm().on('change', 'select', function(e) {
             e.preventDefault();
 
             Log.debug('Submitting filter form');

@@ -118,14 +118,15 @@ abstract class select_filter extends filter
     /**
      * Override this method and call it after creating a form element.
      *
-     * @param \MoodleQuickForm $form
      * @param filter_collection_interface $filter_collection
      * @param string $element_name_prefix
      * @throws \Exception
      */
-    public function create_form_element(\MoodleQuickForm &$form, filter_collection_interface $filter_collection,
+    public function create_form_element(filter_collection_interface $filter_collection,
                                         $element_name_prefix = '')
     {
+        global $OUTPUT;
+
         $options = $this->options;
         asort($options);
 
@@ -134,10 +135,16 @@ abstract class select_filter extends filter
             $options = array(self::ALL_OPTION => $options[self::ALL_OPTION]) + $options;
         }
 
+        $_options = [];
+        foreach ($options as $value => $label) {
+            $_options[] = ['value' => $value, 'label' => $label];
+        }
+
         $name = $element_name_prefix . $this->get_name();
 
-        $form->addElement('select', $name, $this->get_label(), $options, ['class' => 'chosen-select']);
-
-        parent::create_form_element($form, $filter_collection, $element_name_prefix);
+        return $OUTPUT->render_from_template('block_dash/filter_select', [
+            'name' => $name,
+            'options' => $_options
+        ]);
     }
 }

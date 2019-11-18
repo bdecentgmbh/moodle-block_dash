@@ -327,23 +327,14 @@ class filter implements filter_interface
     /**
      * Override this method and call it after creating a form element.
      *
-     * @param \MoodleQuickForm $form
      * @param filter_collection_interface $filter_collection
      * @param string $element_name_prefix
      * @throws \Exception
      */
-    public function create_form_element(\MoodleQuickForm &$form, filter_collection_interface $filter_collection,
+    public function create_form_element(filter_collection_interface $filter_collection,
                                         $element_name_prefix = '')
     {
-        $name = $element_name_prefix.$this->get_name();
-
-        if (!$form->elementExists($name)) {
-            throw new \Exception('Filter element does not exist. Did you forget to override filter::create_form_element()?');
-        }
-
-        if ($this->is_required()) {
-            $form->addRule($name, get_string('required'), 'required');
-        }
+        throw new \coding_exception('Filter element does not exist. Did you forget to override filter::create_form_element()?');
     }
 
     /**

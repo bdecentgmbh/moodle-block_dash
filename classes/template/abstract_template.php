@@ -8,7 +8,6 @@ use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\data_grid\paginator;
 use block_dash\output\renderer;
-use block_dash\data_grid\filter\form\filter_form;
 
 abstract class abstract_template implements template_interface
 {

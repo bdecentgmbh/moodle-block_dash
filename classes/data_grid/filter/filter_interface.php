@@ -156,12 +156,11 @@ interface filter_interface
     /**
      * Override this method and call it after creating a form element.
      *
-     * @param \MoodleQuickForm $form
      * @param filter_collection_interface $filter_collection
      * @param string $element_name_prefix
      * @throws \Exception
      */
-    public function create_form_element(\MoodleQuickForm &$form, filter_collection_interface $filter_collection,
+    public function create_form_element(filter_collection_interface $filter_collection,
                                         $element_name_prefix = '');
 
     /**

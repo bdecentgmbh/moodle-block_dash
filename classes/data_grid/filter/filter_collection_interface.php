@@ -125,6 +125,12 @@ interface filter_collection_interface
     public function get_sql_and_params();
 
     /**
+     * @param string $element_name_prefix
+     * @throws \Exception
+     */
+    public function create_form_elements($element_name_prefix = '');
+
+    /**
      * Cache filter data.
      *
      * @param \stdClass $user User to cache filter preferences for.

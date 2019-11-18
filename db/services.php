@@ -23,6 +23,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
+    'block_dash_get_block_content' => [
+        'classname'     => 'block_dash\external',
+        'classpath'     => '',
+        'methodname'    => 'get_block_content',
+        'description'   => 'Get rendered block content',
+        'type'          => 'read',
+        'ajax'          => true,
+        'loginrequired' => true,
+    ],
     'block_dash_get_database_schema_structure' => [
         'classname'     => 'block_dash\external',
         'classpath'     => '',

@@ -53,10 +53,12 @@ class filter_form extends \moodleform
         $mform->addElement('hidden', 'name');
         $mform->setType('name', PARAM_TEXT);
 
-        $this->filter_collection->create_form_elements($mform);
+        foreach ($this->filter_collection->get_filters() as $filter) {
+            $filter->create_form_element($mform, $this->filter_collection);
+        }
 
         $buttonarray=array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('filter', 'local_coursebit'));
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('filter'));
         $buttonarray[] = &$mform->createElement('cancel', 'cancelbutton', 'Clear filters');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');

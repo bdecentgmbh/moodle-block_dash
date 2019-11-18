@@ -35,21 +35,23 @@ class filter_collection implements filter_collection_interface
     private $filters = [];
 
     /**
-     * @var array A map of filter names to database column names.
-     */
-    private $column_mapping = [];
-
-    /**
      * @var string
      */
     private $unique_identifier;
 
     /**
-     * @param string $unique_identifier
+     * @var \context
      */
-    public function __construct($unique_identifier)
+    private $context;
+
+    /**
+     * @param string $unique_identifier
+     * @param \context $context
+     */
+    public function __construct($unique_identifier, \context $context)
     {
         $this->unique_identifier = $unique_identifier;
+        $this->context = $context;
     }
 
     /**
@@ -71,21 +73,11 @@ class filter_collection implements filter_collection_interface
     }
 
     /**
-     * Map a single field name to a database column.
-     *
-     * @param string $field_name
-     * @param string $database_column
-     */
-    public function add_column_mapping($field_name, $database_column)
-    {
-        $this->column_mapping[$field_name] = $database_column;
-    }
-
-    /**
      * @param filter_interface $filter
      */
     public function add_filter(filter_interface $filter)
     {
+        $filter->set_context($this->context);
         $this->filters[] = $filter;
     }
 
@@ -98,7 +90,7 @@ class filter_collection implements filter_collection_interface
     public function remove_filter(filter_interface $filter)
     {
         foreach ($this->filters as $key => $_filter) {
-            if ($filter->get_field_name() == $_filter->get_field_name()) {
+            if ($filter->get_name() == $_filter->get_name()) {
                 unset($this->filters[$key]);
                 return true;
             }
@@ -130,24 +122,24 @@ class filter_collection implements filter_collection_interface
     /**
      * Check if a filter exists in this collection.
      *
-     * @param $field_name
+     * @param $name
      * @return bool
      */
-    public function has_filter($field_name)
+    public function has_filter($name)
     {
-        return !empty($this->get_filter($field_name));
+        return !empty($this->get_filter($name));
     }
 
     /**
      * Get a filter by field name.
      *
-     * @param $field_name
+     * @param $name
      * @return filter_interface|null
      */
-    public function get_filter($field_name)
+    public function get_filter($name)
     {
         foreach ($this->get_filters() as $filter) {
-            if ($filter->get_field_name() == $field_name) {
+            if ($filter->get_name() == $name) {
                 return $filter;
             }
         }
@@ -158,18 +150,18 @@ class filter_collection implements filter_collection_interface
     /**
      * Set a filter value.
      *
-     * @param string $field_name
+     * @param string $name
      * @param mixed $value
      * @return bool
      */
-    public function apply_filter($field_name, $value)
+    public function apply_filter($name, $value)
     {
         // Don't apply empty values.
         if ($value === "") {
             return false;
         }
         foreach ($this->filters as $filter) {
-            if ($filter->get_field_name() == $field_name) {
+            if ($filter->get_name() == $name) {
                 $filter->set_raw_value($value);
                 return true;
             }
@@ -259,8 +251,7 @@ class filter_collection implements filter_collection_interface
             list($filter_sql, $filter_params) = $filter->get_sql_and_params();
             // Ignore filters with no values.
             if (empty($filter_params)) continue;
-            $select = $this->column_mapping[$filter->get_field_name()];
-            $sql .= sprintf(' AND %s %s', $select, $filter_sql);
+            $sql .= sprintf(' AND %s', $filter_sql);
             $params = array_merge($params, $filter_params);
         }
 
@@ -287,7 +278,7 @@ class filter_collection implements filter_collection_interface
         $filter_data = [];
 
         foreach ($this->filters as $filter) {
-            $filter_data[$filter->get_field_name()] = $filter->get_raw_value();
+            $filter_data[$filter->get_name()] = $filter->get_raw_value();
         }
 
         $identifier = sprintf('%s-%s', $user->id, $this->get_unique_identifier());

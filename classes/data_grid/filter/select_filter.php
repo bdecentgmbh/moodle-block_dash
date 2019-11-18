@@ -25,15 +25,6 @@ namespace block_dash\data_grid\filter;
 abstract class select_filter extends filter
 {
     const ALL_OPTION = -1;
-    /** When All is selected, the filter is not applied */
-    const ALL_BEHAVIOR_IGNORE = 'ignore';
-    /** When All is selected, return a list of all options */
-    const ALL_BEHAVIOR_RETURN_LIST = 'return_list';
-
-    /**
-     * @var bool
-     */
-    private $include_all_option;
 
     /**
      * @var array
@@ -41,9 +32,15 @@ abstract class select_filter extends filter
     private $options = [];
 
     /**
-     * @var string
+     * Initialize the filter. It must be initialized before values are extracted or SQL generated.
+     * If overridden call parent.
      */
-    private $all_behavior;
+    public function init()
+    {
+        $this->add_all_option();
+
+        parent::init();
+    }
 
     /**
      * Return a list of operations this filter can handle.
@@ -67,11 +64,7 @@ abstract class select_filter extends filter
      */
     public function get_default_raw_value()
     {
-        if ($this->include_all_option()) {
-            return -1;
-        } else {
-            return null;
-        }
+        return null;
     }
 
     /**
@@ -79,19 +72,7 @@ abstract class select_filter extends filter
      */
     public function add_all_option()
     {
-        if ($this->include_all_option()) {
-            $this->add_option(self::ALL_OPTION, get_string('all'));
-        }
-    }
-
-    /**
-     * Check if filter should add an "all" option.
-     *
-     * @return bool
-     */
-    public function include_all_option()
-    {
-        return $this->include_all_option;
+        $this->add_option(self::ALL_OPTION, get_string('all'));
     }
 
     /**
@@ -128,21 +109,7 @@ abstract class select_filter extends filter
 
         // If 'All' was selected.
         if (count($values) == 1 && $values[0] == self::ALL_OPTION) {
-            switch ($this->all_behavior) {
-                case self::ALL_BEHAVIOR_IGNORE:
-                    return [];
-                case self::ALL_BEHAVIOR_RETURN_LIST:
-                    $values = [];
-
-                    foreach ($this->options as $value => $label) {
-                        if ($value == self::ALL_OPTION) continue;
-                        $values[] = $value;
-                    }
-
-                    return $values;
-                default:
-                    return [];
-            }
+            return [];
         }
 
         return $values;
@@ -167,7 +134,7 @@ abstract class select_filter extends filter
             $options = array(self::ALL_OPTION => $options[self::ALL_OPTION]) + $options;
         }
 
-        $name = $element_name_prefix . $this->get_field_name();
+        $name = $element_name_prefix . $this->get_name();
 
         $form->addElement('select', $name, $this->get_label(), $options, ['class' => 'chosen-select']);
 

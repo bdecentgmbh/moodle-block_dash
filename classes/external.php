@@ -39,6 +39,72 @@ use external_api;
  */
 class external extends external_api
 {
+    #region get_block_content
+
+    /**
+     * Returns description of get_database_schema_structure() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function get_block_content_parameters()
+    {
+        return new \external_function_parameters([
+            'block_instance_id' => new \external_value(PARAM_INT),
+            'filter_form_data' => new \external_value(PARAM_RAW)
+        ]);
+    }
+
+    /**
+     * @param $block_instance_id
+     * @param $filter_form_data
+     * @return array
+     * @throws \invalid_parameter_exception
+     */
+    public static function get_block_content($block_instance_id, $filter_form_data)
+    {
+        $params = self::validate_parameters(self::get_block_content_parameters(), [
+            'block_instance_id' => $block_instance_id,
+            'filter_form_data' => $filter_form_data
+        ]);
+
+        $block = null;
+        try {
+            $block = block_instance_by_id($params['block_instance_id']);
+        } catch (\Exception $e) {
+
+        }
+
+        self::validate_context($block->context);
+
+        if ($block) {
+            $bb = block_builder::create($block);
+            foreach (json_decode($params['filter_form_data'], true) as $filter) {
+                $bb->get_configuration()
+                    ->get_template()
+                    ->get_filter_collection()
+                    ->apply_filter($filter['name'], $filter['value']);
+            }
+
+            return ['html' => $bb->get_configuration()->get_template()->render()];
+        }
+
+        return ['html' => 'Error'];
+    }
+
+    /**
+     * Returns description of get_block_content() result value.
+     *
+     * @return \external_description
+     */
+    public static function get_block_content_returns()
+    {
+        return new \external_single_structure([
+            'html' => new \external_value(PARAM_RAW)
+        ]);
+    }
+
+    #endregion
+
     /**
      * Returns description of get_database_schema_structure() parameters.
      *

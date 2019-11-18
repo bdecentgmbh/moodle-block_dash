@@ -5,6 +5,8 @@ namespace block_dash\template;
 
 use block_dash\data_grid\configurable_data_grid;
 use block_dash\data_grid\data_grid_interface;
+use block_dash\data_grid\filter\filter_collection_interface;
+use block_dash\data_grid\paginator;
 use block_dash\output\renderer;
 use block_dash\data_grid\filter\form\filter_form;
 
@@ -20,6 +22,14 @@ abstract class abstract_template implements template_interface
      */
     private $data_grid;
 
+    /**
+     * @var filter_collection_interface
+     */
+    private $filter_collection;
+
+    /**
+     * @param \context $context
+     */
     public function __construct(\context $context)
     {
         $this->context = $context;
@@ -38,6 +48,18 @@ abstract class abstract_template implements template_interface
     }
 
     /**
+     * @return filter_collection_interface
+     */
+    public final function get_filter_collection()
+    {
+        if (is_null($this->filter_collection)) {
+            $this->filter_collection = $this->build_filter_collection();
+        }
+
+        return $this->filter_collection;
+    }
+
+    /**
      * @return \context
      */
     public function get_context()
@@ -50,62 +72,16 @@ abstract class abstract_template implements template_interface
      */
     public final function render()
     {
-        global $PAGE, $OUTPUT, $USER;
+        global $PAGE, $OUTPUT;
 
         $output = '';
 
         $data_grid = $this->get_data_grid();
-        $filter_collection = $this->get_filter_collection();
 
-        $filter_form = new filter_form($filter_collection);
-
-        $filter_values = new \stdClass();
-
-        if ($filter_form->is_cancelled()) {
-            $filter_collection->delete_cache($USER);
-        }
-
-        if ($data = $filter_form->get_data()) {
-            // Delete any old filter data.
-            $filter_collection->delete_cache($USER);
-
-            // Clean filter data.
-            foreach ($data as $key => $value) {
-                if (is_null($value) || $value == '') {
-                    unset($data->$key);
-                }
-            }
-
-            $filter_values = $data;
-        } else {
-            if ($filter_data = $filter_collection->get_cache($USER)) {
-                $filter_values = (object)$filter_collection->get_cache($USER);
-            }
-        }
-
-        // Allow filter values to be submitted from query parameters.
-        foreach ($_GET as $param => $value) {
-            if (strpos($param, 'filter_') == 0) {
-                $filter_name = str_replace('filter_', '', $param);
-                $filter_values->$filter_name = $value;
-            }
-        }
-
-        // Set data on form now that everything is aggregated.
-        $filter_form->set_data($filter_values);
-
-        foreach ($filter_values as $key => $data) {
-            $filter_collection->apply_filter($key, $data);
-        }
-
-        $filter_collection->cache($USER);
-
-        ob_start();
-        $filter_form->display();
-        $filter_form_html = ob_get_clean();
+        $data_grid->set_filter_collection($this->get_filter_collection());
 
         try {
-            $data = $data_grid->get_data($filter_collection);
+            $data = $data_grid->get_data();
         } catch (\Exception $e) {
             $error = \html_writer::tag('p', get_string('databaseerror', 'block_dash'));
             if (is_siteadmin()) {
@@ -121,8 +97,8 @@ abstract class abstract_template implements template_interface
         if (isset($data)) {
             try {
                 $output .= $renderer->render_from_template($this->get_mustache_template_name(), [
-                    'filter_form_html' => $filter_form_html,
-                    'data' => $data
+                    'data' => $data,
+                    'paginator' => $OUTPUT->render_from_template(paginator::TEMPLATE, $data_grid->get_paginator()->export_for_template($OUTPUT))
                 ]);
             } catch (\Exception $e) {
                 $error = \html_writer::tag('p', get_string('parseerror', 'block_dash'));
@@ -143,15 +119,5 @@ abstract class abstract_template implements template_interface
     public function get_mustache_template_name()
     {
         return 'block_dash/layout_missing';
-    }
-
-    /**
-     * Get unique idnumber for this template.
-     *
-     * @return string
-     */
-    public function get_idnumber()
-    {
-        return self::class;
     }
 }

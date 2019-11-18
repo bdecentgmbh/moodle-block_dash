@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_dash\block_builder;
+use block_dash\template\template_factory;
 
 /**
  * Form for editing InfoDash block instances.
@@ -46,13 +46,8 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_title', get_string('blocktitle', 'block_dash'));
         $mform->setType('config_title', PARAM_TEXT);
 
-        $options = [];
-        $templates = block_builder::get_all_templates();
-        foreach ($templates as $template) {
-            $options[$template->get_idnumber()] = $template->get_name();
-        }
-
-        $mform->addElement('select', 'config_template_idnumber', get_string('template', 'block_dash'), $options);
+        $mform->addElement('select', 'config_template_idnumber', get_string('template', 'block_dash'),
+            template_factory::get_template_form_options());
         $mform->setType('config_template', PARAM_INT);
 
         $mform->addElement('header', 'extracontent', get_string('extracontent', 'block_dash'));

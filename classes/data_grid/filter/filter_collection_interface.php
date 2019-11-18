@@ -40,14 +40,6 @@ interface filter_collection_interface
     public function get_unique_identifier();
 
     /**
-     * Map a single field name to a database column.
-     *
-     * @param string $field_name
-     * @param string $database_column
-     */
-    public function add_column_mapping($field_name, $database_column);
-
-    /**
      * @param filter_interface $filter
      */
     public function add_filter(filter_interface $filter);
@@ -131,13 +123,6 @@ interface filter_collection_interface
      * @return array
      */
     public function get_sql_and_params();
-
-    /**
-     * @param \MoodleQuickForm $form
-     * @param string $element_name_prefix
-     * @throws \coding_exception
-     */
-    public function create_form_elements(\MoodleQuickForm &$form, $element_name_prefix = '');
 
     /**
      * Cache filter data.

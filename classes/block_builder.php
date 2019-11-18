@@ -5,8 +5,7 @@ namespace block_dash;
 use block_dash\configuration\configuration_interface;
 use block_dash\configuration\configuration;
 use block_dash\data_grid\field\field_definition_interface;
-use block_dash\template\custom_template;
-use block_dash\template\template_interface;
+use block_dash\data_grid\filter\form\filter_form;
 
 class block_builder
 {
@@ -20,8 +19,6 @@ class block_builder
      */
     private $block_instance;
 
-    private static $templates = null;
-
     private static $all_field_definitions = null;
 
     protected function __construct(\block_base $block_instance)
@@ -31,14 +28,34 @@ class block_builder
     }
 
     /**
+     * @return configuration_interface
+     */
+    public function get_configuration()
+    {
+        return $this->configuration;
+    }
+
+    /**
      * @return \stdClass
      */
     public function get_block_content()
     {
+        global $OUTPUT;
+
         $text = '';
 
         if ($this->configuration->is_fully_configured()) {
-            $text .= $this->configuration->get_template()->render();
+            $form = new filter_form($this->configuration->get_template()->get_filter_collection(), null, null, 'post',
+                '', ['class' => 'filter-form']);
+
+            ob_start();
+            $form->display();
+            $formhtml = ob_get_clean();
+
+            $text .= $OUTPUT->render_from_template('block_dash/block', [
+                'filter_form_html' => $formhtml,
+                'block_instance_id' => $this->block_instance->instance->id
+            ]);
         }
 
         $content = new \stdClass();
@@ -64,53 +81,6 @@ class block_builder
     public static function create(\block_base $block_instance)
     {
         return new block_builder($block_instance);
-    }
-
-    /**
-     * @return template_interface[]
-     * @throws \coding_exception | \dml_exception
-     */
-    public static function get_all_templates()
-    {
-        global $DB;
-
-        if (is_null(self::$templates)) {
-            self::$templates = [];
-            if ($pluginsfunction = get_plugins_with_function('register_templates')) {
-                foreach ($pluginsfunction as $plugintype => $plugins) {
-                    foreach ($plugins as $pluginfunction) {
-                        foreach ($pluginfunction() as $template) {
-                            if (!$template instanceof template_interface) {
-                                throw new \coding_exception('Invalid field definition registered. Must implement field_definition_interface');
-                            }
-                            self::$templates[] = $template;
-                        }
-                    }
-                }
-            }
-
-            foreach ($DB->get_records('dash_template') as $record) {
-                self::$templates[] = custom_template::create($record, \context_system::instance());
-            }
-        }
-
-        return self::$templates;
-    }
-
-    /**
-     * @param string $idnumber Template idnumber to retrieve.
-     * @return template_interface
-     * @throws \coding_exception | \dml_exception
-     */
-    public static function get_template($idnumber)
-    {
-        foreach (self::get_all_templates() as $template) {
-            if ($template->get_idnumber() == $idnumber) {
-                return $template;
-            }
-        }
-
-        return null;
     }
 
     /**

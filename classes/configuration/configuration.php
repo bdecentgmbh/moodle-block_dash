@@ -3,31 +3,24 @@
 
 namespace block_dash\configuration;
 
-use block_dash\block_builder;
-use block_dash\template\custom_template;
 use block_dash\template\placeholder_template;
+use block_dash\template\template_factory;
 
 class configuration extends abstract_configuration
 {
     public static function create_from_instance(\block_base $block_instance)
     {
-        global $DB;
+        $parentcontext = \context::instance_by_id($block_instance->instance->parentcontextid);
 
         $template = null;
         if (isset($block_instance->config->template_idnumber)) {
-            if ($record = $DB->get_record('dash_template', ['idnumber' => $block_instance->config->template_idnumber])) {
-                $template = custom_template::create($record, $block_instance->context);
-            }
+            $template = template_factory::get_template($block_instance->config->template_idnumber, $parentcontext);
         }
 
         if (is_null($template)) {
-            $template = block_builder::get_template($block_instance->config->template_idnumber);
+            $template = new placeholder_template($parentcontext);
         }
 
-        if (is_null($template)) {
-            $template = new placeholder_template(\context_system::instance());
-        }
-
-        return new configuration($block_instance->context, $template);
+        return new configuration($parentcontext, $template);
     }
 }

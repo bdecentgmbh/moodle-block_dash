@@ -24,19 +24,13 @@
 
 namespace block_dash\template;
 
+use block_dash\data_grid\data_grid;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
 
 interface template_interface
 {
-    /**
-     * Get unique idnumber for this template.
-     *
-     * @return string
-     */
-    public function get_idnumber();
-
     /**
      * Get human readable name of template.
      *
@@ -65,6 +59,11 @@ interface template_interface
     public function get_filter_collection();
 
     /**
+     * @return filter_collection_interface
+     */
+    public function build_filter_collection();
+
+    /**
      * @return string
      */
     public function get_mustache_template_name();
@@ -75,7 +74,7 @@ interface template_interface
     public function render();
 
     /**
-     * @return data_grid_interface
+     * @return data_grid
      */
     public function get_data_grid();
 }

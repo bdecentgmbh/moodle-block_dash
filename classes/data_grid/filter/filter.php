@@ -22,7 +22,7 @@
 
 namespace block_dash\data_grid\filter;
 
-abstract class filter implements filter_interface
+class filter implements filter_interface
 {
     /**
      * @var mixed The value a user has chosen. Or the default.
@@ -30,19 +30,19 @@ abstract class filter implements filter_interface
     private $raw_value;
 
     /**
-     * @var string Name of database field to filter.
+     * @var string Unique name used for placeholder.
      */
-    private $field_name;
+    private $name;
+
+    /**
+     * @var string The select portion of filter SQL express.
+     */
+    private $select;
 
     /**
      * @var string Human readable name for field.
      */
     private $label;
-
-    /**
-     * @var \stdClass User applying filter. Probably logged in user.
-     */
-    private $user;
 
     /**
      * @var bool
@@ -53,48 +53,26 @@ abstract class filter implements filter_interface
      * @var bool If the filter is required to display data. Make sure required filters have default value if you want
      * the results to display without submitting a filter form.
      */
-    protected $required;
+    protected $required = self::NOT_REQUIRED;
 
     /**
      * @var string SQL WHERE operation.
      */
-    private $operation;
+    private $operation = self::OPERATION_IN_OR_EQUAL;
 
     /**
-     * @param \stdClass $user
-     * @param $field_name
-     * @param $label
-     * @param bool $required
-     * @param string $operation
-     * @throws \coding_exception
+     * @var \context
      */
-    public function __construct(\stdClass $user, $field_name, $label, $required = self::NOT_REQUIRED, $operation = self::OPERATION_IN_OR_EQUAL)
+    private $context;
+
+    /**
+     * @param string $name
+     * @param string $select
+     */
+    public function __construct($name, $select)
     {
-        if (!is_string($field_name)) {
-            throw new \coding_exception('Filter field name must be a string.');
-        }
-
-        if (!is_string($label)) {
-            throw new \coding_exception('Invalid label value.');
-        }
-
-        if (!in_array($required, [self::NOT_REQUIRED, self::REQUIRED])) {
-            throw new \coding_exception('Invalid required value.');
-        }
-
-        if (!$user->id) {
-            throw new \coding_exception('Invalid user.');
-        }
-
-        if (!in_array($operation, $this->get_supported_operations())) {
-            throw new \coding_exception('Operation is not supported by filter: ' . $operation);
-        }
-
-        $this->field_name = $field_name;
-        $this->label = $label;
-        $this->required = $required;
-        $this->user = $user;
-        $this->operation = $operation;
+        $this->name = $name;
+        $this->select = $select;
 
         $this->init();
     }
@@ -108,6 +86,9 @@ abstract class filter implements filter_interface
         $this->initialized = true;
     }
 
+    /**
+     * @return mixed
+     */
     public function get_raw_value()
     {
         return $this->raw_value;
@@ -150,11 +131,27 @@ abstract class filter implements filter_interface
     }
 
     /**
+     * @param $required
+     */
+    public function set_required($required)
+    {
+        $this->required = $required;
+    }
+
+    /**
      * @return string
      */
-    public function get_field_name()
+    public function get_name()
     {
-        return $this->field_name;
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_select()
+    {
+        return $this->select;
     }
 
     /**
@@ -166,14 +163,6 @@ abstract class filter implements filter_interface
     }
 
     /**
-     * @return \stdClass
-     */
-    public function get_user()
-    {
-        return $this->user;
-    }
-
-    /**
      * @return string
      */
     public function get_operation()
@@ -182,18 +171,40 @@ abstract class filter implements filter_interface
     }
 
     /**
+     * Set an operation
+     *
+     * @param $operation
+     * @throws \coding_exception
+     */
+    public function set_operation($operation)
+    {
+        if (!in_array($operation, $this->get_supported_operations())) {
+            throw new \coding_exception(get_class($this) . ' does not support operation: ' . $operation);
+        }
+
+        $this->operation = $operation;
+    }
+
+    /**
      * Get the default raw value to set on form field.
      *
      * @return mixed
      */
-    public abstract function get_default_raw_value();
+    public function get_default_raw_value()
+    {
+        return null;
+    }
 
     /**
      * Return a list of operations this filter can handle.
      *
      * @return array
      */
-    public abstract function get_supported_operations();
+    public function get_supported_operations()
+    {
+        // Return all operations.
+        return filter_interface::OPERATIONS;
+    }
 
     /**
      * @return bool
@@ -243,33 +254,35 @@ abstract class filter implements filter_interface
         $value = $values[0];
 
         $sql = '';
-        $placeholder = $this->get_field_name();
+        $placeholder = $this->get_name();
         $params = [$placeholder => $value];
+        $select = $this->get_select();
 
         switch ($this->operation) {
             case self::OPERATION_EQUAL:
-                $sql = ' = :'.$placeholder;
+                $sql = "$select = :$placeholder";
                 break;
             case self::OPERATION_LESS_THAN:
-                $sql = ' < :'.$placeholder;
+                $sql = "$select < :$placeholder";
                 break;
             case self::OPERATION_GREATER_THAN:
-                $sql = ' > :'.$placeholder;
+                $sql = "$select > :$placeholder";
                 break;
             case self::OPERATION_LESS_THAN_EQUAL:
-                $sql = ' <= :'.$placeholder;
+                $sql = "$select <= :$placeholder";
                 break;
             case self::OPERATION_GREATER_THAN_EQUAL:
-                $sql = ' >= :'.$placeholder;
+                $sql = "$select >= :$placeholder";
                 break;
             case self::OPERATION_IN_OR_EQUAL:
                 list ($sql, $params) = $this->get_in_or_equal();
+                $sql = "$select $sql";
                 break;
             case self::OPERATION_LIKE:
-                $sql = ' LIKE :'.$placeholder;
+                $sql = "$select LIKE :$placeholder";
                 break;
             case self::OPERATION_LIKE_WILDCARD:
-                $sql = ' LIKE :'.$placeholder;
+                $sql = "$select LIKE :$placeholder";
                 // Convert value to wildcard.
                 $params[$placeholder] = '%'.$params[$placeholder].'%';
                 break;
@@ -322,7 +335,7 @@ abstract class filter implements filter_interface
     public function create_form_element(\MoodleQuickForm &$form, filter_collection_interface $filter_collection,
                                         $element_name_prefix = '')
     {
-        $name = $element_name_prefix.$this->get_field_name();
+        $name = $element_name_prefix.$this->get_name();
 
         if (!$form->elementExists($name)) {
             throw new \Exception('Filter element does not exist. Did you forget to override filter::create_form_element()?');
@@ -331,27 +344,6 @@ abstract class filter implements filter_interface
         if ($this->is_required()) {
             $form->addRule($name, get_string('required'), 'required');
         }
-    }
-
-    /**
-     * Override if filter supports querying filter results. Typically user input from a searchable dropdown.
-     *
-     * @return bool
-     */
-    public function supports_query()
-    {
-        return false;
-    }
-
-    /**
-     * If filter supports querying, override this method.
-     *
-     * @param $term
-     * @throws \coding_exception
-     */
-    public function query($term)
-    {
-        throw new \coding_exception('Filter does not supporting querying results, or has not implemented the query function.');
     }
 
     /**
@@ -364,4 +356,21 @@ abstract class filter implements filter_interface
     {
         return $value;
     }
+
+    /**
+     * @return \context
+     */
+    public function get_context()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param \context $context
+     */
+    public function set_context(\context $context)
+    {
+        $this->context = $context;
+    }
+
 }

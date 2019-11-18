@@ -1,0 +1,15 @@
+<div id="info-dash-{{block_instance_id}}" class="info-dash-container">
+    <div class="info-dash-filters">
+        {{{filter_form_html}}}
+    </div>
+
+    <div class="info-dash-block-content">
+        LOADING
+    </div>
+</div>
+
+{{#js}}
+    require(["block_dash/dash_instance"], function(DashInstance) {
+    new DashInstance("#info-dash-{{block_instance_id}}", {{block_instance_id}});
+    });
+{{/js}}

@@ -46,7 +46,7 @@ class placeholder_template extends abstract_template
      */
     public function get_filter_collection()
     {
-        return new filter_collection();
+        return new filter_collection(get_class($this), $this->get_context());
     }
 
     /**

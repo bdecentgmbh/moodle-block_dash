@@ -50,8 +50,9 @@ class block_dash extends block_base {
         return array('all' => true);
     }
 
-    function get_content() {
-        global $CFG, $OUTPUT;
+    function get_content()
+    {
+        global $PAGE;
 
         if($this->content !== NULL) {
             return $this->content;

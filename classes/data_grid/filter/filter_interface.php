@@ -56,6 +56,9 @@ interface filter_interface
      */
     public function init();
 
+    /**
+     * @return mixed
+     */
     public function get_raw_value();
 
     /**
@@ -83,9 +86,19 @@ interface filter_interface
     public function is_required();
 
     /**
+     * @param $required
+     */
+    public function set_required($required);
+
+    /**
      * @return string
      */
-    public function get_field_name();
+    public function get_name();
+
+    /**
+     * @return string
+     */
+    public function get_select();
 
     /**
      * @return string
@@ -93,14 +106,17 @@ interface filter_interface
     public function get_label();
 
     /**
-     * @return \stdClass
-     */
-    public function get_user();
-
-    /**
      * @return string
      */
     public function get_operation();
+
+    /**
+     * Set an operation
+     *
+     * @param $operation
+     * @throws \coding_exception
+     */
+    public function set_operation($operation);
 
     /**
      * Get the default raw value to set on form field.
@@ -115,7 +131,6 @@ interface filter_interface
      * @return array
      */
     public function get_supported_operations();
-
     /**
      * @return bool
      */
@@ -144,25 +159,10 @@ interface filter_interface
      * @param \MoodleQuickForm $form
      * @param filter_collection_interface $filter_collection
      * @param string $element_name_prefix
-     * @throws \coding_exception
+     * @throws \Exception
      */
     public function create_form_element(\MoodleQuickForm &$form, filter_collection_interface $filter_collection,
                                         $element_name_prefix = '');
-
-    /**
-     * Override if filter supports querying filter results. Typically user input from a searchable dropdown.
-     *
-     * @return bool
-     */
-    public function supports_query();
-
-    /**
-     * If filter supports querying, override this method.
-     *
-     * @param $term
-     * @throws \coding_exception
-     */
-    public function query($term);
 
     /**
      * Get option label based on value.
@@ -171,4 +171,14 @@ interface filter_interface
      * @return string
      */
     public function get_option_label($value);
+
+    /**
+     * @return \context
+     */
+    public function get_context();
+
+    /**
+     * @param \context $context
+     */
+    public function set_context(\context $context);
 }

@@ -22,20 +22,36 @@
 
 namespace block_dash\data_grid\filter;
 
-class choice_filter extends select_filter
+class user_profile_field_filter extends select_filter
 {
-    private $choices;
+    /**
+     * @var string Record ID of custom profile field.
+     */
+    private $profile_field_id;
 
     /**
      * @param string $name
      * @param string $select
-     * @param array $choices
+     * @param int $profile_field_id
      */
-    public function __construct($name, $select, array $choices)
+    public function __construct($name, $select, $profile_field_id)
     {
-        $this->choices = $choices;
+        $this->profile_field_id = $profile_field_id;
 
         parent::__construct($name, $select);
+    }
+
+    /**
+     * Return a list of operations this filter can handle.
+     *
+     * @return array
+     */
+    public function get_supported_operations()
+    {
+        return [
+            self::OPERATION_EQUAL,
+            self::OPERATION_IN_OR_EQUAL
+        ];
     }
 
     /**
@@ -45,12 +61,7 @@ class choice_filter extends select_filter
      */
     public function get_default_raw_value()
     {
-        if (count($this->choices) > 1) {
-            return self::ALL_OPTION;
-        } else if (count($this->choices) == 1) {
-            return array_keys($this->choices)[0];
-        }
-        return null;
+        return self::ALL_OPTION;
     }
 
     /**
@@ -59,9 +70,18 @@ class choice_filter extends select_filter
      */
     public function init()
     {
-        $this->add_all_option();
+        global $DB;
 
-        $this->add_options($this->choices);
+
+        $params['fieldid'] = $this->profile_field_id;
+
+        $options = $DB->get_records_sql_menu("SELECT uid.data AS key1, uid.data AS key2 FROM {user_info_data} uid
+                                              WHERE uid.fieldid = :fieldid
+                                              GROUP BY uid.data", $params);
+
+        foreach ($options as $key => $option) {
+            $this->add_option($key, $option);
+        }
 
         parent::init();
     }

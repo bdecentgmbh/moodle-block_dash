@@ -25,9 +25,7 @@ namespace block_dash\data_grid;
 use block_dash\data_grid\data\data_collection;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\field\field_definition_interface;
-use block_dash\data_grid\filter\filter_collection;
 use block_dash\data_grid\filter\filter_collection_interface;
-use ClassesWithParents\F;
 
 /**
  * Get data to be displayed in a grid or downloaded as a formatted file.
@@ -83,6 +81,11 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      */
     private $data_collection;
 
+    /**
+     * @var filter_collection_interface
+     */
+    private $filter_collection;
+
     #endregion
 
     /**
@@ -106,6 +109,22 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     }
 
     /**
+     * @return filter_collection_interface
+     */
+    public function get_filter_collection()
+    {
+        return $this->filter_collection;
+    }
+
+    /**
+     * @param filter_collection_interface $filter_collection
+     */
+    public function set_filter_collection(filter_collection_interface $filter_collection)
+    {
+        $this->filter_collection = $filter_collection;
+    }
+
+    /**
      * Return the template identifier for this component.
      *
      * @return string
@@ -121,6 +140,14 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     public function get_context()
     {
         return $this->context;
+    }
+
+    /**
+     * @return paginator
+     */
+    public function get_paginator()
+    {
+        return $this->paginator;
     }
 
     #region Field methods
@@ -288,14 +315,14 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @throws \Exception
      * @throws \moodle_exception
      */
-    protected function get_sql_and_params(filter_collection_interface $filter_collection, $count = false)
+    protected function get_sql_and_params($count = false)
     {
         if (!$this->has_any_field_definitions()) {
             throw new \moodle_exception('Grid initialized without any fields. Did you forget to call data_grid::init()?');
         }
 
-        if ($filter_collection->has_filters()) {
-            list ($filter_sql, $filter_params) = $filter_collection->get_sql_and_params();
+        if ($this->filter_collection && $this->filter_collection->has_filters()) {
+            list ($filter_sql, $filter_params) = $this->filter_collection->get_sql_and_params();
         } else {
             $filter_sql = '';
             $filter_params = [];
@@ -396,13 +423,13 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @since 2.2
      *
      */
-    public function get_data(filter_collection_interface $filter_collection)
+    public function get_data()
     {
         if ($this->data_collection) {
             return $this->data_collection;
         }
 
-        $records = $this->get_records($filter_collection);
+        $records = $this->get_records();
 
         $grid_data = new data_collection();
 
@@ -459,11 +486,11 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @throws \moodle_exception
      * @since 2.2
      */
-    protected function get_records(filter_collection_interface $filter_collection)
+    protected function get_records()
     {
         global $DB;
 
-        list($query, $filter_params) = $this->get_sql_and_params($filter_collection, false);
+        list($query, $filter_params) = $this->get_sql_and_params(false);
 
         if ($this->supports_pagination() && !$this->is_pagination_disabled()) {
             return $DB->get_records_sql($query, $filter_params, $this->paginator->get_limit_from(),

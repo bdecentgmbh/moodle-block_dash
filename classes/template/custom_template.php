@@ -21,19 +21,10 @@ class custom_template extends abstract_template
 
     public function __construct(\stdClass $record, \context $context)
     {
-        parent::__construct($context);
         $this->record = $record;
         $this->record->available_field_definitions = json_decode($record->available_field_definitions, true);
-    }
 
-    /**
-     * Get unique idnumber for this template.
-     *
-     * @return string
-     */
-    public function get_idnumber()
-    {
-        return $this->record->idnumber;
+        parent::__construct($context);
     }
 
     /**
@@ -59,7 +50,7 @@ class custom_template extends abstract_template
      */
     public function get_filter_collection()
     {
-        return new filter_collection('filter' . $this->record->id);
+        return new filter_collection('filter' . $this->record->id, $this->get_context());
     }
 
     /**
@@ -108,10 +99,5 @@ class custom_template extends abstract_template
         }
 
         return 'block_dash/layout_missing';
-    }
-
-    public static function create(\stdClass $record, \context $context)
-    {
-        return new custom_template($record, $context);
     }
 }

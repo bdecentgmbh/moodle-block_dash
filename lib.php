@@ -50,16 +50,18 @@ function block_dash_register_field_definitions() {
         new field_definition(['user'], 'u_firstaccess', 'u.firstaccess', get_string('firstaccess')),
         new field_definition(['user'], 'u_description', 'u.description', get_string('description')),
         new field_definition(['user'], 'u_picture', 'u.picture', get_string('pictureofuser')),
-        new user_profile_link_field_definition(['user'], 'u_profile_url', 'u.id', 'User profile URL')
+        new user_profile_link_field_definition(['user'], 'u_profile_url', 'u.id', 'User profile URL'),
+        new field_definition(['group'], 'g_id', 'g.id', get_string('group')),
+        new field_definition(['group'], 'g_name', 'g.name', get_string('group'))
     ];
 
     $i = 0;
     foreach (profile_get_custom_fields() as $custom_field) {
-        $definitions[] = field_definition::create(
+        $definitions[] = new field_definition(
             ['user'],
-            'u_' . $custom_field->name,
+            'u_pf_' . strtolower($custom_field->shortname),
             "(SELECT profile$i.data FROM {user_info_data} profile$i 
-            WHERE profile$i.userid = u.id AND profile$i.fieldid = $custom_field->id",
+            WHERE profile$i.userid = u.id AND profile$i.fieldid = $custom_field->id)",
             $custom_field->name);
 
         $i++;
@@ -70,6 +72,9 @@ function block_dash_register_field_definitions() {
 
 function block_dash_register_templates() {
     return [
-        new users_template(context_system::instance())
+        [
+            'name' => get_string('users'),
+            'class' => users_template::class
+        ]
     ];
 }

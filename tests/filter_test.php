@@ -62,9 +62,8 @@ class filter_test extends \advanced_testcase
 
         $this->user = $USER;
 
-        $this->filter_collection = new filter_collection('testing');
-        $this->filter_collection->add_filter(new choice_filter($USER, [], 'alias_fieldname', 'Test filter'));
-        $this->filter_collection->add_column_mapping('alias_fieldname', 'alias.fieldname');
+        $this->filter_collection = new filter_collection('testing', \context_system::instance());
+        $this->filter_collection->add_filter(new filter('filter1', 'table.fieldname'));
         $this->filter_collection->init();
     }
 
@@ -72,13 +71,13 @@ class filter_test extends \advanced_testcase
     {
         $this->assertEquals('testing', $this->filter_collection->get_unique_identifier());
         $this->assertCount(1, $this->filter_collection->get_filters());
-        $this->assertTrue($this->filter_collection->has_filter('alias_fieldname'));
+        $this->assertTrue($this->filter_collection->has_filter('filter1'));
         $this->assertFalse($this->filter_collection->has_filter('missing'));
     }
 
     public function test_remove_filter()
     {
-        $filter = $this->filter_collection->get_filter('alias_fieldname');
+        $filter = $this->filter_collection->get_filter('filter1');
         $this->filter_collection->remove_filter($filter);
 
         $this->assertFalse($this->filter_collection->has_filters());
@@ -90,8 +89,8 @@ class filter_test extends \advanced_testcase
         $this->assertCount(0, $this->filter_collection->get_applied_filters());
         $this->assertCount(0, $this->filter_collection->get_filters_with_values());
 
-        $this->assertTrue($this->filter_collection->apply_filter('alias_fieldname', 123));
-        $this->assertFalse($this->filter_collection->apply_filter('alias_fieldname', ''));
+        $this->assertTrue($this->filter_collection->apply_filter('filter1', 123));
+        $this->assertFalse($this->filter_collection->apply_filter('filter1', ''));
         $this->assertFalse($this->filter_collection->apply_filter('missing', 123));
 
         $this->assertCount(1, $this->filter_collection->get_applied_filters());
@@ -101,11 +100,11 @@ class filter_test extends \advanced_testcase
 
     public function test_filter_sql_and_params_collection()
     {
-        $this->assertTrue($this->filter_collection->apply_filter('alias_fieldname', 123));
+        $this->assertTrue($this->filter_collection->apply_filter('filter1', 123));
 
         list($sql, $params) = $this->filter_collection->get_sql_and_params();
 
-        $this->assertEquals(' AND alias.fieldname = :param1', $sql, 'Ensure SQL is generated.');
+        $this->assertEquals(' AND table.fieldname = :param1', $sql, 'Ensure SQL is generated.');
         $this->assertEquals($params, ['param1' => 123], 'Ensure params are returned.');
     }
 
@@ -114,19 +113,20 @@ class filter_test extends \advanced_testcase
         $this->assertFalse($this->filter_collection->has_required_filters());
         $this->assertCount(0, $this->filter_collection->get_required_filters());
 
-        $this->filter_collection->add_filter(new choice_filter($this->user, [], 'alias_fieldname2', 'Test filter 2',
-            filter::REQUIRED));
-        $this->filter_collection->add_column_mapping('alias_fieldname2', 'alias.fieldname2');
+        $filter = new filter('filter2', 'table.fieldname2');
+        $filter->set_required(filter_interface::REQUIRED);
+
+        $this->filter_collection->add_filter($filter);
         $this->assertTrue($this->filter_collection->has_required_filters());
         $this->assertCount(1, $this->filter_collection->get_required_filters());
     }
 
     public function test_caching()
     {
-        $this->filter_collection->apply_filter('alias_fieldname', 234);
+        $this->filter_collection->apply_filter('filter1', 234);
         $this->filter_collection->cache($this->user);
 
-        $this->assertEquals(234, $this->filter_collection->get_cache($this->user)['alias_fieldname']);
+        $this->assertEquals(234, $this->filter_collection->get_cache($this->user)['filter1']);
 
         $this->filter_collection->delete_cache($this->user);
 

@@ -1,5 +1,8 @@
 {{< block_dash/layout }}
     {{$body}}
+        {{^data.rows}}
+            <p class="text-muted">{{#str}}noresults{{/str}}</p>
+        {{/data.rows}}
         <div class="table-responsive">
             <table class="table">
                 {{#data.rows}}

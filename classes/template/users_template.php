@@ -25,14 +25,6 @@ class users_template extends abstract_template
     /**
      * @return string
      */
-    public function get_mustache_template_name()
-    {
-        return 'block_dash/layout_grid';
-    }
-
-    /**
-     * @return string
-     */
     public function get_query_template()
     {
         global $CFG;

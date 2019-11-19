@@ -21,6 +21,14 @@ class configuration extends abstract_configuration
             $template = new placeholder_template($parentcontext);
         }
 
+        if (isset($block_instance->config->layout) && !empty($block_instance->config->layout)) {
+            $template->set_mustache_template_name($block_instance->config->layout);
+        }
+
+        if (isset($block_instance->config->preferences) && is_array($block_instance->config->preferences)) {
+            $template->set_preferences($block_instance->config->preferences);
+        }
+
         return new configuration($parentcontext, $template);
     }
 }

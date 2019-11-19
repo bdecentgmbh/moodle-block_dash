@@ -115,6 +115,23 @@ class data_collection implements data_collection_interface, \ArrayAccess
         return count($this->children) > 0;
     }
 
+    public function first_child()
+    {
+        if ($type = reset($this->children)) {
+            return reset($type);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return field_interface|null
+     */
+    public function first_data()
+    {
+        return reset($this->data);
+    }
+
     /**
      * Whether a offset exists
      * @link https://php.net/manual/en/arrayaccess.offsetexists.php

@@ -1,0 +1,13 @@
+{{< block_dash/layout }}
+    {{$body}}
+        {{#data.first_child}}
+            {{#first_data}}
+                {{get_value}}
+            {{/first_data}}
+        {{/data.first_child}}
+    {{/body}}
+
+    {{$footer}}
+        {{! No pagination }}
+    {{/footer}}
+{{/ block_dash/layout }}

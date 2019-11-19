@@ -26,6 +26,13 @@ abstract class abstract_template implements template_interface
      */
     private $filter_collection;
 
+    private $template_name = 'block_dash/layout_missing';
+
+    /**
+     * @var array
+     */
+    private $preferences;
+
     /**
      * @param \context $context
      */
@@ -40,6 +47,17 @@ abstract class abstract_template implements template_interface
             $this->data_grid = new configurable_data_grid($this->get_context());
             $this->data_grid->set_query_template($this->get_query_template());
             $this->data_grid->set_field_definitions($this->get_available_field_definitions());
+
+            if ($this->preferences && isset($this->preferences['available_fields'])) {
+                foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
+                    if (isset($preferences['visible'])) {
+                        if ($fielddefinition = $this->data_grid->get_field_definition($fieldname)) {
+                            $fielddefinition->set_visibility($preferences['visible']);
+                        }
+                    }
+                }
+            }
+
             $this->data_grid->init();
         }
 
@@ -117,6 +135,54 @@ abstract class abstract_template implements template_interface
      */
     public function get_mustache_template_name()
     {
-        return 'block_dash/layout_missing';
+        return 'block_dash/layout_grid';
+    }
+
+    /**
+     * @param string $template_name
+     */
+    public function set_mustache_template_name($template_name)
+    {
+        $this->template_name = $template_name;
+    }
+
+    /**
+     * Add form fields to the block edit form. IMPORTANT: Prefix field names with config_ otherwise the values will
+     * not be saved.
+     *
+     * @param \block_dash_edit_form $form
+     * @param \MoodleQuickForm $mform
+     */
+    public function build_preferences_form(\block_dash_edit_form $form, \MoodleQuickForm $mform)
+    {
+        $group = [];
+        foreach ($this->get_available_field_definitions() as $available_field_definition) {
+            $fieldname = 'config_preferences[available_fields][' . $available_field_definition->get_name() . '][visible]';
+            $group[] = $mform->createElement('advcheckbox', $fieldname, $available_field_definition->get_title(), null, array('group' => 1));
+            $mform->setDefault($fieldname, 1);
+        }
+        $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'));
+        $form->add_checkbox_controller(1);
+    }
+
+    /**
+     * @param string $name
+     * @return array
+     */
+    public final function get_preferences($name)
+    {
+        if ($this->preferences && isset($this->preferences[$name])) {
+            return $this->preferences[$name];
+        }
+
+        return [];
+    }
+
+    /**
+     * @param array $preferences
+     */
+    public final function set_preferences(array $preferences)
+    {
+        $this->preferences = $preferences;
     }
 }

@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
-
     'block/dash:addinstance' => [
         'riskbitmask' => RISK_SPAM | RISK_XSS,
 

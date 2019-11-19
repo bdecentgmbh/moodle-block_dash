@@ -79,9 +79,11 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification'], function($, Log
     };
 
     DashInstance.prototype.refresh = function() {
+        this.getBlockContentArea().css('opacity', 0.5);
         this.getBlockContent()
             .then(function(response) {
                 this.getBlockContentArea().html(response.html);
+                this.getBlockContentArea().css('opacity', 1);
             }.bind(this))
             .catch(Notification.exception);
     };

@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 
+use block_dash\template\template_factory;
 use external_api;
 
 /**
@@ -108,6 +109,7 @@ class external extends external_api
     }
 
     #endregion
+
 
     /**
      * Returns description of get_database_schema_structure() parameters.

@@ -16,3 +16,9 @@ body#page-blocks-dash-template .ui-sortable-helper {
 body#page-blocks-dash-template .drag-handle {
     cursor: pointer;
 }
+
+.filter-form .filter-form-control {
+    width: auto;
+    display: inline;
+    margin-right: 0.25rem;
+}

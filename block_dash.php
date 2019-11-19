@@ -26,15 +26,15 @@ use block_dash\block_builder;
 
 class block_dash extends block_base {
 
-    function init() {
+    public function init() {
         $this->title = get_string('pluginname', 'block_dash');
     }
 
-    function has_config() {
+    public function has_config() {
         return true;
     }
 
-    function specialization() {
+    public function specialization() {
         if (isset($this->config->title)) {
             $this->title = $this->title = format_string($this->config->title, true, ['context' => $this->context]);
         } else {
@@ -42,18 +42,16 @@ class block_dash extends block_base {
         }
     }
 
-    function instance_allow_multiple() {
+    public function instance_allow_multiple() {
         return true;
     }
 
-    function applicable_formats() {
+    public function applicable_formats() {
         return array('all' => true);
     }
 
-    function get_content()
+    public function get_content()
     {
-        global $PAGE;
-
         if($this->content !== NULL) {
             return $this->content;
         }
@@ -65,6 +63,15 @@ class block_dash extends block_base {
         $this->content = block_builder::create($this)->get_block_content();
 
         return $this->content;
+    }
+
+    public function html_attributes()
+    {
+        $attributes = parent::html_attributes();
+        if (isset($this->config->css_class)) {
+            $attributes['class'] .= ' ' . $this->config->css_class;
+        }
+        return $attributes;
     }
 }
 

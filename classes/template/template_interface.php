@@ -69,6 +69,11 @@ interface template_interface
     public function get_mustache_template_name();
 
     /**
+     * @param string $template_name
+     */
+    public function set_mustache_template_name($template_name);
+
+    /**
      * @return string
      */
     public function render();
@@ -77,4 +82,24 @@ interface template_interface
      * @return data_grid
      */
     public function get_data_grid();
+
+    /**
+     * Add form fields to the block edit form. IMPORTANT: Prefix field names with config_ otherwise the values will
+     * not be saved.
+     *
+     * @param \block_dash_edit_form $form
+     * @param \MoodleQuickForm $mform
+     */
+    public function build_preferences_form(\block_dash_edit_form $form, \MoodleQuickForm $mform);
+
+    /**
+     * @param string $name
+     * @return array
+     */
+    public function get_preferences($name);
+
+    /**
+     * @param array $preferences
+     */
+    public function set_preferences(array $preferences);
 }

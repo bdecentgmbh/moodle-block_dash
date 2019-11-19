@@ -57,7 +57,7 @@ class template_factory
      */
     public static function is_custom($identifier)
     {
-        return in_array($identifier, self::get_template_registry())
+        return array_key_exists($identifier, self::get_template_registry())
             && self::get_template_registry()[$identifier]['is_custom'];
     }
 

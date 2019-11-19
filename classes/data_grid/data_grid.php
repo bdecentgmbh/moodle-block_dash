@@ -438,11 +438,12 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
         foreach ($records as $record) {
             $row = new data_collection();
             foreach ($field_definitions as $field_definition) {
+                $name = $field_definition->get_name();
+
                 if (!$field_definition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
+                    unset($record->$name);
                     continue;
                 }
-
-                $name = $field_definition->get_name();
 
                 $record->$name = $field_definition->transform_data($record->$name, $record);
             }

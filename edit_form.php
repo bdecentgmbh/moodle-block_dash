@@ -40,15 +40,34 @@ class block_dash_edit_form extends block_edit_form {
      */
     protected function specific_definition($mform)
     {
+        $parentcontext = \context::instance_by_id($this->block->instance->parentcontextid);
+
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
         $mform->addElement('text', 'config_title', get_string('blocktitle', 'block_dash'));
         $mform->setType('config_title', PARAM_TEXT);
 
-        $mform->addElement('select', 'config_template_idnumber', get_string('template', 'block_dash'),
+        $mform->addElement('select', 'config_hide_when_empty', get_string('hidewhenempty', 'block_dash'), [
+            0 => get_string('no'),
+            1 => get_string('yes')
+        ]);
+        $mform->setType('config_hide_When_empty', PARAM_BOOL);
+
+        $mform->addElement('text', 'config_css_class', get_string('cssclass', 'block_dash'));
+        $mform->setType('config_css_class', PARAM_TEXT);
+
+        $mform->addElement('header', 'choose_template', get_string('choosetemplate', 'block_dash'));
+
+        $mform->addElement('select', 'config_template_idnumber', get_string('choosetemplate', 'block_dash'),
             template_factory::get_template_form_options());
-        $mform->setType('config_template', PARAM_INT);
+
+        if (isset($this->block->config->template_idnumber) &&
+            $template = template_factory::get_template($this->block->config->template_idnumber, $parentcontext)) {
+            $template->build_preferences_form($this, $this->_form);
+        }
+
+        $mform->addElement('static', 'preferences', get_string('preferences'), html_writer::div('', 'template_preferences'));
 
         $mform->addElement('header', 'extracontent', get_string('extracontent', 'block_dash'));
 

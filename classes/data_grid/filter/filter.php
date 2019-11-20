@@ -163,6 +163,14 @@ class filter implements filter_interface
     }
 
     /**
+     * @param $label
+     */
+    public function set_label($label)
+    {
+        $this->label = $label;
+    }
+
+    /**
      * @return string
      */
     public function get_operation()

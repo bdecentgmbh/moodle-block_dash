@@ -65,11 +65,13 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
                 this.modal.setBody(this.getBody());
             }.bind(this));
 
+            this.modal.getRoot().on('change', '#id_config_preferences_layout', this.submitFormAjax.bind(this, false));
+
             // We catch the modal save event, and use it to submit the form inside the modal.
             // Triggering a form submission will give JS validation scripts a chance to check for errors.
             this.modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
             // We also catch the form submit event and use it to submit the form with ajax.
-            this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this));
+            this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this, true));
 
             this.modal.getRoot().on(ModalEvents.hidden, function(e) {
                 if (this.onCloseCallback) {
@@ -100,11 +102,10 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
      * @private
      * @return {Promise}
      */
-    PreferencesModal.prototype.handleFormSubmissionResponse = function(formData, response) {
-
-        if (response.validationerrors) {
+    PreferencesModal.prototype.handleFormSubmissionResponse = function(formData, closeWhenDone, response) {
+        if (response.validationerrors || !closeWhenDone) {
             this.modal.setBody(this.getBody(formData));
-        } else {
+        } else if (closeWhenDone) {
             this.modal.hide();
         }
     };
@@ -126,21 +127,11 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
      * @method submitFormAjax
      * @private
      * @param {Event} e Form submission event.
+     * @param {boolean} closeWhenDone If true modal will close after successful submission.
      */
-    PreferencesModal.prototype.submitFormAjax = function(e) {
+    PreferencesModal.prototype.submitFormAjax = function(closeWhenDone, e) {
         // We don't want to do a real form submission.
         e.preventDefault();
-
-        var changeEvent = document.createEvent('HTMLEvents');
-        changeEvent.initEvent('change', true, true);
-
-        // Prompt all inputs to run their validation functions.
-        // Normally this would happen when the form is submitted, but
-        // since we aren't submitting the form normally we need to run client side
-        // validation.
-        this.modal.getRoot().find(':input').each(function(index, element) {
-            element.dispatchEvent(changeEvent);
-        });
 
         // Now the change events have run, see if there are any "invalid" form fields.
         var invalid = $.merge(
@@ -164,7 +155,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
                 contextid: this.contextid,
                 jsonformdata: JSON.stringify(formData)
             },
-            done: this.handleFormSubmissionResponse.bind(this, formData),
+            done: this.handleFormSubmissionResponse.bind(this, formData, closeWhenDone),
             fail: this.handleFormSubmissionFailure.bind(this, formData)
         }]);
     };

@@ -36,12 +36,12 @@ class template_factory
                 }
             }
 
-            foreach ($DB->get_records('dash_template') as $record) {
-                $record = (array)$record;
-                $record['is_custom'] = true;
-
-                self::$template_registry[$record['idnumber']] = $record;
-            }
+//            foreach ($DB->get_records('dash_template') as $record) {
+//                $record = (array)$record;
+//                $record['is_custom'] = true;
+//
+//                self::$template_registry[$record['idnumber']] = $record;
+//            }
         }
 
         return self::$template_registry;
@@ -102,7 +102,7 @@ class template_factory
         $templateinfo = self::get_template_info($identifier);
 
         if (self::is_custom($identifier)) {
-            return new custom_template($templateinfo, $context);
+            //return new custom_template($templateinfo, $context);
         } else {
             if (class_exists($identifier)) {
                 return new $identifier($context);

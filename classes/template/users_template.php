@@ -4,6 +4,7 @@ namespace block_dash\template;
 
 use block_dash\block_builder;
 use block_dash\data_grid\field\field_definition_interface;
+use block_dash\data_grid\filter\logged_in_user_condition;
 use block_dash\data_grid\filter\filter_collection;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\data_grid\filter\participants_condition;
@@ -91,13 +92,21 @@ class users_template extends abstract_template
 
         $filter_collection = new filter_collection(get_class($this), $this->get_context());
 
-        $filter_collection->add_filter(new user_field_filter('u_department', 'u.department', 'department'));
-        $filter_collection->add_filter(new user_field_filter('u_institution', 'u.institution', 'institution'));
+        $filter = new user_field_filter('u_department', 'u.department', 'department');
+        $filter->set_label(get_string('department'));
+        $filter_collection->add_filter($filter);
+        $filter = new user_field_filter('u_institution', 'u.institution', 'institution');
+        $filter->set_label(get_string('institution'));
+        $filter_collection->add_filter($filter);
+
         $filter_collection->add_filter(new participants_condition('c_id', 'c.id'));
+        $filter_collection->add_filter(new logged_in_user_condition('current_user', 'u.id'));
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
-            $filter_collection->add_filter(new user_profile_field_filter($alias, $alias . '.data', $field->id));
+            $filter = new user_profile_field_filter($alias, $alias . '.data', $field->id);
+            $filter->set_label($field->name);
+            $filter_collection->add_filter($filter);
         }
 
         return $filter_collection;

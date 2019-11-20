@@ -74,11 +74,8 @@ class external extends external_api
         ]);
 
         $block = null;
-        try {
-            $block = block_instance_by_id($params['block_instance_id']);
-        } catch (\Exception $e) {
 
-        }
+        $block = block_instance_by_id($params['block_instance_id']);
 
         self::validate_context($block->context);
 

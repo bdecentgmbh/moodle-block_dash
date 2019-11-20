@@ -4,7 +4,7 @@
 namespace block_dash\data_grid\filter;
 
 
-class current_user_condition extends condition
+class logged_in_user_condition extends condition
 {
     /**
      * Get values from filter based on user selection. All filters must return an array of values.
@@ -18,6 +18,18 @@ class current_user_condition extends condition
         global $USER;
 
         return [$USER->id];
+    }
+
+    /**
+     * @return string
+     */
+    public function get_label()
+    {
+        if ($label = parent::get_label()) {
+            return $label;
+        }
+
+        return get_string('loggedinuser', 'block_dash');
     }
 
 }

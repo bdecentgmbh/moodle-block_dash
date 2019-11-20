@@ -28,6 +28,7 @@ use block_dash\data_grid\data_grid;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
+use block_dash\layout\layout_interface;
 
 interface template_interface
 {
@@ -64,14 +65,9 @@ interface template_interface
     public function build_filter_collection();
 
     /**
-     * @return string
+     * @return layout_interface
      */
-    public function get_mustache_template_name();
-
-    /**
-     * @param string $template_name
-     */
-    public function set_mustache_template_name($template_name);
+    public function get_layout();
 
     /**
      * @return data_grid

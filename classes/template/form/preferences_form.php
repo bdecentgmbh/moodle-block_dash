@@ -24,7 +24,7 @@
 
 namespace block_dash\template\form;
 
-use block_dash\template\template_factory;
+use block_dash\configuration\configuration;
 
 require_once($CFG->libdir . '/formslib.php');
 
@@ -41,11 +41,9 @@ class preferences_form extends \moodleform
     {
         $block = $this->_customdata['block'];
 
-        $parentcontext = \context::instance_by_id($block->instance->parentcontextid);
-
-        if (isset($block->config->template_idnumber) &&
-            $template = template_factory::get_template($block->config->template_idnumber, $parentcontext)) {
-            $template->build_preferences_form($this, $this->_form);
+        $configuration = configuration::create_from_instance($block);
+        if ($configuration->is_fully_configured()) {
+            $configuration->get_template()->build_preferences_form($this, $this->_form);
         }
     }
 }

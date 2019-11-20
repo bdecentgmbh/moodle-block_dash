@@ -5,7 +5,7 @@ namespace block_dash\template;
 use block_dash\block_builder;
 use block_dash\data_grid\field\field_definition;
 use block_dash\data_grid\field\field_definition_interface;
-use block_dash\data_grid\filter\current_user_condition;
+use block_dash\data_grid\filter\logged_in_user_condition;
 use block_dash\data_grid\filter\filter_collection;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\data_grid\filter\participants_condition;
@@ -22,14 +22,6 @@ class user_stat_template extends abstract_template
     public function get_name()
     {
         return get_string('userstat', 'block_dash');
-    }
-
-    /**
-     * @return string
-     */
-    public function get_mustache_template_name()
-    {
-        return 'block_dash/layout_stat';
     }
 
     /**
@@ -96,7 +88,7 @@ class user_stat_template extends abstract_template
     public function build_filter_collection()
     {
         $filter_collection = new filter_collection(get_class($this), $this->get_context());
-        $filter_collection->add_filter(new current_user_condition('u_id', 'u.id'));
+        $filter_collection->add_filter(new logged_in_user_condition('u_id', 'u.id'));
         return $filter_collection;
     }
 
@@ -109,7 +101,7 @@ class user_stat_template extends abstract_template
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform)
     {
-        $mform->addElement('text', 'config_preferences[stat_field_label]', get_string('label'));
+        $mform->addElement('text', 'config_preferences[stat_field_label]', get_string('label2'));
         $mform->setType('config_preferences[stat_field_label]', PARAM_TEXT);
         $mform->setDefault('config_preferences[stat_field_label]', get_string('email'));
 

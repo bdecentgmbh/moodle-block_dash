@@ -6,8 +6,12 @@ namespace block_dash\template;
 use block_dash\data_grid\configurable_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
+use block_dash\data_grid\filter\condition;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\data_grid\paginator;
+use block_dash\layout\grid_layout;
+use block_dash\layout\layout_interface;
+use block_dash\layout\one_stat_layout;
 use block_dash\output\renderer;
 
 abstract class abstract_template implements template_interface, \templatable
@@ -32,12 +36,15 @@ abstract class abstract_template implements template_interface, \templatable
      */
     private $filter_collection;
 
-    private $template_name = 'block_dash/layout_missing';
-
     /**
      * @var array
      */
     private $preferences = [];
+
+    /**
+     * @var layout_interface
+     */
+    private $layout;
 
     /**
      * @param \context $context
@@ -85,6 +92,18 @@ abstract class abstract_template implements template_interface, \templatable
                 }
             }
         }
+
+        if ($this->preferences && isset($this->preferences['filters'])) {
+            foreach ($this->preferences['filters'] as $filtername => $preference) {
+                if (isset($preference['enabled']) && !$preference['enabled']) {
+                    if ($filter = $this->get_filter_collection()->get_filter($filtername)) {
+                        $this->get_filter_collection()->remove_filter($filter);
+                    }
+                }
+            }
+        }
+
+        $this->get_layout()->before_data();
     }
 
     /**
@@ -111,7 +130,23 @@ abstract class abstract_template implements template_interface, \templatable
      */
     public function after_data()
     {
+        $this->get_layout()->after_data();
+    }
 
+    /**
+     * @return layout_interface
+     */
+    public function get_layout()
+    {
+        if (is_null($this->layout)) {
+            if ($layout = $this->get_preferences('layout')) {
+                $this->layout = new $layout($this);
+            } else {
+                $this->layout = new grid_layout($this);
+            }
+        }
+
+        return $this->layout;
     }
 
     /**
@@ -154,27 +189,13 @@ abstract class abstract_template implements template_interface, \templatable
                 'data' => $data,
                 'paginator' => $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_grid()->get_paginator()
                     ->export_for_template($OUTPUT)),
+                'supports_filtering' => $this->get_layout()->supports_filtering(),
+                'supports_pagination' => $this->get_layout()->supports_pagination(),
                 'preferences' => $this->get_all_preferences()
             ]);
         }
 
         return $templatedata;
-    }
-
-    /**
-     * @return string
-     */
-    public function get_mustache_template_name()
-    {
-        return 'block_dash/layout_grid';
-    }
-
-    /**
-     * @param string $template_name
-     */
-    public function set_mustache_template_name($template_name)
-    {
-        $this->template_name = $template_name;
     }
 
     /**
@@ -186,17 +207,18 @@ abstract class abstract_template implements template_interface, \templatable
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform)
     {
-        $group = [];
-        foreach ($this->get_available_field_definitions() as $available_field_definition) {
-            $fieldname = 'config_preferences[available_fields][' . $available_field_definition->get_name() . '][visible]';
-            $group[] = $mform->createElement('advcheckbox', $fieldname, $available_field_definition->get_title(), null,
-                ['group' => 1]);
-            $mform->setDefault($fieldname, 1);
-            $mform->setType($fieldname, PARAM_BOOL);
+        $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'), [
+            grid_layout::class => get_string('layoutgrid', 'block_dash'),
+            one_stat_layout::class => get_string('layoutonestat', 'block_dash')
+        ]);
+        $mform->setType('config_preferences[layout]', PARAM_TEXT);
+
+        if ($layout = $this->get_layout()) {
+            $layout->build_preferences_form($form, $mform);
         }
-        $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'));
-        $form->add_checkbox_controller(1);
     }
+
+    #region Preferences
 
     /**
      * @param string $name
@@ -223,4 +245,6 @@ abstract class abstract_template implements template_interface, \templatable
     {
         $this->preferences = $preferences;
     }
+
+    #endregion
 }

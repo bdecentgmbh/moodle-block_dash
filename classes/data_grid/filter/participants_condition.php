@@ -22,4 +22,15 @@ class participants_condition extends condition
         return [$course_context->instanceid];
     }
 
+    /**
+     * @return string
+     */
+    public function get_label()
+    {
+        if ($label = parent::get_label()) {
+            return $label;
+        }
+
+        return get_string('myparticipants', 'block_dash');
+    }
 }

@@ -106,6 +106,11 @@ interface filter_interface
     public function get_label();
 
     /**
+     * @param $label
+     */
+    public function set_label($label);
+
+    /**
      * @return string
      */
     public function get_operation();

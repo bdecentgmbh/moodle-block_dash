@@ -121,6 +121,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function render_template(abstract_template $template)
     {
-        return $this->render_from_template($template->get_mustache_template_name(), $template->export_for_template($this));
+        return $this->render_from_template($template->get_layout()->get_mustache_template_name(),
+            $template->export_for_template($this));
     }
 }

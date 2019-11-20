@@ -48,12 +48,4 @@ class placeholder_template extends abstract_template
     {
         return new filter_collection(get_class($this), $this->get_context());
     }
-
-    /**
-     * @return string
-     */
-    public function get_mustache_template_name()
-    {
-        return 'block_dash/layout_placeholder';
-    }
 }

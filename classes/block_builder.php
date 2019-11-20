@@ -39,17 +39,15 @@ class block_builder
      */
     public function get_block_content()
     {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
 
         $text = '';
 
         if ($this->configuration->is_fully_configured()) {
-            $formhtml = $this->configuration->get_template()->get_filter_collection()->create_form_elements();
-
             $text .= $OUTPUT->render_from_template('block_dash/block', [
-                'filter_form_html' => $formhtml,
-                'filters' => $this->configuration->get_template()->get_filter_collection()->get_filters(),
-                'block_instance_id' => $this->block_instance->instance->id
+                'block_instance_id' => $this->block_instance->instance->id,
+                'block_context_id' => $this->block_instance->context->id,
+                'editing' => $PAGE->user_is_editing()
             ]);
         }
 

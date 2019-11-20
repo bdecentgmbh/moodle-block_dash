@@ -38,6 +38,7 @@ $string['dash:myaddinstance'] = 'Add a new InfoDash block to dashboard';
 $string['databaseerror'] = 'Database error. The content cannot be displayed.';
 $string['delete'] = 'Delete';
 $string['edit'] = 'Edit';
+$string['editpreferences'] = 'Edit preferences';
 $string['edittemplate'] = 'Edit template';
 $string['enabledfields'] = 'Enabled fields';
 $string['extracontent'] = 'Extra content';

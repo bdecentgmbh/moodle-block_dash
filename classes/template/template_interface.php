@@ -87,10 +87,10 @@ interface template_interface
      * Add form fields to the block edit form. IMPORTANT: Prefix field names with config_ otherwise the values will
      * not be saved.
      *
-     * @param \block_dash_edit_form $form
+     * @param \moodleform $form
      * @param \MoodleQuickForm $mform
      */
-    public function build_preferences_form(\block_dash_edit_form $form, \MoodleQuickForm $mform);
+    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform);
 
     /**
      * @param string $name

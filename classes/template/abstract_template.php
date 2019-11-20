@@ -111,9 +111,12 @@ abstract class abstract_template implements template_interface
         /** @var renderer $renderer */
         $renderer = $PAGE->get_renderer('block_dash');
 
+        $formhtml = $this->get_filter_collection()->create_form_elements();
+
         if (isset($data)) {
             try {
                 $output .= $renderer->render_from_template($this->get_mustache_template_name(), [
+                    'filter_form_html' => $formhtml,
                     'data' => $data,
                     'paginator' => $OUTPUT->render_from_template(paginator::TEMPLATE, $data_grid->get_paginator()->export_for_template($OUTPUT))
                 ]);
@@ -150,16 +153,18 @@ abstract class abstract_template implements template_interface
      * Add form fields to the block edit form. IMPORTANT: Prefix field names with config_ otherwise the values will
      * not be saved.
      *
-     * @param \block_dash_edit_form $form
+     * @param \moodleform $form
      * @param \MoodleQuickForm $mform
      */
-    public function build_preferences_form(\block_dash_edit_form $form, \MoodleQuickForm $mform)
+    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform)
     {
         $group = [];
         foreach ($this->get_available_field_definitions() as $available_field_definition) {
             $fieldname = 'config_preferences[available_fields][' . $available_field_definition->get_name() . '][visible]';
-            $group[] = $mform->createElement('advcheckbox', $fieldname, $available_field_definition->get_title(), null, array('group' => 1));
+            $group[] = $mform->createElement('advcheckbox', $fieldname, $available_field_definition->get_title(), null,
+                ['group' => 1]);
             $mform->setDefault($fieldname, 1);
+            $mform->setType($fieldname, PARAM_BOOL);
         }
         $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'));
         $form->add_checkbox_controller(1);

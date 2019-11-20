@@ -15,15 +15,37 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Form for editing InfoDash block instances.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace block_dash\template\form;
 
-$plugin->version   = 2019119001;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;        // Requires this Moodle version
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics)
+use block_dash\template\template_factory;
+
+require_once($CFG->libdir . '/formslib.php');
+
+/**
+ * Form for editing InfoDash block instances.
+ *
+ * @package    block_dash
+ * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class preferences_form extends \moodleform
+{
+    protected function definition()
+    {
+        $block = $this->_customdata['block'];
+
+        $parentcontext = \context::instance_by_id($block->instance->parentcontextid);
+
+        if (isset($block->config->template_idnumber) &&
+            $template = template_factory::get_template($block->config->template_idnumber, $parentcontext)) {
+            $template->build_preferences_form($this, $this->_form);
+        }
+    }
+}

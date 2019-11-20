@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 
+use block_dash\template\form\preferences_form;
 use block_dash\template\template_factory;
 use external_api;
 
@@ -211,6 +212,88 @@ class external extends external_api
     {
         return new \external_single_structure([
             'html' => new \external_value(PARAM_RAW)
+        ]);
+    }
+
+    #region submit_preferences_form
+
+    /**
+     * Describes the parameters for submit_create_group_form webservice.
+     * @return \external_function_parameters
+     */
+    public static function submit_preferences_form_parameters()
+    {
+        return new \external_function_parameters([
+            'contextid' => new \external_value(PARAM_INT, 'The context id for the block'),
+            'jsonformdata' => new \external_value(PARAM_RAW, 'The form data encoded as a json array')
+        ]);
+    }
+
+    /**
+     * Submit the create group form.
+     *
+     * @param int $contextid The context id for the course.
+     * @param string $jsonformdata The data from the form, encoded as a json array.
+     * @return int new group id.
+     */
+    public static function submit_preferences_form($contextid, $jsonformdata)
+    {
+        $params = self::validate_parameters(self::submit_preferences_form_parameters(), [
+            'contextid' => $contextid,
+            'jsonformdata' => $jsonformdata
+        ]);
+
+        $context = \context::instance_by_id($params['contextid'], MUST_EXIST);
+
+        self::validate_context($context);
+        require_capability('block/dash:addinstance', $context);
+
+        $serialiseddata = json_decode($params['jsonformdata']);
+        $data = array();
+        parse_str($serialiseddata, $data);
+
+        $block = block_instance_by_id($context->instanceid);
+
+        $form = new preferences_form(null, ['block' => $block], 'post', '', null, true, $data);
+
+        $validationerrors = true;
+        if ($validateddata = $form->get_data()) {
+
+            if (!empty($block->config)) {
+                $config = clone($block->config);
+            } else {
+                $config = new stdClass;
+            }
+            foreach ($validateddata as $configfield => $value) {
+                if (strpos($configfield, 'config_') !== 0) {
+                    continue;
+                }
+                $field = substr($configfield, 7);
+                $config->$field = $value;
+            }
+            $block->instance_config_save($config);
+
+            $validationerrors = false;
+        } else if ($errors = $form->is_validated()) {
+            throw new \moodle_exception('generalerror');
+        }
+
+
+        return [
+            'validationerrors' => $validationerrors
+        ];
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return \external_description
+     * @since Moodle 3.0
+     */
+    public static function submit_preferences_form_returns()
+    {
+        return new \external_single_structure([
+            'validationerrors' => new \external_value(PARAM_BOOL, 'Were there validation errors', VALUE_REQUIRED),
         ]);
     }
 }

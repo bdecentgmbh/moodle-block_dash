@@ -1,8 +1,7 @@
 <div id="info-dash-{{block_instance_id}}" class="info-dash-container">
-    <div class="info-dash-filters">
-        {{>block_dash/filter_form}}
-    </div>
-
+    {{#editing}}
+        <button class="info-dash-edit-preferences btn btn-sm btn-primary mb-2" style="width: 100%;">{{#str}}preferences{{/str}}</button>
+    {{/editing}}
     <div class="info-dash-block-content">
         LOADING
     </div>
@@ -10,6 +9,6 @@
 
 {{#js}}
     require(["block_dash/dash_instance"], function(DashInstance) {
-        new DashInstance("#info-dash-{{block_instance_id}}", {{block_instance_id}});
+        new DashInstance("#info-dash-{{block_instance_id}}", {{block_instance_id}}, {{block_context_id}});
     });
 {{/js}}

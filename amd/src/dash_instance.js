@@ -1,9 +1,12 @@
-define(['jquery', 'core/log', 'core/ajax', 'core/notification'], function($, Log, Ajax, Notification) {
+define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events', 'block_dash/preferences_modal'],
+    function($, Log, Ajax, Notification, ModalEvents, PreferencesModal) {
 
-    var DashInstance = function(root, blockInstanceId) {
+    var DashInstance = function(root, blockInstanceId, blockContextid) {
         this.root = $(root);
         this.blockInstanceId = blockInstanceId;
+        this.blockContextid = blockContextid;
         this.currentPage = 0;
+        this.blockPreferencesModal = null;
 
         this.init();
     };
@@ -14,7 +17,15 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification'], function($, Log
     DashInstance.prototype.init = function() {
         Log.debug('Initializing dash instance', this);
 
-        this.getFilterForm().on('change', 'select', function(e) {
+        this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.info-dash-edit-preferences'),
+            this.blockContextid, function(e) {
+
+            // Preferences changed, go back to first page.
+            this.currentPage = 0;
+            this.refresh();
+        }.bind(this));
+
+        this.getRoot().on('change', 'select', function(e) {
             e.preventDefault();
 
             Log.debug('Submitting filter form');
@@ -23,7 +34,6 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification'], function($, Log
 
             // Filter results, go back to first page.
             this.currentPage = 0;
-
             this.refresh();
         }.bind(this));
 

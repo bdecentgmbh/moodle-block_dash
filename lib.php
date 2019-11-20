@@ -25,6 +25,7 @@
 use block_dash\data_grid\field\field_definition;
 use block_dash\data_grid\field\user_profile_link_field_definition;
 use block_dash\template\users_template;
+use block_dash\template\form\preferences_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -77,4 +78,50 @@ function block_dash_register_templates() {
             'class' => users_template::class
         ]
     ];
+}
+
+/**
+ * Serve the new group form as a fragment.
+ *
+ * @param array $args List of named arguments for the fragment loader.
+ * @return string
+ */
+function block_dash_output_fragment_block_preferences_form($args) {
+    global $CFG;
+
+    $args = (object) $args;
+    $context = $args->context;
+    $o = '';
+
+    $block = block_instance_by_id($context->instanceid);
+
+    $form = new preferences_form(null, ['block' => $block]);
+
+    require_capability('block/dash:addinstance', $context);
+
+    if (isset($block->config->preferences)) {
+        $data = block_dash_flatten_array($block->config->preferences, 'config_preferences');
+        $form->set_data($data);
+    }
+
+    ob_start();
+    $form->display();
+    $o .= ob_get_contents();
+    ob_end_clean();
+
+    return $o;
+}
+
+function block_dash_flatten_array($array, $prefix = '')
+{
+    $result = array();
+    foreach($array as $key=>$value) {
+        if(is_array($value)) {
+            $result = $result + block_dash_flatten_array($value, $prefix . '[' . $key . ']');
+        }
+        else {
+            $result[$prefix . '[' . $key . ']'] = $value;
+        }
+    }
+    return $result;
 }

@@ -50,4 +50,13 @@ $functions = [
         'ajax'          => true,
         'loginrequired' => true,
     ],
+    'block_dash_submit_preferences_form' => [
+        'classname'     => 'block_dash\external',
+        'classpath'     => '',
+        'methodname'    => 'submit_preferences_form',
+        'description'   => 'Handle preferences form submission.',
+        'ajax'          => true,
+        'type'          => 'write',
+        'capabilities'  => 'block/dash:addinstance',
+    ]
 ];

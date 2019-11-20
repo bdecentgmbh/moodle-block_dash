@@ -7,7 +7,7 @@ namespace block_dash\data_grid\field;
 interface field_definition_interface
 {
     const VISIBILITY_VISIBLE = 1;
-    const VISIBILITY_HIDDEN = 2;
+    const VISIBILITY_HIDDEN = 0;
 
     const DEFAULT_EMPTY_VALUE = '-';
 

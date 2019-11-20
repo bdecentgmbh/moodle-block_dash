@@ -227,7 +227,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @param $name
      * @return bool
      */
-    public function has_field($name)
+    public function has_field_definition($name)
     {
         return !empty($this->get_field_definition($name));
     }
@@ -421,7 +421,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @throws \moodle_exception
      * @return data_collection_interface
      * @since 2.2
-     *
      */
     public function get_data()
     {
@@ -440,7 +439,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
             foreach ($field_definitions as $field_definition) {
                 $name = $field_definition->get_name();
 
-                if (!$field_definition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
+                if ($field_definition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
                     unset($record->$name);
                     continue;
                 }

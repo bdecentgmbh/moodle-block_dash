@@ -67,3 +67,4 @@ $string['template'] = 'Template';
 $string['templatecreated'] = 'Template <b>{$a->name}</b> successfully created.';
 $string['templateedited'] = 'Template <b>{$a->name}</b> successfully edited.';
 $string['templatename'] = 'Template name';
+$string['userstat'] = 'User stat';

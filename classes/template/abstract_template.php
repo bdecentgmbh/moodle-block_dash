@@ -4,12 +4,13 @@
 namespace block_dash\template;
 
 use block_dash\data_grid\configurable_data_grid;
+use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\data_grid\paginator;
 use block_dash\output\renderer;
 
-abstract class abstract_template implements template_interface
+abstract class abstract_template implements template_interface, \templatable
 {
     /**
      * @var \context
@@ -22,6 +23,11 @@ abstract class abstract_template implements template_interface
     private $data_grid;
 
     /**
+     * @var data_collection_interface
+     */
+    private $data;
+
+    /**
      * @var filter_collection_interface
      */
     private $filter_collection;
@@ -31,7 +37,7 @@ abstract class abstract_template implements template_interface
     /**
      * @var array
      */
-    private $preferences;
+    private $preferences = [];
 
     /**
      * @param \context $context
@@ -47,17 +53,6 @@ abstract class abstract_template implements template_interface
             $this->data_grid = new configurable_data_grid($this->get_context());
             $this->data_grid->set_query_template($this->get_query_template());
             $this->data_grid->set_field_definitions($this->get_available_field_definitions());
-
-            if ($this->preferences && isset($this->preferences['available_fields'])) {
-                foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
-                    if (isset($preferences['visible'])) {
-                        if ($fielddefinition = $this->data_grid->get_field_definition($fieldname)) {
-                            $fielddefinition->set_visibility($preferences['visible']);
-                        }
-                    }
-                }
-            }
-
             $this->data_grid->init();
         }
 
@@ -77,6 +72,49 @@ abstract class abstract_template implements template_interface
     }
 
     /**
+     * Modify objects before data is retrieved.
+     */
+    public function before_data()
+    {
+        if ($this->preferences && isset($this->preferences['available_fields'])) {
+            foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
+                if (isset($preferences['visible'])) {
+                    if ($fielddefinition = $this->get_data_grid()->get_field_definition($fieldname)) {
+                        $fielddefinition->set_visibility($preferences['visible']);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @return data_collection_interface
+     * @throws \moodle_exception
+     */
+    public final function get_data()
+    {
+        if (is_null($this->data)) {
+            $this->before_data();
+
+            $data_grid = $this->get_data_grid();
+            $data_grid->set_filter_collection($this->get_filter_collection());
+            $this->data = $data_grid->get_data();
+
+            $this->after_data();
+        }
+
+        return $this->data;
+    }
+
+    /**
+     * Modify objects after data is retrieved.
+     */
+    public function after_data()
+    {
+
+    }
+
+    /**
      * @return \context
      */
     public function get_context()
@@ -85,52 +123,42 @@ abstract class abstract_template implements template_interface
     }
 
     /**
-     * @return string
+     * @param \renderer_base $output
+     * @return array|\renderer_base|\stdClass|string
+     * @throws \coding_exception
      */
-    public final function render()
+    public final function export_for_template(\renderer_base $output)
     {
-        global $PAGE, $OUTPUT;
+        global $OUTPUT;
 
-        $output = '';
-
-        $data_grid = $this->get_data_grid();
-
-        $data_grid->set_filter_collection($this->get_filter_collection());
+        $templatedata = [
+            'error' => ''
+        ];
 
         try {
-            $data = $data_grid->get_data();
+            $data = $this->get_data();
         } catch (\Exception $e) {
             $error = \html_writer::tag('p', get_string('databaseerror', 'block_dash'));
             if (is_siteadmin()) {
                 $error .= \html_writer::tag('p', $e->getMessage());
             }
 
-            $output .= $OUTPUT->notification($error, 'error');
+            $templatedata['error'] .= $OUTPUT->notification($error, 'error');
         }
-
-        /** @var renderer $renderer */
-        $renderer = $PAGE->get_renderer('block_dash');
 
         $formhtml = $this->get_filter_collection()->create_form_elements();
 
         if (isset($data)) {
-            try {
-                $output .= $renderer->render_from_template($this->get_mustache_template_name(), [
-                    'filter_form_html' => $formhtml,
-                    'data' => $data,
-                    'paginator' => $OUTPUT->render_from_template(paginator::TEMPLATE, $data_grid->get_paginator()->export_for_template($OUTPUT))
-                ]);
-            } catch (\Exception $e) {
-                $error = \html_writer::tag('p', get_string('parseerror', 'block_dash'));
-                if (is_siteadmin()) {
-                    $error .= \html_writer::tag('p', $e->getMessage());
-                }
-
-                $output .= $OUTPUT->notification($error, 'error');
-            }
+            $templatedata = array_merge($templatedata, [
+                'filter_form_html' => $formhtml,
+                'data' => $data,
+                'paginator' => $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_grid()->get_paginator()
+                    ->export_for_template($OUTPUT)),
+                'preferences' => $this->get_all_preferences()
+            ]);
         }
 
-        return $output;
+        return $templatedata;
     }
 
     /**
@@ -181,6 +209,11 @@ abstract class abstract_template implements template_interface
         }
 
         return [];
+    }
+
+    public final function get_all_preferences()
+    {
+        return $this->preferences;
     }
 
     /**

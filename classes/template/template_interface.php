@@ -74,11 +74,6 @@ interface template_interface
     public function set_mustache_template_name($template_name);
 
     /**
-     * @return string
-     */
-    public function render();
-
-    /**
      * @return data_grid
      */
     public function get_data_grid();

@@ -22,6 +22,9 @@
 
 namespace block_dash\output;
 
+use block_dash\template\abstract_template;
+use block_dash\template\template_interface;
+
 defined('MOODLE_INTERNAL') || die();
 
 class renderer extends \plugin_renderer_base {
@@ -109,20 +112,15 @@ class renderer extends \plugin_renderer_base {
         return trim($this->get_mustache()->render($templatestring, $context));
     }
 
-    public function render_editing_tabs($templateid, $currentsection = 'general')
+    /**
+     * Render a template.
+     *
+     * @param abstract_template $template
+     * @return bool|string
+     * @throws \coding_exception
+     */
+    public function render_template(abstract_template $template)
     {
-        global $OUTPUT;
-
-        $tabs = [];
-        $tabs[] = new \tabobject('general',
-            new \moodle_url('/blocks/dash/template.php',
-                ['action' => 'edit', 'section' => 'general', 'id' => $templateid]),
-            get_string('general'));
-        $tabs[] = new \tabobject('fields',
-            new \moodle_url('/blocks/dash/template.php',
-                ['action' => 'edit', 'section' => 'fields', 'id' => $templateid]),
-            get_string('fields', 'block_dash'));
-
-        return $OUTPUT->tabtree($tabs, $currentsection);
+        return $this->render_from_template($template->get_mustache_template_name(), $template->export_for_template($this));
     }
 }

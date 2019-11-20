@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/externallib.php");
 
 use block_dash\template\form\preferences_form;
-use block_dash\template\template_factory;
+use block_dash\output\renderer;
 use external_api;
 
 /**
@@ -65,6 +65,8 @@ class external extends external_api
      */
     public static function get_block_content($block_instance_id, $filter_form_data, $page)
     {
+        global $PAGE;
+
         $params = self::validate_parameters(self::get_block_content_parameters(), [
             'block_instance_id' => $block_instance_id,
             'page' => $page,
@@ -80,6 +82,9 @@ class external extends external_api
 
         self::validate_context($block->context);
 
+        /** @var renderer $renderer */
+        $renderer = $PAGE->get_renderer('block_dash');
+
         if ($block) {
             $bb = block_builder::create($block);
             foreach (json_decode($params['filter_form_data'], true) as $filter) {
@@ -91,7 +96,7 @@ class external extends external_api
 
             $bb->get_configuration()->get_template()->get_data_grid()->get_paginator()->set_current_page($params['page']);
 
-            return ['html' => $bb->get_configuration()->get_template()->render()];
+            return ['html' => $renderer->render_template($bb->get_configuration()->get_template())];
         }
 
         return ['html' => 'Error'];

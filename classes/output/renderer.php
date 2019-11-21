@@ -22,8 +22,8 @@
 
 namespace block_dash\output;
 
-use block_dash\template\abstract_template;
-use block_dash\template\template_interface;
+use block_dash\data_source\abstract_data_source;
+use block_dash\data_source\data_source_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -113,15 +113,15 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
-     * Render a template.
+     * Render a data source.
      *
-     * @param abstract_template $template
+     * @param abstract_data_source $datasource
      * @return bool|string
      * @throws \coding_exception
      */
-    public function render_template(abstract_template $template)
+    public function render_data_source(abstract_data_source $datasource)
     {
-        return $this->render_from_template($template->get_layout()->get_mustache_template_name(),
-            $template->export_for_template($this));
+        return $this->render_from_template($datasource->get_layout()->get_mustache_template_name(),
+            $datasource->export_for_template($this));
     }
 }

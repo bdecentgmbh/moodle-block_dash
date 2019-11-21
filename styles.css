@@ -9,11 +9,11 @@
 }
 
 /** Fix width when dragging table row. **/
-body#page-blocks-dash-template .ui-sortable-helper {
+body#page-blocks-dash-data-source .ui-sortable-helper {
     display: table;
 }
 
-body#page-blocks-dash-template .drag-handle {
+body#page-blocks-dash-data-source .drag-handle {
     cursor: pointer;
 }
 

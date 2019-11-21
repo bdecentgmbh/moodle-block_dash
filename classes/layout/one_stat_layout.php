@@ -1,4 +1,24 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    block_dash
+ * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace block_dash\layout;
 
@@ -15,7 +35,7 @@ class one_stat_layout extends abstract_layout
     }
 
     /**
-     * If the template should display filters (does not affect conditions).
+     * If the data source should display filters (does not affect conditions).
      *
      * @return bool
      */
@@ -25,7 +45,7 @@ class one_stat_layout extends abstract_layout
     }
 
     /**
-     * If the template fields can be hidden or shown conditionally.
+     * If the data source fields can be hidden or shown conditionally.
      *
      * @return bool
      */
@@ -35,7 +55,7 @@ class one_stat_layout extends abstract_layout
     }
 
     /**
-     * If the template should display pagination links.
+     * If the data source should display pagination links.
      *
      * @return bool
      */
@@ -55,7 +75,7 @@ class one_stat_layout extends abstract_layout
         $mform->setType('config_preferences[stat_field_label]', PARAM_TEXT);
 
         $options = [];
-        foreach ($this->get_template()->get_available_field_definitions() as $field_definition) {
+        foreach ($this->get_data_source()->get_available_field_definitions() as $field_definition) {
             $options[$field_definition->get_name()] = $field_definition->get_title();
         }
 
@@ -67,22 +87,22 @@ class one_stat_layout extends abstract_layout
     }
 
     /**
-     * Modify objects before data is retrieved in the template.
+     * Modify objects before data is retrieved in the data source.
      */
     public function before_data()
     {
         parent::before_data();
 
-        if (!$statfielddefinition = $this->get_template()->get_preferences('stat_field_definition')) {
+        if (!$statfielddefinition = $this->get_data_source()->get_preferences('stat_field_definition')) {
             return;
         }
 
-        foreach ($this->get_template()->get_data_grid()->get_field_definitions() as $field_definition) {
+        foreach ($this->get_data_source()->get_data_grid()->get_field_definitions() as $field_definition) {
             $field_definition->set_visibility(field_definition::VISIBILITY_HIDDEN);
         }
 
-        if ($this->get_template()->get_data_grid()->has_field_definition($statfielddefinition)) {
-            $this->get_template()->get_data_grid()->get_field_definition($statfielddefinition)
+        if ($this->get_data_source()->get_data_grid()->has_field_definition($statfielddefinition)) {
+            $this->get_data_source()->get_data_grid()->get_field_definition($statfielddefinition)
                 ->set_visibility(field_definition::VISIBILITY_VISIBLE);
         }
     }

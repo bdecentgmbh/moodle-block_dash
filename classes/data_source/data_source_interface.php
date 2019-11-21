@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\template;
+namespace block_dash\data_source;
 
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
@@ -31,11 +29,11 @@ use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\layout\layout_interface;
 
 /**
- * A template defines which query, fields, and filters are used to retrieve data from a data grid.
+ * A data source defines which query, fields, and filters are used to retrieve data from a data grid.
  *
- * @package block_dash\template
+ * @package block_dash\data_source
  */
-interface template_interface
+interface data_source_interface
 {
     /**
      * Get data grid. Build if necessary.
@@ -102,14 +100,14 @@ interface template_interface
     public function get_preferences($name);
 
     /**
-     * Get all preferences associated with the template.
+     * Get all preferences associated with the data source.
      *
      * @return array
      */
     public function get_all_preferences();
 
     /**
-     * Set preferences on this template.
+     * Set preferences on this data source.
      *
      * @param array $preferences
      */

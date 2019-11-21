@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,10 +22,9 @@
 
 use block_dash\data_grid\field\field_definition;
 use block_dash\data_grid\field\user_profile_link_field_definition;
-use block_dash\template\users_template;
-use block_dash\template\form\preferences_form;
-use block_dash\template\user_stat_template;
+use block_dash\data_source\form\preferences_form;
 use block_dash\layout\grid_layout;
+use block_dash\data_source\users_data_source;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -73,15 +70,11 @@ function block_dash_register_field_definitions() {
     return $definitions;
 }
 
-function block_dash_register_templates() {
+function block_dash_register_data_sources() {
     return [
         [
             'name' => get_string('users'),
-            'class' => users_template::class
-        ],
-        [
-            'name' => get_string('userstat', 'block_dash'),
-            'class' => user_stat_template::class
+            'class' => users_data_source::class
         ]
     ];
 }

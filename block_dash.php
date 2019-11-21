@@ -68,7 +68,7 @@ class block_dash extends block_base {
 
         // Conditionally hide the block when empty.
         if (isset($this->config->hide_when_empty) && $this->config->hide_when_empty
-            && $bb->get_configuration()->get_template()->get_data()->is_empty() && !$PAGE->user_is_editing()) {
+            && $bb->get_configuration()->get_data_source()->get_data()->is_empty() && !$PAGE->user_is_editing()) {
            return $this->content;
         }
 

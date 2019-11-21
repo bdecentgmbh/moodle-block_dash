@@ -15,21 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing InfoDash block instances.
- *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\template\form;
+namespace block_dash\data_source\form;
 
 use block_dash\configuration\configuration;
 
 require_once($CFG->libdir . '/formslib.php');
 
 /**
- * Form for editing InfoDash block instances.
+ * Form for editing block preferences.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
@@ -43,7 +41,7 @@ class preferences_form extends \moodleform
 
         $configuration = configuration::create_from_instance($block);
         if ($configuration->is_fully_configured()) {
-            $configuration->get_template()->build_preferences_form($this, $this->_form);
+            $configuration->get_data_source()->build_preferences_form($this, $this->_form);
         }
     }
 }

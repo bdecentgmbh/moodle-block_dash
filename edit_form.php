@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_dash\template\template_factory;
+use block_dash\data_source\data_source_factory;
 
 /**
  * Form for editing InfoDash block instances.
@@ -57,17 +57,15 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_css_class', get_string('cssclass', 'block_dash'));
         $mform->setType('config_css_class', PARAM_TEXT);
 
-        $mform->addElement('header', 'choose_template', get_string('choosetemplate', 'block_dash'));
+        $mform->addElement('header', 'choose_data_source', get_string('choosedatasource', 'block_dash'));
 
-        $mform->addElement('select', 'config_template_idnumber', get_string('choosetemplate', 'block_dash'),
-            template_factory::get_template_form_options());
+        $mform->addElement('select', 'config_data_source_idnumber', get_string('choosedatasource', 'block_dash'),
+            data_source_factory::get_data_source_form_options());
 
-        if (isset($this->block->config->template_idnumber) &&
-            $template = template_factory::get_template($this->block->config->template_idnumber, $parentcontext)) {
-            $template->build_preferences_form($this, $this->_form);
+        if (isset($this->block->config->data_source_idnumber) &&
+            $datasource = data_source_factory::get_data_source($this->block->config->data_source_idnumber, $parentcontext)) {
+            $datasource->build_preferences_form($this, $this->_form);
         }
-
-        $mform->addElement('static', 'preferences', get_string('preferences'), html_writer::div('', 'template_preferences'));
 
         $mform->addElement('header', 'extracontent', get_string('extracontent', 'block_dash'));
 

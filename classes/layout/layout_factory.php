@@ -20,7 +20,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\template;
+namespace block_dash\layout;
+
+use block_dash\data_source\data_source_interface;
 
 /**
  * Responsible for creating layouts on request.
@@ -81,17 +83,17 @@ class layout_factory
 
     /**
      * @param string $identifier
-     * @param template_interface $template
-     * @return template_interface
+     * @param data_source_interface $datasource
+     * @return data_source_interface
      */
-    public static function get_layout($identifier, template_interface $template)
+    public static function get_layout($identifier, data_source_interface $datasource)
     {
         if (!self::exists($identifier)) {
             return null;
         }
 
         if (class_exists($identifier)) {
-            return new $identifier($template);
+            return new $identifier($datasource);
         }
 
         return null;

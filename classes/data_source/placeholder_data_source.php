@@ -20,45 +20,50 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\layout;
+namespace block_dash\data_source;
 
-class grid_layout extends abstract_layout
+use block_dash\block_builder;
+use block_dash\data_grid\field\field_definition_interface;
+use block_dash\data_grid\filter\filter_collection;
+use block_dash\data_grid\filter\filter_collection_interface;
+
+class placeholder_data_source extends abstract_data_source
 {
+    /**
+     * Get human readable name of data source.
+     *
+     * @return string
+     */
+    public function get_name()
+    {
+        return '';
+    }
+
     /**
      * @return string
      */
-    public function get_mustache_template_name()
+    public function get_query_template()
     {
-        return 'block_dash/layout_grid';
+        return 'SELECT %%SELECT%% FROM {user} u';
     }
 
     /**
-     * If the template should display pagination links.
-     *
-     * @return bool
+     * @return field_definition_interface[]
+     * @throws \coding_exception
      */
-    public function supports_pagination()
+    public function get_available_field_definitions()
     {
-        return true;
+        return block_builder::get_field_definitions([
+            'u_id',
+            'u_firstname'
+        ]);
     }
 
     /**
-     * If the template fields can be hidden or shown conditionally.
-     *
-     * @return bool
+     * @return filter_collection_interface
      */
-    public function supports_field_visibility()
+    public function build_filter_collection()
     {
-        return true;
-    }
-
-    /**
-     * If the template should display filters (does not affect conditions).
-     *
-     * @return bool
-     */
-    public function supports_filtering()
-    {
-        return true;
+        return new filter_collection(get_class($this), $this->get_context());
     }
 }

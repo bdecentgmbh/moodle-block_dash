@@ -46,7 +46,7 @@ $capabilities = [
         ],
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ],
-    'block/dash:managetemplates' => [
+    'block/dash:managedatasources' => [
         'riskbitmask'  => RISK_MANAGETRUST,
         'captype'      => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

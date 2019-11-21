@@ -1,10 +1,29 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package    block_dash
+ * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace block_dash\configuration;
 
-use block_dash\template\placeholder_template;
-use block_dash\template\template_factory;
+use block_dash\data_source\placeholder_data_source;
+use block_dash\data_source\data_source_factory;
 
 class configuration extends abstract_configuration
 {
@@ -12,19 +31,19 @@ class configuration extends abstract_configuration
     {
         $parentcontext = \context::instance_by_id($block_instance->instance->parentcontextid);
 
-        $template = null;
-        if (isset($block_instance->config->template_idnumber)) {
-            $template = template_factory::get_template($block_instance->config->template_idnumber, $parentcontext);
+        $datasource = null;
+        if (isset($block_instance->config->data_source_idnumber)) {
+            $datasource = data_source_factory::get_data_source($block_instance->config->data_source_idnumber, $parentcontext);
         }
 
-        if (is_null($template)) {
-            $template = new placeholder_template($parentcontext);
+        if (is_null($datasource)) {
+            $datasource = new placeholder_data_source($parentcontext);
         }
 
         if (isset($block_instance->config->preferences) && is_array($block_instance->config->preferences)) {
-            $template->set_preferences($block_instance->config->preferences);
+            $datasource->set_preferences($block_instance->config->preferences);
         }
 
-        return new configuration($parentcontext, $template);
+        return new configuration($parentcontext, $datasource);
     }
 }

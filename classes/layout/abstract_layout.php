@@ -24,7 +24,7 @@ namespace block_dash\layout;
 
 use block_dash\data_grid\filter\condition;
 use block_dash\data_grid\paginator;
-use block_dash\template\template_interface;
+use block_dash\data_source\data_source_interface;
 
 /**
  * Extend this class when creating new layouts.
@@ -38,33 +38,33 @@ use block_dash\template\template_interface;
 abstract class abstract_layout implements layout_interface, \templatable
 {
     /**
-     * The template used as a data/configuration source for this layout.
+     * The data source used as a data/configuration source for this layout.
      *
-     * @var template_interface
+     * @var data_source_interface
      */
-    private $template;
+    private $datasource;
 
     /**
-     * @param template_interface $template
+     * @param data_source_interface $datasource
      */
-    public function __construct(template_interface $template)
+    public function __construct(data_source_interface $datasource)
     {
-        $this->template = $template;
+        $this->datasource = $datasource;
     }
 
     /**
-     * Get the template used as a data/configuration source for this layout.
+     * Get the data source used as a data/configuration source for this layout.
      *
-     * @return template_interface
+     * @return data_source_interface
      */
-    public function get_template()
+    public function get_data_source()
     {
-        return $this->template;
+        return $this->datasource;
     }
 
     /**
-     * Modify objects before data is retrieved in the template. This allows the layout to make decisions on the
-     * template and data grid.
+     * Modify objects before data is retrieved in the data source. This allows the layout to make decisions on the
+     * data source and data grid.
      */
     public function before_data()
     {
@@ -72,8 +72,8 @@ abstract class abstract_layout implements layout_interface, \templatable
     }
 
     /**
-     * Modify objects after data is retrieved in the template. This allows the layout to make decisions on the
-     * template and data grid.
+     * Modify objects after data is retrieved in the data source. This allows the layout to make decisions on the
+     * data source and data grid.
      */
     public function after_data()
     {
@@ -83,7 +83,7 @@ abstract class abstract_layout implements layout_interface, \templatable
     /**
      * Add form elements to the preferences form when a user is configuring a block.
      *
-     * This extends the form built by the template. When a user chooses a layout, specific form elements may be
+     * This extends the form built by the data source. When a user chooses a layout, specific form elements may be
      * displayed after a quick refresh of the form.
      *
      * Be sure to call parent::build_preferences_form() if you override this method.
@@ -94,11 +94,11 @@ abstract class abstract_layout implements layout_interface, \templatable
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform)
     {
-        $filter_collection = $this->get_template()->get_filter_collection();
+        $filter_collection = $this->get_data_source()->get_filter_collection();
 
         if ($this->supports_field_visibility()) {
             $group = [];
-            foreach ($this->get_template()->get_available_field_definitions() as $available_field_definition) {
+            foreach ($this->get_data_source()->get_available_field_definitions() as $available_field_definition) {
                 $fieldname = 'config_preferences[available_fields][' . $available_field_definition->get_name() . '][visible]';
                 $group[] = $mform->createElement('advcheckbox', $fieldname, $available_field_definition->get_title(), null,
                     ['group' => 1]);
@@ -153,7 +153,7 @@ abstract class abstract_layout implements layout_interface, \templatable
         ];
 
         try {
-            $data = $this->get_template()->get_data();
+            $data = $this->get_data_source()->get_data();
         } catch (\Exception $e) {
             $error = \html_writer::tag('p', get_string('databaseerror', 'block_dash'));
             if (is_siteadmin()) {
@@ -163,17 +163,17 @@ abstract class abstract_layout implements layout_interface, \templatable
             $templatedata['error'] .= $OUTPUT->notification($error, 'error');
         }
 
-        $formhtml = $this->get_template()->get_filter_collection()->create_form_elements();
+        $formhtml = $this->get_data_source()->get_filter_collection()->create_form_elements();
 
         if (isset($data)) {
             $templatedata = array_merge($templatedata, [
                 'filter_form_html' => $formhtml,
                 'data' => $data,
-                'paginator' => $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_template()->get_data_grid()->get_paginator()
+                'paginator' => $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()->get_data_grid()->get_paginator()
                     ->export_for_template($OUTPUT)),
                 'supports_filtering' => $this->supports_filtering(),
                 'supports_pagination' => $this->supports_pagination(),
-                'preferences' => $this->get_template()->get_all_preferences()
+                'preferences' => $this->get_data_source()->get_all_preferences()
             ]);
         }
 

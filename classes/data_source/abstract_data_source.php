@@ -1,7 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package    block_dash
+ * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-namespace block_dash\template;
+namespace block_dash\data_source;
 
 use block_dash\data_grid\configurable_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
@@ -11,7 +30,7 @@ use block_dash\layout\grid_layout;
 use block_dash\layout\layout_interface;
 use block_dash\layout\one_stat_layout;
 
-abstract class abstract_template implements template_interface, \templatable
+abstract class abstract_data_source implements data_source_interface, \templatable
 {
     /**
      * @var \context
@@ -212,7 +231,7 @@ abstract class abstract_template implements template_interface, \templatable
     }
 
     /**
-     * Get all preferences associated with the template.
+     * Get all preferences associated with the data source.
      *
      * @return array
      */
@@ -222,7 +241,7 @@ abstract class abstract_template implements template_interface, \templatable
     }
 
     /**
-     * Set preferences on this template.
+     * Set preferences on this data source.
      *
      * @param array $preferences
      */

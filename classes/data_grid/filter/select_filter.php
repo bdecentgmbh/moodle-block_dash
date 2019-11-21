@@ -137,7 +137,7 @@ abstract class select_filter extends filter
 
         $_options = [];
         foreach ($options as $value => $label) {
-            $_options[] = ['value' => $value, 'label' => $label];
+            $_options[] = ['value' => $value, 'label' => $label, 'selected' => $this->get_raw_value() == $value];
         }
 
         $name = $element_name_prefix . $this->get_name();

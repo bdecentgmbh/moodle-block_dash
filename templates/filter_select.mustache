@@ -1,5 +1,5 @@
 <select name="{{name}}" class="form-control filter-form-control">
     {{#options}}
-        <option value="{{value}}">{{label}}</option>
+        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
     {{/options}}
 </select>

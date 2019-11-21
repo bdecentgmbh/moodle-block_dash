@@ -6,13 +6,10 @@ namespace block_dash\template;
 use block_dash\data_grid\configurable_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
-use block_dash\data_grid\filter\condition;
 use block_dash\data_grid\filter\filter_collection_interface;
-use block_dash\data_grid\paginator;
 use block_dash\layout\grid_layout;
 use block_dash\layout\layout_interface;
 use block_dash\layout\one_stat_layout;
-use block_dash\output\renderer;
 
 abstract class abstract_template implements template_interface, \templatable
 {
@@ -54,12 +51,20 @@ abstract class abstract_template implements template_interface, \templatable
         $this->context = $context;
     }
 
+    /**
+     * Get data grid. Build if necessary.
+     *
+     * @return data_grid_interface
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     public final function get_data_grid()
     {
         if (is_null($this->data_grid)) {
             $this->data_grid = new configurable_data_grid($this->get_context());
             $this->data_grid->set_query_template($this->get_query_template());
             $this->data_grid->set_field_definitions($this->get_available_field_definitions());
+            $this->data_grid->set_supports_pagination($this->get_layout()->supports_pagination());
             $this->data_grid->init();
         }
 
@@ -67,6 +72,8 @@ abstract class abstract_template implements template_interface, \templatable
     }
 
     /**
+     * Get filter collection for data grid. Build if necessary.
+     *
      * @return filter_collection_interface
      */
     public final function get_filter_collection()
@@ -164,38 +171,7 @@ abstract class abstract_template implements template_interface, \templatable
      */
     public final function export_for_template(\renderer_base $output)
     {
-        global $OUTPUT;
-
-        $templatedata = [
-            'error' => ''
-        ];
-
-        try {
-            $data = $this->get_data();
-        } catch (\Exception $e) {
-            $error = \html_writer::tag('p', get_string('databaseerror', 'block_dash'));
-            if (is_siteadmin()) {
-                $error .= \html_writer::tag('p', $e->getMessage());
-            }
-
-            $templatedata['error'] .= $OUTPUT->notification($error, 'error');
-        }
-
-        $formhtml = $this->get_filter_collection()->create_form_elements();
-
-        if (isset($data)) {
-            $templatedata = array_merge($templatedata, [
-                'filter_form_html' => $formhtml,
-                'data' => $data,
-                'paginator' => $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_grid()->get_paginator()
-                    ->export_for_template($OUTPUT)),
-                'supports_filtering' => $this->get_layout()->supports_filtering(),
-                'supports_pagination' => $this->get_layout()->supports_pagination(),
-                'preferences' => $this->get_all_preferences()
-            ]);
-        }
-
-        return $templatedata;
+        return $this->get_layout()->export_for_template($output);
     }
 
     /**
@@ -221,8 +197,10 @@ abstract class abstract_template implements template_interface, \templatable
     #region Preferences
 
     /**
+     * Get a specific preference.
+     *
      * @param string $name
-     * @return array
+     * @return mixed|array
      */
     public final function get_preferences($name)
     {
@@ -233,12 +211,19 @@ abstract class abstract_template implements template_interface, \templatable
         return [];
     }
 
+    /**
+     * Get all preferences associated with the template.
+     *
+     * @return array
+     */
     public final function get_all_preferences()
     {
         return $this->preferences;
     }
 
     /**
+     * Set preferences on this template.
+     *
      * @param array $preferences
      */
     public final function set_preferences(array $preferences)

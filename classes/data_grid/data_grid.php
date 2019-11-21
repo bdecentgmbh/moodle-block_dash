@@ -77,6 +77,11 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     private $paginator;
 
     /**
+     * @var bool
+     */
+    private $supportspagination;
+
+    /**
      * @var data_collection_interface
      */
     private $data_collection;
@@ -535,11 +540,19 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     /**
      * Override to disable pagination for this grid.
      *
-     * @return bool
+     * @param bool $support
+     */
+    public function set_supports_pagination($support)
+    {
+       $this->supportspagination = $support;
+    }
+
+    /**
+     * @return bool If data grid should use pagination to limit results.
      */
     public function supports_pagination()
     {
-        return true;
+        return $this->supportspagination;
     }
 
     /**

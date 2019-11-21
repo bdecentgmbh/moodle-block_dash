@@ -5,6 +5,7 @@ namespace block_dash;
 use block_dash\configuration\configuration_interface;
 use block_dash\configuration\configuration;
 use block_dash\data_grid\field\field_definition_interface;
+use block_dash\output\renderer;
 
 class block_builder
 {
@@ -41,10 +42,18 @@ class block_builder
     {
         global $OUTPUT, $PAGE;
 
+        /** @var renderer $renderer */
+        $renderer = $PAGE->get_renderer('block_dash');
+
         $text = '';
 
         if ($this->configuration->is_fully_configured()) {
+            $bb = block_builder::create($this->block_instance);
+
+            $bb->get_configuration()->get_template()->get_data_grid()->get_paginator()->set_current_page(0);
+
             $text .= $OUTPUT->render_from_template('block_dash/block', [
+                'preloaded' => $renderer->render_template($bb->get_configuration()->get_template()),
                 'block_instance_id' => $this->block_instance->instance->id,
                 'block_context_id' => $this->block_instance->context->id,
                 'editing' => $PAGE->user_is_editing()

@@ -133,6 +133,16 @@ class data_collection implements data_collection_interface, \ArrayAccess
     }
 
     /**
+     * Returns true if data collection has no data or child collections.
+     *
+     * @return bool
+     */
+    public function is_empty()
+    {
+        return empty($this->data) && !$this->has_child_collections();
+    }
+
+    /**
      * Whether a offset exists
      * @link https://php.net/manual/en/arrayaccess.offsetexists.php
      * @param mixed $offset <p>

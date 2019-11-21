@@ -27,6 +27,7 @@ use block_dash\data_grid\field\user_profile_link_field_definition;
 use block_dash\template\users_template;
 use block_dash\template\form\preferences_form;
 use block_dash\template\user_stat_template;
+use block_dash\layout\grid_layout;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -54,7 +55,7 @@ function block_dash_register_field_definitions() {
         new field_definition(['user'], 'u_picture', 'u.picture', get_string('pictureofuser')),
         new user_profile_link_field_definition(['user'], 'u_profile_url', 'u.id', 'User profile URL'),
         new field_definition(['group'], 'g_id', 'g.id', get_string('group')),
-        new field_definition(['group'], 'g_name', 'g.name', get_string('group'))
+        new field_definition(['group'], 'g_name', 'g.name', get_string('group')),
     ];
 
     $i = 0;
@@ -85,6 +86,19 @@ function block_dash_register_templates() {
     ];
 }
 
+function block_dash_register_layouts() {
+    return [
+        [
+            'name' => get_string('layoutgrid', 'block_dash'),
+            'class' => grid_layout::class
+        ],
+        [
+            'name' => get_string('layoutonestat', 'block_dash'),
+            'class' => grid_layout::class
+        ]
+    ];
+}
+
 /**
  * Serve the new group form as a fragment.
  *
@@ -100,7 +114,7 @@ function block_dash_output_fragment_block_preferences_form($args) {
 
     $block = block_instance_by_id($context->instanceid);
 
-    $form = new preferences_form(null, ['block' => $block]);
+    $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'info-dash-preferences-form']);
 
     require_capability('block/dash:addinstance', $context);
 

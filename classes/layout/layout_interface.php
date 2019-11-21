@@ -25,7 +25,7 @@ namespace block_dash\layout;
 use block_dash\template\template_interface;
 
 /**
- * A layout contains information on how to display data.
+ * A layout contains information on how to display data. @see abstract_layout for creating new layouts.
  *
  * @package block_dash\layout
  */
@@ -63,18 +63,37 @@ interface layout_interface
     public function supports_pagination();
 
     /**
-     * @param \moodleform $form
-     * @param \MoodleQuickForm $mform
-     */
-    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform);
-
-    /**
-     * Modify objects before data is retrieved in the template.
+     * Modify objects before data is retrieved in the template. This allows the layout to make decisions on the
+     * template and data grid.
      */
     public function before_data();
 
     /**
-     * Modify objects after data is retrieved in the template.
+     * Modify objects after data is retrieved in the template. This allows the layout to make decisions on the
+     * template and data grid.
      */
     public function after_data();
+
+    /**
+     * Add form elements to the preferences form when a user is configuring a block.
+     *
+     * This extends the form built by the template. When a user chooses a layout, specific form elements may be
+     * displayed after a quick refresh of the form.
+     *
+     * Be sure to call parent::build_preferences_form() if you override this method.
+     *
+     * @param \moodleform $form
+     * @param \MoodleQuickForm $mform
+     * @throws \coding_exception
+     */
+    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform);
+
+    /**
+     * Get data for layout mustache template.
+     *
+     * @param \renderer_base $output
+     * @return array|\stdClass
+     * @throws \coding_exception
+     */
+    public function export_for_template(\renderer_base $output);
 }

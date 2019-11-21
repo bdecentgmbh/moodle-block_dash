@@ -24,25 +24,96 @@
 
 namespace block_dash\template;
 
-use block_dash\data_grid\data_grid;
+use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\layout\layout_interface;
 
+/**
+ * A template defines which query, fields, and filters are used to retrieve data from a data grid.
+ *
+ * @package block_dash\template
+ */
 interface template_interface
 {
     /**
-     * Get human readable name of template.
+     * Get data grid. Build if necessary.
      *
-     * @return string
+     * @return data_grid_interface
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
-    public function get_name();
+    public function get_data_grid();
+
+    /**
+     * Get filter collection for data grid. Build if necessary.
+     *
+     * @return filter_collection_interface
+     */
+    public function get_filter_collection();
+
+    /**
+     * Modify objects before data is retrieved.
+     */
+    public function before_data();
+
+    /**
+     * @return data_collection_interface
+     */
+    public function get_data();
+
+    /**
+     * Modify objects after data is retrieved.
+     */
+    public function after_data();
+
+    /**
+     * @return layout_interface
+     */
+    public function get_layout();
 
     /**
      * @return \context
      */
     public function get_context();
+
+    /**
+     * @param \renderer_base $output
+     * @return array|\renderer_base|\stdClass|string
+     */
+    public function export_for_template(\renderer_base $output);
+
+    /**
+     * Add form fields to the block edit form. IMPORTANT: Prefix field names with config_ otherwise the values will
+     * not be saved.
+     *
+     * @param \moodleform $form
+     * @param \MoodleQuickForm $mform
+     */
+    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform);
+
+    /**
+     * Get a specific preference.
+     *
+     * @param string $name
+     * @return mixed|array
+     */
+    public function get_preferences($name);
+
+    /**
+     * Get all preferences associated with the template.
+     *
+     * @return array
+     */
+    public function get_all_preferences();
+
+    /**
+     * Set preferences on this template.
+     *
+     * @param array $preferences
+     */
+    public function set_preferences(array $preferences);
 
     /**
      * @return string
@@ -57,40 +128,5 @@ interface template_interface
     /**
      * @return filter_collection_interface
      */
-    public function get_filter_collection();
-
-    /**
-     * @return filter_collection_interface
-     */
     public function build_filter_collection();
-
-    /**
-     * @return layout_interface
-     */
-    public function get_layout();
-
-    /**
-     * @return data_grid
-     */
-    public function get_data_grid();
-
-    /**
-     * Add form fields to the block edit form. IMPORTANT: Prefix field names with config_ otherwise the values will
-     * not be saved.
-     *
-     * @param \moodleform $form
-     * @param \MoodleQuickForm $mform
-     */
-    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform);
-
-    /**
-     * @param string $name
-     * @return array
-     */
-    public function get_preferences($name);
-
-    /**
-     * @param array $preferences
-     */
-    public function set_preferences(array $preferences);
 }

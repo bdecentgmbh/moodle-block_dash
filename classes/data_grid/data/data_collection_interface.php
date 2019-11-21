@@ -72,5 +72,10 @@ interface data_collection_interface
      */
     public function has_child_collections();
 
-
+    /**
+     * Returns true if data collection has no data or child collections.
+     *
+     * @return bool
+     */
+    public function is_empty();
 }

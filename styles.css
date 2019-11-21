@@ -22,3 +22,7 @@ body#page-blocks-dash-template .drag-handle {
     display: inline;
     margin-right: 0.25rem;
 }
+
+.info-dash-preferences-form .col-form-label {
+    font-weight: bold;
+}

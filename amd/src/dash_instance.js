@@ -42,8 +42,6 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
             this.currentPage = $(e.target).data('page');
             this.refresh();
         }.bind(this));
-
-        this.refresh();
     };
 
     /**

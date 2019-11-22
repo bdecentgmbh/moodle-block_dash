@@ -25,6 +25,7 @@ namespace block_dash\data_source;
 use block_dash\data_grid\configurable_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
+use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\layout\grid_layout;
 use block_dash\layout\layout_interface;
@@ -61,6 +62,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @var layout_interface
      */
     private $layout;
+
+    /**
+     * @var field_definition_interface[]
+     */
+    private $field_definitions;
 
     /**
      * @param \context $context
@@ -202,6 +208,8 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform)
     {
+        $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
+
         $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'), [
             grid_layout::class => get_string('layoutgrid', 'block_dash'),
             one_stat_layout::class => get_string('layoutonestat', 'block_dash')
@@ -251,4 +259,27 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     #endregion
+
+    /**
+     * @return field_definition_interface[]
+     */
+    public final function get_available_field_definitions()
+    {
+        if (is_null($this->field_definitions)) {
+            $fielddefinitions = $this->build_available_field_definitions();
+            $sortedfielddefinitions = [];
+
+            $availablefields = $this->get_preferences('available_fields');
+
+            foreach ($fielddefinitions as $fielddefinition) {
+                $sortedfielddefinitions[array_search($fielddefinition->get_name(), array_keys($availablefields))] = $fielddefinition;
+            }
+
+            ksort($sortedfielddefinitions);
+
+            $this->field_definitions = $sortedfielddefinitions;
+        }
+
+        return $this->field_definitions;
+    }
 }

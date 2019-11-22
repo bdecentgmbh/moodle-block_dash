@@ -4,14 +4,23 @@
             <p class="text-muted">{{#str}}noresults{{/str}}</p>
         {{/data.rows}}
         <div class="table-responsive">
-            <table class="table">
-                {{#data.rows}}
+            <table class="table info-dash-table">
+                <thead>
                     <tr>
-                        {{#data}}
-                            <td>{{get_value}}</td>
-                        {{/data}}
+                        {{#data.first_child.data}}
+                            <th>{{get_label}}</th>
+                        {{/data.first_child.data}}
                     </tr>
-                {{/data.rows}}
+                </thead>
+                <tbody>
+                    {{#data.rows}}
+                        <tr>
+                            {{#data}}
+                                <td>{{{get_value}}}</td>
+                            {{/data}}
+                        </tr>
+                    {{/data.rows}}
+                </tbody>
             </table>
         </div>
     {{/body}}

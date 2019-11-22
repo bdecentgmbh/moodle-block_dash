@@ -94,17 +94,36 @@ abstract class abstract_layout implements layout_interface, \templatable
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform)
     {
+        global $OUTPUT;
+
         $filter_collection = $this->get_data_source()->get_filter_collection();
 
         if ($this->supports_field_visibility()) {
             $group = [];
             foreach ($this->get_data_source()->get_available_field_definitions() as $available_field_definition) {
-                $fieldname = 'config_preferences[available_fields][' . $available_field_definition->get_name() . '][visible]';
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $available_field_definition->get_title(), null,
-                    ['group' => 1]);
+                $fieldname = 'config_preferences[available_fields][' . $available_field_definition->get_name() .
+                    '][visible]';
+
+                $formattedtable = array_map(function($v){
+                    $v = str_replace('_', ' ', $v);
+                    $v = ucfirst($v);
+                    return $v;
+                }, $available_field_definition->get_tables());
+
+                if (isset($formattedtable[0])) {
+                    $title = $formattedtable[0];
+                } else {
+                    $title = 'General';
+                }
+
+                $icon = $OUTPUT->pix_icon('i/dragdrop', get_string('dragitem', 'block_dash'), 'moodle', ['class' => 'drag-handle']);
+                $title = $icon . '<b>' . $title . '</b>: ' . $available_field_definition->get_title();
+
+                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, null, ['group' => 1]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
-            $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'));
+            $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'),
+                ['<div style="width: 100%;"></div>']);
             $form->add_checkbox_controller(1);
         }
 
@@ -119,7 +138,8 @@ abstract class abstract_layout implements layout_interface, \templatable
                 $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), null, ['group' => 2]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
-            $mform->addGroup($group, null, get_string('enabledfilters', 'block_dash'), ['<br>']);
+            $mform->addGroup($group, null, get_string('enabledfilters', 'block_dash'),
+                ['<div style="width: 100%;"></div>']);
             $form->add_checkbox_controller(2);
         }
 
@@ -133,7 +153,8 @@ abstract class abstract_layout implements layout_interface, \templatable
             $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), null, ['group' => 3]);
             $mform->setType($fieldname, PARAM_BOOL);
         }
-        $mform->addGroup($group, null, get_string('enabledconditions', 'block_dash'), ['<br>']);
+        $mform->addGroup($group, null, get_string('enabledconditions', 'block_dash'),
+            ['<div style="width: 100%;"></div>']);
         $form->add_checkbox_controller(3);
     }
 

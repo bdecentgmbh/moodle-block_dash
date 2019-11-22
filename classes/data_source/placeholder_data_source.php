@@ -51,7 +51,7 @@ class placeholder_data_source extends abstract_data_source
      * @return field_definition_interface[]
      * @throws \coding_exception
      */
-    public function get_available_field_definitions()
+    public function build_available_field_definitions()
     {
         return block_builder::get_field_definitions([
             'u_id',

@@ -22,9 +22,13 @@
 
 use block_dash\data_grid\field\field_definition;
 use block_dash\data_grid\field\user_profile_link_field_definition;
+use block_dash\data_grid\field\user_profile_url_field_definition;
+use block_dash\data_grid\field\date_field_definition;
 use block_dash\data_source\form\preferences_form;
 use block_dash\layout\grid_layout;
 use block_dash\data_source\users_data_source;
+use block_dash\data_grid\field\user_image_url_field_definition;
+use block_dash\data_grid\field\user_image_field_definition;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -42,17 +46,17 @@ function block_dash_register_field_definitions() {
         new field_definition(['user'], 'u_idnumber', 'u.idnumber', get_string('idnumber')),
         new field_definition(['user'], 'u_city', 'u.city', get_string('city')),
         new field_definition(['user'], 'u_country', 'u.country', get_string('country')),
-        new field_definition(['user'], 'u_lastlogin', 'u.lastlogin', get_string('lastlogin')),
+        new date_field_definition(['user'], 'u_lastlogin', 'u.lastlogin', get_string('lastlogin')),
         new field_definition(['user'], 'u_department', 'u.department', get_string('department')),
         new field_definition(['user'], 'u_institution', 'u.institution', get_string('institution')),
         new field_definition(['user'], 'u_address', 'u.address', get_string('address')),
         new field_definition(['user'], 'u_alternatename', 'u.alternatename', get_string('alternatename')),
-        new field_definition(['user'], 'u_firstaccess', 'u.firstaccess', get_string('firstaccess')),
+        new date_field_definition(['user'], 'u_firstaccess', 'u.firstaccess', get_string('firstaccess')),
         new field_definition(['user'], 'u_description', 'u.description', get_string('description')),
-        new field_definition(['user'], 'u_picture', 'u.picture', get_string('pictureofuser')),
-        new user_profile_link_field_definition(['user'], 'u_profile_url', 'u.id', 'User profile URL'),
-        new field_definition(['group'], 'g_id', 'g.id', get_string('group')),
-        new field_definition(['group'], 'g_name', 'g.name', get_string('group')),
+        new user_image_url_field_definition(['user'], 'u_picture_url', 'u.id', get_string('pictureofuser') .' URL'),
+        new user_image_field_definition(['user'], 'u_picture', 'u.id', get_string('pictureofuser')),
+        new user_profile_url_field_definition(['user'], 'u_profile_url', 'u.id', 'User profile URL'),
+        new user_profile_link_field_definition(['user'], 'u_profile_link', 'u.id', 'User profile link')
     ];
 
     $i = 0;
@@ -66,6 +70,11 @@ function block_dash_register_field_definitions() {
 
         $i++;
     }
+
+    $definitions = array_merge($definitions, [
+        new field_definition(['group'], 'g_id', 'g.id', get_string('group') . ' ID'),
+        new field_definition(['group'], 'g_name', 'g.name', get_string('group'))
+    ]);
 
     return $definitions;
 }

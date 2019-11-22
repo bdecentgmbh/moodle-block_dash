@@ -260,14 +260,15 @@ class external extends external_api
             true, $data);
 
         $validationerrors = true;
-        if ($validateddata = $form->get_data()) {
+        if ($form->get_data()) {
+
 
             if (!empty($block->config)) {
                 $config = clone($block->config);
             } else {
                 $config = new stdClass;
             }
-            foreach ($validateddata as $configfield => $value) {
+            foreach ($data as $configfield => $value) {
                 if (strpos($configfield, 'config_') !== 0) {
                     continue;
                 }

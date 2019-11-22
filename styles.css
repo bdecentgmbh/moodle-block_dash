@@ -26,3 +26,11 @@ body#page-blocks-dash-data-source .drag-handle {
 .info-dash-preferences-form .col-form-label {
     font-weight: bold;
 }
+.info-dash-preferences-form .fitem.checkboxgroup1 {
+    width: 100%;
+    justify-content: left;
+}
+
+.info-dash-table th {
+    white-space: nowrap;
+}

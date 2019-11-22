@@ -68,10 +68,7 @@ class users_data_source extends abstract_data_source
         return $sql;
     }
 
-    /**
-     * @return field_definition_interface[]
-     */
-    public function get_available_field_definitions()
+    public function build_available_field_definitions()
     {
         $fieldnames = [
             'u_id',
@@ -90,6 +87,8 @@ class users_data_source extends abstract_data_source
             'u_firstaccess',
             'u_description',
             'u_picture',
+            'u_profile_link',
+            'u_profile_url',
             'g_id',
             'g_name'
         ];
@@ -112,19 +111,17 @@ class users_data_source extends abstract_data_source
 
         $filter_collection = new filter_collection(get_class($this), $this->get_context());
 
-        $filter = new user_field_filter('u_department', 'u.department', 'department');
-        $filter->set_label(get_string('department'));
-        $filter_collection->add_filter($filter);
-        $filter = new user_field_filter('u_institution', 'u.institution', 'institution');
-        $filter->set_label(get_string('institution'));
-        $filter_collection->add_filter($filter);
+        $filter_collection->add_filter(new user_field_filter('u_department', 'u.department', 'department',
+            get_string('department')));
+        $filter_collection->add_filter(new user_field_filter('u_institution', 'u.institution', 'institution',
+            get_string('institution')));
 
         $filter_collection->add_filter(new participants_condition('c_id', 'c.id'));
         $filter_collection->add_filter(new logged_in_user_condition('current_user', 'u.id'));
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
-            $filter = new user_profile_field_filter($alias, $alias . '.data', $field->id);
+            $filter = new user_profile_field_filter($alias, $alias . '.data', $field->id, $field->name);
             $filter->set_label($field->name);
             $filter_collection->add_filter($filter);
         }

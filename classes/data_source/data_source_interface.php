@@ -23,6 +23,7 @@
 namespace block_dash\data_source;
 
 use block_dash\data_grid\data\data_collection_interface;
+use block_dash\data_grid\data\field;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
@@ -35,6 +36,13 @@ use block_dash\layout\layout_interface;
  */
 interface data_source_interface
 {
+    /**
+     * Get human readable name of data source.
+     *
+     * @return string
+     */
+    public function get_name();
+
     /**
      * Get data grid. Build if necessary.
      *
@@ -117,6 +125,11 @@ interface data_source_interface
      * @return string
      */
     public function get_query_template();
+
+    /**
+     * @return field_definition_interface[]
+     */
+    public function build_available_field_definitions();
 
     /**
      * @return field_definition_interface[]

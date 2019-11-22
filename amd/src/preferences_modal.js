@@ -7,8 +7,8 @@
  * @copyright  2017 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/fragment', 'core/ajax'],
-    function($, Str, ModalFactory, ModalEvents, Fragment, Ajax) {
+define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/fragment', 'core/ajax'],
+    function($, jqueryui, Str, ModalFactory, ModalEvents, Fragment, Ajax) {
 
     /**
      * Constructor
@@ -20,7 +20,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
      */
     var PreferencesModal = function(selector, contextid, onCloseCallback) {
         this.contextid = contextid;
-        this.onCloseCallback = onCloseCallback
+        this.onCloseCallback = onCloseCallback;
         this.init(selector);
     };
 
@@ -61,7 +61,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             this.modal.setLarge();
 
             // We want to reset the form every time it is opened.
-            this.modal.getRoot().on(ModalEvents.hidden, function() {
+            this.modal.getRoot().on(ModalEvents.shown, function() {
                 this.modal.setBody(this.getBody());
             }.bind(this));
 
@@ -72,6 +72,13 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             this.modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
             // We also catch the form submit event and use it to submit the form with ajax.
             this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this, true));
+
+            this.modal.getRoot().on(ModalEvents.bodyRendered, function(e) {
+                $("#fgroup_id_group_1 .form-inline").sortable({
+                    handle: ".drag-handle",
+                    axis: "y"
+                });
+            });
 
             this.modal.getRoot().on(ModalEvents.hidden, function(e) {
                 if (this.onCloseCallback) {

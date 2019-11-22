@@ -23,11 +23,11 @@
 namespace block_dash\data_grid\field;
 
 /**
- * Returns @see \moodle_url that links to user profile.
+ * Formats unix timestamp fields to readable date.
  *
  * @package block_dash\data_grid\field
  */
-class user_profile_link_field_definition extends field_definition
+class user_image_field_definition extends user_image_url_field_definition
 {
     /**
      * After records are relieved from database each field has a chance to transform the data.
@@ -40,11 +40,12 @@ class user_profile_link_field_definition extends field_definition
      */
     public function transform_data($data, \stdClass $record)
     {
-        if ($data) {
-            return \html_writer::link(new \moodle_url('/user/profile.php', ['id' => $data]),
-                get_string('viewprofile', 'block_dash'));
+        $data = parent::transform_data($data, $record);
+
+        if ($data instanceof \moodle_url) {
+            return \html_writer::img($data, get_string('pictureofuser'));
         }
 
-        return '';
+        return $data;
     }
 }

@@ -27,7 +27,7 @@ namespace block_dash\data_grid\field;
  *
  * @package block_dash\data_grid\field
  */
-class user_profile_link_field_definition extends field_definition
+class user_profile_url_field_definition extends field_definition
 {
     /**
      * After records are relieved from database each field has a chance to transform the data.
@@ -41,8 +41,7 @@ class user_profile_link_field_definition extends field_definition
     public function transform_data($data, \stdClass $record)
     {
         if ($data) {
-            return \html_writer::link(new \moodle_url('/user/profile.php', ['id' => $data]),
-                get_string('viewprofile', 'block_dash'));
+            return new \moodle_url('/user/profile.php', ['id' => $data]);
         }
 
         return '';

@@ -68,11 +68,13 @@ class filter implements filter_interface
     /**
      * @param string $name
      * @param string $select
+     * @param string $label
      */
-    public function __construct($name, $select)
+    public function __construct($name, $select, $label = '')
     {
         $this->name = $name;
         $this->select = $select;
+        $this->label = $label;
 
         $this->init();
     }

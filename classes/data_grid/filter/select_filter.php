@@ -72,7 +72,7 @@ abstract class select_filter extends filter
      */
     public function add_all_option()
     {
-        $this->add_option(self::ALL_OPTION, get_string('all'));
+        $this->add_option(self::ALL_OPTION, get_string('all') . ' ' . $this->get_label());
     }
 
     /**

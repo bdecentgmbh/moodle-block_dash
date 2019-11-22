@@ -22,6 +22,8 @@
 
 namespace block_dash\data_grid\data;
 
+use block_dash\block_builder;
+
 class field implements field_interface
 {
     private $name;
@@ -42,5 +44,18 @@ class field implements field_interface
     public function get_value()
     {
         return $this->value;
+    }
+
+    /**
+     * @return string|null
+     * @throws \coding_exception
+     */
+    public function get_label()
+    {
+        if ($fielddefinition = block_builder::get_field_definition($this->get_name())) {
+            return $fielddefinition->get_title();
+        }
+
+        return null;
     }
 }

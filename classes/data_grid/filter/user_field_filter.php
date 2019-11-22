@@ -11,11 +11,11 @@ class user_field_filter extends select_filter
      */
     private $user_field;
 
-    public function __construct($name, $select, $user_field)
+    public function __construct($name, $select, $user_field, $label = '')
     {
         $this->user_field = $user_field;
 
-        parent::__construct($name, $select);
+        parent::__construct($name, $select, $label);
     }
 
     /**

@@ -34,11 +34,11 @@ class user_profile_field_filter extends select_filter
      * @param string $select
      * @param int $profile_field_id
      */
-    public function __construct($name, $select, $profile_field_id)
+    public function __construct($name, $select, $profile_field_id, $label = '')
     {
         $this->profile_field_id = $profile_field_id;
 
-        parent::__construct($name, $select);
+        parent::__construct($name, $select, $label);
     }
 
     /**

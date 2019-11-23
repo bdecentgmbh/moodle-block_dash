@@ -26,6 +26,7 @@ use block_dash\data_grid\configurable_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
+use block_dash\data_grid\filter\condition;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\layout\grid_layout;
 use block_dash\layout\layout_interface;
@@ -115,11 +116,13 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function before_data()
     {
-        if ($this->preferences && isset($this->preferences['available_fields'])) {
-            foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
-                if (isset($preferences['visible'])) {
-                    if ($fielddefinition = $this->get_data_grid()->get_field_definition($fieldname)) {
-                        $fielddefinition->set_visibility($preferences['visible']);
+        if ($this->get_layout()->supports_field_visibility()) {
+            if ($this->preferences && isset($this->preferences['available_fields'])) {
+                foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
+                    if (isset($preferences['visible'])) {
+                        if ($fielddefinition = $this->get_data_grid()->get_field_definition($fieldname)) {
+                            $fielddefinition->set_visibility($preferences['visible']);
+                        }
                     }
                 }
             }
@@ -132,6 +135,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                         $this->get_filter_collection()->remove_filter($filter);
                     }
                 }
+            }
+        } else {
+            // No preferences set yet, remove all filters.
+            foreach ($this->get_filter_collection()->get_filters() as $filter) {
+                if ($filter instanceof condition) {
+                    continue;
+                }
+                $this->get_filter_collection()->remove_filter($filter);
             }
         }
 
@@ -267,17 +278,23 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     {
         if (is_null($this->field_definitions)) {
             $fielddefinitions = $this->build_available_field_definitions();
-            $sortedfielddefinitions = [];
 
-            $availablefields = $this->get_preferences('available_fields');
+            if ($this->get_layout()->supports_field_visibility()) {
 
-            foreach ($fielddefinitions as $fielddefinition) {
-                $sortedfielddefinitions[array_search($fielddefinition->get_name(), array_keys($availablefields))] = $fielddefinition;
+                if ($availablefields = $this->get_preferences('available_fields')) {
+                    $sortedfielddefinitions = [];
+
+                    foreach ($fielddefinitions as $fielddefinition) {
+                        $sortedfielddefinitions[array_search($fielddefinition->get_name(), array_keys($availablefields))] = $fielddefinition;
+                    }
+
+                    ksort($sortedfielddefinitions);
+                    $fielddefinitions = $sortedfielddefinitions;
+                }
+
             }
 
-            ksort($sortedfielddefinitions);
-
-            $this->field_definitions = $sortedfielddefinitions;
+            $this->field_definitions = $fielddefinitions;
         }
 
         return $this->field_definitions;

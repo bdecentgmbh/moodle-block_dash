@@ -24,6 +24,8 @@ namespace block_dash\data_source;
 
 use block_dash\block_builder;
 use block_dash\data_grid\field\field_definition_interface;
+use block_dash\data_grid\filter\date_filter;
+use block_dash\data_grid\filter\filter;
 use block_dash\data_grid\filter\logged_in_user_condition;
 use block_dash\data_grid\filter\filter_collection;
 use block_dash\data_grid\filter\filter_collection_interface;
@@ -115,6 +117,16 @@ class users_data_source extends abstract_data_source
             get_string('department')));
         $filter_collection->add_filter(new user_field_filter('u_institution', 'u.institution', 'institution',
             get_string('institution')));
+
+        $filter = new date_filter('u_lastlogin', 'u.lastlogin', date_filter::DATE_FUNCTION_FLOOR,
+            get_string('lastlogin'));
+        $filter->set_operation(filter::OPERATION_GREATER_THAN_EQUAL);
+        $filter_collection->add_filter($filter);
+
+        $filter = new date_filter('u_firstaccess', 'u.firstaccess', date_filter::DATE_FUNCTION_FLOOR,
+            get_string('firstaccess'));
+        $filter->set_operation(filter::OPERATION_GREATER_THAN_EQUAL);
+        $filter_collection->add_filter($filter);
 
         $filter_collection->add_filter(new participants_condition('c_id', 'c.id'));
         $filter_collection->add_filter(new logged_in_user_condition('current_user', 'u.id'));

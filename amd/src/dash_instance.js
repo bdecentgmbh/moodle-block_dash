@@ -25,7 +25,7 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
             this.refresh();
         }.bind(this));
 
-        this.getRoot().on('change', 'select', function(e) {
+        this.getRoot().on('change', 'select, input', function(e) {
             e.preventDefault();
 
             Log.debug('Submitting filter form');

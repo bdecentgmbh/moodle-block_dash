@@ -61,6 +61,8 @@ class block_dash_edit_form extends block_edit_form {
 
         $mform->addElement('select', 'config_data_source_idnumber', get_string('choosedatasource', 'block_dash'),
             data_source_factory::get_data_source_form_options());
+        $mform->setType('config_data_source_idnumber', PARAM_TEXT);
+        $mform->addRule('config_data_source_idnumber', get_string('required'), 'required');
 
         if (isset($this->block->config->data_source_idnumber) &&
             $datasource = data_source_factory::get_data_source($this->block->config->data_source_idnumber, $parentcontext)) {

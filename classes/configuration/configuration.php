@@ -22,7 +22,6 @@
 
 namespace block_dash\configuration;
 
-use block_dash\data_source\placeholder_data_source;
 use block_dash\data_source\data_source_factory;
 
 class configuration extends abstract_configuration
@@ -33,15 +32,12 @@ class configuration extends abstract_configuration
 
         $datasource = null;
         if (isset($block_instance->config->data_source_idnumber)) {
-            $datasource = data_source_factory::get_data_source($block_instance->config->data_source_idnumber, $parentcontext);
-        }
+            $datasource = data_source_factory::get_data_source($block_instance->config->data_source_idnumber,
+                $parentcontext);
 
-        if (is_null($datasource)) {
-            $datasource = new placeholder_data_source($parentcontext);
-        }
-
-        if (isset($block_instance->config->preferences) && is_array($block_instance->config->preferences)) {
-            $datasource->set_preferences($block_instance->config->preferences);
+            if (isset($block_instance->config->preferences) && is_array($block_instance->config->preferences)) {
+                $datasource->set_preferences($block_instance->config->preferences);
+            }
         }
 
         return new configuration($parentcontext, $datasource);

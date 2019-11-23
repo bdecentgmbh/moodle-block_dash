@@ -2,12 +2,8 @@
     {{$body}}
         {{#data.first_child}}
             {{#first_data}}
-                <h3 class="text-center">{{get_value}} <small style="font-size:0.5em">{{preferences.stat_field_label}}</small></h3>
+                <h3 class="text-center">{{{get_value}}} <small style="font-size:0.5em">{{preferences.stat_field_label}}</small></h3>
             {{/first_data}}
         {{/data.first_child}}
     {{/body}}
-
-    {{$footer}}
-        {{! No pagination }}
-    {{/footer}}
 {{/ block_dash/layout }}

@@ -78,6 +78,8 @@ class block_builder
                 'block_context_id' => $this->block_instance->context->id,
                 'editing' => $PAGE->user_is_editing()
             ]);
+        } else {
+            $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
         }
 
         $content = new \stdClass();

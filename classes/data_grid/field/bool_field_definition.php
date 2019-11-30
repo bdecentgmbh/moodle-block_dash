@@ -23,11 +23,11 @@
 namespace block_dash\data_grid\field;
 
 /**
- * Returns user's profile image in HTML.
+ * Converts bool to yes or no label.
  *
  * @package block_dash\data_grid\field
  */
-class user_image_field_definition extends user_image_url_field_definition
+class bool_field_definition extends field_definition
 {
     /**
      * After records are relieved from database each field has a chance to transform the data.
@@ -40,12 +40,12 @@ class user_image_field_definition extends user_image_url_field_definition
      */
     public function transform_data($data, \stdClass $record)
     {
-        $data = parent::transform_data($data, $record);
-
-        if ($data instanceof \moodle_url) {
-            return \html_writer::img($data, $this->get_title());
+        if ($data) {
+            $data = get_string('yes');
+        } else {
+            $data = get_string('no');
         }
 
-        return $data;
+        return parent::transform_data($data, $record);
     }
 }

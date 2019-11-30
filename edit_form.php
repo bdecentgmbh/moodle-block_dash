@@ -40,8 +40,6 @@ class block_dash_edit_form extends block_edit_form {
      */
     protected function specific_definition($mform)
     {
-        $parentcontext = \context::instance_by_id($this->block->instance->parentcontextid);
-
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
@@ -63,11 +61,6 @@ class block_dash_edit_form extends block_edit_form {
             data_source_factory::get_data_source_form_options());
         $mform->setType('config_data_source_idnumber', PARAM_TEXT);
         $mform->addRule('config_data_source_idnumber', get_string('required'), 'required');
-
-        if (isset($this->block->config->data_source_idnumber) &&
-            $datasource = data_source_factory::get_data_source($this->block->config->data_source_idnumber, $parentcontext)) {
-            $datasource->build_preferences_form($this, $this->_form);
-        }
 
         $mform->addElement('header', 'extracontent', get_string('extracontent', 'block_dash'));
 

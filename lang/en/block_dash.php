@@ -22,6 +22,7 @@
  * @copyright 2019 bdecent gmbh <https://bdecent.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 $string['addnewfield'] = 'Add new field';
 $string['availablefields'] = 'Available fields';
 $string['availablefields_help'] = 'Choose all possible fields this data source will utilize. The user will be able to select which fields to include for their own purposes. For example, if you are displaying user information, try to include as many user fields as possible.';
@@ -31,11 +32,15 @@ $string['choosedatasource'] = 'Choose data source';
 $string['coursesummary'] = 'Course summary';
 $string['createdatasource'] = 'Create data source';
 $string['cssclass'] = 'CSS Class';
+$string['currentcourse'] = 'Current course';
 $string['custom'] = 'Custom';
 $string['dash:addinstance'] = 'Add a new InfoDash block';
-$string['dash:managedatasources'] = 'Manage data sources';
 $string['dash:myaddinstance'] = 'Add a new InfoDash block to dashboard';
 $string['databaseerror'] = 'Database error. The content cannot be displayed.';
+$string['datasource'] = 'Data source';
+$string['datasourcecreated'] = 'Data source <b>{$a->name}</b> successfully created.';
+$string['datasourceedited'] = 'Data source <b>{$a->name}</b> successfully edited.';
+$string['datasourcename'] = 'Data source name';
 $string['delete'] = 'Delete';
 $string['dragitem'] = 'Drag item';
 $string['edit'] = 'Edit';
@@ -70,11 +75,8 @@ $string['pluginname'] = 'InfoDash';
 $string['privacy:metadata'] = 'The InfoDash block only shows information about courses and does not store data itself.';
 $string['querytemplate'] = 'Query template';
 $string['source'] = 'Source';
-$string['stattodisplay'] = 'Figure to display';
 $string['sqlfield'] = 'SQL field';
-$string['datasource'] = 'Data source';
-$string['datasourcecreated'] = 'Data source <b>{$a->name}</b> successfully created.';
-$string['datasourceedited'] = 'Data source <b>{$a->name}</b> successfully edited.';
-$string['datasourcename'] = 'Data source name';
+$string['stattodisplay'] = 'Figure to display';
+$string['totalactivities'] = 'Total activities';
 $string['userstat'] = 'User stat';
 $string['viewprofile'] = 'View profile';

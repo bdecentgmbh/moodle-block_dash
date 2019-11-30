@@ -23,7 +23,7 @@
 namespace block_dash\data_grid\field;
 
 /**
- * Formats unix timestamp fields to readable date.
+ * Returns URL to user's profile image.
  *
  * @package block_dash\data_grid\field
  */

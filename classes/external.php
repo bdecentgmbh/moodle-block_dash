@@ -113,110 +113,6 @@ class external extends external_api
 
     #endregion
 
-
-    /**
-     * Returns description of get_database_schema_structure() parameters.
-     *
-     * @return \external_function_parameters
-     */
-    public static function get_database_schema_structure_parameters()
-    {
-        return new \external_function_parameters([]);
-    }
-
-    /**
-     * Create a new competency framework
-     *
-     * @return array
-     */
-    public static function get_database_schema_structure()
-    {
-        global $DB, $CFG;
-
-        $dbman = $DB->get_manager();
-
-        $schema = new \xmldb_structure('export');
-        $schema->setVersion($CFG->version);
-
-        $tables = [];
-        foreach ($dbman->get_install_xml_files() as $filename) {
-            $xmldb_file = new \xmldb_file($filename);
-            if (!$xmldb_file->loadXMLStructure()) {
-                continue;
-            }
-            $structure = $xmldb_file->getStructure();
-            foreach ($structure->getTables() as $table) {
-                $tablename = '{' . $table->getName() . '}';
-                $tables[$tablename] = [];
-                foreach ($table->getFields() as $field) {
-                    $tables[$tablename][] = $field->getName();
-                }
-            }
-        }
-
-        return ['schema' => json_encode($tables)];
-    }
-
-    /**
-     * Returns description of get_database_schema_structure() result value.
-     *
-     * @return \external_description
-     */
-    public static function get_database_schema_structure_returns()
-    {
-        return new \external_single_structure([
-            'schema' => new \external_value(PARAM_RAW)
-        ]);
-    }
-
-    /**
-     * Returns description of get_database_schema_structure() parameters.
-     *
-     * @return \external_function_parameters
-     */
-    public static function get_field_edit_row_parameters()
-    {
-        return new \external_function_parameters([
-            'name' => new \external_value(PARAM_TEXT, 'Name of field definition')
-        ]);
-    }
-
-    /**
-     * Create a new competency framework
-     *
-     * @param string $name
-     * @return array
-     * @throws \moodle_exception | \coding_exception | \invalid_parameter_exception
-     */
-    public static function get_field_edit_row($name)
-    {
-        global $OUTPUT;
-
-        $params = self::validate_parameters(self::get_field_edit_row_parameters(), [
-            'name' => $name
-        ]);
-
-        self::validate_context(\context_system::instance());
-
-        if ($field_definition = block_builder::get_field_definition($params['name'])) {
-            return ['html' => $OUTPUT->render_from_template('block_dash/field_edit_row', $field_definition)];
-        }
-
-        throw new \moodle_exception('fieldnotfound', 'block_dash');
-    }
-
-    /**
-     * Returns description of get_database_schema_structure() result value.
-     *
-     * @return \external_description
-     */
-    public static function get_field_edit_row_returns()
-    {
-        return new \external_single_structure([
-            'html' => new \external_value(PARAM_RAW)
-        ]);
-    }
-
     #region submit_preferences_form
 
     /**
@@ -300,4 +196,6 @@ class external extends external_api
             'validationerrors' => new \external_value(PARAM_BOOL, 'Were there validation errors', VALUE_REQUIRED),
         ]);
     }
+
+    #endregion
 }

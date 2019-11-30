@@ -117,6 +117,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     public function before_data()
     {
         if ($this->get_layout()->supports_field_visibility()) {
+            foreach ($this->get_available_field_definitions() as $available_field_definition) {
+                $available_field_definition->set_visibility(field_definition_interface::VISIBILITY_HIDDEN);
+            }
             if ($this->preferences && isset($this->preferences['available_fields'])) {
                 foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
                     if (isset($preferences['visible'])) {
@@ -129,11 +132,16 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
 
         if ($this->preferences && isset($this->preferences['filters'])) {
+            $enabledfilters = [];
             foreach ($this->preferences['filters'] as $filtername => $preference) {
-                if (isset($preference['enabled']) && !$preference['enabled']) {
-                    if ($filter = $this->get_filter_collection()->get_filter($filtername)) {
-                        $this->get_filter_collection()->remove_filter($filter);
-                    }
+                if (isset($preference['enabled']) && $preference['enabled']) {
+                    $enabledfilters[] = $filtername;
+                }
+            }
+            // No preferences set yet, remove all filters.
+            foreach ($this->get_filter_collection()->get_filters() as $filter) {
+                if (!in_array($filter->get_name(), $enabledfilters)) {
+                    $this->get_filter_collection()->remove_filter($filter);
                 }
             }
         } else {
@@ -281,14 +289,23 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             if ($this->get_layout()->supports_field_visibility()) {
 
-                if ($availablefields = $this->get_preferences('available_fields')) {
-                    $sortedfielddefinitions = [];
+                $sortedfielddefinitions = [];
 
-                    foreach ($fielddefinitions as $fielddefinition) {
-                        $sortedfielddefinitions[array_search($fielddefinition->get_name(), array_keys($availablefields))] = $fielddefinition;
+                if ($availablefields = $this->get_preferences('available_fields')) {
+                    foreach ($availablefields as $fieldname => $availablefield) {
+                        foreach ($fielddefinitions as $key => $fielddefinition) {
+                            if ($fielddefinition->get_name() == $fieldname) {
+                                $sortedfielddefinitions[] = $fielddefinition;
+                                unset($fielddefinitions[$key]);
+                                break;
+                            }
+                        }
                     }
 
-                    ksort($sortedfielddefinitions);
+                    foreach ($fielddefinitions as $fielddefinition) {
+                        $sortedfielddefinitions[] = $fielddefinition;
+                    }
+
                     $fielddefinitions = $sortedfielddefinitions;
                 }
 

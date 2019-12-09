@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * InfoDash block caps.
+ * Dash block caps.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing InfoDash block instances.
+ * Form for editing Dash block instances.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
@@ -25,7 +25,7 @@
 use block_dash\data_source\data_source_factory;
 
 /**
- * Form for editing InfoDash block instances.
+ * Form for editing Dash block instances.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>

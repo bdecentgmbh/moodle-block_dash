@@ -81,6 +81,8 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
             });
 
             this.modal.getRoot().on(ModalEvents.hidden, function(e) {
+                // Prevent "changes may be lost" popup.
+                window.onbeforeunload = null;
                 if (this.onCloseCallback) {
                     this.onCloseCallback(e);
                 }

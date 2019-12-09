@@ -133,6 +133,8 @@ class block_builder
     }
 
     /**
+     * Get field definitions by names. Maintain order.
+     *
      * @param string[] $names Field definition names to retrieve.
      * @return field_definition_interface[]
      * @throws \coding_exception
@@ -143,9 +145,11 @@ class block_builder
 
         foreach (self::get_all_field_definitions() as $field_definition) {
             if (in_array($field_definition->get_name(), $names)) {
-                $field_definitions[] = $field_definition;
+                $field_definitions[array_search($field_definition->get_name(), $names)] = $field_definition;
             }
         }
+
+        ksort($field_definitions);
 
         return $field_definitions;
     }

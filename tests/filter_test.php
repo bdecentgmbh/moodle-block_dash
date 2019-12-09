@@ -37,6 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @group block_dash
  * @group bdecent
+ * @group filter_test
  */
 class filter_test extends \advanced_testcase
 {

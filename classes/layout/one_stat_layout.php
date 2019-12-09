@@ -22,7 +22,7 @@
 
 namespace block_dash\layout;
 
-use block_dash\data_grid\field\field_definition;
+use block_dash\data_grid\field\field_definition_interface;
 
 class one_stat_layout extends abstract_layout
 {
@@ -98,12 +98,12 @@ class one_stat_layout extends abstract_layout
         }
 
         foreach ($this->get_data_source()->get_data_grid()->get_field_definitions() as $field_definition) {
-            $field_definition->set_visibility(field_definition::VISIBILITY_HIDDEN);
+            $field_definition->set_visibility(field_definition_interface::VISIBILITY_HIDDEN);
         }
 
         if ($this->get_data_source()->get_data_grid()->has_field_definition($statfielddefinition)) {
             $this->get_data_source()->get_data_grid()->get_field_definition($statfielddefinition)
-                ->set_visibility(field_definition::VISIBILITY_VISIBLE);
+                ->set_visibility(field_definition_interface::VISIBILITY_VISIBLE);
         }
     }
 }

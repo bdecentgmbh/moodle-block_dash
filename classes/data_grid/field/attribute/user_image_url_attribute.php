@@ -1,5 +1,5 @@
 <?php
-// This file is part of The Bootstrap Moodle theme
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,23 +20,33 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\data_grid;
-
-use block_dash\data_grid\data\data_collection_interface;
+namespace block_dash\data_grid\field\attribute;
 
 /**
- * Get data to be displayed in a grid or downloaded as a formatted file.
+ * Transform data to user's profile image URL.
  *
- * @package block_dash
+ * @package block_dash\data_grid\field
  */
-interface data_grid_interface
+class user_image_url_attribute extends abstract_field_attribute
 {
     /**
-     * Execute and return data collection.
+     * After records are relieved from database each field has a chance to transform the data.
+     * Example: Convert unix timestamp into a human readable date format
      *
+     * @param $data
+     * @param \stdClass $record Entire row
+     * @return mixed
      * @throws \moodle_exception
-     * @return data_collection_interface
-     * @since 2.2
      */
-    public function get_data();
+    public function transform_data($data, \stdClass $record)
+    {
+        global $PAGE, $DB;
+        if ($user = $DB->get_record('user', ['id' => $data])) {
+            $picture = new \user_picture($user);
+            $picture->size = 1;
+            $data = $picture->get_url($PAGE);
+        }
+
+        return $data;
+    }
 }

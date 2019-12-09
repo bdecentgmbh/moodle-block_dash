@@ -22,7 +22,7 @@
 
 namespace block_dash\data_source;
 
-use block_dash\data_grid\configurable_data_grid;
+use block_dash\data_grid\sql_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
@@ -87,7 +87,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     public final function get_data_grid()
     {
         if (is_null($this->data_grid)) {
-            $this->data_grid = new configurable_data_grid($this->get_context());
+            $this->data_grid = new sql_data_grid($this->get_context());
             $this->data_grid->set_query_template($this->get_query_template());
             $this->data_grid->set_field_definitions($this->get_available_field_definitions());
             $this->data_grid->set_supports_pagination($this->get_layout()->supports_pagination());

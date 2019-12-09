@@ -23,6 +23,7 @@
 namespace block_dash\data_source;
 
 use block_dash\block_builder;
+use block_dash\data_grid\field\field_definition_factory;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\date_filter;
 use block_dash\data_grid\filter\filter;
@@ -99,7 +100,7 @@ class users_data_source extends abstract_data_source
             $fieldnames[] = 'u_pf_' . strtolower($field->shortname);
         }
 
-        return block_builder::get_field_definitions($fieldnames);
+        return field_definition_factory::get_field_definitions($fieldnames);
     }
 
     /**

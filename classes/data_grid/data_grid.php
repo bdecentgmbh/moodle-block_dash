@@ -62,11 +62,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     private $user;
 
     /**
-     * @var int Store record count so we don't have to query it multiple times.
-     */
-    private $record_count = null;
-
-    /**
      * @var bool Disable any kind of pagination and return full data set. Useful for downloading all data.
      */
     private $disable_pagination = false;
@@ -80,11 +75,6 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @var bool
      */
     private $supportspagination;
-
-    /**
-     * @var data_collection_interface
-     */
-    private $data_collection;
 
     /**
      * @var filter_collection_interface
@@ -109,7 +99,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
         $this->context = $context;
 
         $this->paginator = new paginator(function () {
-            return $this->get_records_count();
+            return $this->get_count();
         });
     }
 
@@ -261,205 +251,18 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
 
     #region Query builder methods
 
-    /**
-     * Return main query without select
-     *
-     * @return string
-     */
-    protected abstract function get_query();
-
-    /**
-     * Override this method to have a specific query for counting. Example: Not including GROUP BY (which doesn't work with COUNT).
-     *
-     * @return string
-     * @throws \Exception
-     */
-    protected function get_count_query()
-    {
-        $query = $this->get_query();
-        if (strpos($query, 'GROUP') !== false) {
-            throw new \Exception('Grid detected GROUP statement in count query. Please override get_count_query() and exclude group usage.');
-        }
-
-        return $query;
-    }
-
-    /**
-     * Combines all field selects for SQL select
-     *
-     * @return string SQL select
-     * @throws \moodle_exception
-     */
-    protected function get_query_select()
-    {
-        $selects = array();
-        $fields = $this->get_field_definitions();
-
-        foreach ($fields as $field) {
-            if (is_null($field->get_select())) {
-                continue;
-            }
-
-            $selects[] = $field->get_select() . ' AS ' . $field->get_name();
-        }
-
-        $select = implode(', ', $selects);
-
-        if (empty($select)) {
-            throw new \moodle_exception('SQL select cannot be empty.');
-        }
-
-        return $select;
-    }
-
-    /**
-     * Get final SQL query and params.
-     *
-     * @param bool $count If true, query will be counting records instead of selecting fields.
-     * @return array
-     * @throws \Exception
-     * @throws \moodle_exception
-     */
-    protected function get_sql_and_params($count = false)
-    {
-        if (!$this->has_any_field_definitions()) {
-            throw new \moodle_exception('Grid initialized without any fields. Did you forget to call data_grid::init()?');
-        }
-
-        if ($this->filter_collection && $this->filter_collection->has_filters()) {
-            list ($filter_sql, $filter_params) = $this->filter_collection->get_sql_and_params();
-        } else {
-            $filter_sql = '';
-            $filter_params = [];
-        }
-
-        // Use count query and only select a count of primary field.
-        if ($count) {
-            $query = $this->get_count_query();
-            $selects = $this->get_count_select();
-            $order_by = '';
-        } else {
-            $query = $this->get_query();
-            $selects = $this->get_query_select();
-            $order_by = $this->get_sort_sql();
-        }
-
-        $query = str_replace('%%SELECT%%', $selects, $query);
-        $query = str_replace('%%FILTERS%%', $filter_sql, $query);
-        $query = str_replace('%%ORDERBY%%', $order_by, $query);
-
-        return [$query, $filter_params];
-    }
-
-    #endregion
-
-    #region Sort methods
-
-    /**
-     * Call method to handle sort params.
-     *
-     * @throws \coding_exception
-     */
-    protected function handle_sort_params()
-    {
-        $sort = optional_param('sort', null, PARAM_TEXT);
-        $sort_direction = optional_param('sort_dir', 'asc', PARAM_TEXT);
-
-        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'block_dash', 'data_grid_sort');
-
-        if ($sort) {
-            $cache->set($this->get_user()->get_id() . '_' . $this->get_name(), [
-                'sort' => $sort,
-                'sort_dir' => $sort_direction
-            ]);
-        } else {
-            $data = $cache->get($this->get_user()->get_id() . '_' . $this->get_name());
-            if (isset($data['sort'])) {
-                $sort = $data['sort'];
-            }
-            if (isset($data['sort_dir'])) {
-                $sort_direction = $data['sort_dir'];
-            }
-        }
-
-        if ($sort) {
-            foreach ($this->get_field_definitions() as $field) {
-                if ($field->get_name() == $sort) {
-                    $field->set_sort(true);
-                    $field->set_sort_direction($sort_direction);
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Build ORDER BY sql for grid.
-     *
-     * @return string
-     */
-    protected function get_sort_sql()
-    {
-        $sql = '';
-        $sorts = [];
-
-        foreach ($this->get_field_definitions() as $field) {
-            if ($field->get_sort()) {
-                $sorts[] = $field->get_sort_select() . ' ' . strtoupper($field->get_sort_direction());
-            }
-        }
-
-        if (!empty($sorts)) {
-            $sql = 'ORDER BY ' . implode(',', $sorts);
-        }
-
-        return $sql;
-    }
-
     #endregion
 
     #region Execution methods
 
     /**
-     * Execute query and return data collection.
+     * Execute and return data collection.
      *
      * @throws \moodle_exception
      * @return data_collection_interface
      * @since 2.2
      */
-    public function get_data()
-    {
-        if ($this->data_collection) {
-            return $this->data_collection;
-        }
-
-        $records = $this->get_records();
-
-        $grid_data = new data_collection();
-
-        $field_definitions = $this->get_field_definitions();
-
-        foreach ($records as $record) {
-            $row = new data_collection();
-            foreach ($field_definitions as $field_definition) {
-                $name = $field_definition->get_name();
-
-                if ($field_definition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
-                    unset($record->$name);
-                    continue;
-                }
-
-                $record->$name = $field_definition->transform_data($record->$name, $record);
-            }
-
-            $row->add_data_associative($record);
-            $grid_data->add_child_collection('rows', $row);
-        }
-
-        $this->data_collection = $grid_data;
-
-        return $this->data_collection;
-    }
+    public abstract function get_data();
 
     /**
      * Check if grid has data collected. False if grid hasn't run or requires something before it can run.
@@ -472,66 +275,11 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     }
 
     /**
-     * Clear data so grid can query it again.
-     */
-    public function reset()
-    {
-        $this->data_collection = null;
-        $this->fields = [];
-        $this->record_count = null;
-        $this->bulk_actions = [];
-        $this->initialized = false;
-    }
-
-    /**
-     * Get raw records from database.
-     *
-     * @return \stdClass[]
-     * @throws \Exception
-     * @throws \moodle_exception
-     * @since 2.2
-     */
-    protected function get_records()
-    {
-        global $DB;
-
-        list($query, $filter_params) = $this->get_sql_and_params(false);
-
-        if ($this->supports_pagination() && !$this->is_pagination_disabled()) {
-            return $DB->get_records_sql($query, $filter_params, $this->paginator->get_limit_from(),
-                $this->paginator->get_per_page());
-        }
-
-        return $DB->get_records_sql($query, $filter_params);
-    }
-
-    /**
      * Get total number of records for pagination.
      *
      * @return int
      */
-    protected function get_records_count()
-    {
-        global $DB;
-
-        if (is_null($this->record_count)) {
-            list($query, $filter_params) = $this->get_sql_and_params(true);
-
-            $this->record_count = $DB->count_records_sql($query, $filter_params);
-        }
-
-        return $this->record_count;
-    }
-
-    /**
-     * Get select SQL for counting.
-     *
-     * @return string
-     */
-    protected function get_count_select()
-    {
-        return 'COUNT(' . $this->get_field_definitions()[0]->get_select() . ')';
-    }
+    public abstract function get_count();
 
     #endregion
 

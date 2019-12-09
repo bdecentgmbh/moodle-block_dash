@@ -20,26 +20,37 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\data_grid\field;
+namespace block_dash\data_grid\field\attribute;
 
 /**
- * Converts bool to yes or no label.
+ * Transforms data to moodle_url.
  *
- * @package block_dash\data_grid\field
+ * @package block_dash\data_grid\field\attribute
  */
-class not_empty_field_definition extends bool_field_definition
+class moodle_url_attribute extends abstract_field_attribute
 {
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format
      *
-     * @param $data
-     * @param \stdClass $record Entire row
+     * @param mixed $data Raw data associated with this field definition.
+     * @param \stdClass $record Full record from database.
      * @return mixed
-     * @throws \moodle_exception
+     * @throws \coding_exception
      */
     public function transform_data($data, \stdClass $record)
     {
-        return parent::transform_data(!empty($data), $record);
+        /** @var \moodle_url $url */
+        if ($this->get_option('url') instanceof \moodle_url && $url = $this->get_option('url')) {
+            foreach ($url->params() as $key => $value) {
+                if (isset($record->$value)) {
+                    $url->param($key, $record->$value);
+                } else {
+                    $url->param($key, $data);
+                }
+            }
+        }
+
+        return $data;
     }
 }

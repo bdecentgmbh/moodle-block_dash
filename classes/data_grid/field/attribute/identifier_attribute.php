@@ -20,32 +20,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\data_grid\field;
+namespace block_dash\data_grid\field\attribute;
 
 /**
- * Returns user's profile image in HTML.
+ * Designates the field definition as an identifier (database record ID).
  *
- * @package block_dash\data_grid\field
+ * @package block_dash\data_grid\field\attribute
  */
-class user_image_field_definition extends user_image_url_field_definition
+class identifier_attribute extends abstract_field_attribute
 {
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format
      *
-     * @param $data
-     * @param \stdClass $record Entire row
+     * @param mixed $data Raw data associated with this field definition.
+     * @param \stdClass $record Full record from database.
      * @return mixed
-     * @throws \moodle_exception
      */
     public function transform_data($data, \stdClass $record)
     {
-        $data = parent::transform_data($data, $record);
-
-        if ($data instanceof \moodle_url) {
-            return \html_writer::img($data, $this->get_title());
-        }
-
-        return $data;
+        return '#' . $data;
     }
 }

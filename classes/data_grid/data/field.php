@@ -22,7 +22,7 @@
 
 namespace block_dash\data_grid\data;
 
-use block_dash\block_builder;
+use block_dash\data_grid\field\field_definition_factory;
 
 class field implements field_interface
 {
@@ -52,7 +52,7 @@ class field implements field_interface
      */
     public function get_label()
     {
-        if ($fielddefinition = block_builder::get_field_definition($this->get_name())) {
+        if ($fielddefinition = field_definition_factory::get_field_definition($this->get_name())) {
             return $fielddefinition->get_title();
         }
 

@@ -20,34 +20,30 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\data_grid\field;
+namespace block_dash\data_grid\field\attribute;
 
 /**
- * Returns URL to user's profile image.
+ * Transforms unix timestamp data to readable date.
  *
- * @package block_dash\data_grid\field
+ * @package block_dash\data_grid\field\attribute
  */
-class user_image_url_field_definition extends field_definition
+class link_attribute extends abstract_field_attribute
 {
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format
      *
-     * @param $data
-     * @param \stdClass $record Entire row
+     * @param mixed $data Raw data associated with this field definition.
+     * @param \stdClass $record Full record from database.
      * @return mixed
-     * @throws \moodle_exception
+     * @throws \coding_exception
      */
     public function transform_data($data, \stdClass $record)
     {
-        global $PAGE, $DB;
-
-        if ($user = $DB->get_record('user', ['id' => $data])) {
-            $picture = new \user_picture($user);
-            $picture->size = 1;
-            $data = $picture->get_url($PAGE);
+        if ($data) {
+            return \html_writer::link($data, $this->get_option('label'));
         }
 
-        return parent::transform_data($data, $record);
+        return $data;
     }
 }

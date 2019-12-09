@@ -20,63 +20,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_dash\data_grid\field\field_definition;
-use block_dash\data_grid\field\user_profile_link_field_definition;
-use block_dash\data_grid\field\user_profile_url_field_definition;
-use block_dash\data_grid\field\date_field_definition;
 use block_dash\data_source\form\preferences_form;
 use block_dash\layout\grid_layout;
 use block_dash\data_source\users_data_source;
-use block_dash\data_grid\field\user_image_url_field_definition;
-use block_dash\data_grid\field\user_image_field_definition;
 
 defined('MOODLE_INTERNAL') || die();
 
 function block_dash_register_field_definitions() {
     global $CFG;
 
-    require_once("$CFG->dirroot/user/profile/lib.php");
-
-    $definitions = [
-        new field_definition(['user'], 'u_id', 'u.id', get_string('user') . ' ID'),
-        new field_definition(['user'], 'u_firstname', 'u.firstname', get_string('firstname')),
-        new field_definition(['user'], 'u_lastname', 'u.lastname', get_string('lastname')),
-        new field_definition(['user'], 'u_email', 'u.email', get_string('email')),
-        new field_definition(['user'], 'u_username', 'u.username', get_string('username')),
-        new field_definition(['user'], 'u_idnumber', 'u.idnumber', get_string('idnumber')),
-        new field_definition(['user'], 'u_city', 'u.city', get_string('city')),
-        new field_definition(['user'], 'u_country', 'u.country', get_string('country')),
-        new date_field_definition(['user'], 'u_lastlogin', 'u.lastlogin', get_string('lastlogin')),
-        new field_definition(['user'], 'u_department', 'u.department', get_string('department')),
-        new field_definition(['user'], 'u_institution', 'u.institution', get_string('institution')),
-        new field_definition(['user'], 'u_address', 'u.address', get_string('address')),
-        new field_definition(['user'], 'u_alternatename', 'u.alternatename', get_string('alternatename')),
-        new date_field_definition(['user'], 'u_firstaccess', 'u.firstaccess', get_string('firstaccess')),
-        new field_definition(['user'], 'u_description', 'u.description', get_string('description')),
-        new user_image_url_field_definition(['user'], 'u_picture_url', 'u.id', get_string('pictureofuser') .' URL'),
-        new user_image_field_definition(['user'], 'u_picture', 'u.id', get_string('pictureofuser')),
-        new user_profile_url_field_definition(['user'], 'u_profile_url', 'u.id', 'User profile URL'),
-        new user_profile_link_field_definition(['user'], 'u_profile_link', 'u.id', 'User profile link')
-    ];
-
-    $i = 0;
-    foreach (profile_get_custom_fields() as $custom_field) {
-        $definitions[] = new field_definition(
-            ['user'],
-            'u_pf_' . strtolower($custom_field->shortname),
-            "(SELECT profile$i.data FROM {user_info_data} profile$i 
-            WHERE profile$i.userid = u.id AND profile$i.fieldid = $custom_field->id)",
-            $custom_field->name);
-
-        $i++;
+    if (PHPUNIT_TEST) {
+        return require("$CFG->dirroot/blocks/dash/field_definitions_phpunit.php");
     }
 
-    $definitions = array_merge($definitions, [
-        new field_definition(['group'], 'g_id', 'g.id', get_string('group') . ' ID'),
-        new field_definition(['group'], 'g_name', 'g.name', get_string('group'))
-    ]);
-
-    return $definitions;
+    return require("$CFG->dirroot/blocks/dash/field_definitions.php");
 }
 
 function block_dash_register_data_sources() {

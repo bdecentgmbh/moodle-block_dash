@@ -152,7 +152,7 @@ class external extends external_api
 
         $block = block_instance_by_id($context->instanceid);
 
-        $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'info-dash-preferences-form'],
+        $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'dash-preferences-form'],
             true, $data);
 
         $validationerrors = true;

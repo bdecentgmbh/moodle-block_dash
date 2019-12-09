@@ -1,14 +1,14 @@
-<div id="info-dash-{{block_instance_id}}" class="info-dash-container">
+<div id="dash-{{block_instance_id}}" class="dash-container">
     {{#editing}}
-        <button class="info-dash-edit-preferences btn btn-sm btn-primary mb-2" style="width: 100%;">{{#str}}preferences{{/str}}</button>
+        <button class="dash-edit-preferences btn btn-sm btn-primary mb-2" style="width: 100%;">{{#str}}preferences{{/str}}</button>
     {{/editing}}
-    <div class="info-dash-block-content">
+    <div class="dash-block-content">
         {{{preloaded}}}
     </div>
 </div>
 
 {{#js}}
     require(["block_dash/dash_instance"], function(DashInstance) {
-        new DashInstance("#info-dash-{{block_instance_id}}", {{block_instance_id}}, {{block_context_id}});
+        new DashInstance("#dash-{{block_instance_id}}", {{block_instance_id}}, {{block_context_id}});
     });
 {{/js}}

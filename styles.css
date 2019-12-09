@@ -23,14 +23,14 @@ body#page-blocks-dash-data-source .drag-handle {
     margin-right: 0.25rem;
 }
 
-.info-dash-preferences-form .col-form-label {
+.dash-preferences-form .col-form-label {
     font-weight: bold;
 }
-.info-dash-preferences-form .fitem.checkboxgroup1 {
+.dash-preferences-form .fitem.checkboxgroup1 {
     width: 100%;
     justify-content: left;
 }
 
-.info-dash-table th {
+.dash-table th {
     white-space: nowrap;
 }

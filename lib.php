@@ -116,7 +116,7 @@ function block_dash_output_fragment_block_preferences_form($args) {
 
     $block = block_instance_by_id($context->instanceid);
 
-    $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'info-dash-preferences-form']);
+    $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'dash-preferences-form']);
 
     require_capability('block/dash:addinstance', $context);
 

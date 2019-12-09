@@ -11,13 +11,13 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
         this.init();
     };
 
-    DashInstance.prototype.BLOCK_CONTENT_SELECTOR = '.info-dash-block-content';
+    DashInstance.prototype.BLOCK_CONTENT_SELECTOR = '.dash-block-content';
     DashInstance.prototype.FILTER_FORM_SELECTOR = '.filter-form';
 
     DashInstance.prototype.init = function() {
         Log.debug('Initializing dash instance', this);
 
-        this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.info-dash-edit-preferences'),
+        this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
             this.blockContextid, function(e) {
 
             // Preferences changed, go back to first page.

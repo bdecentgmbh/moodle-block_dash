@@ -54,7 +54,7 @@ abstract class abstract_field_definition implements field_definition_interface
     private $options = [];
 
     /**
-     * @var
+     * @var field_attribute_interface[]
      */
     private $attributes = [];
 

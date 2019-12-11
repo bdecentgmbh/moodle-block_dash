@@ -28,12 +28,10 @@ use block_dash\data_grid\sql_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
-use block_dash\data_grid\filter\condition;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\layout\grid_layout;
 use block_dash\layout\layout_factory;
 use block_dash\layout\layout_interface;
-use block_dash\layout\one_stat_layout;
 
 abstract class abstract_data_source implements data_source_interface, \templatable
 {

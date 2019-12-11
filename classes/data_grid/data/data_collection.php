@@ -119,11 +119,23 @@ class data_collection implements data_collection_interface, \ArrayAccess
     }
 
     /**
+     * Returns the first field of the data array.
+     *
      * @return field_interface|null
      */
     public function first_data()
     {
-        return reset($this->data);
+        return isset(array_values($this->data)[0]) ? array_values($this->data)[0] : null;
+    }
+
+    /**
+     * Returns the second field of the data array.
+     *
+     * @return field_interface|null
+     */
+    public function second_data()
+    {
+        return isset(array_values($this->data)[1]) ? array_values($this->data)[1] : null;
     }
 
     /**

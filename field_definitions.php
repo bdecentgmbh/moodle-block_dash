@@ -29,47 +29,56 @@ $definitions = [
             [
                 'type' => \block_dash\data_grid\field\attribute\identifier_attribute::class
             ]
-        ]
+        ],
+        'tables' => ['u']
     ],
     [
         'name' => 'u_firstname',
         'select' => 'u.firstname',
-        'title' => get_string('firstname')
+        'title' => get_string('firstname'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_lastname',
         'select' => 'u.lastname',
-        'title' => get_string('lastname')
+        'title' => get_string('lastname'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_email',
         'select' => 'u.email',
-        'title' => get_string('email')
+        'title' => get_string('email'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_username',
         'select' => 'u.username',
-        'title' => get_string('username')
+        'title' => get_string('username'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_idnumber',
         'select' => 'u.idnumber',
-        'title' => get_string('idnumber')
+        'title' => get_string('idnumber'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_city',
         'select' => 'u.city',
-        'title' => get_string('city')
+        'title' => get_string('city'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_country',
         'select' => 'u.country',
-        'title' => get_string('country')
+        'title' => get_string('country'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_lastlogin',
         'select' => 'u.lastlogin',
         'title' => get_string('lastlogin'),
+        'tables' => ['u'],
         'attributes' => [
             [
                 'type' => \block_dash\data_grid\field\attribute\date_attribute::class
@@ -79,27 +88,32 @@ $definitions = [
     [
         'name' => 'u_department',
         'select' => 'u.department',
-        'title' => get_string('department')
+        'title' => get_string('department'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_institution',
         'select' => 'u.institution',
-        'title' => get_string('institution')
+        'title' => get_string('institution'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_address',
         'select' => 'u.address',
-        'title' => get_string('address')
+        'title' => get_string('address'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_alternatename',
         'select' => 'u.alternatename',
-        'title' => get_string('alternatename')
+        'title' => get_string('alternatename'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_firstaccess',
         'select' => 'u.firstaccess',
         'title' => get_string('firstaccess'),
+        'tables' => ['u'],
         'attributes' => [
             [
                 'type' => \block_dash\data_grid\field\attribute\date_attribute::class
@@ -109,12 +123,14 @@ $definitions = [
     [
         'name' => 'u_description',
         'select' => 'u.description',
-        'title' => get_string('description')
+        'title' => get_string('description'),
+        'tables' => ['u']
     ],
     [
         'name' => 'u_picture_url',
         'select' => 'u.picture',
         'title' => get_string('pictureofuser'),
+        'tables' => ['u'],
         'attributes' => [
             [
                 'type' => \block_dash\data_grid\field\attribute\user_image_url_attribute::class
@@ -125,6 +141,7 @@ $definitions = [
         'name' => 'u_picture',
         'select' => 'u.picture',
         'title' => get_string('pictureofuser'),
+        'tables' => ['u'],
         'attributes' => [
             [
                 'type' => \block_dash\data_grid\field\attribute\user_image_url_attribute::class
@@ -141,6 +158,7 @@ $definitions = [
         'name' => 'u_profile_url',
         'select' => 'u.id',
         'title' => get_string('userprofileurl', 'block_dash'),
+        'tables' => ['u'],
         'attributes' => [
             [
                 'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
@@ -154,6 +172,7 @@ $definitions = [
         'name' => 'u_profile_link',
         'select' => 'u.id',
         'title' => get_string('userprofilelink', 'block_dash'),
+        'tables' => ['u'],
         'attributes' => [
             [
                 'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
@@ -179,7 +198,8 @@ foreach (profile_get_custom_fields() as $custom_field) {
         'name' => 'u_pf_' . strtolower($custom_field->shortname),
         'select' => "(SELECT profile$i.data FROM {user_info_data} profile$i
                       WHERE profile$i.userid = u.id AND profile$i.fieldid = $custom_field->id)",
-        'title' => $custom_field->name
+        'title' => $custom_field->name,
+        'tables' => ['u']
     ];
 
     $i++;
@@ -190,6 +210,7 @@ $definitions = array_merge($definitions, [
         'name' => 'g_id',
         'select' => 'g.id',
         'title' => get_string('group') . ' ID',
+        'tables' => ['g'],
         'attributes' => [
             [
                 'type' => \block_dash\data_grid\field\attribute\identifier_attribute::class
@@ -199,7 +220,8 @@ $definitions = array_merge($definitions, [
     [
         'name' => 'g_name',
         'select' => 'g.name',
-        'title' => get_string('group')
+        'title' => get_string('groupname', 'group'),
+        'tables' => ['g']
     ]
 ]);
 

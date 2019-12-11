@@ -57,6 +57,10 @@ class field_definition_factory
                                     field_definition_interface::VISIBILITY_VISIBLE,
                                 isset($field_definition['options']) ? $field_definition['options'] : []);
 
+                            if (isset($field_definition['tables'])) {
+                                $_field_definition->set_option('tables', $field_definition['tables']);
+                            }
+
                             // Support adding attributes from configuration array.
                             if (isset($field_definition['attributes'])) {
                                 foreach ($field_definition['attributes'] as $attribute) {

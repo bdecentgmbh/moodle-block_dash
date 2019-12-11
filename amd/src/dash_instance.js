@@ -1,12 +1,13 @@
 define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events', 'block_dash/preferences_modal'],
     function($, Log, Ajax, Notification, ModalEvents, PreferencesModal) {
 
-    var DashInstance = function(root, blockInstanceId, blockContextid) {
+    var DashInstance = function(root, blockInstanceId, blockContextid, editing) {
         this.root = $(root);
         this.blockInstanceId = blockInstanceId;
         this.blockContextid = blockContextid;
         this.currentPage = 0;
         this.blockPreferencesModal = null;
+        this.editing = editing;
 
         this.init();
     };
@@ -17,25 +18,27 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
     DashInstance.prototype.init = function() {
         Log.debug('Initializing dash instance', this);
 
-        this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
-            this.blockContextid, function(e) {
+        if (this.editing) {
+            this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
+                this.blockContextid, function (e) {
 
-            // Preferences changed, go back to first page.
-            this.currentPage = 0;
-            this.refresh();
-        }.bind(this));
+                    // Preferences changed, go back to first page.
+                    this.currentPage = 0;
+                    this.refresh();
+                }.bind(this));
 
-        this.getRoot().on('change', 'select, input', function(e) {
-            e.preventDefault();
+            this.getRoot().on('change', 'select, input', function (e) {
+                e.preventDefault();
 
-            Log.debug('Submitting filter form');
-            Log.debug(e);
-            Log.debug($(e.target).serializeArray());
+                Log.debug('Submitting filter form');
+                Log.debug(e);
+                Log.debug($(e.target).serializeArray());
 
-            // Filter results, go back to first page.
-            this.currentPage = 0;
-            this.refresh();
-        }.bind(this));
+                // Filter results, go back to first page.
+                this.currentPage = 0;
+                this.refresh();
+            }.bind(this));
+        }
 
         this.getBlockContentArea().on('click', '.page-link', function(e) {
             e.preventDefault();

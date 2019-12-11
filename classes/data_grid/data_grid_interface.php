@@ -23,6 +23,8 @@
 namespace block_dash\data_grid;
 
 use block_dash\data_grid\data\data_collection_interface;
+use block_dash\data_grid\data\strategy\data_strategy_interface;
+use block_dash\data_grid\field\field_definition_interface;
 
 /**
  * Get data to be displayed in a grid or downloaded as a formatted file.
@@ -32,6 +34,16 @@ use block_dash\data_grid\data\data_collection_interface;
 interface data_grid_interface
 {
     /**
+     * @return data_strategy_interface
+     */
+    public function get_data_strategy();
+
+    /**
+     * @param data_strategy_interface $data_strategy
+     */
+    public function set_data_strategy(data_strategy_interface $data_strategy);
+
+    /**
      * Execute and return data collection.
      *
      * @throws \moodle_exception
@@ -39,4 +51,50 @@ interface data_grid_interface
      * @since 2.2
      */
     public function get_data();
+
+    /**
+     * Get field definition by name. Returns false if not found.
+     *
+     * @param $name
+     * @return bool|field_definition_interface
+     */
+    public function get_field_definition($name);
+
+    /**
+     * Get all field definitions in this data grid.
+     *
+     * @return field_definition_interface[]
+     */
+    public function get_field_definitions();
+
+    /**
+     * Sets field definitions on data grid.
+     *
+     * @param field_definition_interface[] $field_definitions
+     * @throws \moodle_exception
+     */
+    public function set_field_definitions($field_definitions);
+
+    /**
+     * Add a single field definition to the report.
+     *
+     * @param field_definition_interface $field_definition
+     * @throws \moodle_exception
+     */
+    public function add_field_definition(field_definition_interface $field_definition);
+
+    /**
+     * Check if grid has any field definitions set.
+     *
+     * @return bool
+     */
+    public function has_any_field_definitions();
+
+    /**
+     * Check if report has a certain field
+     *
+     * @param $name
+     * @return bool
+     */
+    public function has_field_definition($name);
 }

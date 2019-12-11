@@ -20,25 +20,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\data_grid\field\attribute;
+namespace block_dash\data_grid\data\strategy;
+
+use block_dash\data_grid\data\data_collection_interface;
+use block_dash\data_grid\data_grid_interface;
 
 /**
- * Designates the field definition as an identifier (database record ID).
- *
- * @package block_dash\data_grid\field\attribute
+ * @package block_dash\data
  */
-class identifier_attribute extends abstract_field_attribute
+interface data_strategy_interface
 {
     /**
-     * After records are relieved from database each field has a chance to transform the data.
-     * Example: Convert unix timestamp into a human readable date format
-     *
-     * @param mixed $data Raw data associated with this field definition.
-     * @param \stdClass $record Full record from database.
-     * @return mixed
+     * @param \stdClass[] $records
+     * @param data_grid_interface $data_grid
+     * @return data_collection_interface
      */
-    public function transform_data($data, \stdClass $record)
-    {
-        return $data;
-    }
+    public function convert_records_to_data_collection($records, data_grid_interface $data_grid);
 }

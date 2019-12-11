@@ -167,6 +167,23 @@ abstract class abstract_field_definition implements field_definition_interface
         return array_values($this->attributes);
     }
 
+    /**
+     * Check if field has an attribute type.
+     *
+     * @param string $classname Full class path to attribute
+     * @return bool
+     */
+    public function has_attribute($classname)
+    {
+        foreach ($this->get_attributes() as $attribute) {
+            if (get_class($attribute) == $classname) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     #endregion
 
     #region Options

@@ -162,9 +162,9 @@ $definitions = [
                 ]
             ],
             [
-                'type' => \block_dash\data_grid\field\attribute\image_attribute::class,
+                'type' => \block_dash\data_grid\field\attribute\link_attribute::class,
                 'options' => [
-                    'title' => get_string('pictureofuser')
+                    'label' => get_string('viewprofile')
                 ]
             ]
         ]
@@ -189,7 +189,12 @@ $definitions = array_merge($definitions, [
     [
         'name' => 'g_id',
         'select' => 'g.id',
-        'title' => get_string('group') . ' ID'
+        'title' => get_string('group') . ' ID',
+        'attributes' => [
+            [
+                'type' => \block_dash\data_grid\field\attribute\identifier_attribute::class
+            ]
+        ]
     ],
     [
         'name' => 'g_name',

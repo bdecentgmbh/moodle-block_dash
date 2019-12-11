@@ -24,6 +24,8 @@ namespace block_dash\data_grid;
 
 use block_dash\data_grid\data\data_collection;
 use block_dash\data_grid\data\data_collection_interface;
+use block_dash\data_grid\data\strategy\data_strategy_interface;
+use block_dash\data_grid\data\strategy\standard_strategy;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
 
@@ -81,6 +83,11 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      */
     private $filter_collection;
 
+    /**
+     * @var data_strategy_interface
+     */
+    private $data_strategy;
+
     #endregion
 
     /**
@@ -101,6 +108,24 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
         $this->paginator = new paginator(function () {
             return $this->get_count();
         });
+
+        $this->data_strategy = new standard_strategy();
+    }
+
+    /**
+     * @return data_strategy_interface
+     */
+    public function get_data_strategy()
+    {
+        return $this->data_strategy;
+    }
+
+    /**
+     * @param data_strategy_interface $data_strategy
+     */
+    public function set_data_strategy(data_strategy_interface $data_strategy)
+    {
+        $this->data_strategy = $data_strategy;
     }
 
     /**

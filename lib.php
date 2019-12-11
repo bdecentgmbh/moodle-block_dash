@@ -22,6 +22,8 @@
 
 use block_dash\data_source\form\preferences_form;
 use block_dash\layout\grid_layout;
+use block_dash\layout\accordion_layout;
+use block_dash\layout\one_stat_layout;
 use block_dash\data_source\users_data_source;
 
 defined('MOODLE_INTERNAL') || die();
@@ -49,10 +51,6 @@ function block_dash_register_layouts() {
     return [
         [
             'name' => get_string('layoutgrid', 'block_dash'),
-            'class' => grid_layout::class
-        ],
-        [
-            'name' => get_string('layoutonestat', 'block_dash'),
             'class' => grid_layout::class
         ]
     ];

@@ -116,32 +116,10 @@ class sql_data_grid extends data_grid
      */
     public function get_data()
     {
-        if ($this->data_collection) {
-            return $this->data_collection;
+        if (!$this->data_collection) {
+            $records = $this->get_records();
+            $this->data_collection = $this->get_data_strategy()->convert_records_to_data_collection($records, $this);
         }
-
-        $records = $this->get_records();
-
-        $grid_data = new data_collection();
-
-        foreach ($records as $record) {
-            $row = new data_collection();
-            foreach ($this->get_field_definitions() as $field_definition) {
-                $name = $field_definition->get_name();
-
-                if ($field_definition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
-                    unset($record->$name);
-                    continue;
-                }
-
-                $record->$name = $field_definition->transform_data($record->$name, $record);
-            }
-
-            $row->add_data_associative($record);
-            $grid_data->add_child_collection('rows', $row);
-        }
-
-        $this->data_collection = $grid_data;
 
         return $this->data_collection;
     }
@@ -165,7 +143,7 @@ class sql_data_grid extends data_grid
                 $this->get_paginator()->get_per_page());
         }
 
-        return $DB->get_records_sql($query, $filter_params);
+        return $DB->get_records_sql($query, $filter_params, 0, 100);
     }
 
     #region Counting

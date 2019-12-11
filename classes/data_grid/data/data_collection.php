@@ -79,13 +79,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
                 return $this->children[$type];
             }
         } else {
-            $children = [];
-
-            foreach ($this->children as $set) {
-                $children = array_merge($set, $children);
-            }
-
-            return $children;
+            return array_values($this->children);
         }
 
         return [];

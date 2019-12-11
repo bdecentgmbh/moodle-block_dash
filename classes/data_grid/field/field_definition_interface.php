@@ -86,6 +86,14 @@ interface field_definition_interface
     public function get_attributes();
 
     /**
+     * Check if field has an attribute type.
+     *
+     * @param string $classname Full class path to attribute
+     * @return bool
+     */
+    public function has_attribute($classname);
+
+    /**
      * Get a single option.
      *
      * @param $name

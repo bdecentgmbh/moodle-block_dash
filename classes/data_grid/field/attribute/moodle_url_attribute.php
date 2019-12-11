@@ -40,6 +40,7 @@ class moodle_url_attribute extends abstract_field_attribute
      */
     public function transform_data($data, \stdClass $record)
     {
+        $url = null;
         /** @var \moodle_url $url */
         if ($this->get_option('url') instanceof \moodle_url && $url = $this->get_option('url')) {
             foreach ($url->params() as $key => $value) {
@@ -51,6 +52,6 @@ class moodle_url_attribute extends abstract_field_attribute
             }
         }
 
-        return $data;
+        return $url;
     }
 }

@@ -22,6 +22,10 @@
 
 namespace block_dash\layout;
 
+use block_dash\data_grid\data\data_collection_interface;
+use block_dash\data_grid\data\strategy\data_strategy_interface;
+use block_dash\data_grid\data\strategy\standard_strategy;
+use block_dash\data_grid\field\attribute\identifier_attribute;
 use block_dash\data_grid\filter\condition;
 use block_dash\data_grid\paginator;
 use block_dash\data_source\data_source_interface;
@@ -63,6 +67,14 @@ abstract class abstract_layout implements layout_interface, \templatable
     }
 
     /**
+     * @return data_strategy_interface
+     */
+    public function get_data_strategy()
+    {
+        return new standard_strategy();
+    }
+
+    /**
      * Modify objects before data is retrieved in the data source. This allows the layout to make decisions on the
      * data source and data grid.
      */
@@ -74,8 +86,10 @@ abstract class abstract_layout implements layout_interface, \templatable
     /**
      * Modify objects after data is retrieved in the data source. This allows the layout to make decisions on the
      * data source and data grid.
+     *
+     * @param data_collection_interface $data_collection
      */
-    public function after_data()
+    public function after_data(data_collection_interface $data_collection)
     {
 
     }
@@ -101,6 +115,10 @@ abstract class abstract_layout implements layout_interface, \templatable
         if ($this->supports_field_visibility()) {
             $group = [];
             foreach ($this->get_data_source()->get_available_field_definitions() as $available_field_definition) {
+                if ($available_field_definition->has_attribute(identifier_attribute::class)) {
+                    continue;
+                }
+
                 $fieldname = 'config_preferences[available_fields][' . $available_field_definition->get_name() .
                     '][visible]';
 
@@ -160,28 +178,33 @@ abstract class abstract_layout implements layout_interface, \templatable
         global $OUTPUT;
 
         $templatedata = [
-            'error' => ''
+            'error' => '',
+            'paginator' => '',
+            'data' => null,
+            'uniqueid' => uniqid()
         ];
 
-        try {
-            $data = $this->get_data_source()->get_data();
-        } catch (\Exception $e) {
-            $error = \html_writer::tag('p', get_string('databaseerror', 'block_dash'));
-            if (is_siteadmin()) {
-                $error .= \html_writer::tag('p', $e->getMessage());
+        if (!empty($this->get_data_source()->get_all_preferences())) {
+            try {
+                $templatedata['data'] = $this->get_data_source()->get_data();
+            } catch (\Exception $e) {
+                $error = \html_writer::tag('p', get_string('databaseerror', 'block_dash'));
+                if (is_siteadmin()) {
+                    $error .= \html_writer::tag('p', $e->getMessage());
+                }
+
+                $templatedata['error'] .= $OUTPUT->notification($error, 'error');
             }
 
-            $templatedata['error'] .= $OUTPUT->notification($error, 'error');
+            $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()->get_data_grid()->get_paginator()
+                ->export_for_template($OUTPUT));
         }
 
         $formhtml = $this->get_data_source()->get_filter_collection()->create_form_elements();
 
-        if (isset($data)) {
+        if (!is_null($templatedata['data'])) {
             $templatedata = array_merge($templatedata, [
                 'filter_form_html' => $formhtml,
-                'data' => $data,
-                'paginator' => $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()->get_data_grid()->get_paginator()
-                    ->export_for_template($OUTPUT)),
                 'supports_filtering' => $this->supports_filtering(),
                 'supports_pagination' => $this->supports_pagination(),
                 'preferences' => $this->get_data_source()->get_all_preferences()

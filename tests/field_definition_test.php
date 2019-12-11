@@ -70,8 +70,13 @@ class field_definition_test extends \advanced_testcase
     public function test_field_definition_attributes()
     {
         $attribute = new identifier_attribute();
+
+        $this->assertFalse($this->field_definition->has_attribute(get_class($attribute)), 'Ensure field does not have attribute yet.');
+
         $this->field_definition->add_attribute($attribute);
         $this->field_definition->set_visibility(field_definition_interface::VISIBILITY_VISIBLE);
+
+        $this->assertTrue($this->field_definition->has_attribute(get_class($attribute)), 'Ensure field does have attribute.');
 
         $this->assertCount(1, $this->field_definition->get_attributes(), 'Ensure attributes are returned.');
 

@@ -22,6 +22,8 @@
 
 namespace block_dash\data_source;
 
+use block_dash\data_grid\data\data_collection;
+use block_dash\data_grid\field\attribute\identifier_attribute;
 use block_dash\data_grid\sql_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
@@ -29,6 +31,7 @@ use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\condition;
 use block_dash\data_grid\filter\filter_collection_interface;
 use block_dash\layout\grid_layout;
+use block_dash\layout\layout_factory;
 use block_dash\layout\layout_interface;
 use block_dash\layout\one_stat_layout;
 
@@ -147,9 +150,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         } else {
             // No preferences set yet, remove all filters.
             foreach ($this->get_filter_collection()->get_filters() as $filter) {
-                if ($filter instanceof condition) {
-                    continue;
-                }
                 $this->get_filter_collection()->remove_filter($filter);
             }
         }
@@ -164,13 +164,21 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     public final function get_data()
     {
         if (is_null($this->data)) {
+            // If the block has no preferences do not query any data.
+            if (empty($this->get_all_preferences())) {
+                return new data_collection();
+            }
+
             $this->before_data();
 
             $data_grid = $this->get_data_grid();
+            if ($strategy = $this->get_layout()->get_data_strategy()) {
+                $data_grid->set_data_strategy($strategy);
+            }
             $data_grid->set_filter_collection($this->get_filter_collection());
             $this->data = $data_grid->get_data();
 
-            $this->after_data();
+            $this->after_data($this->data);
         }
 
         return $this->data;
@@ -178,10 +186,22 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
     /**
      * Modify objects after data is retrieved.
+     *
+     * @param data_collection_interface $data_collection
      */
-    public function after_data()
+    public function after_data(data_collection_interface $data_collection)
     {
-        $this->get_layout()->after_data();
+        $this->get_layout()->after_data($data_collection);
+    }
+
+    /**
+     * Explicitly set layout.
+     *
+     * @param layout_interface $layout
+     */
+    public function set_layout(layout_interface $layout)
+    {
+        $this->layout = $layout;
     }
 
     /**
@@ -191,8 +211,13 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     {
         if (is_null($this->layout)) {
             if ($layout = $this->get_preferences('layout')) {
-                $this->layout = new $layout($this);
-            } else {
+                if (class_exists($layout)) {
+                    $this->layout = new $layout($this);
+                }
+            }
+
+            // If still null default to grid layout.
+            if (is_null($this->layout)) {
                 $this->layout = new grid_layout($this);
             }
         }
@@ -229,10 +254,8 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     {
         $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
 
-        $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'), [
-            grid_layout::class => get_string('layoutgrid', 'block_dash'),
-            one_stat_layout::class => get_string('layoutonestat', 'block_dash')
-        ]);
+        $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'),
+            layout_factory::get_layout_form_options());
         $mform->setType('config_preferences[layout]', PARAM_TEXT);
 
         if ($layout = $this->get_layout()) {
@@ -290,6 +313,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             if ($this->get_layout()->supports_field_visibility()) {
 
                 $sortedfielddefinitions = [];
+
+                // First add the identifiers, in order, so they always come first in the query.
+                foreach ($fielddefinitions as $key => $fielddefinition) {
+                    if ($fielddefinition->has_attribute(identifier_attribute::class)) {
+                        $sortedfielddefinitions[] = $fielddefinition;
+                        unset($fielddefinitions[$key]);
+                    }
+                }
 
                 if ($availablefields = $this->get_preferences('available_fields')) {
                     foreach ($availablefields as $fieldname => $availablefield) {

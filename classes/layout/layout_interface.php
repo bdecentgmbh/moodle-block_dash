@@ -22,6 +22,8 @@
 
 namespace block_dash\layout;
 
+use block_dash\data_grid\data\data_collection_interface;
+use block_dash\data_grid\data\strategy\data_strategy_interface;
 use block_dash\data_source\data_source_interface;
 
 /**
@@ -63,6 +65,11 @@ interface layout_interface
     public function supports_pagination();
 
     /**
+     * @return data_strategy_interface
+     */
+    public function get_data_strategy();
+
+    /**
      * Modify objects before data is retrieved in the data source. This allows the layout to make decisions on the
      * data source and data grid.
      */
@@ -71,8 +78,10 @@ interface layout_interface
     /**
      * Modify objects after data is retrieved in the data source. This allows the layout to make decisions on the
      * data source and data grid.
+     *
+     * @param data_collection_interface $data_collection
      */
-    public function after_data();
+    public function after_data(data_collection_interface $data_collection);
 
     /**
      * Add form elements to the preferences form when a user is configuring a block.

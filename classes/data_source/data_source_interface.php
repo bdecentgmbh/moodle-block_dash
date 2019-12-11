@@ -71,8 +71,17 @@ interface data_source_interface
 
     /**
      * Modify objects after data is retrieved.
+     *
+     * @param data_collection_interface $data_collection
      */
-    public function after_data();
+    public function after_data(data_collection_interface $data_collection);
+
+    /**
+     * Explicitly set layout.
+     *
+     * @param layout_interface $layout
+     */
+    public function set_layout(layout_interface $layout);
 
     /**
      * @return layout_interface

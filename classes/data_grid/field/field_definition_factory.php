@@ -88,8 +88,9 @@ class field_definition_factory
     public static function get_field_definitions(array $names)
     {
         $field_definitions = [];
+        $all = self::get_all_field_definitions();
 
-        foreach (self::get_all_field_definitions() as $field_definition) {
+        foreach ($all as $field_definition) {
             if (in_array($field_definition->get_name(), $names)) {
                 $field_definitions[array_search($field_definition->get_name(), $names)] = $field_definition;
             }

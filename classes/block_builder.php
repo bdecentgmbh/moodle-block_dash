@@ -73,7 +73,8 @@ class block_builder
                 'preloaded' => $renderer->render_data_source($bb->get_configuration()->get_data_source()),
                 'block_instance_id' => $this->block_instance->instance->id,
                 'block_context_id' => $this->block_instance->context->id,
-                'editing' => $PAGE->user_is_editing()
+                'editing' => $PAGE->user_is_editing() &&
+                    has_capability('block/dash:addinstance', $this->block_instance->context)
             ]);
         } else {
             $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));

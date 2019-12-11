@@ -46,12 +46,4 @@ $capabilities = [
         ],
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ],
-    'block/dash:managedatasources' => [
-        'riskbitmask'  => RISK_MANAGETRUST,
-        'captype'      => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes'   => [
-            'manager' => CAP_ALLOW
-        ]
-    ],
 ];

@@ -31,6 +31,19 @@ abstract class abstract_field_attribute implements field_attribute_interface
 {
     private $options = [];
 
+    /**
+     * After records are relieved from database each field has a chance to transform the data.
+     * Example: Convert unix timestamp into a human readable date format
+     *
+     * @param mixed $data Raw data associated with this field definition.
+     * @param \stdClass $record Full record from database.
+     * @return mixed
+     */
+    public function transform_data($data, \stdClass $record)
+    {
+        return $data;
+    }
+
     #region Options
 
     /**

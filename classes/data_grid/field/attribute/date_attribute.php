@@ -40,7 +40,7 @@ class date_attribute extends abstract_field_attribute
      */
     public function transform_data($data, \stdClass $record)
     {
-        if (is_integer($data) && $data > 0) {
+        if (is_numeric($data) && $data > 0) {
             return userdate($data, get_string('strftimedatefullshort'));
         }
 

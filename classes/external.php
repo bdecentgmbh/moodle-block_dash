@@ -157,8 +157,6 @@ class external extends external_api
 
         $validationerrors = true;
         if ($form->get_data()) {
-
-
             if (!empty($block->config)) {
                 $config = clone($block->config);
             } else {
@@ -177,7 +175,6 @@ class external extends external_api
         } else if ($errors = $form->is_validated()) {
             throw new \moodle_exception('generalerror');
         }
-
 
         return [
             'validationerrors' => $validationerrors

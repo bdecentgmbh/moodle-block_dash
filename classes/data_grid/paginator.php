@@ -82,6 +82,11 @@ class paginator
         return $this->per_page;
     }
 
+    public function set_per_page($perpage)
+    {
+        $this->per_page = $perpage;
+    }
+
     /**
      * @return int
      */

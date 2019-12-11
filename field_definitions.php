@@ -128,10 +128,13 @@ $definitions = [
     ],
     [
         'name' => 'u_picture_url',
-        'select' => 'u.picture',
-        'title' => get_string('pictureofuser'),
+        'select' => 'u.id',
+        'title' => get_string('pictureofuser') . ' URL',
         'tables' => ['u'],
         'attributes' => [
+            [
+                'type' => \block_dash\data_grid\field\attribute\image_url_attribute::class
+            ],
             [
                 'type' => \block_dash\data_grid\field\attribute\user_image_url_attribute::class
             ]
@@ -139,7 +142,7 @@ $definitions = [
     ],
     [
         'name' => 'u_picture',
-        'select' => 'u.picture',
+        'select' => 'u.id',
         'title' => get_string('pictureofuser'),
         'tables' => ['u'],
         'attributes' => [

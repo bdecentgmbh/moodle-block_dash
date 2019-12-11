@@ -89,6 +89,7 @@ class users_data_source extends abstract_data_source
             'u_alternatename',
             'u_firstaccess',
             'u_description',
+            'u_picture_url',
             'u_picture',
             'u_profile_link',
             'u_profile_url',

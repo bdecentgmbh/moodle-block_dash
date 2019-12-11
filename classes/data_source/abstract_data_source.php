@@ -176,7 +176,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $data_grid->set_filter_collection($this->get_filter_collection());
             $this->data = $data_grid->get_data();
 
-            $this->after_data($this->data);
+            if ($modifieddata = $this->after_data($this->data)) {
+                $this->data = $modifieddata;
+            }
         }
 
         return $this->data;
@@ -189,7 +191,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function after_data(data_collection_interface $data_collection)
     {
-        $this->get_layout()->after_data($data_collection);
+        return $this->get_layout()->after_data($data_collection);
     }
 
     /**
@@ -275,7 +277,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             return $this->preferences[$name];
         }
 
-        return [];
+        return null;
     }
 
     /**

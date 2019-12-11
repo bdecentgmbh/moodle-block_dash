@@ -119,4 +119,37 @@ class field_definition_factory
 
         return null;
     }
+
+    /**
+     * Get options for form select field.
+     *
+     * @param field_definition_interface[] $field_definitions
+     * @return array
+     * @throws \coding_exception
+     */
+    public static function get_field_definition_options($field_definitions)
+    {
+        $options = [];
+        foreach ($field_definitions as $field_definition) {
+
+            $tablenames = [];
+            if ($tables = $field_definition->get_option('tables')) {
+                foreach ($tables as $table) {
+                    $tablenames[] = get_string('tablealias_' . $table, 'block_dash');
+                }
+            }
+
+            if ($tablenames) {
+                $title = implode(', ', $tablenames);
+            } else {
+                $title = get_string('general');
+            }
+
+            $title = $title . ': ' . $field_definition->get_title();
+
+            $options[$field_definition->get_name()] = $title;
+        }
+
+        return $options;
+    }
 }

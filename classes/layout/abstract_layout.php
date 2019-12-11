@@ -226,4 +226,17 @@ abstract class abstract_layout implements layout_interface, \templatable
 
         return $templatedata;
     }
+
+    protected function map_data($mapping, data_collection_interface $data_collection)
+    {
+        foreach ($mapping as $newname => $fieldname) {
+            if ($fieldname) {
+                $data_collection->add_data_associative([
+                    $newname => $data_collection[$fieldname]
+                ]);
+            }
+        }
+
+        return $data_collection;
+    }
 }

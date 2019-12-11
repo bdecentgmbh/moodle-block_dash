@@ -207,8 +207,10 @@ abstract class abstract_layout implements layout_interface, \templatable
                 $templatedata['error'] .= $OUTPUT->notification($error, 'error');
             }
 
-            $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()->get_data_grid()->get_paginator()
-                ->export_for_template($OUTPUT));
+            if ($this->get_data_source()->get_data_grid()->get_count() > 0) {
+                $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()->get_data_grid()->get_paginator()
+                    ->export_for_template($OUTPUT));
+            }
         }
 
         $formhtml = $this->get_data_source()->get_filter_collection()->create_form_elements();

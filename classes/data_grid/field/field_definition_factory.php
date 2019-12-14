@@ -96,7 +96,7 @@ class field_definition_factory
 
         foreach ($all as $field_definition) {
             if (in_array($field_definition->get_name(), $names)) {
-                $field_definitions[array_search($field_definition->get_name(), $names)] = $field_definition;
+                $field_definitions[array_search($field_definition->get_name(), $names)] = clone $field_definition;
             }
         }
 
@@ -113,7 +113,7 @@ class field_definition_factory
     {
         foreach (self::get_all_field_definitions() as $field_definition) {
             if ($field_definition->get_name() == $name) {
-                return $field_definition;
+                return clone $field_definition;
             }
         }
 

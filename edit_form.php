@@ -46,6 +46,18 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_title', get_string('blocktitle', 'block_dash'));
         $mform->setType('config_title', PARAM_TEXT);
 
+        $mform->addElement('select', 'config_width', get_string('blockwidth', 'block_dash'), [
+            100 => '100',
+            50 => '1/2',
+            33 => '1/3',
+            66 => '2/3',
+            25 => '1/4',
+            20 => '1/5',
+            16 => '1/6'
+        ]);
+        $mform->setType('config_width', PARAM_INT);
+        $mform->setDefault('config_width', 100);
+
         $mform->addElement('select', 'config_hide_when_empty', get_string('hidewhenempty', 'block_dash'), [
             0 => get_string('no'),
             1 => get_string('yes')

@@ -83,6 +83,11 @@ class block_dash extends block_base {
         if (isset($this->config->css_class)) {
             $attributes['class'] .= ' ' . $this->config->css_class;
         }
+        if (isset($this->config->width)) {
+            $attributes['class'] .= ' dash-block-width-' . $this->config->width;
+        } else {
+            $attributes['class'] .= ' dash-block-width-100';
+        }
         return $attributes;
     }
 }

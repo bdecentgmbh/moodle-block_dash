@@ -23,11 +23,11 @@
 namespace block_dash\data_grid\field\attribute;
 
 /**
- * Transforms data to moodle_url.
+ * Transforms unix timestamp data to readable date.
  *
  * @package block_dash\data_grid\field\attribute
  */
-class moodle_url_attribute extends abstract_field_attribute
+class linked_data_attribute extends abstract_field_attribute
 {
     /**
      * After records are relieved from database each field has a chance to transform the data.
@@ -40,10 +40,9 @@ class moodle_url_attribute extends abstract_field_attribute
      */
     public function transform_data($data, \stdClass $record)
     {
-        $url = null;
-        /** @var \moodle_url $url */
-        if ($this->get_option('url') instanceof \moodle_url && $url = $this->get_option('url')) {
+        if ($url = $this->get_option('url')) {
             $url = clone $url;
+
             foreach ($url->params() as $key => $value) {
                 if (isset($record->$value)) {
                     $url->param($key, $record->$value);
@@ -51,8 +50,10 @@ class moodle_url_attribute extends abstract_field_attribute
                     $url->param($key, $data);
                 }
             }
+
+            $data = \html_writer::link($url, $data);
         }
 
-        return $url;
+        return $data;
     }
 }

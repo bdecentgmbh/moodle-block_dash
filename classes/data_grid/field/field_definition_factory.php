@@ -123,17 +123,17 @@ class field_definition_factory
     /**
      * Get field definitions by table alias.
      *
-     * @param string $tablealias
+     * @param array $tablealiases
      * @return array
      */
-    public static function get_field_definitions_by_table($tablealias)
+    public static function get_field_definitions_by_tables(array $tablealiases)
     {
         $field_definitions = [];
         $all = self::get_all_field_definitions();
 
         foreach ($all as $field_definition) {
             if ($tables = $field_definition->get_option('tables')) {
-                if (in_array($tablealias, $tables)) {
+                if (array_intersect($tablealiases, $tables)) {
                     $field_definitions[] = clone $field_definition;
                 }
             }

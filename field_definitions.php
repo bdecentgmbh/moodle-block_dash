@@ -45,6 +45,32 @@ $definitions = [
         'tables' => ['u']
     ],
     [
+        'name' => 'u_fullname',
+        'select' => 'CONCAT(u.firstname, " ", u.lastname)',
+        'title' => get_string('fullname'),
+        'tables' => ['u']
+    ],
+    [
+        'name' => 'u_fullname_linked',
+        'select' => 'CONCAT(u.firstname, " ", u.lastname)',
+        'title' => get_string('fullnamelinked', 'block_dash'),
+        'tables' => ['u'],
+        'attributes' => [
+            [
+                'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
+                'options' => [
+                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
+                ]
+            ],
+            [
+                'type' => \block_dash\data_grid\field\attribute\link_attribute::class,
+                'options' => [
+                    'label_field' => 'u_fullname_linked'
+                ]
+            ]
+        ]
+    ],
+    [
         'name' => 'u_email',
         'select' => 'u.email',
         'title' => get_string('email'),
@@ -153,6 +179,29 @@ $definitions = [
                 'type' => \block_dash\data_grid\field\attribute\image_attribute::class,
                 'options' => [
                     'title' => get_string('pictureofuser')
+                ]
+            ]
+        ]
+    ],
+    [
+        'name' => 'u_picture_linked',
+        'select' => 'u.id',
+        'title' => get_string('pictureofuserlinked', 'block_dash'),
+        'tables' => ['u'],
+        'attributes' => [
+            [
+                'type' => \block_dash\data_grid\field\attribute\user_image_url_attribute::class
+            ],
+            [
+                'type' => \block_dash\data_grid\field\attribute\image_attribute::class,
+                'options' => [
+                    'title' => get_string('pictureofuser')
+                ]
+            ],
+            [
+                'type' => \block_dash\data_grid\field\attribute\linked_data_attribute::class,
+                'options' => [
+                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
                 ]
             ]
         ]

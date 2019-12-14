@@ -38,7 +38,8 @@ class standard_strategy implements data_strategy_interface
     {
         $grid_data = new data_collection();
 
-        foreach ($records as $record) {
+        foreach ($records as $fullrecord) {
+            $record = clone $fullrecord;
             $row = new data_collection();
             foreach ($data_grid->get_field_definitions() as $field_definition) {
                 $name = $field_definition->get_name();
@@ -48,7 +49,7 @@ class standard_strategy implements data_strategy_interface
                     continue;
                 }
 
-                $record->$name = $field_definition->transform_data($record->$name, $record);
+                $record->$name = $field_definition->transform_data($record->$name, $fullrecord);
             }
 
             $row->add_data_associative($record);

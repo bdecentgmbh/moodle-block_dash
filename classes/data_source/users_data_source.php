@@ -73,35 +73,7 @@ class users_data_source extends abstract_data_source
 
     public function build_available_field_definitions()
     {
-        $fieldnames = [
-            'u_id',
-            'u_firstname',
-            'u_lastname',
-            'u_email',
-            'u_username',
-            'u_idnumber',
-            'u_city',
-            'u_country',
-            'u_lastlogin',
-            'u_department',
-            'u_institution',
-            'u_address',
-            'u_alternatename',
-            'u_firstaccess',
-            'u_description',
-            'u_picture_url',
-            'u_picture',
-            'u_profile_link',
-            'u_profile_url',
-            'g_id',
-            'g_name'
-        ];
-
-        foreach (profile_get_custom_fields() as $field) {
-            $fieldnames[] = 'u_pf_' . strtolower($field->shortname);
-        }
-
-        return field_definition_factory::get_field_definitions($fieldnames);
+        return field_definition_factory::get_field_definitions_by_tables(['u', 'g']);
     }
 
     /**

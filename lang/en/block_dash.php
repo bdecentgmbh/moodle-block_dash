@@ -140,3 +140,5 @@ $string['userscompleted'] = 'Users completed';
 $string['usersnotcompleted'] = 'Users not completed';
 $string['userstat'] = 'User stat';
 $string['viewprofile'] = 'View profile';
+$string['fullnamelinked'] = 'Full name (linked to profile)';
+$string['pictureofuserlinked'] = 'User picture (linked to profile)';

@@ -41,7 +41,12 @@ class link_attribute extends abstract_field_attribute
     public function transform_data($data, \stdClass $record)
     {
         if ($data) {
-            return \html_writer::link($data, $this->get_option('label'));
+            if ($label = $this->get_option('label')) {
+                return \html_writer::link($data, $label);
+            }
+            if ($labelfield = $this->get_option('label_field')) {
+                return \html_writer::link($data, $record->$labelfield);
+            }
         }
 
         return $data;

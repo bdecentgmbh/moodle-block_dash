@@ -121,6 +121,28 @@ class field_definition_factory
     }
 
     /**
+     * Get field definitions by table alias.
+     *
+     * @param string $tablealias
+     * @return array
+     */
+    public static function get_field_definitions_by_table($tablealias)
+    {
+        $field_definitions = [];
+        $all = self::get_all_field_definitions();
+
+        foreach ($all as $field_definition) {
+            if ($tables = $field_definition->get_option('tables')) {
+                if (in_array($tablealias, $tables)) {
+                    $field_definitions[] = clone $field_definition;
+                }
+            }
+        }
+
+        return $field_definitions;
+    }
+
+    /**
      * Get options for form select field.
      *
      * @param field_definition_interface[] $field_definitions

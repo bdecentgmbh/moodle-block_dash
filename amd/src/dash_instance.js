@@ -26,19 +26,19 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
                     this.currentPage = 0;
                     this.refresh();
                 }.bind(this));
-
-            this.getRoot().on('change', 'select, input', function (e) {
-                e.preventDefault();
-
-                Log.debug('Submitting filter form');
-                Log.debug(e);
-                Log.debug($(e.target).serializeArray());
-
-                // Filter results, go back to first page.
-                this.currentPage = 0;
-                this.refresh();
-            }.bind(this));
         }
+
+        this.getRoot().on('change', 'select, input', function (e) {
+            e.preventDefault();
+
+            Log.debug('Submitting filter form');
+            Log.debug(e);
+            Log.debug($(e.target).serializeArray());
+
+            // Filter results, go back to first page.
+            this.currentPage = 0;
+            this.refresh();
+        }.bind(this));
 
         this.getBlockContentArea().on('click', '.page-link', function(e) {
             e.preventDefault();

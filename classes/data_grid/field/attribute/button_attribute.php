@@ -23,11 +23,11 @@
 namespace block_dash\data_grid\field\attribute;
 
 /**
- * Transforms data to URL.
+ * Transforms URL to button.
  *
  * @package block_dash\data_grid\field\attribute
  */
-class link_attribute extends abstract_field_attribute
+class button_attribute extends abstract_field_attribute
 {
     /**
      * After records are relieved from database each field has a chance to transform the data.
@@ -40,12 +40,14 @@ class link_attribute extends abstract_field_attribute
      */
     public function transform_data($data, \stdClass $record)
     {
+        global $OUTPUT;
+
         if ($data) {
             if ($label = $this->get_option('label')) {
-                return \html_writer::link($data, $label);
+                return $OUTPUT->single_button($data, $label, 'get');
             }
             if ($labelfield = $this->get_option('label_field')) {
-                return \html_writer::link($data, $record->$labelfield);
+                return $OUTPUT->single_button($data, $record->$labelfield, 'get');
             }
         }
 

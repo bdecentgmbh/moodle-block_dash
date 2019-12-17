@@ -111,6 +111,7 @@ $string['myparticipants'] = 'My participants / students';
 $string['newblock'] = 'New Dash block';
 $string['nodashboardsforuser'] = 'No dashboards are available at this time.';
 $string['none'] = 'None';
+$string['nonpublicdashboards'] = 'Non-public dashboards';
 $string['notauthorized'] = 'You do not have access to this dashboard.';
 $string['pagination_summary'] = 'Showing {$a->limit_from} - {$a->limit_to} of {$a->total}';
 $string['parseerror'] = 'Parse error. The content cannot be displayed.';

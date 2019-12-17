@@ -108,6 +108,7 @@ $string['mustachetemplate'] = 'Mustache template';
 $string['mydashboards'] = 'My dashboards';
 $string['myparticipants'] = 'My participants / students';
 $string['newblock'] = 'New Dash block';
+$string['nodashboardsforuser'] = 'No dashboards are available at this time.';
 $string['none'] = 'None';
 $string['notauthorized'] = 'You do not have access to this dashboard.';
 $string['pagination_summary'] = 'Showing {$a->limit_from} - {$a->limit_to} of {$a->total}';

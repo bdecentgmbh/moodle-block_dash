@@ -42,6 +42,11 @@ use block_dash\data_source\data_source_interface;
 abstract class abstract_layout implements layout_interface, \templatable
 {
     /**
+     * @var int Used for creating unique checkbox controller group IDs.
+     */
+    private static $currentgroupid = 1;
+
+    /**
      * The data source used as a data/configuration source for this layout.
      *
      * @var data_source_interface
@@ -138,12 +143,14 @@ abstract class abstract_layout implements layout_interface, \templatable
                 $icon = $OUTPUT->pix_icon('i/dragdrop', get_string('dragitem', 'block_dash'), 'moodle', ['class' => 'drag-handle']);
                 $title = $icon . '<b>' . $title . '</b>: ' . $available_field_definition->get_title();
 
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, null, ['group' => 1]);
+                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, null, ['group' => self::$currentgroupid]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
             $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'),
                 ['<div style="width: 100%;"></div>']);
-            $form->add_checkbox_controller(1);
+            $form->add_checkbox_controller(self::$currentgroupid);
+
+            self::$currentgroupid++;
         }
 
         if ($this->supports_filtering()) {
@@ -154,12 +161,15 @@ abstract class abstract_layout implements layout_interface, \templatable
                     continue;
                 }
                 $fieldname = 'config_preferences[filters][' . $filter->get_name() . '][enabled]';
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), null, ['group' => 2]);
+                $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), null,
+                    ['group' => self::$currentgroupid]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
             $mform->addGroup($group, null, get_string('enabledfilters', 'block_dash'),
                 ['<div style="width: 100%;"></div>']);
-            $form->add_checkbox_controller(2);
+            $form->add_checkbox_controller(self::$currentgroupid);
+
+            self::$currentgroupid++;
         }
 
         $group = [];
@@ -169,12 +179,15 @@ abstract class abstract_layout implements layout_interface, \templatable
                 continue;
             }
             $fieldname = 'config_preferences[filters][' . $filter->get_name() . '][enabled]';
-            $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), null, ['group' => 3]);
+            $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), null,
+                ['group' => self::$currentgroupid]);
             $mform->setType($fieldname, PARAM_BOOL);
         }
         $mform->addGroup($group, null, get_string('enabledconditions', 'block_dash'),
             ['<div style="width: 100%;"></div>']);
-        $form->add_checkbox_controller(3);
+        $form->add_checkbox_controller(self::$currentgroupid);
+
+        self::$currentgroupid++;
     }
 
     /**

@@ -92,7 +92,7 @@ class sql_data_grid extends data_grid
         // Use count query and only select a count of primary field.
         if ($count) {
             $query = $this->get_query();
-            $selects = 'COUNT(' . $this->get_field_definitions()[0]->get_select() . ')';
+            $selects = 'COUNT(DISTINCT ' . $this->get_field_definitions()[0]->get_select() . ')';
             $order_by = '';
         } else {
             $query = $this->get_query();

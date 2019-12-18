@@ -30,9 +30,11 @@ use block_dash\data_grid\filter\filter;
 use block_dash\data_grid\filter\logged_in_user_condition;
 use block_dash\data_grid\filter\filter_collection;
 use block_dash\data_grid\filter\filter_collection_interface;
+use block_dash\data_grid\filter\my_groups_condition;
 use block_dash\data_grid\filter\participants_condition;
 use block_dash\data_grid\filter\user_field_filter;
 use block_dash\data_grid\filter\user_profile_field_filter;
+use local_dash\data_grid\filter\current_course_condition;
 
 class users_data_source extends abstract_data_source
 {
@@ -102,8 +104,10 @@ class users_data_source extends abstract_data_source
         $filter->set_operation(filter::OPERATION_GREATER_THAN_EQUAL);
         $filter_collection->add_filter($filter);
 
-        $filter_collection->add_filter(new participants_condition('c_id', 'c.id'));
         $filter_collection->add_filter(new logged_in_user_condition('current_user', 'u.id'));
+        $filter_collection->add_filter(new participants_condition('participants', 'u.id'));
+        $filter_collection->add_filter(new my_groups_condition('my_groups', 'g.id'));
+        $filter_collection->add_filter(new current_course_condition('current_course', 'c.id'));
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);

@@ -90,6 +90,7 @@ class block_dash extends block_base {
         }
         return $attributes;
     }
+
 }
 
 

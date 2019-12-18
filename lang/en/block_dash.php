@@ -74,6 +74,7 @@ $string['enabledfields'] = 'Enabled fields';
 $string['enabledfilters'] = 'Enabled filters';
 $string['enrollment'] = 'Enrollment';
 $string['enrollments'] = 'Enrollments';
+$string['enrollmentstatus'] = 'Enrollment status';
 $string['enrollmenttimeend'] = 'Enrollment end date';
 $string['enrollmenttimestart'] = 'Enrollment start date';
 $string['extracontent'] = 'Extra content';

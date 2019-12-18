@@ -73,8 +73,6 @@ class external extends external_api
             'filter_form_data' => $filter_form_data,
         ]);
 
-        $block = null;
-
         $block = block_instance_by_id($params['block_instance_id']);
 
         self::validate_context($block->context);

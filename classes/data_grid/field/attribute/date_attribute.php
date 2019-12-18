@@ -44,6 +44,6 @@ class date_attribute extends abstract_field_attribute
             return userdate($data, get_string('strftimedatefullshort'));
         }
 
-        return $data;
+        return null;
     }
 }

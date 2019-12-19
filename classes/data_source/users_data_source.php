@@ -27,6 +27,7 @@ use block_dash\data_grid\field\field_definition_factory;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\date_filter;
 use block_dash\data_grid\filter\filter;
+use block_dash\data_grid\filter\group_filter;
 use block_dash\data_grid\filter\logged_in_user_condition;
 use block_dash\data_grid\filter\filter_collection;
 use block_dash\data_grid\filter\filter_collection_interface;
@@ -88,6 +89,8 @@ class users_data_source extends abstract_data_source
         require_once("$CFG->dirroot/user/profile/lib.php");
 
         $filter_collection = new filter_collection(get_class($this), $this->get_context());
+
+        $filter_collection->add_filter(new group_filter('group', 'g.id'));
 
         $filter_collection->add_filter(new user_field_filter('u_department', 'u.department', 'department',
             get_string('department')));

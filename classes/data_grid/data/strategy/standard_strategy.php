@@ -40,6 +40,7 @@ class standard_strategy implements data_strategy_interface
 
         foreach ($records as $fullrecord) {
             $record = clone $fullrecord;
+            if (isset($record->unique_id)) unset($record->unique_id);
             $row = new data_collection();
             foreach ($data_grid->get_field_definitions() as $field_definition) {
                 $name = $field_definition->get_name();

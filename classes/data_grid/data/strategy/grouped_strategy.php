@@ -68,6 +68,8 @@ class grouped_strategy implements data_strategy_interface
                 continue;
             }
 
+            if (isset($record->unique_id)) unset($record->unique_id);
+
             foreach ($data_grid->get_field_definitions() as $field_definition) {
                 $name = $field_definition->get_name();
 

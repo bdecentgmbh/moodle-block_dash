@@ -23,6 +23,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['accordionfield1'] = 'Top left field';
+$string['accordionfield2'] = 'Top right field';
+$string['accordionfield3'] = 'Bottom left field';
+$string['accordionfield4'] = 'Bottom right field';
 $string['addnewfield'] = 'Add new field';
 $string['availablefields'] = 'Available fields';
 $string['availablefields_help'] = 'Choose all possible fields this data source will utilize. The user will be able to select which fields to include for their own purposes. For example, if you are displaying user information, try to include as many user fields as possible.';
@@ -96,7 +100,8 @@ $string['invalidshortname'] = 'Invalid shortname. It must only contain letters a
 $string['invalidshortnameunique'] = 'This shortname is already used by another dashboard.';
 $string['label'] = 'Label';
 $string['layout'] = 'Layout';
-$string['layoutaccordion'] = 'Accordion layout';
+$string['layoutaccordion'] = 'Accordion layout (with tables)';
+$string['layoutaccordion2'] = 'Accordion layout';
 $string['layoutcards'] = 'Grid layout';
 $string['layoutgrid'] = 'Table layout';
 $string['layoutonestat'] = 'One figure + label layout';

@@ -240,6 +240,41 @@ $definitions = [
             ]
         ]
     ],
+    [
+        'name' => 'u_message_url',
+        'select' => 'u.id',
+        'title' => get_string('message', 'message') . ' URL',
+        'tables' => ['u'],
+        'attributes' => [
+            [
+                'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
+                'options' => [
+                    'url' => new moodle_url('/message/index.php', ['id' => 'u_id'])
+                ]
+            ]
+        ]
+    ],
+    [
+        'name' => 'u_message_link',
+        'select' => 'u.id',
+        'title' => get_string('message', 'message'),
+        'tables' => ['u'],
+        'attributes' => [
+            [
+                'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
+                'options' => [
+                    'url' => new moodle_url('/message/index.php', ['id' => 'u_id'])
+                ]
+            ],
+            [
+                'type' => \block_dash\data_grid\field\attribute\linked_icon_attribute::class,
+                'options' => [
+                    'icon' => 'i/email',
+                    'title' => get_string('sendmessage', 'message')
+                ]
+            ]
+        ]
+    ]
 ];
 
 require_once("$CFG->dirroot/user/profile/lib.php");

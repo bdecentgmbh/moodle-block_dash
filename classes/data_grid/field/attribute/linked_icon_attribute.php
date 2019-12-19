@@ -15,15 +15,37 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace block_dash\data_grid\field\attribute;
 
-$plugin->version   = 2019121802;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2019051100;        // Requires this Moodle version
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics)
+/**
+ * Transforms URL to button.
+ *
+ * @package block_dash\data_grid\field\attribute
+ */
+class linked_icon_attribute extends abstract_field_attribute
+{
+    /**
+     * After records are relieved from database each field has a chance to transform the data.
+     * Example: Convert unix timestamp into a human readable date format
+     *
+     * @param mixed $data Raw data associated with this field definition.
+     * @param \stdClass $record Full record from database.
+     * @return mixed
+     * @throws \coding_exception
+     */
+    public function transform_data($data, \stdClass $record)
+    {
+        global $OUTPUT;
+
+        if ($data) {
+            return \html_writer::link($data, $OUTPUT->pix_icon($this->get_option('icon'), $this->get_option('title')));
+        }
+
+        return $data;
+    }
+}

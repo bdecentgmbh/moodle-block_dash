@@ -6,7 +6,9 @@ namespace block_dash\data_grid;
 
 use block_dash\data_grid\data\data_collection;
 use block_dash\data_grid\data\data_collection_interface;
+use block_dash\data_grid\field\attribute\identifier_attribute;
 use block_dash\data_grid\field\field_definition_interface;
+use block_dash\data_grid\field\sql_field_definition;
 
 class sql_data_grid extends data_grid
 {
@@ -98,6 +100,23 @@ class sql_data_grid extends data_grid
             $query = $this->get_query();
             $selects = $this->get_query_select();
             $order_by = '';
+        }
+
+        if (!$count) {
+            // If there are multiple identifiers in the data source, construct a unique column.
+            // This is to prevent warnings when multiple rows have the same value in the first column.
+            $identifier_selects = [];
+            /** @var sql_field_definition $field_definition */
+            foreach ($this->get_field_definitions() as $field_definition) {
+                if ($field_definition->has_attribute(identifier_attribute::class)) {
+                    $identifier_selects[] = $field_definition->get_select();
+                }
+            }
+            global $DB;
+            $concat = $DB->sql_concat_join('"-"', $identifier_selects);
+            if (count($identifier_selects) > 1) {
+                $selects = sprintf('%s as unique_id, %s', $concat, $selects);
+            }
         }
 
         $query = str_replace('%%SELECT%%', $selects, $query);

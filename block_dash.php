@@ -52,7 +52,7 @@ class block_dash extends block_base {
 
     public function get_content()
     {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -64,15 +64,19 @@ class block_dash extends block_base {
 
         $this->content = new \stdClass();
 
-        $bb = block_builder::create($this);
+        try {
+            $bb = block_builder::create($this);
 
-        // Conditionally hide the block when empty.
-        if (isset($this->config->hide_when_empty) && $this->config->hide_when_empty
-            && $bb->get_configuration()->get_data_source()->get_data()->is_empty() && !$PAGE->user_is_editing()) {
-           return $this->content;
+            // Conditionally hide the block when empty.
+            if (isset($this->config->hide_when_empty) && $this->config->hide_when_empty
+                && $bb->get_configuration()->get_data_source()->get_data()->is_empty() && !$PAGE->user_is_editing()) {
+                return $this->content;
+            }
+
+            $this->content = $bb->get_block_content();
+        } catch (\Exception $e) {
+            $this->content->text = $OUTPUT->notification($e->getMessage(), 'error');
         }
-
-        $this->content = $bb->get_block_content();
 
         return $this->content;
     }

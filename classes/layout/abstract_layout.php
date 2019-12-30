@@ -46,7 +46,7 @@ abstract class abstract_layout implements layout_interface, \templatable
     /**
      * @var int Used for creating unique checkbox controller group IDs.
      */
-    private static $currentgroupid = 1;
+    private static $currentgroupid = null;
 
     /**
      * The data source used as a data/configuration source for this layout.
@@ -116,6 +116,8 @@ abstract class abstract_layout implements layout_interface, \templatable
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform)
     {
         global $OUTPUT;
+
+        self::$currentgroupid = random_int(1, 10000);
 
         $filter_collection = $this->get_data_source()->get_filter_collection();
 

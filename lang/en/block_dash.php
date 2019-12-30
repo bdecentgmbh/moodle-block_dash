@@ -24,9 +24,13 @@
  */
 
 $string['accordionfield1'] = 'Top left field';
+$string['accordionfield1icon'] = 'Top left field icon';
 $string['accordionfield2'] = 'Top right field';
+$string['accordionfield2icon'] = 'Top right field icon';
 $string['accordionfield3'] = 'Bottom left field';
+$string['accordionfield3icon'] = 'Bottom left field icon';
 $string['accordionfield4'] = 'Bottom right field';
+$string['accordionfield4icon'] = 'Bottom right field icon';
 $string['addnewfield'] = 'Add new field';
 $string['availablefields'] = 'Available fields';
 $string['availablefields_help'] = 'Choose all possible fields this data source will utilize. The user will be able to select which fields to include for their own purposes. For example, if you are displaying user information, try to include as many user fields as possible.';

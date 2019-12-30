@@ -29,6 +29,8 @@ use block_dash\data_grid\field\attribute\identifier_attribute;
 use block_dash\data_grid\filter\condition;
 use block_dash\data_grid\paginator;
 use block_dash\data_source\data_source_interface;
+use core\output\icon_system;
+use core\output\icon_system_fontawesome;
 
 /**
  * Extend this class when creating new layouts.
@@ -191,6 +193,17 @@ abstract class abstract_layout implements layout_interface, \templatable
     }
 
     /**
+     * Allows layout to modified preferences values before exporting to mustache template.
+     *
+     * @param array $preferences
+     * @return array
+     */
+    public function process_preferences(array $preferences)
+    {
+        return $preferences;
+    }
+
+    /**
      * Get data for layout mustache template.
      *
      * @param \renderer_base $output
@@ -233,7 +246,7 @@ abstract class abstract_layout implements layout_interface, \templatable
                 'filter_form_html' => $formhtml,
                 'supports_filtering' => $this->supports_filtering(),
                 'supports_pagination' => $this->supports_pagination(),
-                'preferences' => $this->get_data_source()->get_all_preferences()
+                'preferences' => $this->process_preferences($this->get_data_source()->get_all_preferences())
             ]);
         }
 
@@ -251,5 +264,24 @@ abstract class abstract_layout implements layout_interface, \templatable
         }
 
         return $data_collection;
+    }
+
+    protected function get_icon_list()
+    {
+        global $PAGE;
+
+        $icons = [];
+
+        if (isset($PAGE->theme->iconsystem)) {
+            if ($icon_system = icon_system::instance($PAGE->theme->iconsystem)) {
+                if ($icon_system instanceof icon_system_fontawesome) {
+                    foreach ($icon_system->get_icon_name_map() as $pixname => $faname) {
+                        $icons[$faname] = $pixname;
+                    }
+                }
+            }
+        }
+
+        return $icons;
     }
 }

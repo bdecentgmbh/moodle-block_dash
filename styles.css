@@ -63,3 +63,7 @@ body#page-blocks-dash-data-source .drag-handle {
         width: 100%;
     }
 }
+
+.icons-no-margin .icon {
+    margin: 0;
+}

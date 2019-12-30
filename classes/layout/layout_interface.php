@@ -98,6 +98,14 @@ interface layout_interface
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform);
 
     /**
+     * Allows layout to modified preferences values before exporting to mustache template.
+     *
+     * @param array $preferences
+     * @return array
+     */
+    public function process_preferences(array $preferences);
+
+    /**
      * Get data for layout mustache template.
      *
      * @param \renderer_base $output

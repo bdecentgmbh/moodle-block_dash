@@ -101,6 +101,7 @@ $string['hidewhenempty'] = 'Hide when empty';
 $string['imageurlfield'] = 'Image URL field';
 $string['imageurlfield_help'] = 'Choose an image URL field that will be used in each card in the grid.';
 $string['invalidshortname'] = 'Invalid shortname. It must only contain letters a-zA-Z or hyphens (-).';
+$string['invalidshortnametoolong'] = 'Invalid Shortname. Must be 16 characters or less.';
 $string['invalidshortnameunique'] = 'This shortname is already used by another dashboard.';
 $string['label'] = 'Label';
 $string['layout'] = 'Layout';

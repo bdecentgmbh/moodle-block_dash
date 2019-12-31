@@ -146,6 +146,11 @@ interface data_source_interface
     public function get_available_field_definitions();
 
     /**
+     * @return field_definition_interface[]
+     */
+    public function get_sorted_field_definitions();
+
+    /**
      * @return filter_collection_interface
      */
     public function build_filter_collection();

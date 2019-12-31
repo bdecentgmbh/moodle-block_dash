@@ -71,6 +71,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     private $field_definitions;
 
     /**
+     * @var field_definition_interface[]
+     */
+    private $sorted_field_definitions;
+
+    /**
      * @param \context $context
      */
     public function __construct(\context $context)
@@ -90,7 +95,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if (is_null($this->data_grid)) {
             $this->data_grid = new sql_data_grid($this->get_context());
             $this->data_grid->set_query_template($this->get_query_template());
-            $this->data_grid->set_field_definitions($this->get_available_field_definitions());
+            $this->data_grid->set_field_definitions($this->get_sorted_field_definitions());
             $this->data_grid->set_supports_pagination($this->get_layout()->supports_pagination());
             $this->data_grid->init();
         }
@@ -308,7 +313,19 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     public final function get_available_field_definitions()
     {
         if (is_null($this->field_definitions)) {
-            $fielddefinitions = $this->build_available_field_definitions();
+            $this->field_definitions = $this->build_available_field_definitions();;
+        }
+
+        return $this->field_definitions;
+    }
+
+    /**
+     * @return field_definition_interface[]
+     */
+    public function get_sorted_field_definitions()
+    {
+        if (is_null($this->sorted_field_definitions)) {
+            $fielddefinitions = $this->get_available_field_definitions();;
 
             if ($this->get_layout()->supports_field_visibility()) {
 
@@ -342,9 +359,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             }
 
-            $this->field_definitions = $fielddefinitions;
+            $this->sorted_field_definitions = $fielddefinitions;
         }
 
-        return $this->field_definitions;
+        return $this->sorted_field_definitions;
     }
 }

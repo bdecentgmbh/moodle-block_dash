@@ -123,7 +123,7 @@ abstract class abstract_layout implements layout_interface, \templatable
 
         if ($this->supports_field_visibility()) {
             $group = [];
-            foreach ($this->get_data_source()->get_available_field_definitions() as $available_field_definition) {
+            foreach ($this->get_data_source()->get_sorted_field_definitions() as $available_field_definition) {
                 if ($available_field_definition->has_attribute(identifier_attribute::class)) {
                     continue;
                 }

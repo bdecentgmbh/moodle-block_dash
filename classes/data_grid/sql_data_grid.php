@@ -96,10 +96,12 @@ class sql_data_grid extends data_grid
             $query = $this->get_query();
             $selects = 'COUNT(DISTINCT ' . $this->get_field_definitions()[0]->get_select() . ')';
             $order_by = '';
+            $groupby = '';
         } else {
             $query = $this->get_query();
             $selects = $this->get_query_select();
             $order_by = '';
+            $groupby = ' GROUP BY ' . $this->get_field_definitions()[0]->get_select();
         }
 
         if (!$count) {
@@ -122,6 +124,7 @@ class sql_data_grid extends data_grid
         $query = str_replace('%%SELECT%%', $selects, $query);
         $query = str_replace('%%FILTERS%%', $filter_sql, $query);
         $query = str_replace('%%ORDERBY%%', $order_by, $query);
+        $query = str_replace('%%GROUPBY%%', $groupby, $query);
 
         return [$query, $filter_params];
     }

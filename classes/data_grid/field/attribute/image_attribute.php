@@ -40,7 +40,7 @@ class image_attribute extends abstract_field_attribute
     public function transform_data($data, \stdClass $record)
     {
         if ($data) {
-            return \html_writer::img($data, $this->get_option('title'));
+            return \html_writer::img($data, $this->get_option('title'), ['class' => 'img-responsive']);
         }
 
         return $data;

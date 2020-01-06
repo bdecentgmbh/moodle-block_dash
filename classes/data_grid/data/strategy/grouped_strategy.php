@@ -60,7 +60,8 @@ class grouped_strategy implements data_strategy_interface
         $grid_data = new data_collection();
 
         $sections = [];
-        foreach ($records as $record) {
+        foreach ($records as $fullrecord) {
+            $record = clone $fullrecord;
             $row = new data_collection();
 
             $label = $record->{$this->group_label_field_definition->get_name()};
@@ -78,7 +79,7 @@ class grouped_strategy implements data_strategy_interface
                     continue;
                 }
 
-                $record->$name = $field_definition->transform_data($record->$name, $record);
+                $record->$name = $field_definition->transform_data($record->$name, $fullrecord);
             }
 
             $row->add_data_associative($record);

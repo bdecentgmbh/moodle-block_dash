@@ -64,6 +64,16 @@ abstract class abstract_layout implements layout_interface, \templatable
     }
 
     /**
+     * If the layout supports field sorting.
+     *
+     * @return mixed
+     */
+    public function supports_sorting()
+    {
+        return false;
+    }
+
+    /**
      * Get the data source used as a data/configuration source for this layout.
      *
      * @return data_source_interface

@@ -122,4 +122,42 @@ interface field_definition_interface
      * @return array
      */
     public function get_options();
+
+    /**
+     * Set if field should be sorted.
+     *
+     * @param bool $sort
+     */
+    public function set_sort($sort);
+
+    /**
+     * @return bool
+     */
+    public function get_sort();
+
+    /**
+     * Set direction sort should happen for this field.
+     *
+     * @param $direction
+     */
+    public function set_sort_direction($direction);
+
+    /**
+     * @return string
+     */
+    public function get_sort_direction();
+
+    /**
+     * Set optional sort select (ORDER BY <select>), useful for fields that can't sort based on their field name.
+     *
+     * @param $select
+     */
+    public function set_sort_select($select);
+
+    /**
+     * Return select for ORDER BY.
+     *
+     * @return string
+     */
+    public function get_sort_select();
 }

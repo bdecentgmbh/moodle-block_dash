@@ -61,4 +61,14 @@ class grid_layout extends abstract_layout
     {
         return true;
     }
+
+    /**
+     * If the layout supports field sorting.
+     *
+     * @return mixed
+     */
+    public function supports_sorting()
+    {
+        return true;
+    }
 }

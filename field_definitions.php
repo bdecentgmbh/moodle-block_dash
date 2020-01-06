@@ -55,6 +55,7 @@ $definitions = [
         'select' => 'CONCAT(u.firstname, " ", u.lastname)',
         'title' => get_string('fullnamelinked', 'block_dash'),
         'tables' => ['u'],
+        'options' => ['supports_sorting' => false],
         'attributes' => [
             [
                 'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,

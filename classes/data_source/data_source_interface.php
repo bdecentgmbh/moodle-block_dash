@@ -154,4 +154,14 @@ interface data_source_interface
      * @return filter_collection_interface
      */
     public function build_filter_collection();
+
+    /**
+     * @param \block_base $block_instance
+     */
+    public function set_block_instance(\block_base $block_instance);
+
+    /**
+     * @return null|\block_base
+     */
+    public function get_block_instance();
 }

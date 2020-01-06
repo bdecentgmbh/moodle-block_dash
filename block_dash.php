@@ -95,6 +95,41 @@ class block_dash extends block_base {
         return $attributes;
     }
 
+    /**
+     * @param $field_name
+     * @param $direction
+     * @throws coding_exception
+     */
+    public function set_sort($field_name, $direction = null)
+    {
+        global $USER;
+
+        $key = $USER->id . '_' . $this->instance->id;
+
+        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'block_dash', 'sort');
+
+        if (!$cache->has($key)) {
+            $sorting = [];
+        } else {
+            $sorting = $cache->get($key);
+        }
+
+        if (isset($sorting[$field_name]) && !$direction) {
+            if ($sorting[$field_name] == 'asc') {
+                $sorting[$field_name] = 'desc';
+            } else {
+                $sorting[$field_name] = 'asc';
+            }
+        } else {
+            if ($direction) {
+                $sorting[$field_name] = $direction;
+            } else {
+                $sorting[$field_name] = 'asc';
+            }
+        }
+
+        $cache->set($key, [$field_name => $sorting[$field_name]]);
+    }
 }
 
 

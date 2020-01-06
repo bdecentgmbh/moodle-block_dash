@@ -69,7 +69,7 @@ class users_data_source extends abstract_data_source
             $sql .= "LEFT JOIN {user_info_data} AS $alias ON $alias.userid = u.id AND $alias.fieldid = $field->id ";
         }
 
-        $sql .= ' WHERE 1 %%FILTERS%% %%GROUPBY%%';
+        $sql .= ' WHERE 1 %%FILTERS%% %%GROUPBY%% %%ORDERBY%%';
 
         return $sql;
     }

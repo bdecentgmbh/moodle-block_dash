@@ -53,17 +53,23 @@ class external extends external_api
         return new \external_function_parameters([
             'block_instance_id' => new \external_value(PARAM_INT),
             'filter_form_data' => new \external_value(PARAM_RAW),
-            'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0)
+            'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
+            'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null)
         ]);
     }
 
     /**
      * @param $block_instance_id
      * @param $filter_form_data
+     * @param $page
+     * @param $sort_field
      * @return array
+     * @throws \coding_exception
      * @throws \invalid_parameter_exception
+     * @throws \moodle_exception
+     * @throws \restricted_context_exception
      */
-    public static function get_block_content($block_instance_id, $filter_form_data, $page)
+    public static function get_block_content($block_instance_id, $filter_form_data, $page, $sort_field)
     {
         global $PAGE;
 
@@ -71,6 +77,7 @@ class external extends external_api
             'block_instance_id' => $block_instance_id,
             'page' => $page,
             'filter_form_data' => $filter_form_data,
+            'sort_field' => $sort_field
         ]);
 
         $block = block_instance_by_id($params['block_instance_id']);
@@ -81,6 +88,10 @@ class external extends external_api
         $renderer = $PAGE->get_renderer('block_dash');
 
         if ($block) {
+            if ($params['sort_field']) {
+                $block->set_sort($params['sort_field']);
+            }
+
             $bb = block_builder::create($block);
             foreach (json_decode($params['filter_form_data'], true) as $filter) {
                 $bb->get_configuration()
@@ -89,7 +100,8 @@ class external extends external_api
                     ->apply_filter($filter['name'], $filter['value']);
             }
 
-            $bb->get_configuration()->get_data_source()->get_data_grid()->get_paginator()->set_current_page($params['page']);
+            $data_grid = $bb->get_configuration()->get_data_source()->get_data_grid();
+            $data_grid->get_paginator()->set_current_page($params['page']);
 
             return ['html' => $renderer->render_data_source($bb->get_configuration()->get_data_source())];
         }

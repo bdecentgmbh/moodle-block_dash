@@ -59,6 +59,21 @@ abstract class abstract_field_definition implements field_definition_interface
     private $attributes = [];
 
     /**
+     * @var bool If field should be sorted.
+     */
+    private $sort = false;
+
+    /**
+     * @var string Direction of sort, if sorting.
+     */
+    private $sort_direction = 'asc';
+
+    /**
+     * @var string Optional sort select (ORDER BY <select>), useful for fields that can't sort based on their field name.
+     */
+    private $sort_select;
+
+    /**
      * @param string $name String identifier of human readable name of field (e.g. Firstname).
      * @param string $title String identifier of human readable name of field (e.g. Firstname).
      * @param int $visibility Visibility of the field (if it should be displayed to the user).
@@ -230,6 +245,79 @@ abstract class abstract_field_definition implements field_definition_interface
     public function get_options()
     {
         return $this->options;
+    }
+
+    #endregion
+
+    #region Sorting
+
+    /**
+     * Set if field should be sorted.
+     *
+     * @param bool $sort
+     * @throws \Exception
+     */
+    public function set_sort($sort)
+    {
+        if (!is_bool($sort)) {
+            throw new \Exception('Sort expected to be a bool.');
+        }
+
+        $this->sort = $sort;
+    }
+
+    /**
+     * @return bool
+     */
+    public function get_sort()
+    {
+        return $this->sort;
+    }
+
+    /**
+     * Set direction sort should happen for this field.
+     *
+     * @param $direction
+     * @throws \Exception
+     */
+    public function set_sort_direction($direction)
+    {
+        if (!in_array($direction, ['desc', 'asc'])) {
+            throw new \Exception('Invalid sort direction: ' . $direction);
+        }
+        $this->sort_direction = $direction;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_sort_direction()
+    {
+        return $this->sort_direction;
+    }
+
+    /**
+     * Set optional sort select (ORDER BY <select>), useful for fields that can't sort based on their field name.
+     *
+     * @param $select
+     */
+    public function set_sort_select($select)
+    {
+        $this->sort_select = $select;
+    }
+
+    /**
+     * Return select for ORDER BY.
+     *
+     * @return string
+     */
+    public function get_sort_select()
+    {
+        if (!is_null($this->sort_select)) {
+            return $this->sort_select;
+        }
+
+        return $this->get_name();
     }
 
     #endregion

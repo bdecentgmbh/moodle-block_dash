@@ -40,6 +40,8 @@ class configuration extends abstract_configuration
             if (isset($block_instance->config->preferences) && is_array($block_instance->config->preferences)) {
                 $datasource->set_preferences($block_instance->config->preferences);
             }
+
+            $datasource->set_block_instance($block_instance);
         }
 
         return new configuration($parentcontext, $datasource);

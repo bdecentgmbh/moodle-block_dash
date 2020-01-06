@@ -8,6 +8,7 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
         this.currentPage = 0;
         this.blockPreferencesModal = null;
         this.editing = editing;
+        this.sortField = null;
 
         this.init();
     };
@@ -43,6 +44,11 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
         this.getBlockContentArea().on('click', '.page-link', function(e) {
             e.preventDefault();
             this.currentPage = $(e.target).data('page');
+            this.refresh();
+        }.bind(this));
+
+        this.getBlockContentArea().on('click', '.dash-sort', function(e) {
+            this.sortField = $(e.target).data('sort');
             this.refresh();
         }.bind(this));
     };
@@ -82,7 +88,8 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
             args: {
                 block_instance_id: this.blockInstanceId,
                 filter_form_data: JSON.stringify(this.getFilterForm().serializeArray()),
-                page: this.currentPage
+                page: this.currentPage,
+                sort_field: this.sortField,
             }
         };
 

@@ -67,3 +67,7 @@ body#page-blocks-dash-data-source .drag-handle {
 .icons-no-margin .icon {
     margin: 0;
 }
+
+.dash-sort {
+    cursor: pointer;
+}

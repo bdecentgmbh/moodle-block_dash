@@ -24,6 +24,7 @@ namespace block_dash\data_source;
 
 use block_dash\data_grid\data\data_collection;
 use block_dash\data_grid\field\attribute\identifier_attribute;
+use block_dash\data_grid\field\field_definition_factory;
 use block_dash\data_grid\sql_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
@@ -76,6 +77,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     private $sorted_field_definitions;
 
     /**
+     * @var \block_base|null
+     */
+    private $block_instance = null;
+
+    /**
      * @param \context $context
      */
     public function __construct(\context $context)
@@ -97,6 +103,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $this->data_grid->set_query_template($this->get_query_template());
             $this->data_grid->set_field_definitions($this->get_sorted_field_definitions());
             $this->data_grid->set_supports_pagination($this->get_layout()->supports_pagination());
+
+            foreach ($this->get_sorting() as $field_name => $direction) {
+                if ($field_definition = $this->data_grid->get_field_definition($field_name)) {
+                    $field_definition->set_sort(true);
+                    $field_definition->set_sort_direction($direction);
+                }
+            }
+
             $this->data_grid->init();
         }
 
@@ -266,6 +280,18 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if ($layout = $this->get_layout()) {
             $layout->build_preferences_form($form, $mform);
         }
+
+        $sortable_field_definitions = [];
+        foreach ($this->get_available_field_definitions() as $field_definition) {
+            if ($field_definition->get_option('supports_sorting') !== false) {
+                $sortable_field_definitions[] = $field_definition;
+            }
+        }
+
+        $mform->addElement('select', 'config_preferences[default_sort]', get_string('defaultsortfield', 'block_dash'),
+            field_definition_factory::get_field_definition_options($sortable_field_definitions));
+        $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
+        $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
     }
 
     #region Preferences
@@ -363,5 +389,43 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
 
         return $this->sorted_field_definitions;
+    }
+
+    /**
+     * @throws \coding_exception
+     */
+    public function get_sorting()
+    {
+        global $USER;
+
+        if ($this->get_layout()->supports_sorting() && $this->get_block_instance()) {
+            $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'block_dash', 'sort');
+
+            if ($cache->has($USER->id . '_' . $this->get_block_instance()->instance->id)) {
+                return $cache->get($USER->id . '_' . $this->get_block_instance()->instance->id);
+            }
+        }
+
+        if ($defaultsort = $this->get_preferences('default_sort')) {
+            return [$defaultsort => 'asc'];
+        }
+
+        return [];
+    }
+
+    /**
+     * @param \block_base $block_instance
+     */
+    public function set_block_instance(\block_base $block_instance)
+    {
+        $this->block_instance = $block_instance;
+    }
+
+    /**
+     * @return null|\block_base
+     */
+    public function get_block_instance()
+    {
+        return $this->block_instance;
     }
 }

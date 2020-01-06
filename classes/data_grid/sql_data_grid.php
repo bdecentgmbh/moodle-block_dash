@@ -100,7 +100,7 @@ class sql_data_grid extends data_grid
         } else {
             $query = $this->get_query();
             $selects = $this->get_query_select();
-            $order_by = '';
+            $order_by = $this->get_sort_sql();
             $groupby = ' GROUP BY ' . $this->get_field_definitions()[0]->get_select();
         }
 
@@ -168,6 +168,30 @@ class sql_data_grid extends data_grid
         return $DB->get_records_sql($query, $filter_params, 0, 100);
     }
 
+    /**
+     * Build ORDER BY sql for grid.
+     *
+     * @return string
+     */
+    protected function get_sort_sql()
+    {
+        $sql = '';
+        $sorts = [];
+
+        /** @var sql_field_definition $field */
+        foreach ($this->get_field_definitions() as $field) {
+            if ($field->get_sort()) {
+                $sorts[] = $field->get_select() . ' ' . strtoupper($field->get_sort_direction());
+            }
+        }
+
+        if (!empty($sorts)) {
+            $sql = 'ORDER BY ' . implode(',', $sorts);
+        }
+
+        return $sql;
+    }
+
     #region Counting
 
     /**
@@ -189,4 +213,6 @@ class sql_data_grid extends data_grid
     }
 
     #endregion
+
+
 }

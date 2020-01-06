@@ -65,6 +65,13 @@ interface layout_interface
     public function supports_pagination();
 
     /**
+     * If the layout supports field sorting.
+     *
+     * @return mixed
+     */
+    public function supports_sorting();
+
+    /**
      * @return data_strategy_interface
      */
     public function get_data_strategy();

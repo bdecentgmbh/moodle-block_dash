@@ -27,7 +27,7 @@ class filter implements filter_interface
     /**
      * @var mixed The value a user has chosen. Or the default.
      */
-    private $raw_value;
+    private $raw_value = null;
 
     /**
      * @var string Unique name used for placeholder.
@@ -101,7 +101,16 @@ class filter implements filter_interface
      */
     public function set_raw_value($value)
     {
-        $this->raw_value = $value;
+        if (!is_null($this->raw_value)) {
+            if (is_array($this->raw_value)) {
+                $this->raw_value[] = $value;
+            } else {
+                // Convert scaler to array including new value.
+                $this->raw_value = [$this->raw_value, $value];
+            }
+        } else {
+            $this->raw_value = $value;
+        }
     }
 
     /**
@@ -239,7 +248,12 @@ class filter implements filter_interface
             }
             return [];
         }
-        return [$this->get_raw_value()];
+
+        if (is_array($this->get_raw_value())) {
+            return $this->get_raw_value();
+        } else {
+            return [$this->get_raw_value()];
+        }
     }
 
     /**

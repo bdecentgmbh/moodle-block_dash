@@ -1,4 +1,4 @@
-<select name="{{name}}" class="form-control filter-form-control">
+<select name="{{name}}" class="form-control filter-form-control" {{#multiple}}multiple{{/multiple}}>
     {{#options}}
         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
     {{/options}}

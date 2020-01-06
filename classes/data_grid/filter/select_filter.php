@@ -137,14 +137,15 @@ abstract class select_filter extends filter
 
         $_options = [];
         foreach ($options as $value => $label) {
-            $_options[] = ['value' => $value, 'label' => $label, 'selected' => $this->get_raw_value() == $value];
+            $_options[] = ['value' => $value, 'label' => $label, 'selected' => in_array($value, $this->get_values())];
         }
 
         $name = $element_name_prefix . $this->get_name();
 
         return $OUTPUT->render_from_template('block_dash/filter_select', [
             'name' => $name,
-            'options' => $_options
+            'options' => $_options,
+            'multiple' => true
         ]);
     }
 }

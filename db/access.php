@@ -42,8 +42,8 @@ $capabilities = [
         'captype'      => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes'   => [
+            'manager' => CAP_ALLOW,
             'user' => CAP_PROHIBIT,
-        ],
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
+        ]
     ],
 ];

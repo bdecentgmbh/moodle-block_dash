@@ -65,6 +65,7 @@ $string['datasource'] = 'Data source';
 $string['datasourcecreated'] = 'Data source <b>{$a->name}</b> successfully created.';
 $string['datasourceedited'] = 'Data source <b>{$a->name}</b> successfully edited.';
 $string['datasourcename'] = 'Data source name';
+$string['datasourcemissing'] = 'Data source missing';
 $string['datecompleted'] = 'Date completed';
 $string['daysuntilend'] = 'Days until end date';
 $string['daysuntilstart'] = 'Days until start date';

@@ -67,12 +67,20 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_css_class', get_string('cssclass', 'block_dash'));
         $mform->setType('config_css_class', PARAM_TEXT);
 
-        $mform->addElement('header', 'choose_data_source', get_string('choosedatasource', 'block_dash'));
-
-        $mform->addElement('select', 'config_data_source_idnumber', get_string('choosedatasource', 'block_dash'),
-            data_source_factory::get_data_source_form_options());
-        $mform->setType('config_data_source_idnumber', PARAM_TEXT);
-        $mform->addRule('config_data_source_idnumber', get_string('required'), 'required');
+        if (!isset($this->block->config->data_source_idnumber)) {
+            $mform->addElement('select', 'config_data_source_idnumber', get_string('choosedatasource', 'block_dash'),
+                data_source_factory::get_data_source_form_options());
+            $mform->setType('config_data_source_idnumber', PARAM_TEXT);
+            $mform->addRule('config_data_source_idnumber', get_string('required'), 'required');
+        } else {
+            if ($ds = data_source_factory::get_data_source($this->block->config->data_source_idnumber,
+                $this->block->context)) {
+                $label = $ds->get_name();
+            } else {
+                $label = get_string('datasourcemissing', 'block_dash');
+            }
+            $mform->addElement('static', 'data_source_label', get_string('datasource', 'block_dash'), $label);
+        }
 
         $mform->addElement('header', 'extracontent', get_string('extracontent', 'block_dash'));
 

@@ -66,15 +66,23 @@ class filter implements filter_interface
     private $context;
 
     /**
-     * @param string $name
-     * @param string $select
-     * @param string $label
+     * @var string
      */
-    public function __construct($name, $select, $label = '')
+    private $clause_type = self::CLAUSE_TYPE_WHERE;
+
+    /**
+     * filter constructor.
+     * @param $name
+     * @param $select
+     * @param string $label
+     * @param string $clause_type
+     */
+    public function __construct($name, $select, $label = '', $clause_type = self::CLAUSE_TYPE_WHERE)
     {
         $this->name = $name;
         $this->select = $select;
         $this->label = $label;
+        $this->clause_type = $clause_type;
 
         $this->init();
     }
@@ -388,4 +396,11 @@ class filter implements filter_interface
         $this->context = $context;
     }
 
+    /**
+     * @return string
+     */
+    public function get_clause_type()
+    {
+        return $this->clause_type;
+    }
 }

@@ -101,6 +101,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if (is_null($this->data_grid)) {
             $this->data_grid = new sql_data_grid($this->get_context());
             $this->data_grid->set_query_template($this->get_query_template());
+            $this->data_grid->set_count_query_template($this->get_count_query_template());
             $this->data_grid->set_field_definitions($this->get_sorted_field_definitions());
             $this->data_grid->set_supports_pagination($this->get_layout()->supports_pagination());
 
@@ -332,6 +333,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     #endregion
+
+    /**
+     * @return string
+     */
+    public function get_count_query_template()
+    {
+        return $this->get_query_template();
+    }
 
     /**
      * @return field_definition_interface[]

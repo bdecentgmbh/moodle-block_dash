@@ -192,7 +192,7 @@ class filter_collection implements filter_collection_interface
      * Get filters with user submitted values, along with filters that have default
      * values.
      *
-     * @return array
+     * @return filter_interface[]
      */
     public function get_filters_with_values()
     {
@@ -246,16 +246,31 @@ class filter_collection implements filter_collection_interface
     public function get_sql_and_params()
     {
         $params = [];
-        $sql = '';
+        $havingsql = [];
+        $wheresql = [];
         foreach ($this->get_filters_with_values() as $filter) {
             list($filter_sql, $filter_params) = $filter->get_sql_and_params();
             // Ignore filters with no values.
             if (empty($filter_params)) continue;
-            $sql .= sprintf(' AND %s', $filter_sql);
+            switch ($filter->get_clause_type()) {
+                case filter_interface::CLAUSE_TYPE_WHERE:
+                    $wheresql[] = $filter_sql;
+                    break;
+                case filter_interface::CLAUSE_TYPE_HAVING:
+                    $havingsql[] = $filter_sql;
+                    break;
+            }
             $params = array_merge($params, $filter_params);
         }
 
-        return [$sql, $params];
+        if (empty($havingsql)) {
+            $havingsql = ['1'];
+        }
+        if (empty($wheresql)) {
+            $wheresql = ['1'];
+        }
+
+        return [[implode(' AND ', $wheresql), implode(' AND ', $havingsql)], $params];
     }
 
     /**

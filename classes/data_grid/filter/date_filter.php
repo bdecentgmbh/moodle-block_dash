@@ -31,12 +31,15 @@ class date_filter extends filter
     protected $function;
 
     /**
-     * @param string $name
-     * @param string $select
-     * @param string $function
+     * date_filter constructor.
+     * @param $name
+     * @param $select
+     * @param $function
      * @param string $label
+     * @param string $clause_type
+     * @throws \coding_exception
      */
-    public function __construct($name, $select, $function, $label = '')
+    public function __construct($name, $select, $function, $label = '', $clause_type = self::CLAUSE_TYPE_WHERE)
     {
         if (!in_array($function, array(self::DATE_FUNCTION_CEIL, self::DATE_FUNCTION_FLOOR, self::DATE_FUNCTION_NONE))) {
             throw new \coding_exception('Invalid date function');
@@ -44,7 +47,7 @@ class date_filter extends filter
 
         $this->function = $function;
 
-        parent::__construct($name, $select, $label);
+        parent::__construct($name, $select, $label, $clause_type);
     }
 
     /**

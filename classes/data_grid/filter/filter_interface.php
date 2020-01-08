@@ -36,6 +36,9 @@ interface filter_interface
     const OPERATION_LIKE = 'like';
     const OPERATION_LIKE_WILDCARD = 'like_wild';
 
+    const CLAUSE_TYPE_WHERE = 'where';
+    const CLAUSE_TYPE_HAVING = 'having';
+
     /**
      * Supported SQL WHERE operations.
      */
@@ -185,4 +188,9 @@ interface filter_interface
      * @param \context $context
      */
     public function set_context(\context $context);
+
+    /**
+     * @return string
+     */
+    public function get_clause_type();
 }

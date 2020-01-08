@@ -136,6 +136,11 @@ interface data_source_interface
     public function get_query_template();
 
     /**
+     * @return string
+     */
+    public function get_count_query_template();
+
+    /**
      * @return field_definition_interface[]
      */
     public function build_available_field_definitions();

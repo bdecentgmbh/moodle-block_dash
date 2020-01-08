@@ -83,6 +83,7 @@ $string['enabledconditions'] = 'Limit data to';
 $string['enabledfields'] = 'Enabled fields';
 $string['enabledfilters'] = 'Enabled filters';
 $string['enrollment'] = 'Enrollment';
+$string['enrollmentmethodstatus'] = 'Enrollment method status';
 $string['enrollments'] = 'Enrollments';
 $string['enrollmentstatus'] = 'Enrollment status';
 $string['enrollmenttimeend'] = 'Enrollment end date';

@@ -18,6 +18,11 @@ class sql_data_grid extends data_grid
     private $query_template;
 
     /**
+     * @var string
+     */
+    private $count_query_template;
+
+    /**
      * @var data_collection_interface
      */
     private $data_collection;
@@ -30,6 +35,11 @@ class sql_data_grid extends data_grid
     public function set_query_template($query_template)
     {
         $this->query_template = $query_template;
+    }
+
+    public function set_count_query_template($count_query_template)
+    {
+        $this->count_query_template = $count_query_template;
     }
 
     /**
@@ -86,14 +96,17 @@ class sql_data_grid extends data_grid
 
         if ($this->get_filter_collection() && $this->get_filter_collection()->has_filters()) {
             list ($filter_sql, $filter_params) = $this->get_filter_collection()->get_sql_and_params();
+            $wheresql = $filter_sql[0];
+            $havingsql = $filter_sql[1];
         } else {
-            $filter_sql = '';
+            $wheresql = '1';
+            $havingsql = '1';
             $filter_params = [];
         }
 
         // Use count query and only select a count of primary field.
         if ($count) {
-            $query = $this->get_query();
+            $query = $this->count_query_template;
             $selects = 'COUNT(DISTINCT ' . $this->get_field_definitions()[0]->get_select() . ')';
             $order_by = '';
             $groupby = '';
@@ -101,7 +114,7 @@ class sql_data_grid extends data_grid
             $query = $this->get_query();
             $selects = $this->get_query_select();
             $order_by = $this->get_sort_sql();
-            $groupby = ' GROUP BY ' . $this->get_field_definitions()[0]->get_select();
+            $groupby = 'GROUP BY ' . $this->get_field_definitions()[0]->get_select();
         }
 
         if (!$count) {
@@ -122,9 +135,10 @@ class sql_data_grid extends data_grid
         }
 
         $query = str_replace('%%SELECT%%', $selects, $query);
-        $query = str_replace('%%FILTERS%%', $filter_sql, $query);
-        $query = str_replace('%%ORDERBY%%', $order_by, $query);
         $query = str_replace('%%GROUPBY%%', $groupby, $query);
+        $query = str_replace('%%WHERE%%', 'WHERE ' . $wheresql, $query);
+        $query = str_replace('%%HAVING%%', 'HAVING ' . $havingsql, $query);
+        $query = str_replace('%%ORDERBY%%', $order_by, $query);
 
         return [$query, $filter_params];
     }

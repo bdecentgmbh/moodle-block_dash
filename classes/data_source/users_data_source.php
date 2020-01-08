@@ -35,7 +35,7 @@ use block_dash\data_grid\filter\my_groups_condition;
 use block_dash\data_grid\filter\participants_condition;
 use block_dash\data_grid\filter\user_field_filter;
 use block_dash\data_grid\filter\user_profile_field_filter;
-use local_dash\data_grid\filter\current_course_condition;
+use block_dash\data_grid\filter\current_course_condition;
 
 class users_data_source extends abstract_data_source
 {

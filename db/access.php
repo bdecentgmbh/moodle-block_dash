@@ -31,7 +31,7 @@ $capabilities = [
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => [
-            'editingteacher' => CAP_PROHIBIT,
+            'editingteacher' => CAP_PREVENT,
             'manager' => CAP_ALLOW
         ],
 
@@ -43,7 +43,7 @@ $capabilities = [
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes'   => [
             'manager' => CAP_ALLOW,
-            'user' => CAP_PROHIBIT,
+            'user' => CAP_PREVENT,
         ]
     ],
 ];

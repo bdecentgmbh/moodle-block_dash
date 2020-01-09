@@ -294,6 +294,9 @@ class filter implements filter_interface
             case self::OPERATION_EQUAL:
                 $sql = "$select = :$placeholder";
                 break;
+            case self::OPERATION_NOT_EQUAL:
+                $sql = "$select != :$placeholder";
+                break;
             case self::OPERATION_LESS_THAN:
                 $sql = "$select < :$placeholder";
                 break;

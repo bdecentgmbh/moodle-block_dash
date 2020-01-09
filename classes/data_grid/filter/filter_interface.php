@@ -28,6 +28,7 @@ interface filter_interface
     const NOT_REQUIRED = false;
 
     const OPERATION_EQUAL = 'equal';
+    const OPERATION_NOT_EQUAL = 'not_equal';
     const OPERATION_LESS_THAN = 'less';
     const OPERATION_GREATER_THAN = 'greater';
     const OPERATION_LESS_THAN_EQUAL = 'less_equal';
@@ -44,6 +45,7 @@ interface filter_interface
      */
     const OPERATIONS = [
         self::OPERATION_EQUAL,
+        self::OPERATION_NOT_EQUAL,
         self::OPERATION_LESS_THAN,
         self::OPERATION_GREATER_THAN,
         self::OPERATION_LESS_THAN_EQUAL,

@@ -30,7 +30,7 @@ $functions = [
         'description'   => 'Get rendered block content',
         'type'          => 'read',
         'ajax'          => true,
-        'loginrequired' => true,
+        'loginrequired' => false,
     ],
     'block_dash_submit_preferences_form' => [
         'classname'     => 'block_dash\external',

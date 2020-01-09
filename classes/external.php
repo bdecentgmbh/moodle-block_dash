@@ -31,6 +31,7 @@ require_once("$CFG->libdir/externallib.php");
 use block_dash\data_source\form\preferences_form;
 use block_dash\output\renderer;
 use external_api;
+use local_dash\model\dashboard;
 
 /**
  * External API class.
@@ -80,9 +81,21 @@ class external extends external_api
             'sort_field' => $sort_field
         ]);
 
+        $public = false;
         $block = block_instance_by_id($params['block_instance_id']);
+        if (strpos($block->instance->pagetypepattern, 'local-dash-dashboard') !== false) {
+            if ($dashboard = dashboard::get_record(['shortname' => $block->instance->defaultregion])) {
+                if ($dashboard->get('permission') == dashboard::PERMISSION_PUBLIC) {
+                    $public = true;
+                }
+            }
+        }
 
-        self::validate_context($block->context);
+        if (!$public) {
+            self::validate_context($block->context);
+        } else {
+            $PAGE->set_context($block->context);
+        }
 
         /** @var renderer $renderer */
         $renderer = $PAGE->get_renderer('block_dash');

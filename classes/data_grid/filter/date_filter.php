@@ -102,7 +102,7 @@ class date_filter extends filter
     protected function to_timestamp($value)
     {
         // User submitted date in user's timezone
-        $date = \DateTime::createFromFormat('Y-m-d', $value, \core_date::get_user_timezone_object());
+        $date = \DateTime::createFromFormat('d/m/Y', $value, \core_date::get_user_timezone_object());
 
         switch ($this->function) {
             case self::DATE_FUNCTION_FLOOR:

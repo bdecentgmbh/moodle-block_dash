@@ -1,4 +1,4 @@
-define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events', 'block_dash/preferences_modal'],
+define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events', 'block_dash/preferences_modal', 'block_dash/datepicker'],
     function($, Log, Ajax, Notification, ModalEvents, PreferencesModal) {
 
     var DashInstance = function(root, blockInstanceId, blockContextid, editing) {
@@ -18,6 +18,8 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
 
     DashInstance.prototype.init = function() {
         Log.debug('Initializing dash instance', this);
+
+        this.initDatePickers();
 
         if (this.editing) {
             this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
@@ -102,8 +104,16 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
             .then(function(response) {
                 this.getBlockContentArea().html(response.html);
                 this.getBlockContentArea().css('opacity', 1);
+                this.initDatePickers();
             }.bind(this))
             .catch(Notification.exception);
+    };
+
+    DashInstance.prototype.initDatePickers = function() {
+        $('.datepicker').datepicker2({
+            autoclose: true,
+            format: "dd/mm/yyyy"
+        });
     };
 
     return DashInstance;

@@ -34,8 +34,6 @@ $capabilities = [
             'editingteacher' => CAP_PREVENT,
             'manager' => CAP_ALLOW
         ],
-
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ],
     'block/dash:myaddinstance' => [
         'riskbitmask'  => RISK_PERSONAL,

@@ -78,6 +78,9 @@ body#page-blocks-dash-data-source .drag-handle {
  * Licensed under the Apache License v2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
+body.drawer-open-left .datepicker2 {
+    margin-left: 285px;
+}
 .datepicker2 {
     padding: 4px;
     -webkit-border-radius: 4px;

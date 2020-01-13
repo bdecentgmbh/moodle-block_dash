@@ -23,6 +23,11 @@ class sql_data_grid extends data_grid
     private $count_query_template;
 
     /**
+     * @var string
+     */
+    private $groupby;
+
+    /**
      * @var data_collection_interface
      */
     private $data_collection;
@@ -40,6 +45,22 @@ class sql_data_grid extends data_grid
     public function set_count_query_template($count_query_template)
     {
         $this->count_query_template = $count_query_template;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_groupby()
+    {
+        return $this->groupby;
+    }
+
+    /**
+     * @param string $groupby
+     */
+    public function set_groupby($groupby)
+    {
+        $this->groupby = $groupby;
     }
 
     /**
@@ -104,17 +125,19 @@ class sql_data_grid extends data_grid
             $filter_params = [];
         }
 
+        $groupby = '';
         // Use count query and only select a count of primary field.
         if ($count) {
             $query = $this->count_query_template;
             $selects = 'COUNT(DISTINCT ' . $this->get_field_definitions()[0]->get_select() . ')';
             $order_by = '';
-            $groupby = '';
         } else {
             $query = $this->get_query();
             $selects = $this->get_query_select();
             $order_by = $this->get_sort_sql();
-            $groupby = 'GROUP BY ' . $this->get_field_definitions()[0]->get_select();
+            if ($groupby = $this->get_groupby()) {
+                $groupby = 'GROUP BY ' . $this->get_groupby();
+            }
         }
 
         if (!$count) {

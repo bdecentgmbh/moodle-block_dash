@@ -52,6 +52,7 @@ $string['createdashboard'] = 'Create dashboard';
 $string['createdatasource'] = 'Create data source';
 $string['cssclass'] = 'CSS Class';
 $string['currentcourse'] = 'Current course';
+$string['currentcoursegroups'] = 'Current course groups';
 $string['custom'] = 'Custom';
 $string['dash:addinstance'] = 'Add a new Dash block';
 $string['dash:myaddinstance'] = 'Add a new Dash block to dashboard';

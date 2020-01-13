@@ -25,6 +25,7 @@ namespace block_dash\data_source;
 use block_dash\data_grid\data\data_collection;
 use block_dash\data_grid\field\attribute\identifier_attribute;
 use block_dash\data_grid\field\field_definition_factory;
+use block_dash\data_grid\field\sql_field_definition;
 use block_dash\data_grid\sql_data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
@@ -104,6 +105,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $this->data_grid->set_count_query_template($this->get_count_query_template());
             $this->data_grid->set_field_definitions($this->get_sorted_field_definitions());
             $this->data_grid->set_supports_pagination($this->get_layout()->supports_pagination());
+            $this->data_grid->set_groupby($this->get_groupby());
 
             foreach ($this->get_sorting() as $field_name => $direction) {
                 if ($field_definition = $this->data_grid->get_field_definition($field_name)) {
@@ -343,6 +345,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     /**
+     * @return string
+     */
+    public function get_groupby()
+    {
+        return $this->get_sorted_field_definitions()[0]->get_select();
+    }
+
+    /**
      * @return field_definition_interface[]
      */
     public final function get_available_field_definitions()
@@ -355,7 +365,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     /**
-     * @return field_definition_interface[]
+     * @return sql_field_definition[]
      */
     public function get_sorted_field_definitions()
     {
@@ -394,7 +404,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             }
 
-            $this->sorted_field_definitions = $fielddefinitions;
+            $this->sorted_field_definitions = array_values($fielddefinitions);
         }
 
         return $this->sorted_field_definitions;

@@ -69,9 +69,14 @@ class users_data_source extends abstract_data_source
             $sql .= "LEFT JOIN {user_info_data} AS $alias ON $alias.userid = u.id AND $alias.fieldid = $field->id ";
         }
 
-        $sql .= ' %%WHERE%% %%HAVING%% %%ORDERBY%%';
+        $sql .= ' %%WHERE%% %%GROUPBY%% %%ORDERBY%%';
 
         return $sql;
+    }
+
+    public function get_groupby()
+    {
+        return 'u.id, g.id';
     }
 
     public function build_available_field_definitions()
@@ -111,6 +116,8 @@ class users_data_source extends abstract_data_source
         $filter_collection->add_filter(new participants_condition('participants', 'u.id'));
         $filter_collection->add_filter(new my_groups_condition('my_groups', 'g.id'));
         $filter_collection->add_filter(new current_course_condition('current_course', 'c.id'));
+        $filter_collection->add_filter(new current_course_condition('current_course_groups', 'g.courseid',
+            get_string('currentcoursegroups', 'block_dash')));
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);

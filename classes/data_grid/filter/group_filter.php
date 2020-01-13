@@ -39,16 +39,22 @@ class group_filter extends select_filter
      */
     public function init()
     {
-        global $USER, $CFG;
+        global $USER, $CFG, $COURSE;
 
         require_once("$CFG->dirroot/lib/enrollib.php");
         require_once("$CFG->dirroot/lib/grouplib.php");
 
         $this->values = [];
 
-        $courses = enrol_get_my_courses();
+        $courses = [$COURSE];
+        if ($context = $this->get_context()) {
+            if ($context instanceof \context_system || $context instanceof \context_user) {
+                $courses = enrol_get_my_courses();
+            }
+        }
 
         $groups = [];
+
         foreach ($courses as $course) {
             if (has_capability('moodle/site:accessallgroups', \context_course::instance($course->id))) {
                 $groups = array_merge($groups, groups_get_all_groups($course->id));
@@ -56,6 +62,7 @@ class group_filter extends select_filter
                 $groups = array_merge($groups, groups_get_all_groups($course->id, $USER->id));
             }
         }
+
 
         foreach ($groups as $group) {
             $this->add_option($group->id, $group->name);

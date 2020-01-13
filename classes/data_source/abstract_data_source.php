@@ -129,6 +129,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     {
         if (is_null($this->filter_collection)) {
             $this->filter_collection = $this->build_filter_collection();
+            $this->filter_collection->init();
         }
 
         return $this->filter_collection;

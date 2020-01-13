@@ -83,8 +83,6 @@ class filter implements filter_interface
         $this->select = $select;
         $this->label = $label;
         $this->clause_type = $clause_type;
-
-        $this->init();
     }
 
     /**

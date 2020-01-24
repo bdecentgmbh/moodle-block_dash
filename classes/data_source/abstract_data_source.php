@@ -100,6 +100,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     public final function get_data_grid()
     {
         if (is_null($this->data_grid)) {
+            if (!$this->get_sorted_field_definitions()) {
+                throw new \coding_exception('Data source has no field definitions associated with it.');
+            }
+
             $this->data_grid = new sql_data_grid($this->get_context());
             $this->data_grid->set_query_template($this->get_query_template());
             $this->data_grid->set_count_query_template($this->get_count_query_template());

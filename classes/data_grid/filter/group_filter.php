@@ -63,7 +63,6 @@ class group_filter extends select_filter
             }
         }
 
-
         foreach ($groups as $group) {
             $this->add_option($group->id, $group->name);
         }

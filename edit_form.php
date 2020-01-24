@@ -73,7 +73,7 @@ class block_dash_edit_form extends block_edit_form {
             $mform->setType('config_data_source_idnumber', PARAM_TEXT);
             $mform->addRule('config_data_source_idnumber', get_string('required'), 'required');
         } else {
-            if ($ds = data_source_factory::get_data_source($this->block->config->data_source_idnumber,
+            if ($ds = data_source_factory::build_data_source($this->block->config->data_source_idnumber,
                 $this->block->context)) {
                 $label = $ds->get_name();
             } else {

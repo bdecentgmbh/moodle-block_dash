@@ -42,7 +42,7 @@ function block_dash_register_data_sources() {
     return [
         [
             'name' => get_string('users'),
-            'class' => users_data_source::class
+            'identifier' => users_data_source::class
         ]
     ];
 }

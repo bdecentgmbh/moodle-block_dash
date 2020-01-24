@@ -27,7 +27,7 @@ namespace block_dash\data_source;
  *
  * @package block_dash\data_source
  */
-class data_source_factory
+class data_source_factory implements data_source_factory_interface
 {
     /**
      * @var array
@@ -40,44 +40,20 @@ class data_source_factory
      */
     protected static function get_data_source_registry()
     {
-        global $DB;
-
         if (is_null(self::$data_source_registry)) {
             self::$data_source_registry = [];
             if ($pluginsfunction = get_plugins_with_function('register_data_sources')) {
                 foreach ($pluginsfunction as $plugintype => $plugins) {
                     foreach ($plugins as $pluginfunction) {
                         foreach ($pluginfunction() as $datasourceinfo) {
-                            $datasourceinfo['is_custom'] = false;
-                            self::$data_source_registry[$datasourceinfo['class']] = $datasourceinfo;
+                            self::$data_source_registry[$datasourceinfo['identifier']] = $datasourceinfo;
                         }
                     }
                 }
             }
-
-//            foreach ($DB->get_records('dash_data_source') as $record) {
-//                $record = (array)$record;
-//                $record['is_custom'] = true;
-//
-//                self::$data_source_registry[$record['idnumber']] = $record;
-//            }
         }
 
         return self::$data_source_registry;
-    }
-
-    /**
-     * Check if data source identifier references a custom data source. If it does, the identifier is the idnumber to the
-     * database record.
-     *
-     * @param string $identifier
-     * @return bool
-     * @throws \dml_exception
-     */
-    public static function is_custom($identifier)
-    {
-        return array_key_exists($identifier, self::get_data_source_registry())
-            && self::get_data_source_registry()[$identifier]['is_custom'];
     }
 
     /**
@@ -112,7 +88,7 @@ class data_source_factory
      * @return data_source_interface
      * @throws \dml_exception
      */
-    public static function get_data_source($identifier, \context $context)
+    public static function build_data_source($identifier, \context $context)
     {
         if (!self::exists($identifier)) {
             return null;
@@ -120,15 +96,15 @@ class data_source_factory
 
         $datasourceinfo = self::get_data_source_info($identifier);
 
-        if (self::is_custom($identifier)) {
-            //return new custom_data_source($datasourceinfo, $context);
-        } else {
-            if (class_exists($identifier)) {
-                return new $identifier($context);
-            }
+        if (isset($datasourceinfo['factory']) && $datasourceinfo['factory'] != self::class) {
+            return $datasourceinfo['factory']::build_data_source($identifier, $context);
         }
 
-        return null;
+        if (!class_exists($identifier)) {
+            return null;
+        }
+
+        return new $identifier($context);
     }
 
     /**

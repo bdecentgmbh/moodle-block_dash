@@ -321,4 +321,10 @@ abstract class abstract_field_definition implements field_definition_interface
     }
 
     #endregion
+
+    public function get_custom_form()
+    {
+        return '<input type="hidden" name="available_field_definitions[' . $this->get_name()
+            . '][enabled]" value="1">';
+    }
 }

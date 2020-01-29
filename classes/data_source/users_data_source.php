@@ -90,7 +90,21 @@ class users_data_source extends abstract_data_source {
      * @return string
      */
     public function get_groupby() {
-        return 'u.id, g.id';
+        $groupby = 'u.id, g.id';
+
+        if ($this->get_layout()->supports_field_visibility()) {
+            // Default to grouping by user.
+            $groupby = 'u.id';
+
+            foreach ($this->get_preferences('available_fields') as $name => $field) {
+                if (strpos($name, 'g_') === 0 && isset($field['visible']) && $field['visible']) {
+                    $groupby = 'u.id, g.id';
+                    break;
+                }
+            }
+        }
+
+        return $groupby;
     }
 
     /**

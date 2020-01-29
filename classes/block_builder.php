@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Helper class for creating block instance content.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,8 +28,15 @@ use block_dash\configuration\configuration_interface;
 use block_dash\configuration\configuration;
 use block_dash\output\renderer;
 
-class block_builder
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Helper class for creating block instance content.
+ *
+ * @package block_dash
+ */
+class block_builder {
+
     /**
      * @var configuration_interface
      */
@@ -36,27 +45,36 @@ class block_builder
     /**
      * @var \block_base
      */
-    private $block_instance;
+    private $blockinstance;
 
-    protected function __construct(\block_base $block_instance)
-    {
-        $this->block_instance = $block_instance;
-        $this->configuration = configuration::create_from_instance($block_instance);
+    /**
+     * block_builder constructor.
+     *
+     * @param \block_base $blockinstance
+     * @throws \coding_exception
+     */
+    protected function __construct(\block_base $blockinstance) {
+        $this->blockinstance = $blockinstance;
+        $this->configuration = configuration::create_from_instance($blockinstance);
     }
 
     /**
+     * Get configuration.
+     *
      * @return configuration_interface
      */
-    public function get_configuration()
-    {
+    public function get_configuration() {
         return $this->configuration;
     }
 
     /**
+     * Get content object for block instance.
+     *
      * @return \stdClass
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
-    public function get_block_content()
-    {
+    public function get_block_content() {
         global $OUTPUT, $PAGE;
 
         /** @var renderer $renderer */
@@ -65,16 +83,16 @@ class block_builder
         $text = '';
 
         if ($this->configuration->is_fully_configured()) {
-            $bb = block_builder::create($this->block_instance);
+            $bb = self::create($this->blockinstance);
 
             $bb->get_configuration()->get_data_source()->get_data_grid()->get_paginator()->set_current_page(0);
 
             $text .= $OUTPUT->render_from_template('block_dash/block', [
                 'preloaded' => $renderer->render_data_source($bb->get_configuration()->get_data_source()),
-                'block_instance_id' => $this->block_instance->instance->id,
-                'block_context_id' => $this->block_instance->context->id,
+                'block_instance_id' => $this->blockinstance->instance->id,
+                'block_context_id' => $this->blockinstance->context->id,
                 'editing' => $PAGE->user_is_editing() &&
-                    has_capability('block/dash:addinstance', $this->block_instance->context)
+                    has_capability('block/dash:addinstance', $this->blockinstance->context)
             ]);
         } else {
             $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
@@ -83,25 +101,27 @@ class block_builder
         $content = new \stdClass();
         $content->text = $text;
 
-        if (isset($this->block_instance->config->header_content)) {
-            $content->text = format_text($this->block_instance->config->header_content['text'],
-                $this->block_instance->config->header_content['format']) . $content->text;
+        if (isset($this->blockinstance->config->header_content)) {
+            $content->text = format_text($this->blockinstance->config->header_content['text'],
+                $this->blockinstance->config->header_content['format']) . $content->text;
         }
 
-        if (isset($this->block_instance->config->footer_content)) {
-            $content->footer = format_text($this->block_instance->config->footer_content['text'],
-                $this->block_instance->config->footer_content['format']);
+        if (isset($this->blockinstance->config->footer_content)) {
+            $content->footer = format_text($this->blockinstance->config->footer_content['text'],
+                $this->blockinstance->config->footer_content['format']);
         }
 
         return $content;
     }
 
     /**
-     * @param \block_base $block_instance
+     * Create block builder.
+     *
+     * @param \block_base $blockinstance
      * @return block_builder
+     * @throws \coding_exception
      */
-    public static function create(\block_base $block_instance)
-    {
-        return new block_builder($block_instance);
+    public static function create(\block_base $blockinstance) {
+        return new block_builder($blockinstance);
     }
 }

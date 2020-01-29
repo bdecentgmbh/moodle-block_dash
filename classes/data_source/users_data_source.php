@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class users_data_source.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,36 +39,44 @@ use block_dash\data_grid\filter\user_field_filter;
 use block_dash\data_grid\filter\user_profile_field_filter;
 use block_dash\data_grid\filter\current_course_condition;
 
-class users_data_source extends abstract_data_source
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Class users_data_source.
+ *
+ * @package block_dash
+ */
+class users_data_source extends abstract_data_source {
+
     /**
      * Get human readable name of data source.
      *
      * @return string
+     * @throws \coding_exception
      */
-    public function get_name()
-    {
+    public function get_name() {
         return get_string('users');
     }
 
     /**
+     * Return query template for retrieving user info.
+     *
      * @return string
      */
-    public function get_query_template()
-    {
+    public function get_query_template() {
         global $CFG;
 
         require_once("$CFG->dirroot/user/profile/lib.php");
-        $sql = 'SELECT DISTINCT %%SELECT%% FROM {user} u 
-                LEFT JOIN {user_enrolments} AS ue ON ue.userid = u.id
-                LEFT JOIN {enrol} AS e ON e.id = ue.enrolid
-                LEFT JOIN {course} AS c ON c.id = e.courseid
-                LEFT JOIN {groups_members} AS gm ON gm.userid = u.id
-                LEFT JOIN {groups} AS g ON g.id = gm.groupid ';
+        $sql = 'SELECT DISTINCT %%SELECT%% FROM {user} u
+                LEFT JOIN {user_enrolments} ue ON ue.userid = u.id
+                LEFT JOIN {enrol} e ON e.id = ue.enrolid
+                LEFT JOIN {course} c ON c.id = e.courseid
+                LEFT JOIN {groups_members} gm ON gm.userid = u.id
+                LEFT JOIN {groups} g ON g.id = gm.groupid ';
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
-            $sql .= "LEFT JOIN {user_info_data} AS $alias ON $alias.userid = u.id AND $alias.fieldid = $field->id ";
+            $sql .= "LEFT JOIN {user_info_data} $alias ON $alias.userid = u.id AND $alias.fieldid = $field->id ";
         }
 
         $sql .= ' %%WHERE%% %%GROUPBY%% %%ORDERBY%%';
@@ -74,58 +84,68 @@ class users_data_source extends abstract_data_source
         return $sql;
     }
 
-    public function get_groupby()
-    {
+    /**
+     * Group by columns.
+     *
+     * @return string
+     */
+    public function get_groupby() {
         return 'u.id, g.id';
     }
 
-    public function build_available_field_definitions()
-    {
+    /**
+     * Return available field definitions.
+     *
+     * @return array|field_definition_interface[]
+     */
+    public function build_available_field_definitions() {
         return field_definition_factory::get_field_definitions_by_tables(['u', 'g']);
     }
 
     /**
+     * Build and return filter collection.
+     *
      * @return filter_collection_interface
+     * @throws \coding_exception
      */
-    public function build_filter_collection()
-    {
+    public function build_filter_collection() {
         global $CFG;
 
         require_once("$CFG->dirroot/user/profile/lib.php");
 
-        $filter_collection = new filter_collection(get_class($this), $this->get_context());
+        $filtercollection = new filter_collection(get_class($this), $this->get_context());
 
-        $filter_collection->add_filter(new group_filter('group', 'g.id'));
+        $filtercollection->add_filter(new group_filter('group', 'g.id'));
 
-        $filter_collection->add_filter(new user_field_filter('u_department', 'u.department', 'department',
+        $filtercollection->add_filter(new user_field_filter('u_department', 'u.department', 'department',
             get_string('department')));
-        $filter_collection->add_filter(new user_field_filter('u_institution', 'u.institution', 'institution',
+        $filtercollection->add_filter(new user_field_filter('u_institution', 'u.institution', 'institution',
             get_string('institution')));
 
         $filter = new date_filter('u_lastlogin', 'u.lastlogin', date_filter::DATE_FUNCTION_FLOOR,
             get_string('lastlogin'));
         $filter->set_operation(filter::OPERATION_GREATER_THAN_EQUAL);
-        $filter_collection->add_filter($filter);
+        $filtercollection->add_filter($filter);
 
         $filter = new date_filter('u_firstaccess', 'u.firstaccess', date_filter::DATE_FUNCTION_FLOOR,
             get_string('firstaccess'));
         $filter->set_operation(filter::OPERATION_GREATER_THAN_EQUAL);
-        $filter_collection->add_filter($filter);
+        $filtercollection->add_filter($filter);
 
-        $filter_collection->add_filter(new logged_in_user_condition('current_user', 'u.id'));
-        $filter_collection->add_filter(new participants_condition('participants', 'u.id'));
-        $filter_collection->add_filter(new my_groups_condition('my_groups', 'g.id'));
-        $filter_collection->add_filter(new current_course_condition('current_course', 'c.id'));
-        $filter_collection->add_filter(new current_course_condition('current_course_groups', 'g.courseid',
+        $filtercollection->add_filter(new logged_in_user_condition('current_user', 'u.id'));
+        $filtercollection->add_filter(new participants_condition('participants', 'u.id'));
+        $filtercollection->add_filter(new my_groups_condition('my_groups', 'g.id'));
+        $filtercollection->add_filter(new current_course_condition('current_course', 'c.id'));
+        $filtercollection->add_filter(new current_course_condition('current_course_groups', 'g.courseid',
             get_string('currentcoursegroups', 'block_dash')));
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
             $filter = new user_profile_field_filter($alias, $alias . '.data', $field->id, $field->name);
             $filter->set_label($field->name);
-            $filter_collection->add_filter($filter);
+            $filtercollection->add_filter($filter);
         }
 
-        return $filter_collection;
+        return $filtercollection;
     }
 }

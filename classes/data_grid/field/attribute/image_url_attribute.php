@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Designates a field as being an image URL.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,12 +24,13 @@
 
 namespace block_dash\data_grid\field\attribute;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Designates a field as being an image URL.
  *
- * @package block_dash\data_grid\field
+ * @package block_dash
  */
-class image_url_attribute extends abstract_field_attribute
-{
+class image_url_attribute extends abstract_field_attribute {
 
 }

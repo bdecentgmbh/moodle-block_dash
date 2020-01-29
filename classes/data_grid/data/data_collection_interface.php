@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Container for structuring data, usually from a database.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,12 +24,14 @@
 
 namespace block_dash\data_grid\data;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Interface data_collection_interface
- * @package block_dash\data
+ * Container for structuring data, usually from a database.
+ *
+ * @package block_dash
  */
-interface data_collection_interface
-{
+interface data_collection_interface {
     /**
      * Get all fields in this data collection.
      *

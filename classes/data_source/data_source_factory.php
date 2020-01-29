@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Responsible for creating data sources on request.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,38 +24,42 @@
 
 namespace block_dash\data_source;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Responsible for creating data sources on request.
  *
- * @package block_dash\data_source
+ * @package block_dash
  */
-class data_source_factory implements data_source_factory_interface
-{
-    /**
-     * @var array
-     */
-    private static $data_source_registry;
+class data_source_factory implements data_source_factory_interface {
 
     /**
-     * @return array
-     * @throws \dml_exception
+     * Cache registered data sources so they are only retrieved once.
+     *
+     * @var array
      */
-    protected static function get_data_source_registry()
-    {
-        if (is_null(self::$data_source_registry)) {
-            self::$data_source_registry = [];
+    private static $datasourceregistry;
+
+    /**
+     * Register and return data registry.
+     *
+     * @return array
+     */
+    protected static function get_data_source_registry() {
+        if (is_null(self::$datasourceregistry)) {
+            self::$datasourceregistry = [];
             if ($pluginsfunction = get_plugins_with_function('register_data_sources')) {
                 foreach ($pluginsfunction as $plugintype => $plugins) {
                     foreach ($plugins as $pluginfunction) {
                         foreach ($pluginfunction() as $datasourceinfo) {
-                            self::$data_source_registry[$datasourceinfo['identifier']] = $datasourceinfo;
+                            self::$datasourceregistry[$datasourceinfo['identifier']] = $datasourceinfo;
                         }
                     }
                 }
             }
         }
 
-        return self::$data_source_registry;
+        return self::$datasourceregistry;
     }
 
     /**
@@ -61,20 +67,18 @@ class data_source_factory implements data_source_factory_interface
      *
      * @param string $identifier
      * @return bool
-     * @throws \dml_exception
      */
-    public static function exists($identifier)
-    {
+    public static function exists($identifier) {
         return isset(self::get_data_source_registry()[$identifier]);
     }
 
     /**
-     * @param $identifier
+     * Get data source info.
+     *
+     * @param string $identifier
      * @return array|null
-     * @throws \dml_exception
      */
-    public static function get_data_source_info($identifier)
-    {
+    public static function get_data_source_info($identifier) {
         if (self::exists($identifier)) {
             return self::get_data_source_registry()[$identifier];
         }
@@ -83,13 +87,13 @@ class data_source_factory implements data_source_factory_interface
     }
 
     /**
+     * Build data source.
+     *
      * @param string $identifier
      * @param \context $context
      * @return data_source_interface
-     * @throws \dml_exception
      */
-    public static function build_data_source($identifier, \context $context)
-    {
+    public static function build_data_source($identifier, \context $context) {
         if (!self::exists($identifier)) {
             return null;
         }
@@ -111,10 +115,8 @@ class data_source_factory implements data_source_factory_interface
      * Get options array for select form fields.
      *
      * @return array
-     * @throws \dml_exception
      */
-    public static function get_data_source_form_options()
-    {
+    public static function get_data_source_form_options() {
         $options = [];
 
         foreach (self::get_data_source_registry() as $identifier => $datasourceinfo) {

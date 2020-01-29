@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Unit test for field definition factory.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,20 +37,19 @@ defined('MOODLE_INTERNAL') || die();
  * @group bdecent
  * @group data_grid_test
  */
-class data_grid_test extends \advanced_testcase
-{
+class data_grid_test extends \advanced_testcase {
+
     /**
      * @var data_grid_interface
      */
-    private $data_grid;
+    private $datagrid;
 
     /**
      * This method is called before each test.
      */
-    protected function setUp()
-    {
-        $this->data_grid = new testing_data_grid(\context_system::instance());
-        $this->data_grid->set_field_definitions(field_definition_factory::get_field_definitions([
+    protected function setUp() {
+        $this->datagrid = new testing_data_grid(\context_system::instance());
+        $this->datagrid->set_field_definitions(field_definition_factory::get_field_definitions([
             'u_id',
             'u_firstname',
             'u_lastname',
@@ -57,9 +58,8 @@ class data_grid_test extends \advanced_testcase
         ]));
     }
 
-    public function test_getting_data()
-    {
-        $data = $this->data_grid->get_data();
+    public function test_getting_data() {
+        $data = $this->datagrid->get_data();
 
         $users = $data['users'];
 

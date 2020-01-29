@@ -1,12 +1,41 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Limit data to my participants.
+ *
+ * @package    block_dash
+ * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace block_dash\data_grid\filter;
 
+defined('MOODLE_INTERNAL') || die();
 
-class participants_condition extends condition
-{
+/**
+ * Limit data to my participants.
+ *
+ * @package block_dash
+ */
+class participants_condition extends condition {
+
     /**
+     * Condition values.
+     *
      * @var array
      */
     private $values;
@@ -17,9 +46,9 @@ class participants_condition extends condition
      * Override in child class to add more values.
      *
      * @return array
+     * @throws \coding_exception
      */
-    public function get_values()
-    {
+    public function get_values() {
         if (is_null($this->values)) {
             global $USER;
 
@@ -59,10 +88,12 @@ class participants_condition extends condition
     }
 
     /**
+     * Get filter label.
+     *
      * @return string
+     * @throws \coding_exception
      */
-    public function get_label()
-    {
+    public function get_label() {
         if ($label = parent::get_label()) {
             return $label;
         }

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class sql_field_definition.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,33 +24,41 @@
 
 namespace block_dash\data_grid\field;
 
+defined('MOODLE_INTERNAL') || die();
 
-class sql_field_definition extends abstract_field_definition
-{
+/**
+ * Class sql_field_definition.
+ *
+ * @package block_dash
+ */
+class sql_field_definition extends abstract_field_definition {
+
     /**
      * @var string SQL select statement for this field.
      */
     private $select;
 
     /**
+     * Constructor.
+     *
      * @param string $select SQL select statement for this field.
      * @param string $name String identifier of human readable name of field (e.g. Firstname).
      * @param string $title String identifier of human readable name of field (e.g. Firstname).
      * @param int $visibility Visibility of the field (if it should be displayed to the user).
      * @param array $options Arbitrary options belonging to this field.
      */
-    public function __construct($select, $name, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
-    {
+    public function __construct($select, $name, $title, $visibility = self::VISIBILITY_VISIBLE, $options = []) {
         $this->select = $select;
 
         parent::__construct($name, $title, $visibility, $options);
     }
 
     /**
-     * @return string SQL select statement for this field.
+     * Get SQL select statement for this field.
+     *
+     * @return string
      */
-    public function get_select()
-    {
+    public function get_select() {
         return $this->select;
     }
 }

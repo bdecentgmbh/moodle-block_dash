@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This layout displays data in a grid of cards.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,13 +24,24 @@
 
 namespace block_dash\layout;
 
-class grid_layout extends abstract_layout
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * A layout contains information on how to display data.
+ * @see abstract_layout for creating new layouts.
+ *
+ * This layout displays data in a grid of cards.
+ *
+ * @package block_dash
+ */
+class grid_layout extends abstract_layout {
+
     /**
+     * Get mustache template name.
+     *
      * @return string
      */
-    public function get_mustache_template_name()
-    {
+    public function get_mustache_template_name() {
         return 'block_dash/layout_grid';
     }
 
@@ -37,8 +50,7 @@ class grid_layout extends abstract_layout
      *
      * @return bool
      */
-    public function supports_pagination()
-    {
+    public function supports_pagination() {
         return true;
     }
 
@@ -47,8 +59,7 @@ class grid_layout extends abstract_layout
      *
      * @return bool
      */
-    public function supports_field_visibility()
-    {
+    public function supports_field_visibility() {
         return true;
     }
 
@@ -57,8 +68,7 @@ class grid_layout extends abstract_layout
      *
      * @return bool
      */
-    public function supports_filtering()
-    {
+    public function supports_filtering() {
         return true;
     }
 
@@ -67,8 +77,7 @@ class grid_layout extends abstract_layout
      *
      * @return mixed
      */
-    public function supports_sorting()
-    {
+    public function supports_sorting() {
         return true;
     }
 }

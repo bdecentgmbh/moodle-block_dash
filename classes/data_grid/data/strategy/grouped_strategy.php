@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Group data by a certain field.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,59 +29,70 @@ use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
 
-class grouped_strategy implements data_strategy_interface
-{
-    /**
-     * @var field_definition_interface
-     */
-    private $groupby_field_definition;
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Group data by a certain field.
+ *
+ * @package block_dash
+ */
+class grouped_strategy implements data_strategy_interface {
 
     /**
      * @var field_definition_interface
      */
-    private $group_label_field_definition;
+    private $groupbyfielddefinition;
 
     /**
-     * @param field_definition_interface $groupby_field_definition
-     * @param field_definition_interface $group_label_field_definition
+     * @var field_definition_interface
      */
-    public function __construct(field_definition_interface $groupby_field_definition,
-                                field_definition_interface $group_label_field_definition)
-    {
-        $this->groupby_field_definition = $groupby_field_definition;
-        $this->group_label_field_definition = $group_label_field_definition;
+    private $grouplabelfielddefinition;
+
+    /**
+     * Create new grouped strategy.
+     *
+     * @param field_definition_interface $groupbyfielddefinition
+     * @param field_definition_interface $grouplabelfielddefinition
+     */
+    public function __construct(field_definition_interface $groupbyfielddefinition,
+                                field_definition_interface $grouplabelfielddefinition) {
+        $this->groupbyfielddefinition = $groupbyfielddefinition;
+        $this->grouplabelfielddefinition = $grouplabelfielddefinition;
     }
 
     /**
+     * Convert database records into data collections.
+     *
      * @param \stdClass[] $records
-     * @param data_grid_interface $data_grid
+     * @param data_grid_interface $datagrid
      * @return data_collection_interface
      */
-    public function convert_records_to_data_collection($records, data_grid_interface $data_grid)
-    {
-        $grid_data = new data_collection();
+    public function convert_records_to_data_collection($records, data_grid_interface $datagrid) {
+        $griddata = new data_collection();
 
         $sections = [];
         foreach ($records as $fullrecord) {
             $record = clone $fullrecord;
             $row = new data_collection();
 
-            $label = $record->{$this->group_label_field_definition->get_name()};
-            if (!$groupby = $record->{$this->groupby_field_definition->get_name()}) {
+            $label = $record->{$this->grouplabelfielddefinition->get_name()};
+            if (!$groupby = $record->{$this->groupbyfielddefinition->get_name()}) {
                 continue;
             }
 
-            if (isset($record->unique_id)) unset($record->unique_id);
+            if (isset($record->unique_id)) {
+                unset($record->unique_id);
+            }
 
-            foreach ($data_grid->get_field_definitions() as $field_definition) {
-                $name = $field_definition->get_name();
+            foreach ($datagrid->get_field_definitions() as $fielddefinition) {
+                $name = $fielddefinition->get_name();
 
-                if ($field_definition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
+                if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
                     unset($record->$name);
                     continue;
                 }
 
-                $record->$name = $field_definition->transform_data($record->$name, $fullrecord);
+                $record->$name = $fielddefinition->transform_data($record->$name, $fullrecord);
             }
 
             $row->add_data_associative($record);
@@ -94,9 +107,9 @@ class grouped_strategy implements data_strategy_interface
         }
 
         foreach ($sections as $section) {
-            $grid_data->add_child_collection('sections', $section);
+            $griddata->add_child_collection('sections', $section);
         }
 
-        return $grid_data;
+        return $griddata;
     }
 }

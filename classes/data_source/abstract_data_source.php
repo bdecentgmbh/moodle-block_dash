@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class abstract_data_source.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,8 +37,15 @@ use block_dash\layout\grid_layout;
 use block_dash\layout\layout_factory;
 use block_dash\layout\layout_interface;
 
-abstract class abstract_data_source implements data_source_interface, \templatable
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Class abstract_data_source.
+ *
+ * @package block_dash
+ */
+abstract class abstract_data_source implements data_source_interface, \templatable {
+
     /**
      * @var \context
      */
@@ -45,7 +54,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * @var data_grid_interface
      */
-    private $data_grid;
+    private $datagrid;
 
     /**
      * @var data_collection_interface
@@ -55,7 +64,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * @var filter_collection_interface
      */
-    private $filter_collection;
+    private $filtercollection;
 
     /**
      * @var array
@@ -70,23 +79,24 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * @var field_definition_interface[]
      */
-    private $field_definitions;
+    private $fielddefinitions;
 
     /**
      * @var field_definition_interface[]
      */
-    private $sorted_field_definitions;
+    private $sortedfielddefinitions;
 
     /**
      * @var \block_base|null
      */
-    private $block_instance = null;
+    private $blockinstance = null;
 
     /**
+     * Constructor.
+     *
      * @param \context $context
      */
-    public function __construct(\context $context)
-    {
+    public function __construct(\context $context) {
         $this->context = $context;
     }
 
@@ -97,31 +107,30 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    public final function get_data_grid()
-    {
-        if (is_null($this->data_grid)) {
+    public final function get_data_grid() {
+        if (is_null($this->datagrid)) {
             if (!$this->get_sorted_field_definitions()) {
                 throw new \coding_exception('Data source has no field definitions associated with it.');
             }
 
-            $this->data_grid = new sql_data_grid($this->get_context());
-            $this->data_grid->set_query_template($this->get_query_template());
-            $this->data_grid->set_count_query_template($this->get_count_query_template());
-            $this->data_grid->set_field_definitions($this->get_sorted_field_definitions());
-            $this->data_grid->set_supports_pagination($this->get_layout()->supports_pagination());
-            $this->data_grid->set_groupby($this->get_groupby());
+            $this->datagrid = new sql_data_grid($this->get_context());
+            $this->datagrid->set_query_template($this->get_query_template());
+            $this->datagrid->set_count_query_template($this->get_count_query_template());
+            $this->datagrid->set_field_definitions($this->get_sorted_field_definitions());
+            $this->datagrid->set_supports_pagination($this->get_layout()->supports_pagination());
+            $this->datagrid->set_groupby($this->get_groupby());
 
-            foreach ($this->get_sorting() as $field_name => $direction) {
-                if ($field_definition = $this->data_grid->get_field_definition($field_name)) {
-                    $field_definition->set_sort(true);
-                    $field_definition->set_sort_direction($direction);
+            foreach ($this->get_sorting() as $fieldname => $direction) {
+                if ($fielddefinition = $this->datagrid->get_field_definition($fieldname)) {
+                    $fielddefinition->set_sort(true);
+                    $fielddefinition->set_sort_direction($direction);
                 }
             }
 
-            $this->data_grid->init();
+            $this->datagrid->init();
         }
 
-        return $this->data_grid;
+        return $this->datagrid;
     }
 
     /**
@@ -129,24 +138,22 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @return filter_collection_interface
      */
-    public final function get_filter_collection()
-    {
-        if (is_null($this->filter_collection)) {
-            $this->filter_collection = $this->build_filter_collection();
-            $this->filter_collection->init();
+    public final function get_filter_collection() {
+        if (is_null($this->filtercollection)) {
+            $this->filtercollection = $this->build_filter_collection();
+            $this->filtercollection->init();
         }
 
-        return $this->filter_collection;
+        return $this->filtercollection;
     }
 
     /**
      * Modify objects before data is retrieved.
      */
-    public function before_data()
-    {
+    public function before_data() {
         if ($this->get_layout()->supports_field_visibility()) {
-            foreach ($this->get_available_field_definitions() as $available_field_definition) {
-                $available_field_definition->set_visibility(field_definition_interface::VISIBILITY_HIDDEN);
+            foreach ($this->get_available_field_definitions() as $availablefielddefinition) {
+                $availablefielddefinition->set_visibility(field_definition_interface::VISIBILITY_HIDDEN);
             }
             if ($this->preferences && isset($this->preferences['available_fields'])) {
                 foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
@@ -183,11 +190,12 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     /**
+     * Get data collection.
+     *
      * @return data_collection_interface
      * @throws \moodle_exception
      */
-    public final function get_data()
-    {
+    public final function get_data() {
         if (is_null($this->data)) {
             // If the block has no preferences do not query any data.
             if (empty($this->get_all_preferences())) {
@@ -196,12 +204,12 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             $this->before_data();
 
-            $data_grid = $this->get_data_grid();
+            $datagrid = $this->get_data_grid();
             if ($strategy = $this->get_layout()->get_data_strategy()) {
-                $data_grid->set_data_strategy($strategy);
+                $datagrid->set_data_strategy($strategy);
             }
-            $data_grid->set_filter_collection($this->get_filter_collection());
-            $this->data = $data_grid->get_data();
+            $datagrid->set_filter_collection($this->get_filter_collection());
+            $this->data = $datagrid->get_data();
 
             if ($modifieddata = $this->after_data($this->data)) {
                 $this->data = $modifieddata;
@@ -214,11 +222,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * Modify objects after data is retrieved.
      *
-     * @param data_collection_interface $data_collection
+     * @param data_collection_interface $datacollection
      */
-    public function after_data(data_collection_interface $data_collection)
-    {
-        return $this->get_layout()->after_data($data_collection);
+    public function after_data(data_collection_interface $datacollection) {
+        return $this->get_layout()->after_data($datacollection);
     }
 
     /**
@@ -226,16 +233,16 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @param layout_interface $layout
      */
-    public function set_layout(layout_interface $layout)
-    {
+    public function set_layout(layout_interface $layout) {
         $this->layout = $layout;
     }
 
     /**
+     * Get layout.
+     *
      * @return layout_interface
      */
-    public function get_layout()
-    {
+    public function get_layout() {
         if (is_null($this->layout)) {
             if ($layout = $this->get_preferences('layout')) {
                 if (class_exists($layout)) {
@@ -253,20 +260,22 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     /**
+     * Get context.
+     *
      * @return \context
      */
-    public function get_context()
-    {
+    public function get_context() {
         return $this->context;
     }
 
     /**
+     * Get template variables.
+     *
      * @param \renderer_base $output
      * @return array|\renderer_base|\stdClass|string
      * @throws \coding_exception
      */
-    public final function export_for_template(\renderer_base $output)
-    {
+    public final function export_for_template(\renderer_base $output) {
         return $this->get_layout()->export_for_template($output);
     }
 
@@ -276,9 +285,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @param \moodleform $form
      * @param \MoodleQuickForm $mform
+     * @throws \coding_exception
      */
-    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform)
-    {
+    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
         $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
 
         $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'),
@@ -289,15 +298,15 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $layout->build_preferences_form($form, $mform);
         }
 
-        $sortable_field_definitions = [];
-        foreach ($this->get_available_field_definitions() as $field_definition) {
-            if ($field_definition->get_option('supports_sorting') !== false) {
-                $sortable_field_definitions[] = $field_definition;
+        $sortablefielddefinitions = [];
+        foreach ($this->get_available_field_definitions() as $fielddefinition) {
+            if ($fielddefinition->get_option('supports_sorting') !== false) {
+                $sortablefielddefinitions[] = $fielddefinition;
             }
         }
 
         $mform->addElement('select', 'config_preferences[default_sort]', get_string('defaultsortfield', 'block_dash'),
-            field_definition_factory::get_field_definition_options($sortable_field_definitions));
+            field_definition_factory::get_field_definition_options($sortablefielddefinitions));
         $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
         $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
     }
@@ -310,8 +319,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @param string $name
      * @return mixed|array
      */
-    public final function get_preferences($name)
-    {
+    public final function get_preferences($name) {
         if ($this->preferences && isset($this->preferences[$name])) {
             return $this->preferences[$name];
         }
@@ -324,8 +332,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @return array
      */
-    public final function get_all_preferences()
-    {
+    public final function get_all_preferences() {
         return $this->preferences;
     }
 
@@ -334,47 +341,50 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @param array $preferences
      */
-    public final function set_preferences(array $preferences)
-    {
+    public final function set_preferences(array $preferences) {
         $this->preferences = $preferences;
     }
 
     #endregion
 
     /**
+     * Get count query template.
+     *
      * @return string
      */
-    public function get_count_query_template()
-    {
+    public function get_count_query_template() {
         return $this->get_query_template();
     }
 
     /**
+     * Get group by fields.
+     *
      * @return string
      */
-    public function get_groupby()
-    {
+    public function get_groupby() {
         return $this->get_sorted_field_definitions()[0]->get_select();
     }
 
     /**
+     * Get available field definitions.
+     *
      * @return field_definition_interface[]
      */
-    public final function get_available_field_definitions()
-    {
-        if (is_null($this->field_definitions)) {
-            $this->field_definitions = $this->build_available_field_definitions();;
+    public final function get_available_field_definitions() {
+        if (is_null($this->fielddefinitions)) {
+            $this->fielddefinitions = $this->build_available_field_definitions();;
         }
 
-        return $this->field_definitions;
+        return $this->fielddefinitions;
     }
 
     /**
+     * Get sorted field definitions based on preferences.
+     *
      * @return sql_field_definition[]
      */
-    public function get_sorted_field_definitions()
-    {
-        if (is_null($this->sorted_field_definitions)) {
+    public function get_sorted_field_definitions() {
+        if (is_null($this->sortedfielddefinitions)) {
             $fielddefinitions = $this->get_available_field_definitions();;
 
             if ($this->get_layout()->supports_field_visibility()) {
@@ -409,17 +419,18 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             }
 
-            $this->sorted_field_definitions = array_values($fielddefinitions);
+            $this->sortedfielddefinitions = array_values($fielddefinitions);
         }
 
-        return $this->sorted_field_definitions;
+        return $this->sortedfielddefinitions;
     }
 
     /**
+     * Get sorting.
+     *
      * @throws \coding_exception
      */
-    public function get_sorting()
-    {
+    public function get_sorting() {
         global $USER;
 
         if ($this->get_layout()->supports_sorting() && $this->get_block_instance()) {
@@ -438,18 +449,20 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     /**
-     * @param \block_base $block_instance
+     * Set block instance.
+     *
+     * @param \block_base $blockinstance
      */
-    public function set_block_instance(\block_base $block_instance)
-    {
-        $this->block_instance = $block_instance;
+    public function set_block_instance(\block_base $blockinstance) {
+        $this->blockinstance = $blockinstance;
     }
 
     /**
+     * Get block instance.
+     *
      * @return null|\block_base
      */
-    public function get_block_instance()
-    {
-        return $this->block_instance;
+    public function get_block_instance() {
+        return $this->blockinstance;
     }
 }

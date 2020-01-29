@@ -40,8 +40,7 @@ use local_dash\model\dashboard;
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external extends external_api
-{
+class external extends external_api {
     #region get_block_content
 
     /**
@@ -49,8 +48,7 @@ class external extends external_api
      *
      * @return \external_function_parameters
      */
-    public static function get_block_content_parameters()
-    {
+    public static function get_block_content_parameters() {
         return new \external_function_parameters([
             'block_instance_id' => new \external_value(PARAM_INT),
             'filter_form_data' => new \external_value(PARAM_RAW),
@@ -60,18 +58,19 @@ class external extends external_api
     }
 
     /**
-     * @param $block_instance_id
-     * @param $filter_form_data
-     * @param $page
-     * @param $sort_field
+     * Get block content.
+     *
+     * @param int $block_instance_id
+     * @param string $filter_form_data
+     * @param int $page
+     * @param string $sort_field
      * @return array
      * @throws \coding_exception
      * @throws \invalid_parameter_exception
      * @throws \moodle_exception
      * @throws \restricted_context_exception
      */
-    public static function get_block_content($block_instance_id, $filter_form_data, $page, $sort_field)
-    {
+    public static function get_block_content($block_instance_id, $filter_form_data, $page, $sort_field) {
         global $PAGE;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
@@ -113,8 +112,8 @@ class external extends external_api
                     ->apply_filter($filter['name'], $filter['value']);
             }
 
-            $data_grid = $bb->get_configuration()->get_data_source()->get_data_grid();
-            $data_grid->get_paginator()->set_current_page($params['page']);
+            $datagrid = $bb->get_configuration()->get_data_source()->get_data_grid();
+            $datagrid->get_paginator()->set_current_page($params['page']);
 
             return ['html' => $renderer->render_data_source($bb->get_configuration()->get_data_source())];
         }
@@ -127,8 +126,7 @@ class external extends external_api
      *
      * @return \external_description
      */
-    public static function get_block_content_returns()
-    {
+    public static function get_block_content_returns() {
         return new \external_single_structure([
             'html' => new \external_value(PARAM_RAW)
         ]);
@@ -142,8 +140,7 @@ class external extends external_api
      * Describes the parameters for submit_create_group_form webservice.
      * @return \external_function_parameters
      */
-    public static function submit_preferences_form_parameters()
-    {
+    public static function submit_preferences_form_parameters() {
         return new \external_function_parameters([
             'contextid' => new \external_value(PARAM_INT, 'The context id for the block'),
             'jsonformdata' => new \external_value(PARAM_RAW, 'The form data encoded as a json array')
@@ -151,14 +148,17 @@ class external extends external_api
     }
 
     /**
-     * Submit the create group form.
+     * Submit the preferences form.
      *
      * @param int $contextid The context id for the course.
      * @param string $jsonformdata The data from the form, encoded as a json array.
-     * @return int new group id.
+     * @return array
+     * @throws \invalid_parameter_exception
+     * @throws \coding_exception
+     * @throws \required_capability_exception
+     * @throws \moodle_exception
      */
-    public static function submit_preferences_form($contextid, $jsonformdata)
-    {
+    public static function submit_preferences_form($contextid, $jsonformdata) {
         $params = self::validate_parameters(self::submit_preferences_form_parameters(), [
             'contextid' => $contextid,
             'jsonformdata' => $jsonformdata
@@ -183,7 +183,7 @@ class external extends external_api
             if (!empty($block->config)) {
                 $config = clone($block->config);
             } else {
-                $config = new stdClass;
+                $config = new \stdClass;
             }
             foreach ($data as $configfield => $value) {
                 if (strpos($configfield, 'config_') !== 0) {
@@ -210,8 +210,7 @@ class external extends external_api
      * @return \external_description
      * @since Moodle 3.0
      */
-    public static function submit_preferences_form_returns()
-    {
+    public static function submit_preferences_form_returns() {
         return new \external_single_structure([
             'validationerrors' => new \external_value(PARAM_BOOL, 'Were there validation errors', VALUE_REQUIRED),
         ]);

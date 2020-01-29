@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Transform data to user's profile image URL.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,24 +24,25 @@
 
 namespace block_dash\data_grid\field\attribute;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Transform data to user's profile image URL.
  *
- * @package block_dash\data_grid\field
+ * @package block_dash
  */
-class user_image_url_attribute extends abstract_field_attribute
-{
+class user_image_url_attribute extends abstract_field_attribute {
+
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format
      *
-     * @param $data
+     * @param mixed $data
      * @param \stdClass $record Entire row
      * @return mixed
      * @throws \moodle_exception
      */
-    public function transform_data($data, \stdClass $record)
-    {
+    public function transform_data($data, \stdClass $record) {
         global $PAGE, $DB;
         if ($user = $DB->get_record('user', ['id' => $data])) {
             $picture = new \user_picture($user);

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Perform some custom name mapping for template file names.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,12 +26,12 @@ namespace block_dash\output;
 
 use core\output\mustache_template_finder;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Perform some custom name mapping for template file names.
  *
- * @copyright  2015 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      2.9
+ * @package block_dash
  */
 class mustache_custom_loader extends \Mustache_Loader_FilesystemLoader {
 
@@ -37,6 +39,7 @@ class mustache_custom_loader extends \Mustache_Loader_FilesystemLoader {
      * Provide a default no-args constructor (we don't really need anything).
      */
     public function __construct() {
+
     }
 
     /**

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Common methods for configuration objects.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,8 +26,15 @@ namespace block_dash\configuration;
 
 use block_dash\data_source\data_source_interface;
 
-abstract class abstract_configuration implements configuration_interface
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Common methods for configuration objects.
+ *
+ * @package block_dash
+ */
+abstract class abstract_configuration implements configuration_interface {
+
     /**
      * @var \context
      */
@@ -36,25 +45,32 @@ abstract class abstract_configuration implements configuration_interface
      */
     private $datasource;
 
-    protected function __construct(\context $context, data_source_interface $datasource = null)
-    {
+    /**
+     * abstract_configuration constructor.
+     *
+     * @param \context $context
+     * @param data_source_interface|null $datasource
+     */
+    protected function __construct(\context $context, data_source_interface $datasource = null) {
         $this->context = $context;
         $this->datasource = $datasource;
     }
 
     /**
+     * Get context.
+     *
      * @return \context
      */
-    public function get_context()
-    {
+    public function get_context() {
         return $this->context;
     }
 
     /**
+     * Get data source.
+     *
      * @return data_source_interface
      */
-    public function get_data_source()
-    {
+    public function get_data_source() {
         return $this->datasource;
     }
 
@@ -63,8 +79,7 @@ abstract class abstract_configuration implements configuration_interface
      *
      * @return bool
      */
-    public function is_fully_configured()
-    {
+    public function is_fully_configured() {
         return !empty($this->datasource);
     }
 }

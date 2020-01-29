@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A field is a simple container for a single value within a row/collection.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,19 +24,26 @@
 
 namespace block_dash\data_grid\data;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Class field_interface
- * @package block_dash\data
+ * A field is a simple container for a single value within a row/collection.
+ *
+ * @package block_dash
  */
-interface field_interface
-{
+interface field_interface {
+
     /**
+     * Get field name.
+     *
      * @return string
      */
     public function get_name();
 
     /**
-     * @return mixed
+     * Get field value.
+     *
+     * @return mixed|string
      */
     public function get_value();
 }

@@ -15,10 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Field definitions.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 $definitions = [
     [
@@ -281,12 +285,12 @@ $definitions = [
 require_once("$CFG->dirroot/user/profile/lib.php");
 
 $i = 0;
-foreach (profile_get_custom_fields() as $custom_field) {
+foreach (profile_get_custom_fields() as $customfield) {
     $definitions[] = [
-        'name' => 'u_pf_' . strtolower($custom_field->shortname),
+        'name' => 'u_pf_' . strtolower($customfield->shortname),
         'select' => "(SELECT profile$i.data FROM {user_info_data} profile$i
-                      WHERE profile$i.userid = u.id AND profile$i.fieldid = $custom_field->id)",
-        'title' => $custom_field->name,
+                      WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)",
+        'title' => $customfield->name,
         'tables' => ['u']
     ];
 

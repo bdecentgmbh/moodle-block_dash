@@ -1,120 +1,120 @@
 define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events', 'block_dash/preferences_modal', 'block_dash/datepicker'],
     function($, Log, Ajax, Notification, ModalEvents, PreferencesModal) {
 
-    var DashInstance = function(root, blockInstanceId, blockContextid, editing) {
-        this.root = $(root);
-        this.blockInstanceId = blockInstanceId;
-        this.blockContextid = blockContextid;
-        this.currentPage = 0;
-        this.blockPreferencesModal = null;
-        this.editing = editing;
-        this.sortField = null;
-
-        this.init();
-    };
-
-    DashInstance.prototype.BLOCK_CONTENT_SELECTOR = '.dash-block-content';
-    DashInstance.prototype.FILTER_FORM_SELECTOR = '.filter-form';
-
-    DashInstance.prototype.init = function() {
-        Log.debug('Initializing dash instance', this);
-
-        this.initDatePickers();
-
-        if (this.editing) {
-            this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
-                this.blockContextid, function (e) {
-
-                    // Preferences changed, go back to first page.
-                    this.currentPage = 0;
-                    this.refresh();
-                }.bind(this));
-        }
-
-        this.getRoot().on('change', 'select, input', function (e) {
-            e.preventDefault();
-
-            Log.debug('Submitting filter form');
-            Log.debug(e);
-            Log.debug($(e.target).serializeArray());
-
-            // Filter results, go back to first page.
+        var DashInstance = function(root, blockInstanceId, blockContextid, editing) {
+            this.root = $(root);
+            this.blockInstanceId = blockInstanceId;
+            this.blockContextid = blockContextid;
             this.currentPage = 0;
-            this.refresh();
-        }.bind(this));
+            this.blockPreferencesModal = null;
+            this.editing = editing;
+            this.sortField = null;
 
-        this.getBlockContentArea().on('click', '.page-link', function(e) {
-            e.preventDefault();
-            this.currentPage = $(e.target).data('page');
-            this.refresh();
-        }.bind(this));
-
-        this.getBlockContentArea().on('click', '.dash-sort', function(e) {
-            this.sortField = $(e.target).data('sort');
-            this.refresh();
-        }.bind(this));
-    };
-
-    /**
-     * Get the root element of this dash instance.
-     *
-     * @method getRoot
-     * @return {object} jQuery object
-     */
-    DashInstance.prototype.getRoot = function() {
-        return this.root;
-    };
-
-    /**
-     * Get the content element of this dash instance.
-     *
-     * @method getRoot
-     * @return {object} jQuery object
-     */
-    DashInstance.prototype.getBlockContentArea = function() {
-        return this.getRoot().find(this.BLOCK_CONTENT_SELECTOR);
-    };
-
-    /**
-     * Get filter form element.
-     *
-     * @returns {object} jQuery object
-     */
-    DashInstance.prototype.getFilterForm = function() {
-        return this.getRoot().find(this.FILTER_FORM_SELECTOR);
-    };
-
-    DashInstance.prototype.getBlockContent = function() {
-        var request = {
-            methodname: 'block_dash_get_block_content',
-            args: {
-                block_instance_id: this.blockInstanceId,
-                filter_form_data: JSON.stringify(this.getFilterForm().serializeArray()),
-                page: this.currentPage,
-                sort_field: this.sortField,
-            }
+            this.init();
         };
 
-        return Ajax.call([request])[0];
-    };
+        DashInstance.prototype.BLOCK_CONTENT_SELECTOR = '.dash-block-content';
+        DashInstance.prototype.FILTER_FORM_SELECTOR = '.filter-form';
 
-    DashInstance.prototype.refresh = function() {
-        this.getBlockContentArea().css('opacity', 0.5);
-        this.getBlockContent()
-            .then(function(response) {
-                this.getBlockContentArea().html(response.html);
-                this.getBlockContentArea().css('opacity', 1);
-                this.initDatePickers();
-            }.bind(this))
-            .catch(Notification.exception);
-    };
+        DashInstance.prototype.init = function() {
+            Log.debug('Initializing dash instance', this);
 
-    DashInstance.prototype.initDatePickers = function() {
-        $('.datepicker').datepicker2({
-            autoclose: true,
-            format: "dd/mm/yyyy"
-        });
-    };
+            this.initDatePickers();
 
-    return DashInstance;
-});
+            if (this.editing) {
+                this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
+                    this.blockContextid, function (e) {
+
+                        // Preferences changed, go back to first page.
+                        this.currentPage = 0;
+                        this.refresh();
+                    }.bind(this));
+            }
+
+            this.getRoot().on('change', 'select, input', function (e) {
+                e.preventDefault();
+
+                Log.debug('Submitting filter form');
+                Log.debug(e);
+                Log.debug($(e.target).serializeArray());
+
+                // Filter results, go back to first page.
+                this.currentPage = 0;
+                this.refresh();
+            }.bind(this));
+
+            this.getBlockContentArea().on('click', '.page-link', function(e) {
+                e.preventDefault();
+                this.currentPage = $(e.target).data('page');
+                this.refresh();
+            }.bind(this));
+
+            this.getBlockContentArea().on('click', '.dash-sort', function(e) {
+                this.sortField = $(e.target).data('sort');
+                this.refresh();
+            }.bind(this));
+        };
+
+        /**
+         * Get the root element of this dash instance.
+         *
+         * @method getRoot
+         * @return {object} jQuery object
+         */
+        DashInstance.prototype.getRoot = function() {
+            return this.root;
+        };
+
+        /**
+         * Get the content element of this dash instance.
+         *
+         * @method getRoot
+         * @return {object} jQuery object
+         */
+        DashInstance.prototype.getBlockContentArea = function() {
+            return this.getRoot().find(this.BLOCK_CONTENT_SELECTOR);
+        };
+
+        /**
+         * Get filter form element.
+         *
+         * @returns {object} jQuery object
+         */
+        DashInstance.prototype.getFilterForm = function() {
+            return this.getRoot().find(this.FILTER_FORM_SELECTOR);
+        };
+
+        DashInstance.prototype.getBlockContent = function() {
+            var request = {
+                methodname: 'block_dash_get_block_content',
+                args: {
+                    block_instance_id: this.blockInstanceId,
+                    filter_form_data: JSON.stringify(this.getFilterForm().serializeArray()),
+                    page: this.currentPage,
+                    sort_field: this.sortField,
+                }
+            };
+
+            return Ajax.call([request])[0];
+        };
+
+        DashInstance.prototype.refresh = function() {
+            this.getBlockContentArea().css('opacity', 0.5);
+            this.getBlockContent()
+                .then(function(response) {
+                    this.getBlockContentArea().html(response.html);
+                    this.getBlockContentArea().css('opacity', 1);
+                    this.initDatePickers();
+                }.bind(this))
+                .catch(Notification.exception);
+        };
+
+        DashInstance.prototype.initDatePickers = function() {
+            $('.datepicker').datepicker2({
+                autoclose: true,
+                format: "dd/mm/yyyy"
+            });
+        };
+
+        return DashInstance;
+    });

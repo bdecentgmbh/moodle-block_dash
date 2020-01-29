@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class user_profile_field_filter.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,21 +24,30 @@
 
 namespace block_dash\data_grid\filter;
 
-class user_profile_field_filter extends select_filter
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Class user_profile_field_filter.
+ *
+ * @package block_dash
+ */
+class user_profile_field_filter extends select_filter {
+
     /**
      * @var string Record ID of custom profile field.
      */
-    private $profile_field_id;
+    private $profilefieldid;
 
     /**
+     * Constructor.
+     *
      * @param string $name
      * @param string $select
-     * @param int $profile_field_id
+     * @param int $profilefieldid
+     * @param string $label
      */
-    public function __construct($name, $select, $profile_field_id, $label = '')
-    {
-        $this->profile_field_id = $profile_field_id;
+    public function __construct($name, $select, $profilefieldid, $label = '') {
+        $this->profilefieldid = $profilefieldid;
 
         parent::__construct($name, $select, $label);
     }
@@ -46,8 +57,7 @@ class user_profile_field_filter extends select_filter
      *
      * @return array
      */
-    public function get_supported_operations()
-    {
+    public function get_supported_operations() {
         return [
             self::OPERATION_EQUAL,
             self::OPERATION_IN_OR_EQUAL
@@ -59,8 +69,7 @@ class user_profile_field_filter extends select_filter
      *
      * @return mixed
      */
-    public function get_default_raw_value()
-    {
+    public function get_default_raw_value() {
         return self::ALL_OPTION;
     }
 
@@ -68,12 +77,10 @@ class user_profile_field_filter extends select_filter
      * Initialize the filter. It must be initialized before values are extracted or SQL generated.
      * If overridden call parent.
      */
-    public function init()
-    {
+    public function init() {
         global $DB;
 
-
-        $params['fieldid'] = $this->profile_field_id;
+        $params['fieldid'] = $this->profilefieldid;
 
         $options = $DB->get_records_sql_menu("SELECT uid.data AS key1, uid.data AS key2 FROM {user_info_data} uid
                                               WHERE uid.fieldid = :fieldid

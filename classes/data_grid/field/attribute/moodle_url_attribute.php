@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Transforms data to moodle_url.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,13 +24,15 @@
 
 namespace block_dash\data_grid\field\attribute;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Transforms data to moodle_url.
  *
- * @package block_dash\data_grid\field\attribute
+ * @package block_dash
  */
-class moodle_url_attribute extends abstract_field_attribute
-{
+class moodle_url_attribute extends abstract_field_attribute {
+
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format
@@ -38,11 +42,10 @@ class moodle_url_attribute extends abstract_field_attribute
      * @return mixed
      * @throws \coding_exception
      */
-    public function transform_data($data, \stdClass $record)
-    {
+    public function transform_data($data, \stdClass $record) {
         $url = null;
-        /** @var \moodle_url $url */
         if ($this->get_option('url') instanceof \moodle_url && $url = $this->get_option('url')) {
+            /** @var \moodle_url $url */
             $url = clone $url;
             foreach ($url->params() as $key => $value) {
                 if (isset($record->$value)) {

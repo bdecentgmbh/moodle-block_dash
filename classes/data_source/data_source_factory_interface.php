@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Responsible for creating data sources on request.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,14 +24,18 @@
 
 namespace block_dash\data_source;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Responsible for creating data sources on request.
  *
- * @package block_dash\data_source
+ * @package block_dash
  */
-interface data_source_factory_interface
-{
+interface data_source_factory_interface {
+
     /**
+     * Build and return a data source based on unique identifier.
+     *
      * @param string $identifier
      * @param \context $context
      * @return data_source_interface

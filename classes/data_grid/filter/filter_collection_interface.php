@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Container for a collection of filters.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,24 +24,30 @@
 
 namespace block_dash\data_grid\filter;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Container for a collection of filters.
  *
- * @package block_dash\filter
+ * @package block_dash
  */
-interface filter_collection_interface
-{
+interface filter_collection_interface {
+
     /**
      * Initialize all filters.
      */
     public function init();
 
     /**
+     * Get unique identifier for this filter collection.
+     *
      * @return string
      */
     public function get_unique_identifier();
 
     /**
+     * Add filter to collection.
+     *
      * @param filter_interface $filter
      */
     public function add_filter(filter_interface $filter);
@@ -69,27 +77,27 @@ interface filter_collection_interface
     /**
      * Check if a filter exists in this collection.
      *
-     * @param $field_name
+     * @param string $fieldname
      * @return bool
      */
-    public function has_filter($field_name);
+    public function has_filter($fieldname);
 
     /**
      * Get a filter by field name.
      *
-     * @param $field_name
+     * @param string $fieldname
      * @return filter_interface|null
      */
-    public function get_filter($field_name);
+    public function get_filter($fieldname);
 
     /**
      * Set a filter value.
      *
-     * @param string $field_name
+     * @param string $fieldname
      * @param mixed $value
      * @return bool
      */
-    public function apply_filter($field_name, $value);
+    public function apply_filter($fieldname, $value);
     /**
      * Get filters with user submitted values.
      *
@@ -120,15 +128,19 @@ interface filter_collection_interface
     public function get_required_filters();
 
     /**
+     * Get SQL query and parameters.
+     *
      * @return array
      */
     public function get_sql_and_params();
 
     /**
-     * @param string $element_name_prefix
+     * Create form for filters.
+     *
+     * @param string $elementnameprefix
      * @throws \Exception
      */
-    public function create_form_elements($element_name_prefix = '');
+    public function create_form_elements($elementnameprefix = '');
 
     /**
      * Cache filter data.

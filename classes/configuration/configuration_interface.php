@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Configuration helps with building block instance content.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,14 +26,25 @@ namespace block_dash\configuration;
 
 use block_dash\data_source\data_source_interface;
 
-interface configuration_interface
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Configuration helps with building block instance content.
+ *
+ * @package block_dash
+ */
+interface configuration_interface {
+
     /**
+     * Get context.
+     *
      * @return \context
      */
     public function get_context();
 
     /**
+     * Get data source.
+     *
      * @return data_source_interface
      */
     public function get_data_source();
@@ -46,8 +59,8 @@ interface configuration_interface
     /**
      * Create new configuration instance
      *
-     * @param \block_base $block_instance
+     * @param \block_base $blockinstance
      * @return configuration_interface
      */
-    public static function create_from_instance(\block_base $block_instance);
+    public static function create_from_instance(\block_base $blockinstance);
 }

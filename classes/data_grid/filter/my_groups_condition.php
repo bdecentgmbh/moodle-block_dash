@@ -15,20 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Limits data to logged in user's groups.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace block_dash\data_grid\filter;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Limits data to logged in user's groups.
  *
- * @package block_dash\data_grid\filter
+ * @package block_dash
  */
-class my_groups_condition extends condition
-{
+class my_groups_condition extends condition {
+
     /**
+     * Condition values.
+     *
      * @var array
      */
     private $values;
@@ -39,9 +46,9 @@ class my_groups_condition extends condition
      * Override in child class to add more values.
      *
      * @return array
+     * @throws \coding_exception
      */
-    public function get_values()
-    {
+    public function get_values() {
         if (is_null($this->values)) {
             global $USER, $CFG;
 
@@ -74,10 +81,12 @@ class my_groups_condition extends condition
     }
 
     /**
+     * Get filter label.
+     *
      * @return string
+     * @throws \coding_exception
      */
-    public function get_label()
-    {
+    public function get_label() {
         if ($label = parent::get_label()) {
             return $label;
         }

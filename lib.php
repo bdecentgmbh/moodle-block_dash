@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Common functions.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,6 +30,11 @@ use block_dash\data_source\users_data_source;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Register field definitions.
+ *
+ * @return array
+ */
 function block_dash_register_field_definitions() {
     global $CFG;
 
@@ -38,6 +45,12 @@ function block_dash_register_field_definitions() {
     return require("$CFG->dirroot/blocks/dash/field_definitions.php");
 }
 
+/**
+ * Register data sources.
+ *
+ * @return array
+ * @throws coding_exception
+ */
 function block_dash_register_data_sources() {
     return [
         [
@@ -47,6 +60,12 @@ function block_dash_register_data_sources() {
     ];
 }
 
+/**
+ * Register layouts.
+ *
+ * @return array
+ * @throws coding_exception
+ */
 function block_dash_register_layouts() {
     return [
         [
@@ -63,8 +82,6 @@ function block_dash_register_layouts() {
  * @return string
  */
 function block_dash_output_fragment_block_preferences_form($args) {
-    global $CFG;
-
     $args = (object) $args;
     $context = $args->context;
     $o = '';
@@ -88,14 +105,19 @@ function block_dash_output_fragment_block_preferences_form($args) {
     return $o;
 }
 
-function block_dash_flatten_array($array, $prefix = '')
-{
-    $result = array();
-    foreach($array as $key=>$value) {
-        if(is_array($value)) {
+/**
+ * Flatten array to form field names.
+ *
+ * @param array $array
+ * @param string $prefix
+ * @return array
+ */
+function block_dash_flatten_array($array, $prefix = '') {
+    $result = [];
+    foreach ($array as $key => $value) {
+        if (is_array($value)) {
             $result = $result + block_dash_flatten_array($value, $prefix . '[' . $key . ']');
-        }
-        else {
+        } else {
             $result[$prefix . '[' . $key . ']'] = $value;
         }
     }

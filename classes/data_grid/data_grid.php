@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Get data to be displayed in a grid or downloaded as a formatted file.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,20 +24,21 @@
 
 namespace block_dash\data_grid;
 
-use block_dash\data_grid\data\data_collection;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data\strategy\data_strategy_interface;
 use block_dash\data_grid\data\strategy\standard_strategy;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Get data to be displayed in a grid or downloaded as a formatted file.
  *
  * @package block_dash
  */
-abstract class data_grid implements data_grid_interface, \JsonSerializable
-{
+abstract class data_grid implements data_grid_interface, \JsonSerializable {
+
     #region Properties
 
     /**
@@ -51,7 +54,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     /**
      * @var field_definition_interface[] All fields in this data grid. Key by field name.
      */
-    private $field_definitions = [];
+    private $fielddefinitions = [];
 
     /**
      * @var string
@@ -66,7 +69,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     /**
      * @var bool Disable any kind of pagination and return full data set. Useful for downloading all data.
      */
-    private $disable_pagination = false;
+    private $disablepagination = false;
 
     /**
      * @var paginator
@@ -81,22 +84,23 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     /**
      * @var filter_collection_interface
      */
-    private $filter_collection;
+    private $filtercollection;
 
     /**
      * @var data_strategy_interface
      */
-    private $data_strategy;
+    private $datastrategy;
 
     #endregion
 
     /**
+     * Constructor.
+     *
      * @param \context $context
      * @param \stdClass $user User displaying data (logged in user).
      * @throws \coding_exception
      */
-    public function __construct(\context $context, \stdClass $user = null)
-    {
+    public function __construct(\context $context, \stdClass $user = null) {
         global $USER;
 
         if (is_null($user)) {
@@ -109,39 +113,43 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
             return $this->get_count();
         });
 
-        $this->data_strategy = new standard_strategy();
+        $this->datastrategy = new standard_strategy();
     }
 
     /**
+     * Get data strategy.
+     *
      * @return data_strategy_interface
      */
-    public function get_data_strategy()
-    {
-        return $this->data_strategy;
+    public function get_data_strategy() {
+        return $this->datastrategy;
     }
 
     /**
-     * @param data_strategy_interface $data_strategy
+     * Set data strategy.
+     *
+     * @param data_strategy_interface $datastrategy
      */
-    public function set_data_strategy(data_strategy_interface $data_strategy)
-    {
-        $this->data_strategy = $data_strategy;
+    public function set_data_strategy(data_strategy_interface $datastrategy) {
+        $this->datastrategy = $datastrategy;
     }
 
     /**
+     * Get filter collection.
+     *
      * @return filter_collection_interface
      */
-    public function get_filter_collection()
-    {
-        return $this->filter_collection;
+    public function get_filter_collection() {
+        return $this->filtercollection;
     }
 
     /**
-     * @param filter_collection_interface $filter_collection
+     * Set filter collection.
+     *
+     * @param filter_collection_interface $filtercollection
      */
-    public function set_filter_collection(filter_collection_interface $filter_collection)
-    {
-        $this->filter_collection = $filter_collection;
+    public function set_filter_collection(filter_collection_interface $filtercollection) {
+        $this->filtercollection = $filtercollection;
     }
 
     /**
@@ -149,24 +157,25 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      *
      * @return string
      */
-    public function get_template()
-    {
+    public function get_template() {
         return 'block_dash/data_grid';
     }
 
     /**
+     * Get context.
+     *
      * @return \context
      */
-    public function get_context()
-    {
+    public function get_context() {
         return $this->context;
     }
 
     /**
+     * Get paginator.
+     *
      * @return paginator
      */
-    public function get_paginator()
-    {
+    public function get_paginator() {
         return $this->paginator;
     }
 
@@ -175,14 +184,13 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     /**
      * Get field definition by name. Returns false if not found.
      *
-     * @param $name
+     * @param string $name
      * @return bool|field_definition_interface
      */
-    public function get_field_definition($name)
-    {
+    public function get_field_definition($name) {
         // Field definitions are keyed by name.
-        if (isset($this->field_definitions[$name])) {
-            return $this->field_definitions[$name];
+        if (isset($this->fielddefinitions[$name])) {
+            return $this->fielddefinitions[$name];
         }
 
         return false;
@@ -193,42 +201,39 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      *
      * @return field_definition_interface[]
      */
-    public function get_field_definitions()
-    {
-        return array_values($this->field_definitions);
+    public function get_field_definitions() {
+        return array_values($this->fielddefinitions);
     }
 
     /**
      * Sets field definitions on data grid.
      *
-     * @param field_definition_interface[] $field_definitions
+     * @param field_definition_interface[] $fielddefinitions
      * @throws \moodle_exception
      */
-    public function set_field_definitions($field_definitions)
-    {
+    public function set_field_definitions($fielddefinitions) {
         // We don't want field definitions to be set multiple times, it should be done during init only.
         if ($this->has_any_field_definitions()) {
             throw new \coding_exception('Setting field definitions multiple times is not allowed.');
         }
 
-        foreach ($field_definitions as $field_definition) {
-            if (!$field_definition instanceof field_definition_interface) {
+        foreach ($fielddefinitions as $fielddefinition) {
+            if (!$fielddefinition instanceof field_definition_interface) {
                 throw new \moodle_exception('Field definition is of wrong type.');
             }
 
-            $this->add_field_definition($field_definition);
+            $this->add_field_definition($fielddefinition);
         }
     }
 
     /**
      * Add a single field definition to the report.
      *
-     * @param field_definition_interface $field_definition
+     * @param field_definition_interface $fielddefinition
      * @throws \moodle_exception
      */
-    public function add_field_definition(field_definition_interface $field_definition)
-    {
-        $this->field_definitions[$field_definition->get_name()] = $field_definition;
+    public function add_field_definition(field_definition_interface $fielddefinition) {
+        $this->fielddefinitions[$fielddefinition->get_name()] = $fielddefinition;
     }
 
     /**
@@ -236,19 +241,17 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      *
      * @return bool
      */
-    public function has_any_field_definitions()
-    {
-        return count($this->field_definitions) > 0;
+    public function has_any_field_definitions() {
+        return count($this->fielddefinitions) > 0;
     }
 
     /**
      * Check if report has a certain field
      *
-     * @param $name
+     * @param string $name
      * @return bool
      */
-    public function has_field_definition($name)
-    {
+    public function has_field_definition($name) {
         return !empty($this->get_field_definition($name));
     }
 
@@ -259,16 +262,16 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     /**
      * Initialize data grid.
      */
-    public function init()
-    {
+    public function init() {
         $this->initialized = true;
     }
 
     /**
+     * Check if data grid is initialized.
+     *
      * @return bool
      */
-    public function is_initialized()
-    {
+    public function is_initialized() {
         return $this->initialized;
     }
 
@@ -294,8 +297,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      *
      * @return bool
      */
-    public function has_data()
-    {
+    public function has_data() {
         return !empty($this->data_collection);
     }
 
@@ -315,41 +317,40 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      *
      * @param bool $support
      */
-    public function set_supports_pagination($support)
-    {
-       $this->supportspagination = $support;
+    public function set_supports_pagination($support) {
+        $this->supportspagination = $support;
     }
 
     /**
-     * @return bool If data grid should use pagination to limit results.
+     * If data grid should use pagination to limit results.
+     *
+     * @return bool
      */
-    public function supports_pagination()
-    {
+    public function supports_pagination() {
         return $this->supportspagination;
     }
 
     /**
+     * Get default per page value.
+     *
      * @return int
      */
-    protected function get_per_page_default()
-    {
+    protected function get_per_page_default() {
         return paginator::PER_PAGE_DEFAULT;
     }
 
     /**
      * Disable pagination grid.
      */
-    public function disabled_pagination()
-    {
-        $this->disable_pagination = true;
+    public function disabled_pagination() {
+        $this->disablepagination = true;
     }
 
     /**
      * Enable pagination on grid.
      */
-    public function enable_pagination()
-    {
-        $this->disable_pagination = false;
+    public function enable_pagination() {
+        $this->disablepagination = false;
     }
 
     /**
@@ -357,9 +358,8 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      *
      * @return bool
      */
-    public function is_pagination_disabled()
-    {
-        return $this->disable_pagination;
+    public function is_pagination_disabled() {
+        return $this->disablepagination;
     }
 
     #endregion
@@ -373,8 +373,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
      * @throws \Exception
      * @return bool
      */
-    public function has_access(\stdClass $user)
-    {
+    public function has_access(\stdClass $user) {
         return true;
     }
 
@@ -383,27 +382,35 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable
     #region Display/output methods
 
     /**
-     * @param $url
+     * Set URL of data grid.
+     *
+     * @param string $url
      */
-    public function set_url($url)
-    {
+    public function set_url($url) {
         $this->url = $url;
     }
 
     /**
+     * Get URL.
+     *
      * @return \moodle_url|string
      */
-    public function get_url()
-    {
+    public function get_url() {
         global $PAGE;
 
-        if ($this->url) return $this->url;
+        if ($this->url) {
+            return $this->url;
+        }
 
         return $PAGE->url;
     }
 
-    public function jsonSerialize()
-    {
+    /**
+     * Convert to array.
+     *
+     * @return array|mixed
+     */
+    public function jsonSerialize() {
         return [
             'name' => $this->get_name(),
             'selection_count' => count($this->get_selections())

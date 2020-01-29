@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Container for structuring data, usually from a database.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,8 +24,15 @@
 
 namespace block_dash\data_grid\data;
 
-class data_collection implements data_collection_interface, \ArrayAccess
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Container for structuring data, usually from a database.
+ *
+ * @package block_dash
+ */
+class data_collection implements data_collection_interface, \ArrayAccess {
+
     /**
      * @var field_interface[]
      */
@@ -39,8 +48,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      *
      * @return field_interface[]
      */
-    public function get_data()
-    {
+    public function get_data() {
         return array_values($this->data);
     }
 
@@ -49,8 +57,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      *
      * @param field_interface $field
      */
-    public function add_data(field_interface $field)
-    {
+    public function add_data(field_interface $field) {
         $this->data[$field->get_name()] = $field;
     }
 
@@ -59,8 +66,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      *
      * @param array $data Associative array of data
      */
-    public function add_data_associative($data)
-    {
+    public function add_data_associative($data) {
         foreach ($data as $key => $value) {
             $this->data[$key] = new field($key, $value);
         }
@@ -72,8 +78,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      * @param string $type Name of collection type to return. Null returns all.
      * @return data_collection_interface[]
      */
-    public function get_child_collections($type = null)
-    {
+    public function get_child_collections($type = null) {
         if ($type) {
             if (isset($this->children[$type])) {
                 return $this->children[$type];
@@ -91,8 +96,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      * @param string $type Name of collection type.
      * @param data_collection_interface $collection
      */
-    public function add_child_collection($type, data_collection_interface $collection)
-    {
+    public function add_child_collection($type, data_collection_interface $collection) {
         if (!isset($this->children[$type])) {
             $this->children[$type] = [];
         }
@@ -104,13 +108,16 @@ class data_collection implements data_collection_interface, \ArrayAccess
      *
      * @return bool
      */
-    public function has_child_collections()
-    {
+    public function has_child_collections() {
         return count($this->children) > 0;
     }
 
-    public function first_child()
-    {
+    /**
+     * Get first child data collection.
+     *
+     * @return data_collection_interface
+     */
+    public function first_child() {
         if ($type = reset($this->children)) {
             return reset($type);
         }
@@ -123,8 +130,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      *
      * @return field_interface|null
      */
-    public function first_data()
-    {
+    public function first_data() {
         return isset(array_values($this->data)[0]) ? array_values($this->data)[0] : null;
     }
 
@@ -133,8 +139,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      *
      * @return field_interface|null
      */
-    public function second_data()
-    {
+    public function second_data() {
         return isset(array_values($this->data)[1]) ? array_values($this->data)[1] : null;
     }
 
@@ -143,8 +148,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      *
      * @return bool
      */
-    public function is_empty()
-    {
+    public function is_empty() {
         return empty($this->data) && !$this->has_child_collections();
     }
 
@@ -160,8 +164,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset)
-    {
+    public function offsetExists($offset) {
         if ($offset == 'data') {
             return true;
         }
@@ -177,8 +180,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      * @return mixed Can return all value types.
      * @since 5.0.0
      */
-    public function offsetGet($offset)
-    {
+    public function offsetGet($offset) {
         if ($offset == 'data') {
             return $this->get_data();
         }
@@ -202,8 +204,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      * @return void
      * @since 5.0.0
      */
-    public function offsetSet($offset, $value)
-    {
+    public function offsetSet($offset, $value) {
         throw new \coding_exception('Setting data not supported with array access.');
     }
 
@@ -216,8 +217,7 @@ class data_collection implements data_collection_interface, \ArrayAccess
      * @return void
      * @since 5.0.0
      */
-    public function offsetUnset($offset)
-    {
+    public function offsetUnset($offset) {
         throw new \coding_exception('Unsetting data not supported with array access.');
     }
 }

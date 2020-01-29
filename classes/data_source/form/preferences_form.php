@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Form for editing block preferences.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,6 +25,8 @@
 namespace block_dash\data_source\form;
 
 use block_dash\configuration\configuration;
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
@@ -33,10 +37,15 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class preferences_form extends \moodleform
-{
-    protected function definition()
-    {
+class preferences_form extends \moodleform {
+
+    /**
+     * Define form fields.
+     *
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    protected function definition() {
         $block = $this->_customdata['block'];
 
         $configuration = configuration::create_from_instance($block);

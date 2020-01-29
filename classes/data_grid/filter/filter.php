@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A filter will limit a result set.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,12 +24,19 @@
 
 namespace block_dash\data_grid\filter;
 
-class filter implements filter_interface
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * A filter will limit a result set.
+ *
+ * @package block_dash
+ */
+class filter implements filter_interface {
+
     /**
      * @var mixed The value a user has chosen. Or the default.
      */
-    private $raw_value = null;
+    private $rawvalue = null;
 
     /**
      * @var string Unique name used for placeholder.
@@ -68,54 +77,55 @@ class filter implements filter_interface
     /**
      * @var string
      */
-    private $clause_type = self::CLAUSE_TYPE_WHERE;
+    private $clausetype = self::CLAUSE_TYPE_WHERE;
 
     /**
-     * filter constructor.
-     * @param $name
-     * @param $select
+     * Filter constructor.
+     *
+     * @param string $name
+     * @param string $select
      * @param string $label
-     * @param string $clause_type
+     * @param string $clausetype
      */
-    public function __construct($name, $select, $label = '', $clause_type = self::CLAUSE_TYPE_WHERE)
-    {
+    public function __construct($name, $select, $label = '', $clausetype = self::CLAUSE_TYPE_WHERE) {
         $this->name = $name;
         $this->select = $select;
         $this->label = $label;
-        $this->clause_type = $clause_type;
+        $this->clausetype = $clausetype;
     }
 
     /**
      * Initialize the filter. It must be initialized before values are extracted or SQL generated.
      * If overridden call parent.
      */
-    public function init()
-    {
+    public function init() {
         $this->initialized = true;
     }
 
     /**
+     * Get the raw submitted value of the filter.
+     *
      * @return mixed
      */
-    public function get_raw_value()
-    {
-        return $this->raw_value;
+    public function get_raw_value() {
+        return $this->rawvalue;
     }
 
     /**
-     * @param $value mixed Raw value (most likely from form submission).
+     * Set raw value.
+     *
+     * @param mixed $value Raw value (most likely from form submission).
      */
-    public function set_raw_value($value)
-    {
-        if (!is_null($this->raw_value)) {
-            if (is_array($this->raw_value)) {
-                $this->raw_value[] = $value;
+    public function set_raw_value($value) {
+        if (!is_null($this->rawvalue)) {
+            if (is_array($this->rawvalue)) {
+                $this->rawvalue[] = $value;
             } else {
                 // Convert scaler to array including new value.
-                $this->raw_value = [$this->raw_value, $value];
+                $this->rawvalue = [$this->rawvalue, $value];
             }
         } else {
-            $this->raw_value = $value;
+            $this->rawvalue = $value;
         }
     }
 
@@ -124,9 +134,8 @@ class filter implements filter_interface
      *
      * @return bool
      */
-    public function has_raw_value()
-    {
-        return !is_null($this->raw_value);
+    public function has_raw_value() {
+        return !is_null($this->rawvalue);
     }
 
     /**
@@ -134,75 +143,80 @@ class filter implements filter_interface
      *
      * @return bool
      */
-    public function is_applied()
-    {
+    public function is_applied() {
         return $this->has_raw_value() && $this->get_raw_value() != $this->get_default_raw_value();
     }
 
     /**
+     * Check if filter is required.
+     *
      * @return bool
      */
-    public function is_required()
-    {
+    public function is_required() {
         return $this->required == self::REQUIRED;
     }
 
     /**
-     * @param $required
+     * Set if filter is required.
+     *
+     * @param bool $required
      */
-    public function set_required($required)
-    {
+    public function set_required($required) {
         $this->required = $required;
     }
 
     /**
+     * Get filter name.
+     *
      * @return string
      */
-    public function get_name()
-    {
+    public function get_name() {
         return $this->name;
     }
 
     /**
+     * Get SQL select.
+     *
      * @return string
      */
-    public function get_select()
-    {
+    public function get_select() {
         return $this->select;
     }
 
     /**
+     * Get filter label.
+     *
      * @return string
      */
-    public function get_label()
-    {
+    public function get_label() {
         return $this->label;
     }
 
     /**
-     * @param $label
+     * Set filter label.
+     *
+     * @param string $label
      */
-    public function set_label($label)
-    {
+    public function set_label($label) {
         $this->label = $label;
     }
 
     /**
+     * Get filter SQL operation.
+     *
      * @return string
      */
-    public function get_operation()
-    {
+    public function get_operation() {
         return $this->operation;
     }
 
     /**
-     * Set an operation
+     * Set an operation.
      *
-     * @param $operation
+     * @param string $operation
      * @throws \coding_exception
      */
-    public function set_operation($operation)
-    {
+    public function set_operation($operation) {
         if (!in_array($operation, $this->get_supported_operations())) {
             throw new \coding_exception(get_class($this) . ' does not support operation: ' . $operation);
         }
@@ -215,8 +229,7 @@ class filter implements filter_interface
      *
      * @return mixed
      */
-    public function get_default_raw_value()
-    {
+    public function get_default_raw_value() {
         return null;
     }
 
@@ -225,17 +238,17 @@ class filter implements filter_interface
      *
      * @return array
      */
-    public function get_supported_operations()
-    {
+    public function get_supported_operations() {
         // Return all operations.
         return filter_interface::OPERATIONS;
     }
 
     /**
+     * Check if filter has a default raw value.
+     *
      * @return bool
      */
-    public function has_default_raw_value()
-    {
+    public function has_default_raw_value() {
         return !empty($this->get_default_raw_value());
     }
 
@@ -246,8 +259,7 @@ class filter implements filter_interface
      *
      * @return array
      */
-    public function get_values()
-    {
+    public function get_values() {
         if (!$this->has_raw_value()) {
             if ($this->has_default_raw_value()) {
                 return [$this->get_default_raw_value()];
@@ -268,14 +280,13 @@ class filter implements filter_interface
      * @return array
      * @throws \Exception
      */
-    public function get_sql_and_params()
-    {
+    public function get_sql_and_params() {
         if (!$this->initialized) {
             throw new \Exception('Filter was not initialized properly. Did you call parent::init()?');
         }
 
         if (!$values = $this->get_values()) {
-            // Return empty
+            // Return empty.
             return ['', []];
         }
 
@@ -332,76 +343,78 @@ class filter implements filter_interface
      *
      * @var array
      */
-    private $sql_and_params;
+    private $sqlandparams;
 
     /**
+     * Special get in or equal.
+     *
      * @return array
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    private function get_in_or_equal()
-    {
+    private function get_in_or_equal() {
         global $DB;
 
         if (!$values = $this->get_values()) {
             return ['', []];
         }
 
-        if (is_null($this->sql_and_params)) {
+        if (is_null($this->sqlandparams)) {
 
             $values = $this->get_values();
 
-            $this->sql_and_params = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED);
+            $this->sqlandparams = $DB->get_in_or_equal($values, SQL_PARAMS_NAMED);
         }
 
-        return $this->sql_and_params;
+        return $this->sqlandparams;
     }
 
     /**
      * Override this method and call it after creating a form element.
      *
-     * @param filter_collection_interface $filter_collection
-     * @param string $element_name_prefix
+     * @param filter_collection_interface $filtercollection
+     * @param string $elementnameprefix
      * @throws \Exception
      */
-    public function create_form_element(filter_collection_interface $filter_collection,
-                                        $element_name_prefix = '')
-    {
+    public function create_form_element(filter_collection_interface $filtercollection,
+                                        $elementnameprefix = '') {
         throw new \coding_exception('Filter element does not exist. Did you forget to override filter::create_form_element()?');
     }
 
     /**
      * Get option label based on value.
      *
-     * @param $value
+     * @param string $value
      * @return string
      */
-    public function get_option_label($value)
-    {
+    public function get_option_label($value) {
         return $value;
     }
 
     /**
+     * Get filter context.
+     *
      * @return \context
      */
-    public function get_context()
-    {
+    public function get_context() {
         return $this->context;
     }
 
     /**
+     * Set context.
+     *
      * @param \context $context
      */
-    public function set_context(\context $context)
-    {
+    public function set_context(\context $context) {
         $this->context = $context;
     }
 
     /**
+     * Get clause type.
+     *
      * @return string
      */
-    public function get_clause_type()
-    {
-        return $this->clause_type;
+    public function get_clause_type() {
+        return $this->clausetype;
     }
 }

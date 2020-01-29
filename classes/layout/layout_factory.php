@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Responsible for creating layouts on request.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,37 +26,40 @@ namespace block_dash\layout;
 
 use block_dash\data_source\data_source_interface;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Responsible for creating layouts on request.
  *
- * @package block_dash\layout
+ * @package block_dash
  */
-class layout_factory
-{
+class layout_factory {
+
     /**
      * @var array
      */
-    private static $layout_registry;
+    private static $layoutregistry;
 
     /**
+     * Build and get layout registry.
+     *
      * @return array
      */
-    protected static function get_layout_registry()
-    {
-        if (is_null(self::$layout_registry)) {
-            self::$layout_registry = [];
+    protected static function get_layout_registry() {
+        if (is_null(self::$layoutregistry)) {
+            self::$layoutregistry = [];
             if ($pluginsfunction = get_plugins_with_function('register_layouts')) {
                 foreach ($pluginsfunction as $plugintype => $plugins) {
                     foreach ($plugins as $pluginfunction) {
                         foreach ($pluginfunction() as $layoutinfo) {
-                            self::$layout_registry[$layoutinfo['class']] = $layoutinfo;
+                            self::$layoutregistry[$layoutinfo['class']] = $layoutinfo;
                         }
                     }
                 }
             }
         }
 
-        return self::$layout_registry;
+        return self::$layoutregistry;
     }
 
     /**
@@ -63,17 +68,17 @@ class layout_factory
      * @param string $identifier
      * @return bool
      */
-    public static function exists($identifier)
-    {
+    public static function exists($identifier) {
         return isset(self::get_layout_registry()[$identifier]);
     }
 
     /**
-     * @param $identifier
+     * Get layout info based on layout identifier.
+     *
+     * @param string $identifier
      * @return array|null
      */
-    public static function get_layout_info($identifier)
-    {
+    public static function get_layout_info($identifier) {
         if (self::exists($identifier)) {
             return self::get_layout_registry()[$identifier];
         }
@@ -82,12 +87,13 @@ class layout_factory
     }
 
     /**
+     * Get layout object with datasource.
+     *
      * @param string $identifier
      * @param data_source_interface $datasource
      * @return data_source_interface
      */
-    public static function get_layout($identifier, data_source_interface $datasource)
-    {
+    public static function get_layout($identifier, data_source_interface $datasource) {
         if (!self::exists($identifier)) {
             return null;
         }
@@ -104,8 +110,7 @@ class layout_factory
      *
      * @return array
      */
-    public static function get_layout_form_options()
-    {
+    public static function get_layout_form_options() {
         $options = [];
 
         foreach (self::get_layout_registry() as $identifier => $layoutinfo) {

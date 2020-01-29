@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Extend this class when creating new layouts.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -32,17 +34,18 @@ use block_dash\data_source\data_source_interface;
 use core\output\icon_system;
 use core\output\icon_system_fontawesome;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Extend this class when creating new layouts.
  *
  * Then register the layout in a lib.php function: pluginname_register_layouts(). See blocks/dash/lib.php for an
  * example.
  *
- *
- * @package block_dash\layout
+ * @package block_dash
  */
-abstract class abstract_layout implements layout_interface, \templatable
-{
+abstract class abstract_layout implements layout_interface, \templatable {
+
     /**
      * @var int Used for creating unique checkbox controller group IDs.
      */
@@ -56,10 +59,11 @@ abstract class abstract_layout implements layout_interface, \templatable
     private $datasource;
 
     /**
+     * Layout constructor.
+     *
      * @param data_source_interface $datasource
      */
-    public function __construct(data_source_interface $datasource)
-    {
+    public function __construct(data_source_interface $datasource) {
         $this->datasource = $datasource;
     }
 
@@ -68,8 +72,7 @@ abstract class abstract_layout implements layout_interface, \templatable
      *
      * @return mixed
      */
-    public function supports_sorting()
-    {
+    public function supports_sorting() {
         return false;
     }
 
@@ -78,16 +81,16 @@ abstract class abstract_layout implements layout_interface, \templatable
      *
      * @return data_source_interface
      */
-    public function get_data_source()
-    {
+    public function get_data_source() {
         return $this->datasource;
     }
 
     /**
+     * Get data strategy.
+     *
      * @return data_strategy_interface
      */
-    public function get_data_strategy()
-    {
+    public function get_data_strategy() {
         return new standard_strategy();
     }
 
@@ -95,8 +98,7 @@ abstract class abstract_layout implements layout_interface, \templatable
      * Modify objects before data is retrieved in the data source. This allows the layout to make decisions on the
      * data source and data grid.
      */
-    public function before_data()
-    {
+    public function before_data() {
 
     }
 
@@ -104,10 +106,9 @@ abstract class abstract_layout implements layout_interface, \templatable
      * Modify objects after data is retrieved in the data source. This allows the layout to make decisions on the
      * data source and data grid.
      *
-     * @param data_collection_interface $data_collection
+     * @param data_collection_interface $datacollection
      */
-    public function after_data(data_collection_interface $data_collection)
-    {
+    public function after_data(data_collection_interface $datacollection) {
 
     }
 
@@ -123,26 +124,25 @@ abstract class abstract_layout implements layout_interface, \templatable
      * @param \MoodleQuickForm $mform
      * @throws \coding_exception
      */
-    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform)
-    {
+    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
         global $OUTPUT;
 
         self::$currentgroupid = random_int(1, 10000);
 
-        $filter_collection = $this->get_data_source()->get_filter_collection();
+        $filtercollection = $this->get_data_source()->get_filter_collection();
 
         if ($this->supports_field_visibility()) {
             $group = [];
-            foreach ($this->get_data_source()->get_sorted_field_definitions() as $available_field_definition) {
-                if ($available_field_definition->has_attribute(identifier_attribute::class)) {
+            foreach ($this->get_data_source()->get_sorted_field_definitions() as $availablefielddefinition) {
+                if ($availablefielddefinition->has_attribute(identifier_attribute::class)) {
                     continue;
                 }
 
-                $fieldname = 'config_preferences[available_fields][' . $available_field_definition->get_name() .
+                $fieldname = 'config_preferences[available_fields][' . $availablefielddefinition->get_name() .
                     '][visible]';
 
                 $tablenames = [];
-                if ($tables = $available_field_definition->get_option('tables')) {
+                if ($tables = $availablefielddefinition->get_option('tables')) {
                     foreach ($tables as $table) {
                         $tablenames[] = get_string('tablealias_' . $table, 'block_dash');
                     }
@@ -154,10 +154,12 @@ abstract class abstract_layout implements layout_interface, \templatable
                     $title = get_string('general');
                 }
 
-                $icon = $OUTPUT->pix_icon('i/dragdrop', get_string('dragitem', 'block_dash'), 'moodle', ['class' => 'drag-handle']);
-                $title = $icon . '<b>' . $title . '</b>: ' . $available_field_definition->get_title();
+                $icon = $OUTPUT->pix_icon('i/dragdrop', get_string('dragitem', 'block_dash'), 'moodle',
+                    ['class' => 'drag-handle']);
+                $title = $icon . '<b>' . $title . '</b>: ' . $availablefielddefinition->get_title();
 
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, null, ['group' => self::$currentgroupid]);
+                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, null,
+                    ['group' => self::$currentgroupid]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
             $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'),
@@ -169,7 +171,7 @@ abstract class abstract_layout implements layout_interface, \templatable
 
         if ($this->supports_filtering()) {
             $group = [];
-            foreach ($filter_collection->get_filters() as $filter) {
+            foreach ($filtercollection->get_filters() as $filter) {
                 if ($filter instanceof condition) {
                     // Don't include conditions in this group.
                     continue;
@@ -187,7 +189,7 @@ abstract class abstract_layout implements layout_interface, \templatable
         }
 
         $group = [];
-        foreach ($filter_collection->get_filters() as $filter) {
+        foreach ($filtercollection->get_filters() as $filter) {
             if (!$filter instanceof condition) {
                 // Only include conditions in this group.
                 continue;
@@ -210,8 +212,7 @@ abstract class abstract_layout implements layout_interface, \templatable
      * @param array $preferences
      * @return array
      */
-    public function process_preferences(array $preferences)
-    {
+    public function process_preferences(array $preferences) {
         return $preferences;
     }
 
@@ -222,8 +223,7 @@ abstract class abstract_layout implements layout_interface, \templatable
      * @return array|\stdClass
      * @throws \coding_exception
      */
-    public function export_for_template(\renderer_base $output)
-    {
+    public function export_for_template(\renderer_base $output) {
         global $OUTPUT;
 
         $templatedata = [
@@ -246,7 +246,8 @@ abstract class abstract_layout implements layout_interface, \templatable
             }
 
             if ($this->get_data_source()->get_data_grid()->get_paginator()->get_page_count() > 1) {
-                $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()->get_data_grid()->get_paginator()
+                $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()
+                    ->get_data_grid()->get_paginator()
                     ->export_for_template($OUTPUT));
             }
         }
@@ -265,29 +266,39 @@ abstract class abstract_layout implements layout_interface, \templatable
         return $templatedata;
     }
 
-    protected function map_data($mapping, data_collection_interface $data_collection)
-    {
+    /**
+     * Map data.
+     *
+     * @param array $mapping
+     * @param data_collection_interface $datacollection
+     * @return data_collection_interface
+     */
+    protected function map_data($mapping, data_collection_interface $datacollection) {
         foreach ($mapping as $newname => $fieldname) {
             if ($fieldname) {
-                $data_collection->add_data_associative([
-                    $newname => $data_collection[$fieldname]
+                $datacollection->add_data_associative([
+                    $newname => $datacollection[$fieldname]
                 ]);
             }
         }
 
-        return $data_collection;
+        return $datacollection;
     }
 
-    protected function get_icon_list()
-    {
+    /**
+     * Returns supported icons.
+     *
+     * @return array
+     */
+    protected function get_icon_list() {
         global $PAGE;
 
         $icons = [];
 
         if (isset($PAGE->theme->iconsystem)) {
-            if ($icon_system = icon_system::instance($PAGE->theme->iconsystem)) {
-                if ($icon_system instanceof icon_system_fontawesome) {
-                    foreach ($icon_system->get_icon_name_map() as $pixname => $faname) {
+            if ($iconsystem = icon_system::instance($PAGE->theme->iconsystem)) {
+                if ($iconsystem instanceof icon_system_fontawesome) {
+                    foreach ($iconsystem->get_icon_name_map() as $pixname => $faname) {
                         $icons[$faname] = $pixname;
                     }
                 }

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Simple yes or no filter.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,20 +24,21 @@
 
 namespace block_dash\data_grid\filter;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Simple yes or no filter.
  *
- * @package block_dash\data_grid\filter
+ * @package block_dash
  */
-class bool_filter extends select_filter
-{
+class bool_filter extends select_filter {
+
     /**
      * Return a list of operations this filter can handle.
      *
      * @return array
      */
-    public function get_supported_operations()
-    {
+    public function get_supported_operations() {
         return [
             self::OPERATION_EQUAL
         ];
@@ -45,8 +48,7 @@ class bool_filter extends select_filter
      * Initialize the filter. It must be initialized before values are extracted or SQL generated.
      * If overridden call parent.
      */
-    public function init()
-    {
+    public function init() {
         $this->add_options([
             1 => get_string('yes'),
             0 => get_string('no')

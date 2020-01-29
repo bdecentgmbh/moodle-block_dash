@@ -24,6 +24,8 @@
 
 use block_dash\data_source\data_source_factory;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Form for editing Dash block instances.
  *
@@ -34,12 +36,12 @@ use block_dash\data_source\data_source_factory;
 class block_dash_edit_form extends block_edit_form {
 
     /**
+     * Add form fields.
+     *
      * @param MoodleQuickForm $mform
      * @throws coding_exception
-     * @throws dml_exception
      */
-    protected function specific_definition($mform)
-    {
+    protected function specific_definition($mform) {
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 

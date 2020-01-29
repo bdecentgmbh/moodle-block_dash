@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A filter will limit a result set.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,22 +24,78 @@
 
 namespace block_dash\data_grid\filter;
 
-interface filter_interface
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * A filter will limit a result set.
+ *
+ * @package block_dash
+ */
+interface filter_interface {
+
+    /**
+     * Filter value is required
+     */
     const REQUIRED = true;
+
+    /**
+     * Filter value is not required.
+     */
     const NOT_REQUIRED = false;
 
+    /**
+     * Operation equal (=).
+     */
     const OPERATION_EQUAL = 'equal';
+
+    /**
+     * Operation not equal (!=).
+     */
     const OPERATION_NOT_EQUAL = 'not_equal';
+
+    /**
+     * Operation less than (<).
+     */
     const OPERATION_LESS_THAN = 'less';
+
+    /**
+     * Operation greater than (>).
+     */
     const OPERATION_GREATER_THAN = 'greater';
+
+    /**
+     * Operation less than or equal to (<=).
+     */
     const OPERATION_LESS_THAN_EQUAL = 'less_equal';
+
+    /**
+     * Operation greater than or equal (>=).
+     */
     const OPERATION_GREATER_THAN_EQUAL = 'greater_equal';
+
+    /**
+     * Operation in or equal (= or IN()).
+     */
     const OPERATION_IN_OR_EQUAL = 'in_or_equal';
+
+    /**
+     * Operation like (LIKE)
+     */
     const OPERATION_LIKE = 'like';
+
+    /**
+     * Operation like with wildcard (LIKE %%).
+     */
     const OPERATION_LIKE_WILDCARD = 'like_wild';
 
+    /**
+     * Filter clause is included in "where".
+     */
     const CLAUSE_TYPE_WHERE = 'where';
+
+    /**
+     * filter clause is included in "having".
+     */
     const CLAUSE_TYPE_HAVING = 'having';
 
     /**
@@ -62,12 +120,16 @@ interface filter_interface
     public function init();
 
     /**
+     * Get the raw submitted value of the filter.
+     *
      * @return mixed
      */
     public function get_raw_value();
 
     /**
-     * @param $value mixed Raw value (most likely from form submission).
+     * Set raw value.
+     *
+     * @param mixed $value Raw value (most likely from form submission).
      */
     public function set_raw_value($value);
 
@@ -86,44 +148,58 @@ interface filter_interface
     public function is_applied();
 
     /**
+     * Is filter required.
+     *
      * @return bool
      */
     public function is_required();
 
     /**
-     * @param $required
+     * Set if filter is required.
+     *
+     * @param bool $required
      */
     public function set_required($required);
 
     /**
+     * Get filter name.
+     *
      * @return string
      */
     public function get_name();
 
     /**
+     * Get filter SQL select.
+     *
      * @return string
      */
     public function get_select();
 
     /**
+     * Get filter label.
+     *
      * @return string
      */
     public function get_label();
 
     /**
-     * @param $label
+     * Set filter label.
+     *
+     * @param string $label
      */
     public function set_label($label);
 
     /**
+     * Get SQL operation.
+     *
      * @return string
      */
     public function get_operation();
 
     /**
-     * Set an operation
+     * Set an operation.
      *
-     * @param $operation
+     * @param string $operation
      * @throws \coding_exception
      */
     public function set_operation($operation);
@@ -141,7 +217,10 @@ interface filter_interface
      * @return array
      */
     public function get_supported_operations();
+
     /**
+     * If filter has a default value.
+     *
      * @return bool
      */
     public function has_default_raw_value();
@@ -166,32 +245,38 @@ interface filter_interface
     /**
      * Override this method and call it after creating a form element.
      *
-     * @param filter_collection_interface $filter_collection
-     * @param string $element_name_prefix
+     * @param filter_collection_interface $filtercollection
+     * @param string $elementnameprefix
      * @throws \Exception
      */
-    public function create_form_element(filter_collection_interface $filter_collection,
-                                        $element_name_prefix = '');
+    public function create_form_element(filter_collection_interface $filtercollection,
+                                        $elementnameprefix = '');
 
     /**
      * Get option label based on value.
      *
-     * @param $value
+     * @param string $value
      * @return string
      */
     public function get_option_label($value);
 
     /**
+     * Get filter context.
+     *
      * @return \context
      */
     public function get_context();
 
     /**
+     * Set context.
+     *
      * @param \context $context
      */
     public function set_context(\context $context);
 
     /**
+     * Get clause type.
+     *
      * @return string
      */
     public function get_clause_type();

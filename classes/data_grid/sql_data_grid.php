@@ -1,26 +1,55 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Get data to be displayed in a grid or downloaded as a formatted file.
+ *
+ * @package    block_dash
+ * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace block_dash\data_grid;
 
-
-use block_dash\data_grid\data\data_collection;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\field\attribute\identifier_attribute;
-use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\field\sql_field_definition;
 
-class sql_data_grid extends data_grid
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Get data to be displayed in a grid or downloaded as a formatted file.
+ *
+ * Based on database query.
+ *
+ * @package block_dash
+ */
+class sql_data_grid extends data_grid {
+
     /**
+     * Query template to process and execute.
+     *
      * @var string
      */
-    private $query_template;
+    private $querytemplate;
 
     /**
      * @var string
      */
-    private $count_query_template;
+    private $countquerytemplate;
 
     /**
      * @var string
@@ -30,57 +59,65 @@ class sql_data_grid extends data_grid
     /**
      * @var data_collection_interface
      */
-    private $data_collection;
+    private $datacollection;
 
     /**
      * @var int Store record count so we don't have to query it multiple times.
      */
-    private $record_count = null;
+    private $recordcount = null;
 
-    public function set_query_template($query_template)
-    {
-        $this->query_template = $query_template;
-    }
-
-    public function set_count_query_template($count_query_template)
-    {
-        $this->count_query_template = $count_query_template;
+    /**
+     * Set query template.
+     *
+     * @param string $querytemplate
+     */
+    public function set_query_template($querytemplate) {
+        $this->querytemplate = $querytemplate;
     }
 
     /**
+     * Set count query template.
+     *
+     * @param string $countquerytemplate
+     */
+    public function set_count_query_template($countquerytemplate) {
+        $this->countquerytemplate = $countquerytemplate;
+    }
+
+    /**
+     * Get group by field.
+     *
      * @return string
      */
-    public function get_groupby()
-    {
+    public function get_groupby() {
         return $this->groupby;
     }
 
     /**
+     * Set group by field.
+     *
      * @param string $groupby
      */
-    public function set_groupby($groupby)
-    {
+    public function set_groupby($groupby) {
         $this->groupby = $groupby;
     }
 
     /**
-     * Return main query without select
+     * Return main query without select.
      *
      * @return string
      */
-    protected function get_query()
-    {
-        return $this->query_template;
+    protected function get_query() {
+        return $this->querytemplate;
     }
 
     /**
-     * Combines all field selects for SQL select
+     * Combines all field selects for SQL select.
      *
      * @return string SQL select
      * @throws \moodle_exception
      */
-    protected function get_query_select()
-    {
+    protected function get_query_select() {
         $selects = array();
         $fields = $this->get_field_definitions();
 
@@ -109,32 +146,32 @@ class sql_data_grid extends data_grid
      * @throws \Exception
      * @throws \moodle_exception
      */
-    protected function get_sql_and_params($count = false)
-    {
+    protected function get_sql_and_params($count = false) {
         if (!$this->has_any_field_definitions()) {
-            throw new \moodle_exception('Grid initialized without any fields. Did you forget to call data_grid::init()?');
+            throw new \moodle_exception('Grid initialized without any fields.
+                Did you forget to call data_grid::init()?');
         }
 
         if ($this->get_filter_collection() && $this->get_filter_collection()->has_filters()) {
-            list ($filter_sql, $filter_params) = $this->get_filter_collection()->get_sql_and_params();
-            $wheresql = $filter_sql[0];
-            $havingsql = $filter_sql[1];
+            list ($filtersql, $filterparams) = $this->get_filter_collection()->get_sql_and_params();
+            $wheresql = $filtersql[0];
+            $havingsql = $filtersql[1];
         } else {
             $wheresql = '1';
             $havingsql = '1';
-            $filter_params = [];
+            $filterparams = [];
         }
 
         $groupby = '';
         // Use count query and only select a count of primary field.
         if ($count) {
-            $query = $this->count_query_template;
+            $query = $this->countquerytemplate;
             $selects = 'COUNT(DISTINCT ' . $this->get_field_definitions()[0]->get_select() . ')';
-            $order_by = '';
+            $orderby = '';
         } else {
             $query = $this->get_query();
             $selects = $this->get_query_select();
-            $order_by = $this->get_sort_sql();
+            $orderby = $this->get_sort_sql();
             if ($groupby = $this->get_groupby()) {
                 $groupby = 'GROUP BY ' . $this->get_groupby();
             }
@@ -143,16 +180,16 @@ class sql_data_grid extends data_grid
         if (!$count) {
             // If there are multiple identifiers in the data source, construct a unique column.
             // This is to prevent warnings when multiple rows have the same value in the first column.
-            $identifier_selects = [];
-            /** @var sql_field_definition $field_definition */
-            foreach ($this->get_field_definitions() as $field_definition) {
-                if ($field_definition->has_attribute(identifier_attribute::class)) {
-                    $identifier_selects[] = $field_definition->get_select();
+            $identifierselects = [];
+            /** @var sql_field_definition $fielddefinition */
+            foreach ($this->get_field_definitions() as $fielddefinition) {
+                if ($fielddefinition->has_attribute(identifier_attribute::class)) {
+                    $identifierselects[] = $fielddefinition->get_select();
                 }
             }
             global $DB;
-            $concat = $DB->sql_concat_join('"-"', $identifier_selects);
-            if (count($identifier_selects) > 1) {
+            $concat = $DB->sql_concat_join('"-"', $identifierselects);
+            if (count($identifierselects) > 1) {
                 $selects = sprintf('%s as unique_id, %s', $concat, $selects);
             }
         }
@@ -161,9 +198,9 @@ class sql_data_grid extends data_grid
         $query = str_replace('%%GROUPBY%%', $groupby, $query);
         $query = str_replace('%%WHERE%%', 'WHERE ' . $wheresql, $query);
         $query = str_replace('%%HAVING%%', 'HAVING ' . $havingsql, $query);
-        $query = str_replace('%%ORDERBY%%', $order_by, $query);
+        $query = str_replace('%%ORDERBY%%', $orderby, $query);
 
-        return [$query, $filter_params];
+        return [$query, $filterparams];
     }
 
     /**
@@ -173,14 +210,13 @@ class sql_data_grid extends data_grid
      * @return data_collection_interface
      * @since 2.2
      */
-    public function get_data()
-    {
-        if (!$this->data_collection) {
+    public function get_data() {
+        if (!$this->datacollection) {
             $records = $this->get_records();
-            $this->data_collection = $this->get_data_strategy()->convert_records_to_data_collection($records, $this);
+            $this->datacollection = $this->get_data_strategy()->convert_records_to_data_collection($records, $this);
         }
 
-        return $this->data_collection;
+        return $this->datacollection;
     }
 
     /**
@@ -191,18 +227,17 @@ class sql_data_grid extends data_grid
      * @throws \moodle_exception
      * @since 2.2
      */
-    protected function get_records()
-    {
+    protected function get_records() {
         global $DB;
 
-        list($query, $filter_params) = $this->get_sql_and_params(false);
+        list($query, $filterparams) = $this->get_sql_and_params(false);
 
         if ($this->supports_pagination() && !$this->is_pagination_disabled()) {
-            return $DB->get_records_sql($query, $filter_params, $this->get_paginator()->get_limit_from(),
+            return $DB->get_records_sql($query, $filterparams, $this->get_paginator()->get_limit_from(),
                 $this->get_paginator()->get_per_page());
         }
 
-        return $DB->get_records_sql($query, $filter_params, 0, 100);
+        return $DB->get_records_sql($query, $filterparams, 0, 100);
     }
 
     /**
@@ -210,8 +245,7 @@ class sql_data_grid extends data_grid
      *
      * @return string
      */
-    protected function get_sort_sql()
-    {
+    protected function get_sort_sql() {
         $sql = '';
         $sorts = [];
 
@@ -235,21 +269,21 @@ class sql_data_grid extends data_grid
      * Get total number of records for pagination.
      *
      * @return int
+     * @throws \dml_exception
+     * @throws \moodle_exception
      */
-    public function get_count()
-    {
+    public function get_count() {
         global $DB;
 
-        if (is_null($this->record_count)) {
-            list($query, $filter_params) = $this->get_sql_and_params(true);
+        if (is_null($this->recordcount)) {
+            list($query, $filterparams) = $this->get_sql_and_params(true);
 
-            $this->record_count = $DB->count_records_sql($query, $filter_params);
+            $this->recordcount = $DB->count_records_sql($query, $filterparams);
         }
 
-        return $this->record_count;
+        return $this->recordcount;
     }
 
     #endregion
-
 
 }

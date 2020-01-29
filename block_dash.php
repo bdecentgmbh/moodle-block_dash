@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Dash block
+ * Dash block class.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
@@ -24,16 +24,38 @@
 
 use block_dash\block_builder;
 
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Dash block class.
+ */
 class block_dash extends block_base {
 
+    /**
+     * Initialize block instance.
+     *
+     * @throws coding_exception
+     */
     public function init() {
         $this->title = get_string('pluginname', 'block_dash');
     }
 
+    /**
+     * This block supports configuration fields.
+     *
+     * @return bool
+     */
     public function has_config() {
         return true;
     }
 
+    /**
+     * This function is called on your subclass right after an instance is loaded
+     * Use this function to act on instance data just after it's loaded and before anything else is done
+     * For instance: if your block will have different title's depending on location (site, course, blog, etc)
+     *
+     * @throws coding_exception
+     */
     public function specialization() {
         if (isset($this->config->title)) {
             $this->title = $this->title = format_string($this->config->title, true, ['context' => $this->context]);
@@ -42,19 +64,33 @@ class block_dash extends block_base {
         }
     }
 
+    /**
+     * Multiple dashes can be added to a single page.
+     *
+     * @return bool
+     */
     public function instance_allow_multiple() {
         return true;
     }
 
+    /**
+     * Dashes are suitable on all page types.
+     *
+     * @return array
+     */
     public function applicable_formats() {
-        return array('all' => true);
+        return ['all' => true];
     }
 
-    public function get_content()
-    {
+    /**
+     * Return block content. Build dash.
+     *
+     * @return \stdClass
+     */
+    public function get_content() {
         global $PAGE, $OUTPUT;
 
-        if($this->content !== NULL) {
+        if ($this->content !== null) {
             return $this->content;
         }
 
@@ -81,8 +117,12 @@ class block_dash extends block_base {
         return $this->content;
     }
 
-    public function html_attributes()
-    {
+    /**
+     * Add block width CSS classes.
+     *
+     * @return array
+     */
+    public function html_attributes() {
         $attributes = parent::html_attributes();
         if (isset($this->config->css_class)) {
             $attributes['class'] .= ' ' . $this->config->css_class;
@@ -96,12 +136,13 @@ class block_dash extends block_base {
     }
 
     /**
-     * @param $field_name
-     * @param $direction
+     * Set dash sorting.
+     *
+     * @param string $fieldname
+     * @param string|null $direction
      * @throws coding_exception
      */
-    public function set_sort($field_name, $direction = null)
-    {
+    public function set_sort($fieldname, $direction = null) {
         global $USER;
 
         $key = $USER->id . '_' . $this->instance->id;
@@ -114,21 +155,21 @@ class block_dash extends block_base {
             $sorting = $cache->get($key);
         }
 
-        if (isset($sorting[$field_name]) && !$direction) {
-            if ($sorting[$field_name] == 'asc') {
-                $sorting[$field_name] = 'desc';
+        if (isset($sorting[$fieldname]) && !$direction) {
+            if ($sorting[$fieldname] == 'asc') {
+                $sorting[$fieldname] = 'desc';
             } else {
-                $sorting[$field_name] = 'asc';
+                $sorting[$fieldname] = 'asc';
             }
         } else {
             if ($direction) {
-                $sorting[$field_name] = $direction;
+                $sorting[$fieldname] = $direction;
             } else {
-                $sorting[$field_name] = 'asc';
+                $sorting[$fieldname] = 'asc';
             }
         }
 
-        $cache->set($key, [$field_name => $sorting[$field_name]]);
+        $cache->set($key, [$fieldname => $sorting[$fieldname]]);
     }
 }
 

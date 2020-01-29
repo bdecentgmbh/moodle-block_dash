@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class date_filter.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,32 +24,52 @@
 
 namespace block_dash\data_grid\filter;
 
-class date_filter extends filter
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Class date_filter.
+ *
+ * @package block_dash
+ */
+class date_filter extends filter {
+
+    /**
+     * Round date up to the end of the day.
+     */
     const DATE_FUNCTION_CEIL = 'ceil';
+
+    /**
+     * Round date down to the end of the day.
+     */
     const DATE_FUNCTION_FLOOR = 'floor';
+
+    /**
+     * Do nothing to the date.
+     */
     const DATE_FUNCTION_NONE = 'none';
 
+    /**
+     * @var string
+     */
     protected $function;
 
     /**
      * date_filter constructor.
-     * @param $name
-     * @param $select
-     * @param $function
+     * @param string $name
+     * @param string $select
+     * @param string $function
      * @param string $label
-     * @param string $clause_type
+     * @param string $clausetype
      * @throws \coding_exception
      */
-    public function __construct($name, $select, $function, $label = '', $clause_type = self::CLAUSE_TYPE_WHERE)
-    {
+    public function __construct($name, $select, $function, $label = '', $clausetype = self::CLAUSE_TYPE_WHERE) {
         if (!in_array($function, array(self::DATE_FUNCTION_CEIL, self::DATE_FUNCTION_FLOOR, self::DATE_FUNCTION_NONE))) {
             throw new \coding_exception('Invalid date function');
         }
 
         $this->function = $function;
 
-        parent::__construct($name, $select, $label, $clause_type);
+        parent::__construct($name, $select, $label, $clausetype);
     }
 
     /**
@@ -55,8 +77,7 @@ class date_filter extends filter
      *
      * @return array
      */
-    public function get_supported_operations()
-    {
+    public function get_supported_operations() {
         return [
             self::OPERATION_GREATER_THAN,
             self::OPERATION_GREATER_THAN_EQUAL,
@@ -70,8 +91,7 @@ class date_filter extends filter
      *
      * @return mixed
      */
-    public function get_default_raw_value()
-    {
+    public function get_default_raw_value() {
         return null;
     }
 
@@ -80,8 +100,7 @@ class date_filter extends filter
      *
      * @return array
      */
-    public function get_values()
-    {
+    public function get_values() {
         $values = parent::get_values();
 
         foreach ($values as $key => $value) {
@@ -96,17 +115,16 @@ class date_filter extends filter
     /**
      * Convert user submitted value to a unix timestamp in user's timezone.
      *
-     * @param $value
+     * @param string $value
      * @return int
      */
-    protected function to_timestamp($value)
-    {
-        // User submitted date in user's timezone
+    protected function to_timestamp($value) {
+        // User submitted date in user's timezone.
         $date = \DateTime::createFromFormat('d/m/Y', $value, \core_date::get_user_timezone_object());
 
         switch ($this->function) {
             case self::DATE_FUNCTION_FLOOR:
-                $date->setTime(0,0,0);
+                $date->setTime(0, 0, 0);
                 break;
             case self::DATE_FUNCTION_CEIL:
                 $date->setTime(23, 59, 59);
@@ -122,16 +140,16 @@ class date_filter extends filter
     /**
      * Override this method and call it after creating a form element.
      *
-     * @param filter_collection_interface $filter_collection
-     * @param string $element_name_prefix
+     * @param filter_collection_interface $filtercollection
+     * @param string $elementnameprefix
      * @throws \Exception
+     * @return string
      */
-    public function create_form_element(filter_collection_interface $filter_collection,
-                                        $element_name_prefix = '')
-    {
+    public function create_form_element(filter_collection_interface $filtercollection,
+                                        $elementnameprefix = '') {
         global $OUTPUT;
 
-        $name = $element_name_prefix . $this->get_name();
+        $name = $elementnameprefix . $this->get_name();
 
         return $OUTPUT->render_from_template('block_dash/filter_date', [
             'label' => $this->get_label(),

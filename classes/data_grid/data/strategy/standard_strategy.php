@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class standard_strategy.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,36 +29,46 @@ use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
 
-class standard_strategy implements data_strategy_interface
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Class standard_strategy.
+ *
+ * @package block_dash
+ */
+class standard_strategy implements data_strategy_interface {
+
     /**
+     * Convert records.
+     *
      * @param \stdClass[] $records
-     * @param data_grid_interface $data_grid
+     * @param data_grid_interface $datagrid
      * @return data_collection_interface
      */
-    public function convert_records_to_data_collection($records, data_grid_interface $data_grid)
-    {
-        $grid_data = new data_collection();
+    public function convert_records_to_data_collection($records, data_grid_interface $datagrid) {
+        $griddata = new data_collection();
 
         foreach ($records as $fullrecord) {
             $record = clone $fullrecord;
-            if (isset($record->unique_id)) unset($record->unique_id);
+            if (isset($record->unique_id)) {
+                unset($record->unique_id);
+            }
             $row = new data_collection();
-            foreach ($data_grid->get_field_definitions() as $field_definition) {
-                $name = $field_definition->get_name();
+            foreach ($datagrid->get_field_definitions() as $fielddefinition) {
+                $name = $fielddefinition->get_name();
 
-                if ($field_definition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
+                if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
                     unset($record->$name);
                     continue;
                 }
 
-                $record->$name = $field_definition->transform_data($record->$name, $fullrecord);
+                $record->$name = $fielddefinition->transform_data($record->$name, $fullrecord);
             }
 
             $row->add_data_associative($record);
-            $grid_data->add_child_collection('rows', $row);
+            $griddata->add_child_collection('rows', $row);
         }
 
-        return $grid_data;
+        return $griddata;
     }
 }

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * An attribute changes how a field definition is designated or behaves.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,13 +24,15 @@
 
 namespace block_dash\data_grid\field\attribute;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * An attribute changes how a field definition is designated or behaves.
  *
- * @package block_dash\data_grid\field\attribute
+ * @package block_dash
  */
-interface field_attribute_interface
-{
+interface field_attribute_interface {
+
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format
@@ -42,7 +46,7 @@ interface field_attribute_interface
     /**
      * Get a single option.
      *
-     * @param $name
+     * @param string $name
      * @return mixed|null
      */
     public function get_option($name);
@@ -50,8 +54,8 @@ interface field_attribute_interface
     /**
      * Set option on field.
      *
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param string $value
      */
     public function set_option($name, $value);
 
@@ -70,8 +74,10 @@ interface field_attribute_interface
     public function get_options();
 
     /**
-     * @param $name
-     * @param $value
+     * Add option.
+     *
+     * @param string $name
+     * @param string $value
      */
     public function add_option($name, $value);
 }

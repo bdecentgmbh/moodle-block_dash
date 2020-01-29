@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A field is a simple container for a single value within a row/collection.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,34 +26,60 @@ namespace block_dash\data_grid\data;
 
 use block_dash\data_grid\field\field_definition_factory;
 
-class field implements field_interface
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * A field is a simple container for a single value within a row/collection.
+ *
+ * @package block_dash
+ */
+class field implements field_interface {
+
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @var mixed|string
+     */
     private $value;
 
-    public function __construct($name, $value)
-    {
+    /**
+     * Create a new field.
+     *
+     * @param string $name
+     * @param string $value
+     */
+    public function __construct($name, $value) {
         $this->name = $name;
         $this->value = $value;
     }
 
-    public function get_name()
-    {
+    /**
+     * Get field name.
+     *
+     * @return string
+     */
+    public function get_name() {
         return $this->name;
     }
 
-    public function get_value()
-    {
+    /**
+     * Get field value.
+     *
+     * @return mixed|string
+     */
+    public function get_value() {
         return $this->value;
     }
 
     /**
+     * Get label of field definition.
+     *
      * @return string|null
-     * @throws \coding_exception
      */
-    public function get_label()
-    {
+    public function get_label() {
         if ($fielddefinition = field_definition_factory::get_field_definition($this->get_name())) {
             return $fielddefinition->get_title();
         }

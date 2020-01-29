@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Custom select field.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,17 +24,28 @@
 
 namespace block_dash\data_grid\filter;
 
-class choice_filter extends select_filter
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Custom select field.
+ *
+ * @package block_dash
+ */
+class choice_filter extends select_filter {
+
+    /**
+     * @var array
+     */
     private $choices;
 
     /**
+     * Constructor.
+     *
      * @param string $name
      * @param string $select
      * @param array $choices
      */
-    public function __construct($name, $select, array $choices)
-    {
+    public function __construct($name, $select, array $choices) {
         $this->choices = $choices;
 
         parent::__construct($name, $select);
@@ -43,8 +56,7 @@ class choice_filter extends select_filter
      *
      * @return mixed
      */
-    public function get_default_raw_value()
-    {
+    public function get_default_raw_value() {
         if (count($this->choices) > 1) {
             return self::ALL_OPTION;
         } else if (count($this->choices) == 1) {
@@ -57,8 +69,7 @@ class choice_filter extends select_filter
      * Initialize the filter. It must be initialized before values are extracted or SQL generated.
      * If overridden call parent.
      */
-    public function init()
-    {
+    public function init() {
         $this->add_all_option();
 
         $this->add_options($this->choices);

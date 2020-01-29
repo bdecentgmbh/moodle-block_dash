@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Unit test for field definition factory.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,18 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  * @group bdecent
  * @group field_definition_factory_test
  */
-class field_definition_factory_test extends \advanced_testcase
-{
-    /**
-     * This method is called before each test.
-     */
-    protected function setUp()
-    {
+class field_definition_factory_test extends \advanced_testcase {
 
-    }
-
-    public function test_field_definition()
-    {
+    public function test_field_definition() {
         global $CFG;
 
         require_once("$CFG->dirroot/blocks/dash/lib.php");

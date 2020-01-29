@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit test for search indexing.
+ * Unit test for filtering.
  *
- * @package block_html
- * @copyright 2017 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    block_dash
+ * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace block_dash\test;
@@ -39,12 +39,12 @@ defined('MOODLE_INTERNAL') || die();
  * @group bdecent
  * @group filter_test
  */
-class filter_test extends \advanced_testcase
-{
+class filter_test extends \advanced_testcase {
+
     /**
      * @var filter_collection_interface
      */
-    private $filter_collection;
+    private $filtercollection;
 
     /**
      * @var \stdClass
@@ -54,8 +54,7 @@ class filter_test extends \advanced_testcase
     /**
      * This method is called before each test.
      */
-    protected function setUp()
-    {
+    protected function setUp() {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -63,75 +62,70 @@ class filter_test extends \advanced_testcase
 
         $this->user = $USER;
 
-        $this->filter_collection = new filter_collection('testing', \context_system::instance());
-        $this->filter_collection->add_filter(new filter('filter1', 'table.fieldname'));
-        $this->filter_collection->init();
+        $this->filtercollection = new filter_collection('testing', \context_system::instance());
+        $this->filtercollection->add_filter(new filter('filter1', 'table.fieldname'));
+        $this->filtercollection->init();
     }
 
-    public function test_general_stuff()
-    {
-        $this->assertEquals('testing', $this->filter_collection->get_unique_identifier());
-        $this->assertCount(1, $this->filter_collection->get_filters());
-        $this->assertTrue($this->filter_collection->has_filter('filter1'));
-        $this->assertFalse($this->filter_collection->has_filter('missing'));
+    public function test_general_stuff() {
+        $this->assertEquals('testing', $this->filtercollection->get_unique_identifier());
+        $this->assertCount(1, $this->filtercollection->get_filters());
+        $this->assertTrue($this->filtercollection->has_filter('filter1'));
+        $this->assertFalse($this->filtercollection->has_filter('missing'));
     }
 
-    public function test_remove_filter()
-    {
-        $filter = $this->filter_collection->get_filter('filter1');
-        $this->filter_collection->remove_filter($filter);
+    public function test_remove_filter() {
+        $filter = $this->filtercollection->get_filter('filter1');
+        $this->filtercollection->remove_filter($filter);
 
-        $this->assertFalse($this->filter_collection->has_filters());
-        $this->assertFalse($this->filter_collection->remove_filter($filter), 'Ensure false is returend when filter was already removed.');
+        $this->assertFalse($this->filtercollection->has_filters());
+        $this->assertFalse($this->filtercollection->remove_filter($filter),
+            'Ensure false is returend when filter was already removed.');
     }
 
-    public function test_applying_filter()
-    {
-        $this->assertCount(0, $this->filter_collection->get_applied_filters());
-        $this->assertCount(0, $this->filter_collection->get_filters_with_values());
+    public function test_applying_filter() {
+        $this->assertCount(0, $this->filtercollection->get_applied_filters());
+        $this->assertCount(0, $this->filtercollection->get_filters_with_values());
 
-        $this->assertTrue($this->filter_collection->apply_filter('filter1', 123));
-        $this->assertFalse($this->filter_collection->apply_filter('filter1', ''));
-        $this->assertFalse($this->filter_collection->apply_filter('missing', 123));
+        $this->assertTrue($this->filtercollection->apply_filter('filter1', 123));
+        $this->assertFalse($this->filtercollection->apply_filter('filter1', ''));
+        $this->assertFalse($this->filtercollection->apply_filter('missing', 123));
 
-        $this->assertCount(1, $this->filter_collection->get_applied_filters());
+        $this->assertCount(1, $this->filtercollection->get_applied_filters());
 
-        $this->assertCount(1, $this->filter_collection->get_filters_with_values());
+        $this->assertCount(1, $this->filtercollection->get_filters_with_values());
     }
 
-    public function test_filter_sql_and_params_collection()
-    {
-        $this->assertTrue($this->filter_collection->apply_filter('filter1', 123));
+    public function test_filter_sql_and_params_collection() {
+        $this->assertTrue($this->filtercollection->apply_filter('filter1', 123));
 
-        list($sql, $params) = $this->filter_collection->get_sql_and_params();
+        list($sql, $params) = $this->filtercollection->get_sql_and_params();
 
         $this->assertEquals(' AND table.fieldname = :param1', $sql, 'Ensure SQL is generated.');
         $this->assertEquals($params, ['param1' => 123], 'Ensure params are returned.');
     }
 
-    public function test_required_filters()
-    {
-        $this->assertFalse($this->filter_collection->has_required_filters());
-        $this->assertCount(0, $this->filter_collection->get_required_filters());
+    public function test_required_filters() {
+        $this->assertFalse($this->filtercollection->has_required_filters());
+        $this->assertCount(0, $this->filtercollection->get_required_filters());
 
         $filter = new filter('filter2', 'table.fieldname2');
         $filter->set_required(filter_interface::REQUIRED);
 
-        $this->filter_collection->add_filter($filter);
-        $this->assertTrue($this->filter_collection->has_required_filters());
-        $this->assertCount(1, $this->filter_collection->get_required_filters());
+        $this->filtercollection->add_filter($filter);
+        $this->assertTrue($this->filtercollection->has_required_filters());
+        $this->assertCount(1, $this->filtercollection->get_required_filters());
     }
 
-    public function test_caching()
-    {
-        $this->filter_collection->apply_filter('filter1', 234);
-        $this->filter_collection->cache($this->user);
+    public function test_caching() {
+        $this->filtercollection->apply_filter('filter1', 234);
+        $this->filtercollection->cache($this->user);
 
-        $this->assertEquals(234, $this->filter_collection->get_cache($this->user)['filter1']);
+        $this->assertEquals(234, $this->filtercollection->get_cache($this->user)['filter1']);
 
-        $this->filter_collection->delete_cache($this->user);
+        $this->filtercollection->delete_cache($this->user);
 
-        $this->assertEmpty($this->filter_collection->get_cache($this->user));
+        $this->assertEmpty($this->filtercollection->get_cache($this->user));
     }
 }
 

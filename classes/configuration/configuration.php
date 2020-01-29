@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Configuration helps with building block instance content.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,24 +26,38 @@ namespace block_dash\configuration;
 
 use block_dash\data_source\data_source_factory;
 
-class configuration extends abstract_configuration
-{
-    public static function create_from_instance(\block_base $block_instance)
-    {
-        $parentcontext = \context::instance_by_id($block_instance->instance->parentcontextid);
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Configuration helps with building block instance content.
+ *
+ * @package block_dash
+ */
+class configuration extends abstract_configuration {
+
+    /**
+     * Create configuration from block instance.
+     *
+     * @param \block_base $blockinstance
+     * @return configuration|configuration_interface
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function create_from_instance(\block_base $blockinstance) {
+        $parentcontext = \context::instance_by_id($blockinstance->instance->parentcontextid);
 
         $datasource = null;
-        if (isset($block_instance->config->data_source_idnumber)) {
-            if (!$datasource = data_source_factory::build_data_source($block_instance->config->data_source_idnumber,
+        if (isset($blockinstance->config->data_source_idnumber)) {
+            if (!$datasource = data_source_factory::build_data_source($blockinstance->config->data_source_idnumber,
                 $parentcontext)) {
                 throw new \coding_exception('Missing data source.');
             }
 
-            if (isset($block_instance->config->preferences) && is_array($block_instance->config->preferences)) {
-                $datasource->set_preferences($block_instance->config->preferences);
+            if (isset($blockinstance->config->preferences) && is_array($blockinstance->config->preferences)) {
+                $datasource->set_preferences($blockinstance->config->preferences);
             }
 
-            $datasource->set_block_instance($block_instance);
+            $datasource->set_block_instance($blockinstance);
         }
 
         return new configuration($parentcontext, $datasource);

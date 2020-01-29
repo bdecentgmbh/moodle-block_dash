@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Container for a collection of filters.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,13 +24,15 @@
 
 namespace block_dash\data_grid\filter;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Container for a collection of filters.
  *
- * @package block_dash\filter
+ * @package block_dash
  */
-class filter_collection implements filter_collection_interface
-{
+class filter_collection implements filter_collection_interface {
+
     /**
      * @var filter_interface[] Every filter that belongs to this collection.
      */
@@ -37,7 +41,7 @@ class filter_collection implements filter_collection_interface
     /**
      * @var string
      */
-    private $unique_identifier;
+    private $uniqueidentifier;
 
     /**
      * @var \context
@@ -45,38 +49,40 @@ class filter_collection implements filter_collection_interface
     private $context;
 
     /**
-     * @param string $unique_identifier
+     * Filter collection constructor.
+     *
+     * @param string $uniqueidentifier
      * @param \context $context
      */
-    public function __construct($unique_identifier, \context $context)
-    {
-        $this->unique_identifier = $unique_identifier;
+    public function __construct($uniqueidentifier, \context $context) {
+        $this->uniqueidentifier = $uniqueidentifier;
         $this->context = $context;
     }
 
     /**
      * Initialize all filters.
      */
-    public function init()
-    {
+    public function init() {
         foreach ($this->get_filters() as $filter) {
             $filter->init();
         }
     }
 
     /**
+     * Get filter collection unique identifier.
+     *
      * @return string
      */
-    public function get_unique_identifier()
-    {
-        return $this->unique_identifier;
+    public function get_unique_identifier() {
+        return $this->uniqueidentifier;
     }
 
     /**
+     * Add filter to colelction.
+     *
      * @param filter_interface $filter
      */
-    public function add_filter(filter_interface $filter)
-    {
+    public function add_filter(filter_interface $filter) {
         $filter->set_context($this->context);
         $this->filters[] = $filter;
     }
@@ -87,10 +93,9 @@ class filter_collection implements filter_collection_interface
      * @param filter_interface $filter
      * @return bool
      */
-    public function remove_filter(filter_interface $filter)
-    {
-        foreach ($this->filters as $key => $_filter) {
-            if ($filter->get_name() == $_filter->get_name()) {
+    public function remove_filter(filter_interface $filter) {
+        foreach ($this->filters as $key => $searchfilter) {
+            if ($filter->get_name() == $searchfilter->get_name()) {
                 unset($this->filters[$key]);
                 return true;
             }
@@ -104,8 +109,7 @@ class filter_collection implements filter_collection_interface
      *
      * @return bool
      */
-    public function has_filters()
-    {
+    public function has_filters() {
         return count($this->filters) > 0;
     }
 
@@ -114,30 +118,27 @@ class filter_collection implements filter_collection_interface
      *
      * @return filter_interface[]
      */
-    public function get_filters()
-    {
+    public function get_filters() {
         return $this->filters;
     }
 
     /**
      * Check if a filter exists in this collection.
      *
-     * @param $name
+     * @param string $name
      * @return bool
      */
-    public function has_filter($name)
-    {
+    public function has_filter($name) {
         return !empty($this->get_filter($name));
     }
 
     /**
      * Get a filter by field name.
      *
-     * @param $name
+     * @param string $name
      * @return filter_interface|null
      */
-    public function get_filter($name)
-    {
+    public function get_filter($name) {
         foreach ($this->get_filters() as $filter) {
             if ($filter->get_name() == $name) {
                 return $filter;
@@ -154,8 +155,7 @@ class filter_collection implements filter_collection_interface
      * @param mixed $value
      * @return bool
      */
-    public function apply_filter($name, $value)
-    {
+    public function apply_filter($name, $value) {
         // Don't apply empty values.
         if ($value === "") {
             return false;
@@ -175,8 +175,7 @@ class filter_collection implements filter_collection_interface
      *
      * @return filter_interface[]
      */
-    public function get_applied_filters()
-    {
+    public function get_applied_filters() {
         $filters = [];
 
         foreach ($this->filters as $filter) {
@@ -194,8 +193,7 @@ class filter_collection implements filter_collection_interface
      *
      * @return filter_interface[]
      */
-    public function get_filters_with_values()
-    {
+    public function get_filters_with_values() {
         $filters = [];
         foreach ($this->get_filters() as $filter) {
             if ($filter->has_raw_value() || $filter->has_default_raw_value()) {
@@ -211,8 +209,7 @@ class filter_collection implements filter_collection_interface
      *
      * @return bool
      */
-    public function has_required_filters()
-    {
+    public function has_required_filters() {
         foreach ($this->get_filters() as $filter) {
             if ($filter->is_required()) {
                 return true;
@@ -227,8 +224,7 @@ class filter_collection implements filter_collection_interface
      *
      * @return filter[]
      */
-    public function get_required_filters()
-    {
+    public function get_required_filters() {
         $filters = [];
 
         foreach ($this->get_filters() as $filter) {
@@ -241,26 +237,30 @@ class filter_collection implements filter_collection_interface
     }
 
     /**
+     * Get SQL query and parameters.
+     *
      * @return array
+     * @throws \Exception
      */
-    public function get_sql_and_params()
-    {
+    public function get_sql_and_params() {
         $params = [];
         $havingsql = [];
         $wheresql = [];
         foreach ($this->get_filters_with_values() as $filter) {
-            list($filter_sql, $filter_params) = $filter->get_sql_and_params();
+            list($filtersql, $filterparams) = $filter->get_sql_and_params();
             // Ignore filters with no values.
-            if (empty($filter_params)) continue;
+            if (empty($filterparams)) {
+                continue;
+            }
             switch ($filter->get_clause_type()) {
                 case filter_interface::CLAUSE_TYPE_WHERE:
-                    $wheresql[] = $filter_sql;
+                    $wheresql[] = $filtersql;
                     break;
                 case filter_interface::CLAUSE_TYPE_HAVING:
-                    $havingsql[] = $filter_sql;
+                    $havingsql[] = $filtersql;
                     break;
             }
-            $params = array_merge($params, $filter_params);
+            $params = array_merge($params, $filterparams);
         }
 
         if (empty($havingsql)) {
@@ -274,19 +274,21 @@ class filter_collection implements filter_collection_interface
     }
 
     /**
-     * @param string $element_name_prefix
+     * Create form for filters.
+     *
+     * @param string $elementnameprefix
      * @throws \Exception
+     * @return string|null
      */
-    public function create_form_elements($element_name_prefix = '')
-    {
+    public function create_form_elements($elementnameprefix = '') {
         if (!$this->has_filters()) {
-            return;
+            return null;
         }
 
         $html = '';
 
         foreach ($this->get_filters() as $filter) {
-            $html .= $filter->create_form_element($this, $element_name_prefix);
+            $html .= $filter->create_form_element($this, $elementnameprefix);
         }
 
         return $html;
@@ -297,8 +299,7 @@ class filter_collection implements filter_collection_interface
      *
      * @return \cache_session
      */
-    private function create_cache()
-    {
+    private function create_cache() {
         return \cache::make_from_params(\cache_store::MODE_SESSION, 'block_dash', 'filter_cache');
     }
 
@@ -307,17 +308,16 @@ class filter_collection implements filter_collection_interface
      *
      * @param \stdClass $user User to cache filter preferences for.
      */
-    public function cache(\stdClass $user)
-    {
-        $filter_data = [];
+    public function cache(\stdClass $user) {
+        $filterdata = [];
 
         foreach ($this->filters as $filter) {
-            $filter_data[$filter->get_name()] = $filter->get_raw_value();
+            $filterdata[$filter->get_name()] = $filter->get_raw_value();
         }
 
         $identifier = sprintf('%s-%s', $user->id, $this->get_unique_identifier());
 
-        $this->create_cache()->set($identifier, $filter_data);
+        $this->create_cache()->set($identifier, $filterdata);
     }
 
     /**
@@ -327,8 +327,7 @@ class filter_collection implements filter_collection_interface
      * @return array|false|mixed
      * @throws \coding_exception
      */
-    public function get_cache(\stdClass $user)
-    {
+    public function get_cache(\stdClass $user) {
         $cache = $this->create_cache();
 
         $identifer = sprintf('%s-%s', $user->id, $this->get_unique_identifier());
@@ -344,8 +343,7 @@ class filter_collection implements filter_collection_interface
      *
      * @param \stdClass $user
      */
-    public function delete_cache(\stdClass $user)
-    {
+    public function delete_cache(\stdClass $user) {
         $cache = $this->create_cache();
 
         $identifier = sprintf('%s-%s', $user->id, $this->get_unique_identifier());

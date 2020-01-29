@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A condition is a filter that is always applied.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,15 +24,21 @@
 
 namespace block_dash\data_grid\filter;
 
-class condition extends filter
-{
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * A condition is a filter that is always applied.
+ *
+ * @package block_dash
+ */
+class condition extends filter {
+
     /**
      * Check if a user value was set.
      *
      * @return bool
      */
-    public function has_raw_value()
-    {
+    public function has_raw_value() {
         return true;
     }
 
@@ -39,20 +47,18 @@ class condition extends filter
      *
      * @return bool
      */
-    public function is_applied()
-    {
+    public function is_applied() {
         return true;
     }
 
     /**
      * Override this method and call it after creating a form element.
      *
-     * @param filter_collection_interface $filter_collection
-     * @param string $element_name_prefix
+     * @param filter_collection_interface $filtercollection
+     * @param string $elementnameprefix
      * @throws \Exception
      */
-    public function create_form_element(filter_collection_interface $filter_collection, $element_name_prefix = '')
-    {
+    public function create_form_element(filter_collection_interface $filtercollection, $elementnameprefix = '') {
         // Intentionally left blank.
     }
 

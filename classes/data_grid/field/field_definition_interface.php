@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Represents a predefined field that can be added to a data grid.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,16 +26,28 @@ namespace block_dash\data_grid\field;
 
 use block_dash\data_grid\field\attribute\field_attribute_interface;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Represents a predefined field that can be added to a data grid.
  *
- * @package block_dash\data_grid\field
+ * @package block_dash
  */
-interface field_definition_interface
-{
+interface field_definition_interface {
+
+    /**
+     * Visible to user.
+     */
     const VISIBILITY_VISIBLE = 1;
+
+    /**
+     * Not visible to user.
+     */
     const VISIBILITY_HIDDEN = 0;
 
+    /**
+     * Value to display when empty or null.
+     */
     const DEFAULT_EMPTY_VALUE = '-';
 
     /**
@@ -47,21 +61,29 @@ interface field_definition_interface
     public function transform_data($data, \stdClass $record);
 
     /**
+     * Get unique field name.
+     *
      * @return string
      */
     public function get_name();
 
     /**
+     * Get field title.
+     *
      * @return string
      */
     public function get_title();
 
     /**
+     * Get field visibility.
+     *
      * @return int
      */
     public function get_visibility();
 
     /**
+     * Set field visibility.
+     *
      * @param int $visibility
      */
     public function set_visibility($visibility);
@@ -81,6 +103,8 @@ interface field_definition_interface
     public function remove_attribute(field_attribute_interface $attribute);
 
     /**
+     * Get all attributes associated with this field definition.
+     *
      * @return field_attribute_interface[]
      */
     public function get_attributes();
@@ -96,7 +120,7 @@ interface field_definition_interface
     /**
      * Get a single option.
      *
-     * @param $name
+     * @param string $name
      * @return mixed|null
      */
     public function get_option($name);
@@ -104,8 +128,8 @@ interface field_definition_interface
     /**
      * Set option on field.
      *
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param string $value
      */
     public function set_option($name, $value);
 
@@ -131,6 +155,8 @@ interface field_definition_interface
     public function set_sort($sort);
 
     /**
+     * Is the field sorted.
+     *
      * @return bool
      */
     public function get_sort();
@@ -138,11 +164,13 @@ interface field_definition_interface
     /**
      * Set direction sort should happen for this field.
      *
-     * @param $direction
+     * @param string $direction
      */
     public function set_sort_direction($direction);
 
     /**
+     * Get sort direction.
+     *
      * @return string
      */
     public function get_sort_direction();
@@ -150,7 +178,7 @@ interface field_definition_interface
     /**
      * Set optional sort select (ORDER BY <select>), useful for fields that can't sort based on their field name.
      *
-     * @param $select
+     * @param string $select
      */
     public function set_sort_select($select);
 

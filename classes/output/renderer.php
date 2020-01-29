@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class renderer.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,11 +26,20 @@ namespace block_dash\output;
 
 use block_dash\data_source\abstract_data_source;
 use block_dash\data_source\data_source_interface;
+use core\output\mustache_engine;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Class renderer.
+ *
+ * @package block_dash
+ */
 class renderer extends \plugin_renderer_base {
 
+    /**
+     * @var mustache_engine
+     */
     private $mustache;
 
     /**
@@ -119,8 +130,7 @@ class renderer extends \plugin_renderer_base {
      * @return bool|string
      * @throws \coding_exception
      */
-    public function render_data_source(abstract_data_source $datasource)
-    {
+    public function render_data_source(abstract_data_source $datasource) {
         return $this->render_from_template($datasource->get_layout()->get_mustache_template_name(),
             $datasource->export_for_template($this));
     }

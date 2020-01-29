@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Used for unit testing a generic data grid.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,35 +30,35 @@ use block_dash\data_grid\data\field;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Used for unit testing a generic data grid.
  *
  * @package block_dash
  */
-class testing_data_grid extends data_grid
-{
+class testing_data_grid extends data_grid {
+
     /**
      * Execute and return data collection.
      *
      * @return data_collection_interface
-     * @throws \moodle_exception
      * @since 2.2
      */
-    public function get_data()
-    {
+    public function get_data() {
         $collection = new data_collection();
 
         foreach ($this->get_testing_records() as $record) {
             $row = new data_collection();
-            foreach ($this->get_field_definitions() as $field_definition) {
-                $name = $field_definition->get_name();
+            foreach ($this->get_field_definitions() as $fielddefinition) {
+                $name = $fielddefinition->get_name();
 
-                if ($field_definition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
+                if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
                     unset($record->$name);
                     continue;
                 }
 
-                $record->$name = $field_definition->transform_data($record->$name, $record);
+                $record->$name = $fielddefinition->transform_data($record->$name, $record);
             }
 
             $row->add_data_associative($record);
@@ -71,8 +73,7 @@ class testing_data_grid extends data_grid
      *
      * @return array
      */
-    protected function get_testing_records()
-    {
+    protected function get_testing_records() {
         $records = [];
 
         $record = new \stdClass();
@@ -99,8 +100,7 @@ class testing_data_grid extends data_grid
      *
      * @return int
      */
-    public function get_count()
-    {
+    public function get_count() {
         return 100;
     }
 }

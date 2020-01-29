@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Transforms URL to button.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,13 +24,15 @@
 
 namespace block_dash\data_grid\field\attribute;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Transforms URL to button.
  *
- * @package block_dash\data_grid\field\attribute
+ * @package block_dash
  */
-class button_attribute extends abstract_field_attribute
-{
+class button_attribute extends abstract_field_attribute {
+
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format
@@ -36,10 +40,8 @@ class button_attribute extends abstract_field_attribute
      * @param mixed $data Raw data associated with this field definition.
      * @param \stdClass $record Full record from database.
      * @return mixed
-     * @throws \coding_exception
      */
-    public function transform_data($data, \stdClass $record)
-    {
+    public function transform_data($data, \stdClass $record) {
         global $OUTPUT;
 
         if ($data) {

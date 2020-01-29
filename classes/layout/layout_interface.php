@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A layout contains information on how to display data.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,19 +28,25 @@ use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data\strategy\data_strategy_interface;
 use block_dash\data_source\data_source_interface;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * A layout contains information on how to display data. @see abstract_layout for creating new layouts.
+ * A layout contains information on how to display data.
  *
- * @package block_dash\layout
+ * @package block_dash
  */
-interface layout_interface
-{
+interface layout_interface {
+
     /**
+     * Get data source for this layout.
+     *
      * @return data_source_interface
      */
     public function get_data_source();
 
     /**
+     * Get mustache template name.
+     *
      * @return string
      */
     public function get_mustache_template_name();
@@ -72,6 +80,8 @@ interface layout_interface
     public function supports_sorting();
 
     /**
+     * Get data strategy.
+     *
      * @return data_strategy_interface
      */
     public function get_data_strategy();
@@ -86,9 +96,9 @@ interface layout_interface
      * Modify objects after data is retrieved in the data source. This allows the layout to make decisions on the
      * data source and data grid.
      *
-     * @param data_collection_interface $data_collection
+     * @param data_collection_interface $datacollection
      */
-    public function after_data(data_collection_interface $data_collection);
+    public function after_data(data_collection_interface $datacollection);
 
     /**
      * Add form elements to the preferences form when a user is configuring a block.

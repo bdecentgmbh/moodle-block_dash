@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * An attribute changes how a field definition is designated or behaves.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,13 +24,18 @@
 
 namespace block_dash\data_grid\field\attribute;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * An attribute changes how a field definition is designated or behaves.
  *
- * @package block_dash\data_grid\field\attribute
+ * @package block_dash
  */
-abstract class abstract_field_attribute implements field_attribute_interface
-{
+abstract class abstract_field_attribute implements field_attribute_interface {
+
+    /**
+     * @var array
+     */
     private $options = [];
 
     /**
@@ -39,8 +46,7 @@ abstract class abstract_field_attribute implements field_attribute_interface
      * @param \stdClass $record Full record from database.
      * @return mixed
      */
-    public function transform_data($data, \stdClass $record)
-    {
+    public function transform_data($data, \stdClass $record) {
         return $data;
     }
 
@@ -49,22 +55,20 @@ abstract class abstract_field_attribute implements field_attribute_interface
     /**
      * Get a single option.
      *
-     * @param $name
+     * @param string $name
      * @return mixed|null
      */
-    public function get_option($name)
-    {
+    public function get_option($name) {
         return isset($this->options[$name]) ? $this->options[$name] : null;
     }
 
     /**
      * Set option on field.
      *
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param string $value
      */
-    public function set_option($name, $value)
-    {
+    public function set_option($name, $value) {
         $this->options[$name] = $value;
     }
 
@@ -73,8 +77,7 @@ abstract class abstract_field_attribute implements field_attribute_interface
      *
      * @param array $options
      */
-    public function set_options($options)
-    {
+    public function set_options($options) {
         foreach ($options as $name => $value) {
             $this->set_option($name, $value);
         }
@@ -85,17 +88,17 @@ abstract class abstract_field_attribute implements field_attribute_interface
      *
      * @return array
      */
-    public function get_options()
-    {
+    public function get_options() {
         return $this->options;
     }
 
     /**
-     * @param $name
-     * @param $value
+     * Add option.
+     *
+     * @param string $name
+     * @param string $value
      */
-    public function add_option($name, $value)
-    {
+    public function add_option($name, $value) {
         $this->options[$name] = $value;
     }
 

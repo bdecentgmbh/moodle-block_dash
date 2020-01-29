@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Unit test for field definitions.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,53 +38,53 @@ defined('MOODLE_INTERNAL') || die();
  * @group bdecent
  * @group field_definition_test
  */
-class field_definition_test extends \advanced_testcase
-{
+class field_definition_test extends \advanced_testcase {
+
     /**
      * @var field_definition_interface
      */
-    private $field_definition;
+    private $fielddefinition;
 
     /**
      * This method is called before each test.
      */
-    protected function setUp()
-    {
-        $this->field_definition = new sql_field_definition('u.id', 'u_id', 'User ID');
+    protected function setUp() {
+        $this->fielddefinition = new sql_field_definition('u.id', 'u_id', 'User ID');
     }
 
-    public function test_field_definition_options()
-    {
+    public function test_field_definition_options() {
         global $CFG;
 
         require_once("$CFG->dirroot/blocks/dash/lib.php");
 
-        $this->assertEmpty($this->field_definition->get_options(), 'Ensure default options is empty.');
+        $this->assertEmpty($this->fielddefinition->get_options(), 'Ensure default options is empty.');
 
-        $this->field_definition->set_option('foo', 123);
-        $this->field_definition->set_options(['bar' => 'testing']);
+        $this->fielddefinition->set_option('foo', 123);
+        $this->fielddefinition->set_options(['bar' => 'testing']);
 
-        $this->assertCount(2, $this->field_definition->get_options(), 'Ensure correct number of options returned.');
-        $this->assertEquals(123, $this->field_definition->get_option('foo'), 'Ensure option return value is correct.');
-        $this->assertEquals('testing', $this->field_definition->get_option('bar'), 'Ensure option return value is correct.');
+        $this->assertCount(2, $this->fielddefinition->get_options(), 'Ensure correct number of options returned.');
+        $this->assertEquals(123, $this->fielddefinition->get_option('foo'), 'Ensure option return value is correct.');
+        $this->assertEquals('testing', $this->fielddefinition->get_option('bar'),
+            'Ensure option return value is correct.');
     }
 
-    public function test_field_definition_attributes()
-    {
+    public function test_field_definition_attributes() {
         $attribute = new identifier_attribute();
 
-        $this->assertFalse($this->field_definition->has_attribute(get_class($attribute)), 'Ensure field does not have attribute yet.');
+        $this->assertFalse($this->fielddefinition->has_attribute(get_class($attribute)),
+            'Ensure field does not have attribute yet.');
 
-        $this->field_definition->add_attribute($attribute);
-        $this->field_definition->set_visibility(field_definition_interface::VISIBILITY_VISIBLE);
+        $this->fielddefinition->add_attribute($attribute);
+        $this->fielddefinition->set_visibility(field_definition_interface::VISIBILITY_VISIBLE);
 
-        $this->assertTrue($this->field_definition->has_attribute(get_class($attribute)), 'Ensure field does have attribute.');
+        $this->assertTrue($this->fielddefinition->has_attribute(get_class($attribute)),
+            'Ensure field does have attribute.');
 
-        $this->assertCount(1, $this->field_definition->get_attributes(), 'Ensure attributes are returned.');
+        $this->assertCount(1, $this->fielddefinition->get_attributes(), 'Ensure attributes are returned.');
 
-        $this->field_definition->remove_attribute($attribute);
+        $this->fielddefinition->remove_attribute($attribute);
 
-        $this->assertCount(0, $this->field_definition->get_attributes(), 'Ensure no attributes are returned.');
+        $this->assertCount(0, $this->fielddefinition->get_attributes(), 'Ensure no attributes are returned.');
     }
 }
 

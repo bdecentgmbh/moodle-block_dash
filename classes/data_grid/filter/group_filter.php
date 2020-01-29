@@ -15,20 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Filter by groups the user has access to.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace block_dash\data_grid\filter;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Filter by groups the user has access to.
  *
- * @package block_dash\data_grid\filter
+ * @package block_dash
  */
-class group_filter extends select_filter
-{
+class group_filter extends select_filter {
+
     /**
+     * Filter values.
+     *
      * @var array
      */
     private $values;
@@ -37,8 +44,7 @@ class group_filter extends select_filter
      * Initialize the filter. It must be initialized before values are extracted or SQL generated.
      * If overridden call parent.
      */
-    public function init()
-    {
+    public function init() {
         global $USER, $CFG, $COURSE;
 
         require_once("$CFG->dirroot/lib/enrollib.php");
@@ -71,10 +77,12 @@ class group_filter extends select_filter
     }
 
     /**
+     * Get filter label.
+     *
      * @return string
+     * @throws \coding_exception
      */
-    public function get_label()
-    {
+    public function get_label() {
         if ($label = parent::get_label()) {
             return $label;
         }

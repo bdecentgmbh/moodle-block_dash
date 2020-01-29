@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * A strategy for structuring database records into data collections.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,15 +27,21 @@ namespace block_dash\data_grid\data\strategy;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data_grid_interface;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * @package block_dash\data
+ * A strategy for structuring database records into data collections.
+ *
+ * @package block_dash
  */
-interface data_strategy_interface
-{
+interface data_strategy_interface {
+
     /**
+     * Convert database records into data collections.
+     *
      * @param \stdClass[] $records
-     * @param data_grid_interface $data_grid
+     * @param data_grid_interface $datagrid
      * @return data_collection_interface
      */
-    public function convert_records_to_data_collection($records, data_grid_interface $data_grid);
+    public function convert_records_to_data_collection($records, data_grid_interface $datagrid);
 }

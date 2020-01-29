@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Represents a predefined field that can be added to a data grid.
+ *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,15 +26,17 @@ namespace block_dash\data_grid\field;
 
 use block_dash\data_grid\field\attribute\field_attribute_interface;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Represents a predefined field that can be added to a data grid.
  *
  * Add basic functionality for field definitions.
  *
- * @package block_dash\data_grid\field
+ * @package block_dash
  */
-abstract class abstract_field_definition implements field_definition_interface
-{
+abstract class abstract_field_definition implements field_definition_interface {
+
     /**
      * @var string Unique name of field (e.g. u_firstname).
      */
@@ -66,21 +70,22 @@ abstract class abstract_field_definition implements field_definition_interface
     /**
      * @var string Direction of sort, if sorting.
      */
-    private $sort_direction = 'asc';
+    private $sortdirection = 'asc';
 
     /**
      * @var string Optional sort select (ORDER BY <select>), useful for fields that can't sort based on their field name.
      */
-    private $sort_select;
+    private $sortselect;
 
     /**
+     * Constructor.
+     *
      * @param string $name String identifier of human readable name of field (e.g. Firstname).
      * @param string $title String identifier of human readable name of field (e.g. Firstname).
      * @param int $visibility Visibility of the field (if it should be displayed to the user).
      * @param array $options Arbitrary options belonging to this field.
      */
-    public function __construct($name, $title, $visibility = self::VISIBILITY_VISIBLE, $options = [])
-    {
+    public function __construct($name, $title, $visibility = self::VISIBILITY_VISIBLE, $options = []) {
         $this->name = $name;
         $this->title = $title;
         $this->visibility = $visibility;
@@ -95,8 +100,7 @@ abstract class abstract_field_definition implements field_definition_interface
      * @param \stdClass $record Full record from database.
      * @return mixed
      */
-    public final function transform_data($data, \stdClass $record)
-    {
+    public final function transform_data($data, \stdClass $record) {
         foreach ($this->attributes as $attribute) {
             $data = $attribute->transform_data($data, $record);
         }
@@ -107,34 +111,38 @@ abstract class abstract_field_definition implements field_definition_interface
     #region Property methods
 
     /**
+     * Get unique field name.
+     *
      * @return string
      */
-    public function get_name()
-    {
+    public function get_name() {
         return $this->name;
     }
 
     /**
+     * Get field title.
+     *
      * @return string
      */
-    public function get_title()
-    {
+    public function get_title() {
         return $this->title;
     }
 
     /**
+     * Get field visibility.
+     *
      * @return int
      */
-    public function get_visibility()
-    {
+    public function get_visibility() {
         return $this->visibility;
     }
 
     /**
+     * Set field visibility.
+     *
      * @param int $visibility
      */
-    public function set_visibility($visibility)
-    {
+    public function set_visibility($visibility) {
         // Warn the developer if they have used an invalid visibility.
         // @codeCoverageIgnoreStart
         if (!in_array($visibility, [self::VISIBILITY_HIDDEN, self::VISIBILITY_VISIBLE])) {
@@ -155,8 +163,7 @@ abstract class abstract_field_definition implements field_definition_interface
      *
      * @param field_attribute_interface $attribute
      */
-    public function add_attribute(field_attribute_interface $attribute)
-    {
+    public function add_attribute(field_attribute_interface $attribute) {
         $this->attributes[] = $attribute;
     }
 
@@ -165,20 +172,20 @@ abstract class abstract_field_definition implements field_definition_interface
      *
      * @param field_attribute_interface $attribute
      */
-    public function remove_attribute(field_attribute_interface $attribute)
-    {
-        foreach ($this->attributes as $key => $_attribute) {
-            if ($_attribute === $attribute) {
+    public function remove_attribute(field_attribute_interface $attribute) {
+        foreach ($this->attributes as $key => $searchattribute) {
+            if ($searchattribute === $attribute) {
                 unset($this->attributes[$key]);
             }
         }
     }
 
     /**
+     * Get all attributes associated with this field definition.
+     *
      * @return field_attribute_interface[]
      */
-    public function get_attributes()
-    {
+    public function get_attributes() {
         return array_values($this->attributes);
     }
 
@@ -188,8 +195,7 @@ abstract class abstract_field_definition implements field_definition_interface
      * @param string $classname Full class path to attribute
      * @return bool
      */
-    public function has_attribute($classname)
-    {
+    public function has_attribute($classname) {
         foreach ($this->get_attributes() as $attribute) {
             if (get_class($attribute) == $classname) {
                 return true;
@@ -206,22 +212,20 @@ abstract class abstract_field_definition implements field_definition_interface
     /**
      * Get a single option.
      *
-     * @param $name
+     * @param string $name
      * @return mixed|null
      */
-    public function get_option($name)
-    {
+    public function get_option($name) {
         return isset($this->options[$name]) ? $this->options[$name] : null;
     }
 
     /**
      * Set option on field.
      *
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param string $value
      */
-    public function set_option($name, $value)
-    {
+    public function set_option($name, $value) {
         $this->options[$name] = $value;
     }
 
@@ -230,8 +234,7 @@ abstract class abstract_field_definition implements field_definition_interface
      *
      * @param array $options
      */
-    public function set_options($options)
-    {
+    public function set_options($options) {
         foreach ($options as $name => $value) {
             $this->set_option($name, $value);
         }
@@ -242,8 +245,7 @@ abstract class abstract_field_definition implements field_definition_interface
      *
      * @return array
      */
-    public function get_options()
-    {
+    public function get_options() {
         return $this->options;
     }
 
@@ -257,8 +259,7 @@ abstract class abstract_field_definition implements field_definition_interface
      * @param bool $sort
      * @throws \Exception
      */
-    public function set_sort($sort)
-    {
+    public function set_sort($sort) {
         if (!is_bool($sort)) {
             throw new \Exception('Sort expected to be a bool.');
         }
@@ -267,43 +268,43 @@ abstract class abstract_field_definition implements field_definition_interface
     }
 
     /**
+     * Is the field sorted.
+     *
      * @return bool
      */
-    public function get_sort()
-    {
+    public function get_sort() {
         return $this->sort;
     }
 
     /**
      * Set direction sort should happen for this field.
      *
-     * @param $direction
+     * @param string $direction
      * @throws \Exception
      */
-    public function set_sort_direction($direction)
-    {
+    public function set_sort_direction($direction) {
         if (!in_array($direction, ['desc', 'asc'])) {
             throw new \Exception('Invalid sort direction: ' . $direction);
         }
-        $this->sort_direction = $direction;
+        $this->sortdirection = $direction;
     }
 
     /**
+     * Get sort direction.
+     *
      * @return string
      */
-    public function get_sort_direction()
-    {
-        return $this->sort_direction;
+    public function get_sort_direction() {
+        return $this->sortdirection;
     }
 
     /**
      * Set optional sort select (ORDER BY <select>), useful for fields that can't sort based on their field name.
      *
-     * @param $select
+     * @param string $select
      */
-    public function set_sort_select($select)
-    {
-        $this->sort_select = $select;
+    public function set_sort_select($select) {
+        $this->sortselect = $select;
     }
 
     /**
@@ -311,10 +312,9 @@ abstract class abstract_field_definition implements field_definition_interface
      *
      * @return string
      */
-    public function get_sort_select()
-    {
-        if (!is_null($this->sort_select)) {
-            return $this->sort_select;
+    public function get_sort_select() {
+        if (!is_null($this->sortselect)) {
+            return $this->sortselect;
         }
 
         return $this->get_name();
@@ -322,8 +322,12 @@ abstract class abstract_field_definition implements field_definition_interface
 
     #endregion
 
-    public function get_custom_form()
-    {
+    /**
+     * Get custom form.
+     *
+     * @return string
+     */
+    public function get_custom_form() {
         return '<input type="hidden" name="available_field_definitions[' . $this->get_name()
             . '][enabled]" value="1">';
     }

@@ -26,7 +26,7 @@ namespace block_dash\output;
 
 use block_dash\data_source\abstract_data_source;
 use block_dash\data_source\data_source_interface;
-use core\output\mustache_engine;
+use Mustache_Engine;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
 class renderer extends \plugin_renderer_base {
 
     /**
-     * @var mustache_engine
+     * @var Mustache_Engine
      */
     private $mustache;
 
@@ -92,7 +92,7 @@ class renderer extends \plugin_renderer_base {
                 'userdate' => array($userdatehelper, 'transform'),
             );
 
-            $this->mustache = new \core\output\mustache_engine(array(
+            $this->mustache = new Mustache_Engine(array(
                 'cache' => $cachedir,
                 'escape' => 's',
                 'loader' => $loader,

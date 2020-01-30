@@ -50,13 +50,13 @@ $definitions = [
     ],
     [
         'name' => 'u_fullname',
-        'select' => 'CONCAT(u.firstname, " ", u.lastname)',
+        'select' => "CONCAT(u.firstname, ' ', u.lastname)",
         'title' => get_string('fullname'),
         'tables' => ['u']
     ],
     [
         'name' => 'u_fullname_linked',
-        'select' => 'CONCAT(u.firstname, " ", u.lastname)',
+        'select' => "CONCAT(u.firstname, '_', u.lastname)",
         'title' => get_string('fullnamelinked', 'block_dash'),
         'tables' => ['u'],
         'options' => ['supports_sorting' => false],

@@ -158,7 +158,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
                     ['class' => 'drag-handle']);
                 $title = $icon . '<b>' . $title . '</b>: ' . $availablefielddefinition->get_title();
 
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, null,
+                $totaratitle = block_dash_is_totara() ? $title : null;
+                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, $totaratitle,
                     ['group' => self::$currentgroupid]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
@@ -177,7 +178,9 @@ abstract class abstract_layout implements layout_interface, \templatable {
                     continue;
                 }
                 $fieldname = 'config_preferences[filters][' . $filter->get_name() . '][enabled]';
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), null,
+
+                $totaratitle = block_dash_is_totara() ? $filter->get_label() : null;
+                $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), $totaratitle,
                     ['group' => self::$currentgroupid]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
@@ -195,7 +198,9 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 continue;
             }
             $fieldname = 'config_preferences[filters][' . $filter->get_name() . '][enabled]';
-            $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), null,
+
+            $totaratitle = block_dash_is_totara() ? $filter->get_label() : null;
+            $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), $totaratitle,
                 ['group' => self::$currentgroupid]);
             $mform->setType($fieldname, PARAM_BOOL);
         }

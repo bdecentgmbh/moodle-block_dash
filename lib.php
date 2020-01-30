@@ -82,11 +82,14 @@ function block_dash_register_layouts() {
  * @return string
  */
 function block_dash_output_fragment_block_preferences_form($args) {
+    global $DB;
+
     $args = (object) $args;
     $context = $args->context;
     $o = '';
 
-    $block = block_instance_by_id($context->instanceid);
+    $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
+    $block = block_instance($blockinstance->blockname, $blockinstance);
 
     $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'dash-preferences-form']);
 
@@ -122,4 +125,14 @@ function block_dash_flatten_array($array, $prefix = '') {
         }
     }
     return $result;
+}
+
+/**
+ * Check if system is Totara.
+ *
+ * @return bool
+ */
+function block_dash_is_totara() {
+    global $CFG;
+    return file_exists("$CFG->dirroot/totara");
 }

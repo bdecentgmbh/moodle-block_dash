@@ -157,8 +157,8 @@ class sql_data_grid extends data_grid {
             $wheresql = $filtersql[0];
             $havingsql = $filtersql[1];
         } else {
-            $wheresql = '1';
-            $havingsql = '1';
+            $wheresql = '1=1';
+            $havingsql = '1=1';
             $filterparams = [];
         }
 
@@ -188,7 +188,7 @@ class sql_data_grid extends data_grid {
                 }
             }
             global $DB;
-            $concat = $DB->sql_concat_join('"-"', $identifierselects);
+            $concat = $DB->sql_concat_join("'-'", $identifierselects);
             if (count($identifierselects) > 1) {
                 $selects = sprintf('%s as unique_id, %s', $concat, $selects);
             }

@@ -96,10 +96,12 @@ class users_data_source extends abstract_data_source {
             // Default to grouping by user.
             $groupby = 'u.id';
 
-            foreach ($this->get_preferences('available_fields') as $name => $field) {
-                if (strpos($name, 'g_') === 0 && isset($field['visible']) && $field['visible']) {
-                    $groupby = 'u.id, g.id';
-                    break;
+            if ($this->get_preferences('available_fields')) {
+                foreach ($this->get_preferences('available_fields') as $name => $field) {
+                    if (strpos($name, 'g_') === 0 && isset($field['visible']) && $field['visible']) {
+                        $groupby = 'u.id, g.id';
+                        break;
+                    }
                 }
             }
         }

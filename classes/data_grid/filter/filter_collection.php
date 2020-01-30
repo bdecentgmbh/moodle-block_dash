@@ -264,10 +264,10 @@ class filter_collection implements filter_collection_interface {
         }
 
         if (empty($havingsql)) {
-            $havingsql = ['1'];
+            $havingsql = ['1=1'];
         }
         if (empty($wheresql)) {
-            $wheresql = ['1'];
+            $wheresql = ['1=1'];
         }
 
         return [[implode(' AND ', $wheresql), implode(' AND ', $havingsql)], $params];

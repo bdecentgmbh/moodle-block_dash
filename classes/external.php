@@ -31,7 +31,6 @@ require_once("$CFG->libdir/externallib.php");
 use block_dash\data_source\form\preferences_form;
 use block_dash\output\renderer;
 use external_api;
-use local_dash\model\dashboard;
 
 /**
  * External API class.
@@ -71,7 +70,7 @@ class external extends external_api {
      * @throws \restricted_context_exception
      */
     public static function get_block_content($block_instance_id, $filter_form_data, $page, $sort_field) {
-        global $PAGE;
+        global $PAGE, $DB;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
             'block_instance_id' => $block_instance_id,
@@ -81,10 +80,12 @@ class external extends external_api {
         ]);
 
         $public = false;
-        $block = block_instance_by_id($params['block_instance_id']);
+        $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
+        $block = block_instance($blockinstance->blockname, $blockinstance);
         if (strpos($block->instance->pagetypepattern, 'local-dash-dashboard') !== false) {
-            if ($dashboard = dashboard::get_record(['shortname' => $block->instance->defaultregion])) {
-                if ($dashboard->get('permission') == dashboard::PERMISSION_PUBLIC) {
+            if ($dashboard = \local_dash\model\dashboard::get_record(
+                    ['shortname' => $block->instance->defaultregion])) {
+                if ($dashboard->get('permission') == \local_dash\model\dashboard::PERMISSION_PUBLIC) {
                     $public = true;
                 }
             }
@@ -159,6 +160,8 @@ class external extends external_api {
      * @throws \moodle_exception
      */
     public static function submit_preferences_form($contextid, $jsonformdata) {
+        global $DB;
+
         $params = self::validate_parameters(self::submit_preferences_form_parameters(), [
             'contextid' => $contextid,
             'jsonformdata' => $jsonformdata
@@ -173,7 +176,8 @@ class external extends external_api {
         $data = array();
         parse_str($serialiseddata, $data);
 
-        $block = block_instance_by_id($context->instanceid);
+        $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
+        $block = block_instance($blockinstance->blockname, $blockinstance);
 
         $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'dash-preferences-form'],
             true, $data);

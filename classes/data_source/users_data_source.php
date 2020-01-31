@@ -79,7 +79,7 @@ class users_data_source extends abstract_data_source {
             $sql .= "LEFT JOIN {user_info_data} $alias ON $alias.userid = u.id AND $alias.fieldid = $field->id ";
         }
 
-        $sql .= ' %%WHERE%% %%GROUPBY%% %%ORDERBY%%';
+        $sql .= ' %%WHERE%% AND u.deleted = 0 %%GROUPBY%% %%ORDERBY%%';
 
         return $sql;
     }
@@ -93,6 +93,7 @@ class users_data_source extends abstract_data_source {
         $groupby = 'u.id, g.id';
 
         if ($this->get_layout()->supports_field_visibility()) {
+            // Default to grouping by user.
             // Default to grouping by user.
             $groupby = 'u.id';
 

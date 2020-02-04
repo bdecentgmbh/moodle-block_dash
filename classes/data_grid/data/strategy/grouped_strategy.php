@@ -26,6 +26,7 @@ namespace block_dash\data_grid\data\strategy;
 
 use block_dash\data_grid\data\data_collection;
 use block_dash\data_grid\data\data_collection_interface;
+use block_dash\data_grid\data\field;
 use block_dash\data_grid\data_grid_interface;
 use block_dash\data_grid\field\field_definition_interface;
 
@@ -88,20 +89,17 @@ class grouped_strategy implements data_strategy_interface {
                 $name = $fielddefinition->get_name();
 
                 if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
-                    unset($record->$name);
                     continue;
                 }
 
-                $record->$name = $fielddefinition->transform_data($record->$name, $fullrecord);
+                $row->add_data(new field($name, $fielddefinition->transform_data($record->$name, $fullrecord),
+                    $fielddefinition->get_title()));
             }
 
-            $row->add_data_associative($record);
             if (!isset($sections[$groupby])) {
                 $sections[$groupby] = new data_collection();
-                $sections[$groupby]->add_data_associative([
-                    'groupby' => $groupby,
-                    'label' => $label
-                ]);
+                $sections[$groupby]->add_data(new field('groupby', $groupby));
+                $sections[$groupby]->add_data(new field('label', $label));
             }
             $sections[$groupby]->add_child_collection('rows', $row);
         }

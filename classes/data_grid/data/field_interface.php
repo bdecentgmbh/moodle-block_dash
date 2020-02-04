@@ -46,4 +46,9 @@ interface field_interface {
      * @return mixed|string
      */
     public function get_value();
+
+    /**
+     * @return string
+     */
+    public function get_label();
 }

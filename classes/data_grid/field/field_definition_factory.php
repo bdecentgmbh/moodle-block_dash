@@ -33,57 +33,138 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package block_dash
  */
-class field_definition_factory {
+class field_definition_factory implements field_definition_factory_interface {
+
+    /**
+     * Cache registered field definitions so they are only retrieved once.
+     *
+     * @var array
+     */
+    private static $fielddefintionregistry;
 
     /**
      * @var field_definition_interface[]
      */
-    private static $allfielddefinitions = null;
+    private static $fielddefinitions;
 
     /**
-     * Returns all reigstered field definitions.
+     * Register and return data registry.
      *
-     * @return field_definition_interface[]
+     * @return array
      */
-    public static function get_all_field_definitions() {
-        if (is_null(self::$allfielddefinitions)) {
-            self::$allfielddefinitions = [];
+    protected static function get_field_definition_registry() {
+        if (is_null(self::$fielddefintionregistry)) {
+            self::$fielddefintionregistry = [];
             if ($pluginsfunction = get_plugins_with_function('register_field_definitions')) {
                 foreach ($pluginsfunction as $plugintype => $plugins) {
                     foreach ($plugins as $pluginfunction) {
                         foreach ($pluginfunction() as $fielddefinition) {
-                            $newfielddefinition = new sql_field_definition(
-                                $fielddefinition['select'],
-                                $fielddefinition['name'],
-                                $fielddefinition['title'],
-                                isset($fielddefinition['visibility']) ? $fielddefinition['visibility'] :
-                                    field_definition_interface::VISIBILITY_VISIBLE,
-                                isset($fielddefinition['options']) ? $fielddefinition['options'] : []);
-
-                            if (isset($fielddefinition['tables'])) {
-                                $newfielddefinition->set_option('tables', $fielddefinition['tables']);
-                            }
-
-                            // Support adding attributes from configuration array.
-                            if (isset($fielddefinition['attributes'])) {
-                                foreach ($fielddefinition['attributes'] as $attribute) {
-                                    /** @var field_attribute_interface $newattribute */
-                                    $newattribute = new $attribute['type']();
-                                    if (isset($attribute['options'])) {
-                                        $newattribute->set_options($attribute['options']);
-                                    }
-                                    $newfielddefinition->add_attribute($newattribute);
-                                }
-                            }
-
-                            self::$allfielddefinitions[] = $newfielddefinition;
+                            self::$fielddefintionregistry[$fielddefinition['name']] = $fielddefinition;
                         }
                     }
                 }
             }
         }
 
-        return self::$allfielddefinitions;
+        return self::$fielddefintionregistry;
+    }
+
+    /**
+     * Returns all registered field definitions.
+     *
+     * @return field_definition_interface[]
+     * @throws \coding_exception
+     */
+    public static function get_all_field_definitions() {
+        if (is_null(self::$fielddefinitions)) {
+            self::$fielddefinitions = [];
+            foreach (self::get_field_definition_registry() as $info) {
+                if (!isset($info['name'])) {
+                    throw new \coding_exception('Standard SQL fields need a name defined.');
+                }
+                self::$fielddefinitions[$info['name']] = self::build_field_definition($info['name'], $info);
+            }
+        }
+
+        return self::$fielddefinitions;
+    }
+
+    /**
+     * Check if field definition exists.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public static function exists($name) {
+        return isset(self::get_field_definition_registry()[$name]);
+    }
+
+    /**
+     * Get field definition info.
+     *
+     * @param string $name
+     * @return array|null
+     */
+    public static function get_field_definition_info($name) {
+        if (self::exists($name)) {
+            return self::get_field_definition_registry()[$name];
+        }
+
+        return null;
+    }
+
+    /**
+     * Build field definition.
+     *
+     * @param string $name
+     * @param array $info
+     * @return field_definition_interface
+     * @throws \coding_exception
+     */
+    public static function build_field_definition($name, array $info) {
+        if (!self::exists($name)) {
+            return null;
+        }
+
+        $fielddefinitioninfo = self::get_field_definition_info($name);
+
+        if (isset($fielddefinitioninfo['factory']) && $fielddefinitioninfo['factory'] != self::class) {
+            return $fielddefinitioninfo['factory']::build_field_definition($name, $info);
+        }
+
+        if (!isset($fielddefinitioninfo['select'])) {
+            throw new \coding_exception('Standard SQL fields need a select defined: ' . $name);
+        }
+
+        if (!isset($fielddefinitioninfo['title'])) {
+            throw new \coding_exception('Standard SQL fields need a title defined: ' . $name);
+        }
+
+        $newfielddefinition = new sql_field_definition(
+            $fielddefinitioninfo['select'],
+            $fielddefinitioninfo['name'],
+            $fielddefinitioninfo['title'],
+            isset($fielddefinitioninfo['visibility']) ? $fielddefinitioninfo['visibility'] :
+                field_definition_interface::VISIBILITY_VISIBLE,
+            isset($fielddefinitioninfo['options']) ? $fielddefinitioninfo['options'] : []);
+
+        if (isset($fielddefinitioninfo['tables'])) {
+            $newfielddefinition->set_option('tables', $fielddefinitioninfo['tables']);
+        }
+
+        // Support adding attributes from configuration array.
+        if (isset($fielddefinitioninfo['attributes'])) {
+            foreach ($fielddefinitioninfo['attributes'] as $attribute) {
+                /** @var field_attribute_interface $newattribute */
+                $newattribute = new $attribute['type']();
+                if (isset($attribute['options'])) {
+                    $newattribute->set_options($attribute['options']);
+                }
+                $newfielddefinition->add_attribute($newattribute);
+            }
+        }
+
+        return $newfielddefinition;
     }
 
     /**
@@ -91,6 +172,7 @@ class field_definition_factory {
      *
      * @param string[] $names Field definition names to retrieve.
      * @return field_definition_interface[]
+     * @throws \coding_exception
      */
     public static function get_field_definitions(array $names) {
         $fielddefinitions = [];
@@ -112,6 +194,7 @@ class field_definition_factory {
      *
      * @param string $name Field definition name to retrieve.
      * @return field_definition_interface
+     * @throws \coding_exception
      */
     public static function get_field_definition($name) {
         foreach (self::get_all_field_definitions() as $fielddefinition) {
@@ -128,6 +211,7 @@ class field_definition_factory {
      *
      * @param array $tablealiases
      * @return array
+     * @throws \coding_exception
      */
     public static function get_field_definitions_by_tables(array $tablealiases) {
         $fielddefinitions = [];

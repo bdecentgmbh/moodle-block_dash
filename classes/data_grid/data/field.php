@@ -24,8 +24,6 @@
 
 namespace block_dash\data_grid\data;
 
-use block_dash\data_grid\field\field_definition_factory;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -46,14 +44,21 @@ class field implements field_interface {
     private $value;
 
     /**
+     * @var string
+     */
+    private $label;
+
+    /**
      * Create a new field.
      *
      * @param string $name
      * @param string $value
+     * @param string $label
      */
-    public function __construct($name, $value) {
+    public function __construct($name, $value, $label = '') {
         $this->name = $name;
         $this->value = $value;
+        $this->label = $label;
     }
 
     /**
@@ -80,10 +85,6 @@ class field implements field_interface {
      * @return string|null
      */
     public function get_label() {
-        if ($fielddefinition = field_definition_factory::get_field_definition($this->get_name())) {
-            return $fielddefinition->get_title();
-        }
-
-        return null;
+        return $this->label;
     }
 }

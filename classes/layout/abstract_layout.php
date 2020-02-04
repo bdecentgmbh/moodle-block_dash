@@ -25,6 +25,7 @@
 namespace block_dash\layout;
 
 use block_dash\data_grid\data\data_collection_interface;
+use block_dash\data_grid\data\field;
 use block_dash\data_grid\data\strategy\data_strategy_interface;
 use block_dash\data_grid\data\strategy\standard_strategy;
 use block_dash\data_grid\field\attribute\identifier_attribute;
@@ -281,9 +282,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
     protected function map_data($mapping, data_collection_interface $datacollection) {
         foreach ($mapping as $newname => $fieldname) {
             if ($fieldname) {
-                $datacollection->add_data_associative([
-                    $newname => $datacollection[$fieldname]
-                ]);
+                $datacollection->add_data(new field($newname, $datacollection[$fieldname]));
             }
         }
 

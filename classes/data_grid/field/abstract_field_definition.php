@@ -129,6 +129,15 @@ abstract class abstract_field_definition implements field_definition_interface {
     }
 
     /**
+     * Override field title.
+     *
+     * @param string $title
+     */
+    public function set_title($title) {
+        $this->title = $title;
+    }
+
+    /**
      * Get field visibility.
      *
      * @return int
@@ -328,7 +337,13 @@ abstract class abstract_field_definition implements field_definition_interface {
      * @return string
      */
     public function get_custom_form() {
-        return '<input type="hidden" name="available_field_definitions[' . $this->get_name()
+        $html = '<input type="hidden" name="available_field_definitions[' . $this->get_name()
             . '][enabled]" value="1">';
+
+        $html .= '<input type="text" name="available_field_definitions[' . $this->get_name()
+            . '][title_override]" placeholder="' . get_string('titleoverride', 'block_dash') . '" 
+            value="' . $this->get_title() . '">';
+
+        return $html;
     }
 }

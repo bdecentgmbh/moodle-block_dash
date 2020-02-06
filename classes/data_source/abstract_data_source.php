@@ -245,9 +245,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     public function get_layout() {
         if (is_null($this->layout)) {
             if ($layout = $this->get_preferences('layout')) {
-                if (class_exists($layout)) {
-                    $this->layout = new $layout($this);
-                }
+                $this->layout = layout_factory::build_layout($layout, $this);
             }
 
             // If still null default to grid layout.

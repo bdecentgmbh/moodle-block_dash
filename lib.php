@@ -70,7 +70,7 @@ function block_dash_register_layouts() {
     return [
         [
             'name' => get_string('layoutgrid', 'block_dash'),
-            'class' => grid_layout::class
+            'identifier' => grid_layout::class
         ]
     ];
 }

@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Responsible for creating data sources on request.
  *
  * @package    block_dash
- * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @copyright  2020 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_dash\layout;
+
+use block_dash\data_source\data_source_interface;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020020500;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017051509;        // Requires this Moodle version.
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release = '1.0';
+/**
+ * Responsible for creating layouts on request.
+ *
+ * @package block_dash
+ */
+interface layout_factory_interface {
+
+    /**
+     * Build and return a layout based on unique identifier.
+     *
+     * @param string $identifier
+     * @param data_source_interface $datasource
+     * @return data_source_interface
+     */
+    public static function build_layout($identifier, data_source_interface $datasource);
+}

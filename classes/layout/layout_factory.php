@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package block_dash
  */
-class layout_factory {
+class layout_factory implements layout_factory_interface {
 
     /**
      * @var array
@@ -52,7 +52,7 @@ class layout_factory {
                 foreach ($pluginsfunction as $plugintype => $plugins) {
                     foreach ($plugins as $pluginfunction) {
                         foreach ($pluginfunction() as $layoutinfo) {
-                            self::$layoutregistry[$layoutinfo['class']] = $layoutinfo;
+                            self::$layoutregistry[$layoutinfo['identifier']] = $layoutinfo;
                         }
                     }
                 }
@@ -93,9 +93,15 @@ class layout_factory {
      * @param data_source_interface $datasource
      * @return data_source_interface
      */
-    public static function get_layout($identifier, data_source_interface $datasource) {
+    public static function build_layout($identifier, data_source_interface $datasource) {
         if (!self::exists($identifier)) {
             return null;
+        }
+
+        $layoutinfo = self::get_layout_info($identifier);
+
+        if (isset($layoutinfo['factory']) && $layoutinfo['factory'] != self::class) {
+            return $layoutinfo['factory']::build_layout($identifier, $datasource);
         }
 
         if (class_exists($identifier)) {

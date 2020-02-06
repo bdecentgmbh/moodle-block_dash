@@ -92,6 +92,11 @@ class renderer extends \plugin_renderer_base {
                 'userdate' => array($userdatehelper, 'transform'),
             );
 
+            if (block_dash_is_totara()) {
+                $flexhelper = new \core\output\mustache_flex_icon_helper($this);
+                $helpers['flex_icon'] = array($flexhelper, 'flex_icon');
+            }
+
             $this->mustache = new Mustache_Engine(array(
                 'cache' => $cachedir,
                 'escape' => 's',

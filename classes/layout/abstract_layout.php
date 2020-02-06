@@ -32,8 +32,6 @@ use block_dash\data_grid\field\attribute\identifier_attribute;
 use block_dash\data_grid\filter\condition;
 use block_dash\data_grid\paginator;
 use block_dash\data_source\data_source_interface;
-use core\output\icon_system;
-use core\output\icon_system_fontawesome;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -236,7 +234,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
             'error' => '',
             'paginator' => '',
             'data' => null,
-            'uniqueid' => uniqid()
+            'uniqueid' => uniqid(),
+            'is_totara' => block_dash_is_totara()
         ];
 
         if (!empty($this->get_data_source()->get_all_preferences())) {
@@ -300,12 +299,16 @@ abstract class abstract_layout implements layout_interface, \templatable {
         $icons = [];
 
         if (isset($PAGE->theme->iconsystem)) {
-            if ($iconsystem = icon_system::instance($PAGE->theme->iconsystem)) {
-                if ($iconsystem instanceof icon_system_fontawesome) {
+            if ($iconsystem = \core\output\icon_system::instance($PAGE->theme->iconsystem)) {
+                if ($iconsystem instanceof \core\output\icon_system_fontawesome) {
                     foreach ($iconsystem->get_icon_name_map() as $pixname => $faname) {
                         $icons[$faname] = $pixname;
                     }
                 }
+            }
+        } else if (block_dash_is_totara()) {
+            foreach (\core\output\flex_icon_helper::get_icons($PAGE->theme->name) as $iconkey => $icon) {
+                $icons[$iconkey] = $iconkey;
             }
         }
 

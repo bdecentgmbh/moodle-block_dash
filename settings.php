@@ -15,17 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
- * @package    block_dash
- * @copyright  2019 bdecent gmbh <https://bdecent.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_dash
+ * @copyright 2020 bdecent gmbh <https://bdecent.de>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2020020601;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017051509;        // Requires this Moodle version.
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release = '1.0';
+if ($ADMIN->fulltree) {
+
+    require_once("$CFG->dirroot/blocks/dash/lib.php");
+
+    // Default high scores.
+    $setting = new admin_setting_configselect('block_dash/bootstrap_version',
+        get_string('bootstrapversion', 'block_dash'),
+        get_string('bootstrapversion_desc', 'block_dash'), block_dash_is_totara() ? 3 : 4, [
+            3 => 'Bootstrap 3.x',
+            4 => 'Bootstrap 4.x'
+        ]);
+    $settings->add($setting);
+}

@@ -72,6 +72,11 @@ body#page-blocks-dash-data-source .drag-handle {
     cursor: pointer;
 }
 
+.bootstrap3 .row.flex,
+.bootstrap3 .col-sm-3.flex {
+    display: flex;
+}
+
 /*!
  * Datepicker for Bootstrap v1.9.0 (https://github.com/uxsolutions/bootstrap-datepicker)
  *

@@ -24,6 +24,8 @@
 
 namespace block_dash\data_grid\field\attribute;
 
+use block_dash\data_grid\field\field_definition_interface;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -32,6 +34,18 @@ defined('MOODLE_INTERNAL') || die();
  * @package block_dash
  */
 interface field_attribute_interface {
+
+    /**
+     * Set the field definition this attribute is attached to.
+     *
+     * @param field_definition_interface $fielddefinition
+     */
+    public function set_field_definition(field_definition_interface $fielddefinition);
+
+    /**
+     * @return field_definition_interface
+     */
+    public function get_field_definition();
 
     /**
      * After records are relieved from database each field has a chance to transform the data.

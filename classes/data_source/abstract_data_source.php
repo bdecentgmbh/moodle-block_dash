@@ -113,7 +113,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 throw new \coding_exception('Data source has no field definitions associated with it.');
             }
 
-            $this->datagrid = new sql_data_grid($this->get_context());
+            $this->datagrid = new sql_data_grid($this->get_context(), $this);
             $this->datagrid->set_query_template($this->get_query_template());
             $this->datagrid->set_count_query_template($this->get_count_query_template());
             $this->datagrid->set_field_definitions($this->get_sorted_field_definitions());
@@ -360,7 +360,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @return string
      */
     public function get_groupby() {
-        return $this->get_sorted_field_definitions()[0]->get_select();
+        return false;
     }
 
     /**
@@ -370,7 +370,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public final function get_available_field_definitions() {
         if (is_null($this->fielddefinitions)) {
-            $this->fielddefinitions = $this->build_available_field_definitions();;
+            $this->fielddefinitions = $this->build_available_field_definitions();
         }
 
         return $this->fielddefinitions;

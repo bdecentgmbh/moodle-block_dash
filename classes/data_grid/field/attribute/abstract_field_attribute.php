@@ -24,10 +24,12 @@
 
 namespace block_dash\data_grid\field\attribute;
 
+use block_dash\data_grid\field\field_definition_interface;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * An attribute changes how a field definition is designated or behaves.
+ * An attribute changes how field definition output is formatted.
  *
  * @package block_dash
  */
@@ -37,6 +39,26 @@ abstract class abstract_field_attribute implements field_attribute_interface {
      * @var array
      */
     private $options = [];
+
+    private $fielddefinition;
+
+    /**
+     * Set the field definition this attribute is attached to.
+     *
+     * @param field_definition_interface $fielddefinition
+     */
+    public function set_field_definition(field_definition_interface $fielddefinition) {
+        $this->fielddefinition = $fielddefinition;
+    }
+
+    /**
+     * Get the field definition this attribute is attached to.
+     *
+     * @return field_definition_interface
+     */
+    public function get_field_definition() {
+        return $this->fielddefinition;
+    }
 
     /**
      * After records are relieved from database each field has a chance to transform the data.

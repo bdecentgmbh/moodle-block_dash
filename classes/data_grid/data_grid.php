@@ -29,6 +29,7 @@ use block_dash\data_grid\data\strategy\data_strategy_interface;
 use block_dash\data_grid\data\strategy\standard_strategy;
 use block_dash\data_grid\field\field_definition_interface;
 use block_dash\data_grid\filter\filter_collection_interface;
+use block_dash\data_source\data_source_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -91,16 +92,22 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable {
      */
     private $datastrategy;
 
+    /**
+     * @var data_source_interface
+     */
+    private $datasource;
+
     #endregion
 
     /**
      * Constructor.
      *
      * @param \context $context
+     * @param data_source_interface $datasource
      * @param \stdClass $user User displaying data (logged in user).
      * @throws \coding_exception
      */
-    public function __construct(\context $context, \stdClass $user = null) {
+    public function __construct(\context $context, data_source_interface $datasource, \stdClass $user = null) {
         global $USER;
 
         if (is_null($user)) {
@@ -108,12 +115,22 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable {
         }
 
         $this->context = $context;
+        $this->datasource = $datasource;
 
         $this->paginator = new paginator(function () {
             return $this->get_count();
         });
 
         $this->datastrategy = new standard_strategy();
+    }
+
+    /**
+     * Get data source running this data grid.
+     *
+     * @return data_source_interface
+     */
+    public function get_data_source() {
+        return $this->datasource;
     }
 
     /**
@@ -211,7 +228,7 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable {
      * @param field_definition_interface[] $fielddefinitions
      * @throws \moodle_exception
      */
-    public function set_field_definitions($fielddefinitions) {
+    public final function set_field_definitions($fielddefinitions) {
         // We don't want field definitions to be set multiple times, it should be done during init only.
         if ($this->has_any_field_definitions()) {
             throw new \coding_exception('Setting field definitions multiple times is not allowed.');
@@ -232,7 +249,9 @@ abstract class data_grid implements data_grid_interface, \JsonSerializable {
      * @param field_definition_interface $fielddefinition
      * @throws \moodle_exception
      */
-    public function add_field_definition(field_definition_interface $fielddefinition) {
+    public final function add_field_definition(field_definition_interface $fielddefinition) {
+        $fielddefinition = clone $fielddefinition;
+        $fielddefinition->set_data_grid($this);
         $this->fielddefinitions[$fielddefinition->get_name()] = $fielddefinition;
     }
 

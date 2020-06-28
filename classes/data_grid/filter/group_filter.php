@@ -24,6 +24,9 @@
 
 namespace block_dash\data_grid\filter;
 
+use coding_exception;
+use context;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -34,29 +37,22 @@ defined('MOODLE_INTERNAL') || die();
 class group_filter extends select_filter {
 
     /**
-     * Filter values.
+     * Get user groups in context.
      *
-     * @var array
+     * @param $userid
+     * @param context $context
+     * @return array
+     * @throws coding_exception
      */
-    private $values;
-
-    /**
-     * Initialize the filter. It must be initialized before values are extracted or SQL generated.
-     * If overridden call parent.
-     */
-    public function init() {
-        global $USER, $CFG, $COURSE;
+    public static function get_user_groups($userid, context $context) {
+        global $COURSE, $CFG;
 
         require_once("$CFG->dirroot/lib/enrollib.php");
         require_once("$CFG->dirroot/lib/grouplib.php");
 
-        $this->values = [];
-
         $courses = [$COURSE];
-        if ($context = $this->get_context()) {
-            if ($context instanceof \context_system || $context instanceof \context_user) {
-                $courses = enrol_get_my_courses();
-            }
+        if ($context instanceof \context_system || $context instanceof \context_user) {
+            $courses = enrol_get_my_courses();
         }
 
         $groups = [];
@@ -65,12 +61,24 @@ class group_filter extends select_filter {
             if (has_capability('moodle/site:accessallgroups', \context_course::instance($course->id))) {
                 $groups = array_merge($groups, groups_get_all_groups($course->id));
             } else {
-                $groups = array_merge($groups, groups_get_all_groups($course->id, $USER->id));
+                $groups = array_merge($groups, groups_get_all_groups($course->id, $userid));
             }
         }
 
-        foreach ($groups as $group) {
-            $this->add_option($group->id, $group->name);
+        return $groups;
+    }
+
+    /**
+     * Initialize the filter. It must be initialized before values are extracted or SQL generated.
+     * If overridden call parent.
+     */
+    public function init() {
+        global $USER;
+
+        if ($context = $this->get_context()) {
+            foreach (self::get_user_groups($USER->id, $context) as $group) {
+                $this->add_option($group->id, $group->name);
+            }
         }
 
         parent::init();
@@ -80,7 +88,7 @@ class group_filter extends select_filter {
      * Get filter label.
      *
      * @return string
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function get_label() {
         if ($label = parent::get_label()) {
@@ -88,5 +96,21 @@ class group_filter extends select_filter {
         }
 
         return get_string('group', 'group');
+    }
+
+    /**
+     * Return where SQL and params for placeholders.
+     *
+     * @return array
+     * @throws \coding_exception|\dml_exception
+     */
+    public function get_sql_and_params() {
+        list($sql, $params) = parent::get_sql_and_params();
+
+        if ($sql) {
+            $sql = 'EXISTS (SELECT * FROM {groups_members} gm100 WHERE gm100.userid = u.id AND ' . $sql . ')';
+        }
+
+        return [$sql, $params];
     }
 }

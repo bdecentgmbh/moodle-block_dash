@@ -67,12 +67,7 @@ class users_data_source extends abstract_data_source {
         global $CFG;
 
         require_once("$CFG->dirroot/user/profile/lib.php");
-        $sql = 'SELECT DISTINCT %%SELECT%% FROM {user} u
-                LEFT JOIN {user_enrolments} ue ON ue.userid = u.id
-                LEFT JOIN {enrol} e ON e.id = ue.enrolid
-                LEFT JOIN {course} c ON c.id = e.courseid
-                LEFT JOIN {groups_members} gm ON gm.userid = u.id
-                LEFT JOIN {groups} g ON g.id = gm.groupid ';
+        $sql = 'SELECT %%SELECT%% FROM {user} u ';
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
@@ -90,24 +85,7 @@ class users_data_source extends abstract_data_source {
      * @return string
      */
     public function get_groupby() {
-        $groupby = 'u.id, g.id';
-
-        if ($this->get_layout()->supports_field_visibility()) {
-            // Default to grouping by user.
-            // Default to grouping by user.
-            $groupby = 'u.id';
-
-            if ($this->get_preferences('available_fields')) {
-                foreach ($this->get_preferences('available_fields') as $name => $field) {
-                    if (strpos($name, 'g_') === 0 && isset($field['visible']) && $field['visible']) {
-                        $groupby = 'u.id, g.id';
-                        break;
-                    }
-                }
-            }
-        }
-
-        return $groupby;
+        return false;
     }
 
     /**
@@ -116,7 +94,7 @@ class users_data_source extends abstract_data_source {
      * @return array|field_definition_interface[]
      */
     public function build_available_field_definitions() {
-        return field_definition_factory::get_field_definitions_by_tables(['u', 'g']);
+        return field_definition_factory::get_field_definitions_by_tables(['u']);
     }
 
     /**
@@ -132,7 +110,7 @@ class users_data_source extends abstract_data_source {
 
         $filtercollection = new filter_collection(get_class($this), $this->get_context());
 
-        $filtercollection->add_filter(new group_filter('group', 'g.id'));
+        $filtercollection->add_filter(new group_filter('group', 'gm100.groupid'));
 
         $filtercollection->add_filter(new user_field_filter('u_department', 'u.department', 'department',
             get_string('department')));
@@ -151,7 +129,7 @@ class users_data_source extends abstract_data_source {
 
         $filtercollection->add_filter(new logged_in_user_condition('current_user', 'u.id'));
         $filtercollection->add_filter(new participants_condition('participants', 'u.id'));
-        $filtercollection->add_filter(new my_groups_condition('my_groups', 'g.id'));
+        $filtercollection->add_filter(new my_groups_condition('my_groups', 'gm300.groupid'));
         $filtercollection->add_filter(new current_course_condition('current_course', 'c.id'));
         $filtercollection->add_filter(new current_course_condition('current_course_groups', 'g.courseid',
             get_string('currentcoursegroups', 'block_dash')));

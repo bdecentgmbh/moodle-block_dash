@@ -27,6 +27,7 @@ namespace block_dash\data_grid;
 use block_dash\data_grid\data\data_collection_interface;
 use block_dash\data_grid\data\strategy\data_strategy_interface;
 use block_dash\data_grid\field\field_definition_interface;
+use block_dash\data_source\data_source_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,6 +37,13 @@ defined('MOODLE_INTERNAL') || die();
  * @package block_dash
  */
 interface data_grid_interface {
+
+    /**
+     * Get data source running this data grid.
+     *
+     * @return data_source_interface
+     */
+    public function get_data_source();
 
     /**
      * Get data strategy.

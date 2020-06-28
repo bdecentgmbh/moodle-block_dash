@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $DB;
+
 $definitions = [
     [
         'name' => 'u_id',
@@ -50,13 +52,13 @@ $definitions = [
     ],
     [
         'name' => 'u_fullname',
-        'select' => "CONCAT(u.firstname, ' ', u.lastname)",
+        'select' => $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']),
         'title' => get_string('fullname'),
         'tables' => ['u']
     ],
     [
         'name' => 'u_fullname_linked',
-        'select' => "CONCAT(u.firstname, ' ', u.lastname)",
+        'select' => $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']),
         'title' => get_string('fullnamelinked', 'block_dash'),
         'tables' => ['u'],
         'options' => ['supports_sorting' => false],
@@ -276,6 +278,22 @@ $definitions = [
                 'options' => [
                     'icon' => 'i/email',
                     'title' => get_string('sendmessage', 'message')
+                ]
+            ]
+        ]
+    ],
+    [
+        'name' => 'u_group_names',
+        'select' => "(SELECT string_agg(g200.id::text, ',') FROM {groups} g200 JOIN {groups_members} gm200 ON gm200.groupid = g200.id AND gm200.userid = u.id)",
+        'title' => get_string('group'),
+        'tables' => ['u'],
+        'attributes' => [
+            [
+                'type' => \block_dash\data_grid\field\attribute\rename_group_ids_attribute::class,
+                'options' => [
+                    'table' => 'groups',
+                    'field' => 'name',
+                    'delimiter' => ',' // Separator between each ID in SQL select.
                 ]
             ]
         ]

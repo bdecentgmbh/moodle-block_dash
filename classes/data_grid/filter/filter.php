@@ -278,11 +278,11 @@ class filter implements filter_interface {
      * Return where SQL and params for placeholders.
      *
      * @return array
-     * @throws \Exception
+     * @throws \coding_exception|\dml_exception
      */
     public function get_sql_and_params() {
         if (!$this->initialized) {
-            throw new \Exception('Filter was not initialized properly. Did you call parent::init()?');
+            throw new \coding_exception('Filter was not initialized properly. Did you call parent::init()?');
         }
 
         if (!$values = $this->get_values()) {

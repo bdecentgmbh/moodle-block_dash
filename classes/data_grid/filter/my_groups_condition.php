@@ -50,30 +50,12 @@ class my_groups_condition extends condition {
      */
     public function get_values() {
         if (is_null($this->values)) {
-            global $USER, $CFG;
-
-            require_once("$CFG->dirroot/lib/enrollib.php");
-            require_once("$CFG->dirroot/lib/grouplib.php");
+            global $USER;
 
             $this->values = [];
 
-            $courses = enrol_get_my_courses();
-
-            $groups = [];
-            foreach ($courses as $course) {
-                if (has_capability('moodle/site:accessallgroups', \context_course::instance($course->id))) {
-                    $groups = array_merge($groups, groups_get_all_groups($course->id));
-                } else {
-                    $groups = array_merge($groups, groups_get_all_groups($course->id, $USER->id));
-                }
-            }
-
-            foreach ($groups as $group) {
+            foreach (group_filter::get_user_groups($USER->id, $this->get_context()) as $group) {
                 $this->values[] = $group->id;
-            }
-
-            if (!$this->values) {
-                $this->values = [0];
             }
         }
 
@@ -92,5 +74,21 @@ class my_groups_condition extends condition {
         }
 
         return get_string('mygroups', 'group');
+    }
+
+    /**
+     * Return where SQL and params for placeholders.
+     *
+     * @return array
+     * @throws \coding_exception|\dml_exception
+     */
+    public function get_sql_and_params() {
+        list($sql, $params) = parent::get_sql_and_params();
+
+        if ($sql) {
+            $sql = 'EXISTS (SELECT * FROM {groups_members} gm300 WHERE gm300.userid = u.id AND ' . $sql . ')';
+        }
+
+        return [$sql, $params];
     }
 }

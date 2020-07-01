@@ -52,5 +52,7 @@ class preferences_form extends \moodleform {
         if ($configuration->is_fully_configured()) {
             $configuration->get_data_source()->build_preferences_form($this, $this->_form);
         }
+
+        $this->add_action_buttons();
     }
 }

@@ -49,7 +49,7 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
         return Str.get_string('editpreferences', 'block_dash').then(function(title) {
             // Create the modal.
             return ModalFactory.create({
-                type: ModalFactory.types.SAVE_CANCEL,
+                type: ModalFactory.types.DEFAULT,
                 title: title,
                 body: this.getBody()
             }, triggers);
@@ -74,7 +74,7 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
             this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this, true));
 
             this.modal.getRoot().on(ModalEvents.bodyRendered, function(e) {
-                $("#fgroup_id_group_1 .form-inline").sortable({
+                $("#fgroup_id_group_1 .form-check-inline").sortable({
                     handle: ".drag-handle",
                     axis: "y"
                 });

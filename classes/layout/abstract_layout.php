@@ -158,13 +158,18 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $title = $icon . '<b>' . $title . '</b>: ' . $availablefielddefinition->get_title();
 
                 $totaratitle = block_dash_is_totara() ? $title : null;
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, $totaratitle,
-                    ['group' => self::$currentgroupid]);
+                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, $totaratitle, [
+                    'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
+                    'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
+                    'data-toggle' => 'slave', // For checkbox_toggleall.
+                    'data-action' => 'toggle' // For checkbox_toggleall.
+                ]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
             $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'),
                 ['<div style="width: 100%;"></div>']);
-            $form->add_checkbox_controller(self::$currentgroupid);
+
+            $this->add_checkbox_toggleall(self::$currentgroupid, $form, $mform);
 
             self::$currentgroupid++;
         }
@@ -179,13 +184,18 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $fieldname = 'config_preferences[filters][' . $filter->get_name() . '][enabled]';
 
                 $totaratitle = block_dash_is_totara() ? $filter->get_label() : null;
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), $totaratitle,
-                    ['group' => self::$currentgroupid]);
+                $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), $totaratitle, [
+                    'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
+                    'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
+                    'data-toggle' => 'slave', // For checkbox_toggleall.
+                    'data-action' => 'toggle' // For checkbox_toggleall.
+                ]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
             $mform->addGroup($group, null, get_string('enabledfilters', 'block_dash'),
                 ['<div style="width: 100%;"></div>']);
-            $form->add_checkbox_controller(self::$currentgroupid);
+
+            $this->add_checkbox_toggleall(self::$currentgroupid, $form, $mform);
 
             self::$currentgroupid++;
         }
@@ -199,15 +209,41 @@ abstract class abstract_layout implements layout_interface, \templatable {
             $fieldname = 'config_preferences[filters][' . $filter->get_name() . '][enabled]';
 
             $totaratitle = block_dash_is_totara() ? $filter->get_label() : null;
-            $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), $totaratitle,
-                ['group' => self::$currentgroupid]);
+            $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), $totaratitle, [
+                'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
+                'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
+                'data-toggle' => 'slave', // For checkbox_toggleall.
+                'data-action' => 'toggle' // For checkbox_toggleall.
+            ]);
             $mform->setType($fieldname, PARAM_BOOL);
         }
         $mform->addGroup($group, null, get_string('enabledconditions', 'block_dash'),
             ['<div style="width: 100%;"></div>']);
-        $form->add_checkbox_controller(self::$currentgroupid);
+
+        $this->add_checkbox_toggleall(self::$currentgroupid, $form, $mform);
 
         self::$currentgroupid++;
+    }
+
+    /**
+     * Add button to select/deselect all checkboxes in group.
+     *
+     * @param $uniqueid
+     * @param \moodleform $form
+     * @param \MoodleQuickForm $mform
+     */
+    private function add_checkbox_toggleall($uniqueid, \moodleform $form, \MoodleQuickForm $mform) {
+        global $OUTPUT;
+
+        if (class_exists('\core\output\checkbox_toggleall')) {
+            $masterbutton = new \core\output\checkbox_toggleall('group' . $uniqueid, true, [], true);
+
+            // Then you can export for template.
+            $mform->addElement('static', 'toggleall' . $uniqueid, '', $OUTPUT->render($masterbutton));
+        } else {
+            // Moodle 3.7 and earlier support
+            $form->add_checkbox_controller($uniqueid);
+        }
     }
 
     /**

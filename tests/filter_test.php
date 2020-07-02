@@ -24,11 +24,11 @@
 
 namespace block_dash\test;
 
-use block_dash\data_grid\filter\choice_filter;
-use block_dash\data_grid\filter\filter;
-use block_dash\data_grid\filter\filter_collection;
-use block_dash\data_grid\filter\filter_collection_interface;
-use block_dash\data_grid\filter\filter_interface;
+use block_dash\local\data_grid\filter\choice_filter;
+use block_dash\local\data_grid\filter\filter;
+use block_dash\local\data_grid\filter\filter_collection;
+use block_dash\local\data_grid\filter\filter_collection_interface;
+use block_dash\local\data_grid\filter\filter_interface;
 
 defined('MOODLE_INTERNAL') || die();
 

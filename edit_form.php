@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_dash\data_source\data_source_factory;
+use block_dash\local\data_source\data_source_factory;
 
 defined('MOODLE_INTERNAL') || die();
 

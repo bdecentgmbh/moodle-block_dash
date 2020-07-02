@@ -28,7 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 
-use block_dash\data_source\form\preferences_form;
+use block_dash\local\block_builder;
+use block_dash\local\data_source\form\preferences_form;
 use block_dash\output\renderer;
 use external_api;
 

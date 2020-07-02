@@ -15,17 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Transforms data to yes or no.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_dash\local\data_grid\field\attribute;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020070202;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017051509;        // Requires this Moodle version.
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release = '1.0.1';
+/**
+ * Transforms data to yes or no.
+ *
+ * @package block_dash
+ */
+class bool_attribute extends abstract_field_attribute {
+
+    /**
+     * After records are relieved from database each field has a chance to transform the data.
+     * Example: Convert unix timestamp into a human readable date format
+     *
+     * @param mixed $data Raw data associated with this field definition.
+     * @param \stdClass $record Full record from database.
+     * @return mixed
+     * @throws \coding_exception
+     */
+    public function transform_data($data, \stdClass $record) {
+        if ($data) {
+            $data = get_string('yes');
+        } else {
+            $data = get_string('no');
+        }
+
+        return $data;
+    }
+}

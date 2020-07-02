@@ -33,7 +33,7 @@ $definitions = [
         'title' => get_string('user') . ' ID',
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\identifier_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\identifier_attribute::class
             ]
         ],
         'tables' => ['u']
@@ -64,13 +64,13 @@ $definitions = [
         'options' => ['supports_sorting' => false],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
                     'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
                 ]
             ],
             [
-                'type' => \block_dash\data_grid\field\attribute\link_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\link_attribute::class,
                 'options' => [
                     'label_field' => 'u_fullname_linked'
                 ]
@@ -114,7 +114,7 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\date_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\date_attribute::class
             ]
         ]
     ],
@@ -149,7 +149,7 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\date_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\date_attribute::class
             ]
         ]
     ],
@@ -166,10 +166,10 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\image_url_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\image_url_attribute::class
             ],
             [
-                'type' => \block_dash\data_grid\field\attribute\user_image_url_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\user_image_url_attribute::class
             ]
         ]
     ],
@@ -180,10 +180,10 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\user_image_url_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\user_image_url_attribute::class
             ],
             [
-                'type' => \block_dash\data_grid\field\attribute\image_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\image_attribute::class,
                 'options' => [
                     'title' => get_string('pictureofuser')
                 ]
@@ -197,16 +197,16 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\user_image_url_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\user_image_url_attribute::class
             ],
             [
-                'type' => \block_dash\data_grid\field\attribute\image_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\image_attribute::class,
                 'options' => [
                     'title' => get_string('pictureofuser')
                 ]
             ],
             [
-                'type' => \block_dash\data_grid\field\attribute\linked_data_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\linked_data_attribute::class,
                 'options' => [
                     'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
                 ]
@@ -220,7 +220,7 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
                     'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
                 ]
@@ -234,13 +234,13 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
                     'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
                 ]
             ],
             [
-                'type' => \block_dash\data_grid\field\attribute\link_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\link_attribute::class,
                 'options' => [
                     'label' => get_string('viewprofile')
                 ]
@@ -254,7 +254,7 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
                     'url' => new moodle_url('/message/index.php', ['id' => 'u_id'])
                 ]
@@ -268,13 +268,13 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\moodle_url_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
                     'url' => new moodle_url('/message/index.php', ['id' => 'u_id'])
                 ]
             ],
             [
-                'type' => \block_dash\data_grid\field\attribute\linked_icon_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\linked_icon_attribute::class,
                 'options' => [
                     'icon' => 'i/email',
                     'title' => get_string('sendmessage', 'message')
@@ -289,7 +289,7 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\rename_group_ids_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\rename_group_ids_attribute::class,
                 'options' => [
                     'table' => 'groups',
                     'field' => 'name',
@@ -323,7 +323,7 @@ $definitions = array_merge($definitions, [
         'tables' => ['g'],
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\identifier_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\identifier_attribute::class
             ]
         ]
     ],

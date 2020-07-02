@@ -46,7 +46,7 @@ return [
         'title' => get_string('firstaccess'),
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\date_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\date_attribute::class
             ]
         ]
     ],
@@ -56,7 +56,7 @@ return [
         'title' => get_string('pictureofuser'),
         'attributes' => [
             [
-                'type' => \block_dash\data_grid\field\attribute\link_attribute::class,
+                'type' => \block_dash\local\data_grid\field\attribute\link_attribute::class,
                 'options' => [
                     'label' => get_string('viewprofile', 'block_dash')
                 ]

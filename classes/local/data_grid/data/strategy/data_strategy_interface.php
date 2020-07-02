@@ -15,17 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * A strategy for structuring database records into data collections.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_dash\local\data_grid\data\strategy;
+
+use block_dash\local\data_grid\data\data_collection_interface;
+use block_dash\local\data_grid\data_grid_interface;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020070202;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017051509;        // Requires this Moodle version.
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release = '1.0.1';
+/**
+ * A strategy for structuring database records into data collections.
+ *
+ * @package block_dash
+ */
+interface data_strategy_interface {
+
+    /**
+     * Convert database records into data collections.
+     *
+     * @param \stdClass[] $records
+     * @param data_grid_interface $datagrid
+     * @return data_collection_interface
+     */
+    public function convert_records_to_data_collection($records, data_grid_interface $datagrid);
+}

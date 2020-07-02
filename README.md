@@ -78,7 +78,7 @@ The following field definition transforms `1,5,123` into `Group 1, Group 5, Grou
     'tables' => ['u'],
     'attributes' => [
         [
-            'type' => \block_dash\data_grid\field\attribute\rename_ids_attribute::class,
+            'type' => \block_dash\local\data_grid\field\attribute\rename_ids_attribute::class,
             'options' => [
                 'table' => 'groups',
                 'field' => 'name',
@@ -96,4 +96,6 @@ The following field definition transforms `1,5,123` into `Group 1, Group 5, Grou
 * Add support for PostgreSQL
 * Improve filtering
 * Add renaming field attribute to map objects to IDs returned by query
+* Moved custom classes to `local` namespace
+* Improved CSS selectors
 

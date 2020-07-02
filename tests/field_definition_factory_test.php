@@ -24,7 +24,7 @@
 
 namespace block_dash\test;
 
-use block_dash\data_grid\field\field_definition_factory;
+use block_dash\local\data_grid\field\field_definition_factory;
 
 defined('MOODLE_INTERNAL') || die();
 

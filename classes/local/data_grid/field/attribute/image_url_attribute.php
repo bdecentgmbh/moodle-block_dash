@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Designates a field as being an image URL.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_dash\local\data_grid\field\attribute;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020070202;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017051509;        // Requires this Moodle version.
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release = '1.0.1';
+/**
+ * Designates a field as being an image URL.
+ *
+ * @package block_dash
+ */
+class image_url_attribute extends abstract_field_attribute {
+
+}

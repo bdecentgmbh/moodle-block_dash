@@ -22,11 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use block_dash\data_source\form\preferences_form;
-use block_dash\layout\grid_layout;
-use block_dash\layout\accordion_layout;
-use block_dash\layout\one_stat_layout;
-use block_dash\data_source\users_data_source;
+use block_dash\local\data_source\form\preferences_form;
+use block_dash\local\layout\grid_layout;
+use block_dash\local\layout\accordion_layout;
+use block_dash\local\layout\one_stat_layout;
+use block_dash\local\data_source\users_data_source;
 
 defined('MOODLE_INTERNAL') || die();
 

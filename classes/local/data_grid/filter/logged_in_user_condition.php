@@ -15,17 +15,49 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Class logged_in_user_condition.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_dash\local\data_grid\filter;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020070202;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017051509;        // Requires this Moodle version.
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release = '1.0.1';
+/**
+ * Class logged_in_user_condition.
+ *
+ * @package block_dash
+ */
+class logged_in_user_condition extends condition {
+
+    /**
+     * Get values from filter based on user selection. All filters must return an array of values.
+     *
+     * Override in child class to add more values.
+     *
+     * @return array
+     */
+    public function get_values() {
+        global $USER;
+
+        return [$USER->id];
+    }
+
+    /**
+     * Get filter label.
+     *
+     * @return string
+     * @throws \coding_exception
+     */
+    public function get_label() {
+        if ($label = parent::get_label()) {
+            return $label;
+        }
+
+        return get_string('loggedinuser', 'block_dash');
+    }
+
+}

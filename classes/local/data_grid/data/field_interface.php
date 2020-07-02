@@ -15,17 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * A field is a simple container for a single value within a row/collection.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_dash\local\data_grid\data;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020070202;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017051509;        // Requires this Moodle version.
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release = '1.0.1';
+/**
+ * A field is a simple container for a single value within a row/collection.
+ *
+ * @package block_dash
+ */
+interface field_interface {
+
+    /**
+     * Get field name.
+     *
+     * @return string
+     */
+    public function get_name();
+
+    /**
+     * Get field value.
+     *
+     * @return mixed|string
+     */
+    public function get_value();
+
+    /**
+     * @return string
+     */
+    public function get_label();
+}

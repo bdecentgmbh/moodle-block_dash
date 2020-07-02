@@ -1,10 +1,10 @@
-.CodeMirror {
+.path-local-dash .CodeMirror {
     border: 1px solid #eee;
     height: auto !important;
     width: 100%;
     z-index: 0;
 }
-.CodeMirror .CodeMirror-scroll {
+.path-local-dash .CodeMirror .CodeMirror-scroll {
     min-height: 150px;
 }
 
@@ -13,11 +13,11 @@ body#page-blocks-dash-data-source .ui-sortable-helper {
     display: table;
 }
 
-body#page-blocks-dash-data-source .drag-handle {
+.dash-preferences-form .drag-handle {
     cursor: pointer;
 }
 
-.filter-form .filter-form-control {
+.block_dash .filter-form .filter-form-control {
     width: auto;
     display: inline;
     margin-right: 0.25rem;
@@ -31,30 +31,30 @@ body#page-blocks-dash-data-source .drag-handle {
     justify-content: left;
 }
 
-.dash-table th {
+.block_dash .dash-table th {
     white-space: nowrap;
 }
 
 /** Block widths **/
-.dash-block-width-100 {
+.block_dash .dash-block-width-100 {
     width: 100%;
 }
-.dash-block-width-50 {
+.block_dash .dash-block-width-50 {
     width: calc(50% - 1rem);
 }
-.dash-block-width-33 {
+.block_dash .dash-block-width-33 {
     width: calc(33.33% - 1rem);
 }
-.dash-block-width-66 {
+.block_dash .dash-block-width-66 {
     width: calc(66.66% - 1rem);
 }
-.dash-block-width-25 {
+.block_dash .dash-block-width-25 {
     width: calc(25% - 1rem);
 }
-.dash-block-width-20 {
+.block_dash .dash-block-width-20 {
     width: calc(20% - 1rem);
 }
-.dash-block-width-16 {
+.block_dash .dash-block-width-16 {
     width: calc(16.66% - 1rem);
 }
 
@@ -64,16 +64,16 @@ body#page-blocks-dash-data-source .drag-handle {
     }
 }
 
-.icons-no-margin .icon {
+.block_dash .icons-no-margin .icon {
     margin: 0;
 }
 
-.dash-sort {
+.block_dash .dash-sort {
     cursor: pointer;
 }
 
-.bootstrap3 .row.flex,
-.bootstrap3 .col-sm-3.flex {
+.block_dash .bootstrap3 .row.flex,
+.block_dash .bootstrap3 .col-sm-3.flex {
     display: flex;
 }
 

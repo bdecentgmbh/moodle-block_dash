@@ -122,6 +122,8 @@ class field_definition_factory implements field_definition_factory_interface {
      * @throws \coding_exception
      */
     public static function build_field_definition($name, array $info) {
+        global $CFG;
+
         if (!self::exists($name)) {
             return null;
         }
@@ -132,8 +134,15 @@ class field_definition_factory implements field_definition_factory_interface {
             return $fielddefinitioninfo['factory']::build_field_definition($name, $info);
         }
 
-        if (!isset($fielddefinitioninfo['select'])) {
-            throw new \coding_exception('Standard SQL fields need a select defined: ' . $name);
+        // Check for db driver specific select statements.
+        if (isset($fielddefinitioninfo['select_' . $CFG->dbtype])) {
+            $select = $fielddefinitioninfo['select_' . $CFG->dbtype];
+        } else {
+            // Otherwise default to agnostic select (not db specific).
+            if (!isset($fielddefinitioninfo['select'])) {
+                throw new \coding_exception('Standard SQL fields need a select defined: ' . $name);
+            }
+            $select = $fielddefinitioninfo['select'];
         }
 
         if (!isset($fielddefinitioninfo['title'])) {
@@ -141,7 +150,7 @@ class field_definition_factory implements field_definition_factory_interface {
         }
 
         $newfielddefinition = new sql_field_definition(
-            $fielddefinitioninfo['select'],
+            $select,
             $fielddefinitioninfo['name'],
             $fielddefinitioninfo['title'],
             isset($fielddefinitioninfo['visibility']) ? $fielddefinitioninfo['visibility'] :

@@ -62,6 +62,49 @@ Typical use cases:
 * **Field attribute**: An attribute changes how field definition output is formatted. 
 * **Data grid**: Get data to be displayed in a grid or downloaded as a formatted file.
 
+### Field definitions
+
+#### Define custom fields
+lib.php
+```php
+/**
+ * Register field definitions.
+ *
+ * @return array
+ */
+function pluginname_register_field_definitions() {
+    global $CFG;
+    
+    return require("$CFG->dirroot/plugintype/pluginname/field_definitions.php");
+}
+```
+field_definitions.php
+```php
+return [
+    [ // Field definition.
+        'name' => 'u_id',
+        'select' => 'u.id',
+        'title' => get_string('user') . ' ID',
+        'attributes' => [
+            [
+                'type' => \block_dash\local\data_grid\field\attribute\identifier_attribute::class
+            ]
+        ],
+        'tables' => ['u']
+    ],
+];
+```
+
+#### Supporting multiple DB types
+If your field definition requires something DB specific, use `select_<dbtype>`.  
+```php
+[ // Field definition.
+    'name' => 'subquery',
+    'select_mysqli' => '(SELECT GROUP_CONCAT())', // Used when Moodle is running MySQL/MariaDB
+    'select_pgsql' => '(SELECT STRING_AGG())' // or PostgreSQL
+]
+```
+
 ### Field attributes
 
 #### Rename object ID to object field
@@ -98,4 +141,5 @@ The following field definition transforms `1,5,123` into `Group 1, Group 5, Grou
 * Add renaming field attribute to map objects to IDs returned by query
 * Moved custom classes to `local` namespace
 * Improved CSS selectors
+* Fix column sorting bug where pagination would unintentionally toggle sort direction
 

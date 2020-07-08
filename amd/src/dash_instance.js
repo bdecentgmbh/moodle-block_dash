@@ -9,6 +9,7 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
             this.blockPreferencesModal = null;
             this.editing = editing;
             this.sortField = null;
+            this.sortDirections = {};
 
             this.init();
         };
@@ -50,7 +51,16 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
             }.bind(this));
 
             this.getBlockContentArea().on('click', '.dash-sort', function(e) {
-                this.sortField = $(e.target).data('sort');
+                const $target = $(e.target);
+                this.sortField = $target.data('sort');
+
+                // Set sorting to asc by default.
+                if (!this.sortDirections.hasOwnProperty(this.sortField)) {
+                    this.sortDirections[this.sortField] = 'asc';
+                } else {
+                    // Toggle sort direction on field.
+                    this.sortDirections[this.sortField] = this.sortDirections[this.sortField] === 'asc' ? 'desc' : 'asc';
+                }
                 this.refresh();
             }.bind(this));
         };
@@ -85,6 +95,11 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
         };
 
         DashInstance.prototype.getBlockContent = function() {
+            let sortDirection = null;
+            if (this.sortField && this.sortDirections.hasOwnProperty(this.sortField)) {
+                sortDirection = this.sortDirections[this.sortField];
+            }
+
             var request = {
                 methodname: 'block_dash_get_block_content',
                 args: {
@@ -92,6 +107,7 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
                     filter_form_data: JSON.stringify(this.getFilterForm().serializeArray()),
                     page: this.currentPage,
                     sort_field: this.sortField,
+                    sort_direction: sortDirection
                 }
             };
 

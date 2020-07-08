@@ -134,6 +134,11 @@ The following field definition transforms `1,5,123` into `Group 1, Group 5, Grou
 
 ## Change log
 
+### 1.0.2
+
+* Fix column sorting bug where pagination would unintentionally toggle sort direction
+* Add Select2 library for autocomplete dropdowns
+
 ### 1.0.1
 
 * Add support for PostgreSQL
@@ -141,5 +146,3 @@ The following field definition transforms `1,5,123` into `Group 1, Group 5, Grou
 * Add renaming field attribute to map objects to IDs returned by query
 * Moved custom classes to `local` namespace
 * Improved CSS selectors
-* Fix column sorting bug where pagination would unintentionally toggle sort direction
-

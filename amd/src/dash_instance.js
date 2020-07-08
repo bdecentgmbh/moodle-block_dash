@@ -1,4 +1,4 @@
-define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events', 'block_dash/preferences_modal', 'block_dash/datepicker'],
+define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events', 'block_dash/preferences_modal', 'block_dash/datepicker', 'block_dash/select2'],
     function($, Log, Ajax, Notification, ModalEvents, PreferencesModal) {
 
         var DashInstance = function(root, blockInstanceId, blockContextid, editing) {
@@ -21,6 +21,7 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
             Log.debug('Initializing dash instance', this);
 
             this.initDatePickers();
+            this.initSelect2();
 
             if (this.editing) {
                 this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
@@ -121,15 +122,41 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
                     this.getBlockContentArea().html(response.html);
                     this.getBlockContentArea().css('opacity', 1);
                     this.initDatePickers();
+                    this.initSelect2();
                 }.bind(this))
                 .catch(Notification.exception);
         };
 
         DashInstance.prototype.initDatePickers = function() {
-            $('.datepicker').datepicker2({
+            this.getRoot().find('.datepicker').datepicker2({
                 autoclose: true,
                 format: "dd/mm/yyyy"
             });
+        };
+
+        DashInstance.prototype.initSelect2 = function() {
+            this.getRoot().find('.select2').each(function(index, element) {
+                let placeholder = null;
+                if ($(element).find("option[value='-1']")) {
+                    placeholder = {
+                        id: '-1', // the value of the option
+                        text: $(element).find("option[value='-1']").text()
+                    };
+                }
+                $(element).select2({
+                    dropdownParent: this.getRoot(),
+                    allowClear: true,
+                    theme: 'bootstrap4',
+                    placeholder: placeholder
+                }).on('select2:unselecting', function() {
+                    $(this).data('unselecting', true);
+                }).on('select2:opening', function(e) {
+                    if ($(this).data('unselecting')) {
+                        $(this).removeData('unselecting');
+                        e.preventDefault();
+                    }
+                });
+            }.bind(this));
         };
 
         return DashInstance;

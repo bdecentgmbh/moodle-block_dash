@@ -146,7 +146,7 @@ class sql_data_grid extends data_grid {
      * @throws \Exception
      * @throws \moodle_exception
      */
-    protected function get_sql_and_params($count = false) {
+    public function get_sql_and_params($count = false) {
         if (!$this->has_any_field_definitions()) {
             throw new \moodle_exception('Grid initialized without any fields.
                 Did you forget to call data_grid::init()?');

@@ -61,6 +61,8 @@ Typical use cases:
 * **Field definition**: Represents a predefined field that can be added to a data grid.
 * **Field attribute**: An attribute changes how field definition output is formatted. 
 * **Data grid**: Get data to be displayed in a grid or downloaded as a formatted file.
+* **Query template**: Query templates are written by developers to define which data to include. These are typically joins,
+because selects, wheres, ordering, etc is handled elsewhere (and is often dynamic). 
 
 ### Field definitions
 

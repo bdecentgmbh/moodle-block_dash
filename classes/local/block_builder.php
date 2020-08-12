@@ -26,6 +26,8 @@ namespace block_dash\local;
 
 use block_dash\local\configuration\configuration_interface;
 use block_dash\local\configuration\configuration;
+use block_dash\local\data_grid\sql_data_grid;
+use block_dash\output\query_debug;
 use block_dash\output\renderer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -94,6 +96,11 @@ class block_builder {
                 'editing' => $PAGE->user_is_editing() &&
                     has_capability('block/dash:addinstance', $this->blockinstance->context)
             ]);
+
+            $datagrid = $bb->get_configuration()->get_data_source()->get_data_grid();
+            if (is_siteadmin() && $datagrid instanceof sql_data_grid) {
+                $text .= $renderer->render(new query_debug($datagrid->get_sql_and_params()[0], $datagrid->get_sql_and_params()[1]));
+            }
         } else {
             $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
         }

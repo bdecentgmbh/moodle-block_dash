@@ -27,6 +27,7 @@ namespace block_dash\local\data_source;
 use block_dash\local\block_builder;
 use block_dash\local\data_grid\field\field_definition_factory;
 use block_dash\local\data_grid\field\field_definition_interface;
+use block_dash\local\data_grid\filter\current_course_participants_condition;
 use block_dash\local\data_grid\filter\date_filter;
 use block_dash\local\data_grid\filter\filter;
 use block_dash\local\data_grid\filter\group_filter;
@@ -67,7 +68,12 @@ class users_data_source extends abstract_data_source {
         global $CFG;
 
         require_once("$CFG->dirroot/user/profile/lib.php");
-        $sql = 'SELECT %%SELECT%% FROM {user} u ';
+        $sql = 'SELECT DISTINCT %%SELECT%% FROM {user} u
+                LEFT JOIN {user_enrolments} ue ON ue.userid = u.id
+                LEFT JOIN {enrol} e ON e.id = ue.enrolid
+                LEFT JOIN {course} c ON c.id = e.courseid
+                LEFT JOIN {groups_members} gm ON gm.userid = u.id
+                LEFT JOIN {groups} g ON g.id = gm.groupid ';
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);

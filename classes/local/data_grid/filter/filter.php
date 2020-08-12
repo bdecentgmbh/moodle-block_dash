@@ -24,6 +24,8 @@
 
 namespace block_dash\local\data_grid\filter;
 
+use coding_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -214,11 +216,11 @@ class filter implements filter_interface {
      * Set an operation.
      *
      * @param string $operation
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function set_operation($operation) {
         if (!in_array($operation, $this->get_supported_operations())) {
-            throw new \coding_exception(get_class($this) . ' does not support operation: ' . $operation);
+            throw new coding_exception(get_class($this) . ' does not support operation: ' . $operation);
         }
 
         $this->operation = $operation;
@@ -278,11 +280,11 @@ class filter implements filter_interface {
      * Return where SQL and params for placeholders.
      *
      * @return array
-     * @throws \coding_exception|\dml_exception
+     * @throws coding_exception|\dml_exception
      */
     public function get_sql_and_params() {
         if (!$this->initialized) {
-            throw new \coding_exception('Filter was not initialized properly. Did you call parent::init()?');
+            throw new coding_exception('Filter was not initialized properly. Did you call parent::init()?');
         }
 
         if (!$values = $this->get_values()) {
@@ -330,6 +332,9 @@ class filter implements filter_interface {
                 // Convert value to wildcard.
                 $params[$placeholder] = '%'.$params[$placeholder].'%';
                 break;
+            case self::OPERATION_CUSTOM:
+                $sql = $this->get_custom_operation();
+                break;
         }
 
         return [$sql, $params];
@@ -349,7 +354,7 @@ class filter implements filter_interface {
      * Special get in or equal.
      *
      * @return array
-     * @throws \coding_exception
+     * @throws coding_exception
      * @throws \dml_exception
      */
     private function get_in_or_equal() {
@@ -378,7 +383,7 @@ class filter implements filter_interface {
      */
     public function create_form_element(filter_collection_interface $filtercollection,
                                         $elementnameprefix = '') {
-        throw new \coding_exception('Filter element does not exist. Did you forget to override filter::create_form_element()?');
+        throw new coding_exception('Filter element does not exist. Did you forget to override filter::create_form_element()?');
     }
 
     /**
@@ -416,5 +421,15 @@ class filter implements filter_interface {
      */
     public function get_clause_type() {
         return $this->clausetype;
+    }
+
+    /**
+     * Return custom operation SQL.
+     *
+     * @return string
+     * @throws coding_exception
+     */
+    public function get_custom_operation(): string {
+        throw new coding_exception('Must implement get_custom_operation when using OPERATION_CUSTOM');
     }
 }

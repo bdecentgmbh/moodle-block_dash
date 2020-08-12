@@ -28,6 +28,7 @@ use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
 use block_dash\local\data_grid\data_grid_interface;
+use block_dash\local\data_grid\field\attribute\identifier_attribute;
 use block_dash\local\data_grid\field\field_definition_interface;
 
 defined('MOODLE_INTERNAL') || die();
@@ -59,6 +60,10 @@ class standard_strategy implements data_strategy_interface {
                 $name = $fielddefinition->get_name();
 
                 if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
+                    continue;
+                }
+
+                if ($fielddefinition->has_attribute(identifier_attribute::class)) {
                     continue;
                 }
 

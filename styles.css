@@ -36,25 +36,25 @@ body#page-blocks-dash-data-source .ui-sortable-helper {
 }
 
 /** Block widths **/
-.block_dash .dash-block-width-100 {
+.block_dash.dash-block-width-100 {
     width: 100%;
 }
-.block_dash .dash-block-width-50 {
+.block_dash.dash-block-width-50 {
     width: calc(50% - 1rem);
 }
-.block_dash .dash-block-width-33 {
+.block_dash.dash-block-width-33 {
     width: calc(33.33% - 1rem);
 }
-.block_dash .dash-block-width-66 {
+.block_dash.dash-block-width-66 {
     width: calc(66.66% - 1rem);
 }
-.block_dash .dash-block-width-25 {
+.block_dash.dash-block-width-25 {
     width: calc(25% - 1rem);
 }
-.block_dash .dash-block-width-20 {
+.block_dash.dash-block-width-20 {
     width: calc(20% - 1rem);
 }
-.block_dash .dash-block-width-16 {
+.block_dash.dash-block-width-16 {
     width: calc(16.66% - 1rem);
 }
 

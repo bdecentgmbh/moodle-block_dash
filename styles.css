@@ -77,6 +77,11 @@ body#page-blocks-dash-data-source .ui-sortable-helper {
     display: flex;
 }
 
+#fgroup_id_available_fields .form-check-inline.fitem {
+    width: 100%;
+    justify-content: left;
+}
+
 /*!
  * Datepicker for Bootstrap v1.9.0 (https://github.com/uxsolutions/bootstrap-datepicker)
  *

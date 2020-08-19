@@ -166,8 +166,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 ]);
                 $mform->setType($fieldname, PARAM_BOOL);
             }
-            $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'),
-                ['<div style="width: 100%;"></div>']);
+            $mform->addGroup($group, 'available_fields', get_string('enabledfields', 'block_dash'),
+                [''], false);
 
             $this->add_checkbox_toggleall(self::$currentgroupid, $form, $mform);
 

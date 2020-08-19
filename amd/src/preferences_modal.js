@@ -74,7 +74,8 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
             this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this, true));
 
             this.modal.getRoot().on(ModalEvents.bodyRendered, function(e) {
-                $("#fgroup_id_group_1 .form-check-inline").sortable({
+                $("#fgroup_id_available_fields .form-inline > fieldset > div").sortable({
+                    items: ".form-check-inline.fitem",
                     handle: ".drag-handle",
                     axis: "y"
                 });

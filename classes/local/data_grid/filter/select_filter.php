@@ -108,6 +108,14 @@ abstract class select_filter extends filter {
     }
 
     /**
+     * @return array
+     */
+    public function get_selected_options() {
+        // Return raw values.
+        return parent::get_values();
+    }
+
+    /**
      * Get values from filter based on user selection. All filters must return an array of values.
      *
      * Override in child class to add more values.
@@ -147,7 +155,7 @@ abstract class select_filter extends filter {
 
         $newoptions = [];
         foreach ($options as $value => $label) {
-            $newoptions[] = ['value' => $value, 'label' => $label, 'selected' => in_array($value, $this->get_values())];
+            $newoptions[] = ['value' => $value, 'label' => $label, 'selected' => in_array($value, $this->get_selected_options())];
         }
 
         $name = $elementnameprefix . $this->get_name();

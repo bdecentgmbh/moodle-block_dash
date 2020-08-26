@@ -25,6 +25,8 @@
 namespace block_dash\local\data_grid\filter;
 
 use coding_exception;
+use moodleform;
+use MoodleQuickForm;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -80,6 +82,11 @@ class filter implements filter_interface {
      * @var string
      */
     private $clausetype = self::CLAUSE_TYPE_WHERE;
+
+    /**
+     * @var array
+     */
+    private $preferences;
 
     /**
      * Filter constructor.
@@ -431,5 +438,37 @@ class filter implements filter_interface {
      */
     public function get_custom_operation(): string {
         throw new coding_exception('Must implement get_custom_operation when using OPERATION_CUSTOM');
+    }
+
+    /**
+     * Set preferences on this filter.
+     *
+     * @param array $preferences
+     */
+    public function set_preferences(array $preferences): void {
+        $this->preferences = $preferences;
+    }
+
+    /**
+     * Get preferences related to this filter.
+     *
+     * @return array
+     */
+    public function get_preferences(): array {
+        return $this->preferences;
+    }
+
+    /**
+     * Add form fields for this filter (and any settings related to this filter.)
+     *
+     * @param moodleform $moodleform
+     * @param MoodleQuickForm $mform
+     * @param string $fieldnameformat
+     */
+    public function build_settings_form_fields(moodleform $moodleform, MoodleQuickForm $mform, $fieldnameformat = 'filters[%s]'): void {
+        $fieldname = sprintf($fieldnameformat, $this->get_name());
+
+        $totaratitle = block_dash_is_totara() ? $this->get_label() : null;
+        $mform->addElement('advcheckbox', $fieldname . '[enabled]', $this->get_label(), $totaratitle);
     }
 }

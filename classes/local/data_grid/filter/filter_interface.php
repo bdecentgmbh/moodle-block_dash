@@ -24,6 +24,9 @@
 
 namespace block_dash\local\data_grid\filter;
 
+use moodleform;
+use MoodleQuickForm;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -293,4 +296,27 @@ interface filter_interface {
      * @return string
      */
     public function get_custom_operation(): string;
+
+    /**
+     * Set preferences on this filter.
+     *
+     * @param array $preferences
+     */
+    public function set_preferences(array $preferences): void;
+
+    /**
+     * Get preferences related to this filter.
+     *
+     * @return array
+     */
+    public function get_preferences(): array;
+
+    /**
+     * Add form fields for this filter (and any settings related to this filter.)
+     *
+     * @param moodleform $moodleform
+     * @param MoodleQuickForm $mform
+     * @param string $fieldnameformat
+     */
+    public function build_settings_form_fields(moodleform $moodleform, MoodleQuickForm $mform, $fieldnameformat = 'filters[%s]'): void;
 }

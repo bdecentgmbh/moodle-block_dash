@@ -7,8 +7,8 @@
  * @copyright  2017 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/fragment', 'core/ajax'],
-    function($, jqueryui, Str, ModalFactory, ModalEvents, Fragment, Ajax) {
+define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/fragment', 'core/ajax', 'block_dash/select2'],
+    function($, jqueryui, Str, ModalFactory, ModalEvents, Fragment, Ajax, Select2) {
 
     /**
      * Constructor
@@ -21,6 +21,7 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
     var PreferencesModal = function(selector, contextid, onCloseCallback) {
         this.contextid = contextid;
         this.onCloseCallback = onCloseCallback;
+        this.tab = "";
         this.init(selector);
     };
 
@@ -67,6 +68,10 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
 
             this.modal.getRoot().on('change', '#id_config_preferences_layout', this.submitFormAjax.bind(this, false));
 
+            this.modal.getRoot().on('click', '[data-action=cancel]', (e) => {
+                this.modal.hide();
+            });
+
             // We catch the modal save event, and use it to submit the form inside the modal.
             // Triggering a form submission will give JS validation scripts a chance to check for errors.
             this.modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
@@ -79,7 +84,9 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
                     handle: ".drag-handle",
                     axis: "y"
                 });
-            });
+
+                this.initSelect2();
+            }.bind(this));
 
             this.modal.getRoot().on(ModalEvents.hidden, function(e) {
                 // Prevent "changes may be lost" popup.
@@ -89,8 +96,17 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
                 }
             }.bind(this));
 
+            this.modal.getRoot().on('click', '[data-action=change-tab]', (e) => {
+                this.changeTab($(e.target).data('tab'));
+            });
+
             return this.modal;
         }.bind(this));
+    };
+
+    PreferencesModal.prototype.changeTab = function(tab) {
+        this.tab = tab;
+        this.submitFormAjax(false);
     };
 
     /**
@@ -102,8 +118,12 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
         if (typeof formdata === "undefined") {
             formdata = {};
         }
+
         // Get the content of the modal.
-        var params = {jsonformdata: JSON.stringify(formdata)};
+        var params = {
+            jsonformdata: JSON.stringify(formdata),
+            tab: this.tab
+        };
         return Fragment.loadFragment('block_dash', 'block_preferences_form', this.contextid, params);
     };
 
@@ -141,7 +161,9 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
      */
     PreferencesModal.prototype.submitFormAjax = function(closeWhenDone, e) {
         // We don't want to do a real form submission.
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
         // Now the change events have run, see if there are any "invalid" form fields.
         var invalid = $.merge(
@@ -184,6 +206,32 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
     PreferencesModal.prototype.submitForm = function(e) {
         e.preventDefault();
         this.modal.getRoot().find('form').submit();
+    };
+
+    PreferencesModal.prototype.initSelect2 = function() {
+        var self = this;
+        this.modal.getRoot().find('.select2-form select').each(function(index, element) {
+            let placeholder = null;
+            if ($(element).find("option[value='-1']")) {
+                placeholder = {
+                    id: '-1', // the value of the option
+                    text: $(element).find("option[value='-1']").text()
+                };
+            }
+            $(element).select2({
+                dropdownParent: $(this).parent(),
+                allowClear: true,
+                theme: 'bootstrap4',
+                placeholder: placeholder
+            }).on('select2:unselecting', function() {
+                $(this).data('unselecting', true);
+            }).on('select2:opening', function(e) {
+                if ($(this).data('unselecting')) {
+                    $(this).removeData('unselecting');
+                    e.preventDefault();
+                }
+            });
+        });
     };
 
     return PreferencesModal;

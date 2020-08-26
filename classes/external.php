@@ -182,8 +182,10 @@ class external extends external_api {
         $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
 
-        $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'dash-preferences-form'],
-            true, $data);
+        $form = new preferences_form(null, ['block' => $block], 'post', '', [
+            'class' => 'dash-preferences-form',
+            'data-double-submit-protection' => 'off'
+        ], true, $data);
 
         $validationerrors = true;
         if ($form->get_data()) {
@@ -197,6 +199,9 @@ class external extends external_api {
                     continue;
                 }
                 $field = substr($configfield, 7);
+                if (is_array($config->$field) && is_array($value)) {
+                    $value = array_merge($config->$field, $value);
+                }
                 $config->$field = $value;
             }
             $block->instance_config_save($config);

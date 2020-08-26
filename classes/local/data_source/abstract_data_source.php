@@ -33,6 +33,7 @@ use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data_grid_interface;
 use block_dash\local\data_grid\field\field_definition_interface;
 use block_dash\local\data_grid\filter\filter_collection_interface;
+use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
 use block_dash\local\layout\layout_factory;
 use block_dash\local\layout\layout_interface;
@@ -142,6 +143,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if (is_null($this->filtercollection)) {
             $this->filtercollection = $this->build_filter_collection();
             $this->filtercollection->init();
+
+            if ($this->get_preferences('filters')) {
+                foreach ($this->get_preferences('filters') as $filtername => $filterpreferences) {
+                    if ($this->filtercollection->has_filter($filtername)) {
+                        $this->filtercollection->get_filter($filtername)->set_preferences($filterpreferences);
+                    }
+                }
+            }
         }
 
         return $this->filtercollection;
@@ -288,9 +297,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
         $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
 
-        $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'),
-            layout_factory::get_layout_form_options());
-        $mform->setType('config_preferences[layout]', PARAM_TEXT);
+        if ($form->get_tab() == preferences_form::TAB_GENERAL) {
+            $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'),
+                layout_factory::get_layout_form_options());
+            $mform->setType('config_preferences[layout]', PARAM_TEXT);
+        }
 
         if ($layout = $this->get_layout()) {
             $layout->build_preferences_form($form, $mform);

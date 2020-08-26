@@ -24,6 +24,9 @@
 
 namespace block_dash\local\data_grid\filter;
 
+use moodleform;
+use MoodleQuickForm;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -349,5 +352,23 @@ class filter_collection implements filter_collection_interface {
         $identifier = sprintf('%s-%s', $user->id, $this->get_unique_identifier());
 
         $cache->delete($identifier);
+    }
+
+    /**
+     * Take a Moodle form and add any settings for the filters beloning to this collection.
+     *
+     * @param moodleform $form
+     * @param MoodleQuickForm $mform
+     * @param $type
+     * @param string $fieldnameformat
+     */
+    public function build_settings_form(moodleform $form, MoodleQuickForm $mform, $type, $fieldnameformat = 'filters[%s]'): void {
+        foreach ($this->get_filters() as $filter) {
+            if (!$filter instanceof $type) {
+                continue;
+            }
+
+            $filter->build_settings_form_fields($form, $mform, $fieldnameformat);
+        }
     }
 }

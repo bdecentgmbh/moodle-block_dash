@@ -1,0 +1,9 @@
+<ul class="nav nav-tabs">
+    {{#tabs}}
+        <li class="nav-item">
+            <a class="nav-link {{#active}}active{{/active}}" data-action="change-tab" data-tab="{{tabid}}" href="#">{{{label}}}</a>
+        </li>
+    {{/tabs}}
+</ul>
+
+{{{formhtml}}}

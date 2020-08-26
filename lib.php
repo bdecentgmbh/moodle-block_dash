@@ -82,16 +82,22 @@ function block_dash_register_layouts() {
  * @return string
  */
 function block_dash_output_fragment_block_preferences_form($args) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     $args = (object) $args;
     $context = $args->context;
-    $o = '';
 
     $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
     $block = block_instance($blockinstance->blockname, $blockinstance);
 
-    $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'dash-preferences-form']);
+    if (!$args->tab) {
+        $args->tab = preferences_form::TAB_GENERAL;
+    }
+
+    $form = new preferences_form(null, ['block' => $block, 'tab' => $args->tab], 'post', '', [
+        'class' => 'dash-preferences-form',
+        'data-double-submit-protection' => 'off'
+    ]);
 
     require_capability('block/dash:addinstance', $context);
 
@@ -102,10 +108,22 @@ function block_dash_output_fragment_block_preferences_form($args) {
 
     ob_start();
     $form->display();
-    $o .= ob_get_contents();
+    $formhtml = ob_get_contents();
     ob_end_clean();
 
-    return $o;
+    $tabs = [];
+    foreach (preferences_form::TABS as $tab) {
+        $tabs[] = [
+            'label' => get_string($tab, 'block_dash'),
+            'active' => $tab == $args->tab,
+            'tabid' => $tab
+        ];
+    }
+
+    return $OUTPUT->render_from_template('block_dash/preferences_form', [
+        'formhtml' => $formhtml,
+        'tabs' => $tabs
+    ]);
 }
 
 /**
@@ -118,7 +136,10 @@ function block_dash_output_fragment_block_preferences_form($args) {
 function block_dash_flatten_array($array, $prefix = '') {
     $result = [];
     foreach ($array as $key => $value) {
-        if (is_array($value)) {
+        if (is_integer($key)) {
+            // Don't flatten arrays with numeric indexes. Otherwise it won't be set on the Moodle form.
+            $result[$prefix] = $array;
+        } else if (is_array($value)) {
             $result = $result + block_dash_flatten_array($value, $prefix . '[' . $key . ']');
         } else {
             $result[$prefix . '[' . $key . ']'] = $value;

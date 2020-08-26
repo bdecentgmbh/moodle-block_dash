@@ -24,6 +24,9 @@
 
 namespace block_dash\local\data_grid\filter;
 
+use moodleform;
+use MoodleQuickForm;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -164,4 +167,14 @@ interface filter_collection_interface {
      * @param \stdClass $user
      */
     public function delete_cache(\stdClass $user);
+
+    /**
+     * Take a Moodle form and add any settings for the filters beloning to this collection.
+     *
+     * @param moodleform $form
+     * @param MoodleQuickForm $mform
+     * @param $type
+     * @param string $fieldnameformat
+     */
+    public function build_settings_form(moodleform $form, MoodleQuickForm $mform, $type, $fieldnameformat = 'filters[%s]'): void;
 }

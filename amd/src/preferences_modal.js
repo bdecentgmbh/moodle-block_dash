@@ -7,8 +7,8 @@
  * @copyright  2017 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/fragment', 'core/ajax', 'block_dash/select2'],
-    function($, jqueryui, Str, ModalFactory, ModalEvents, Fragment, Ajax, Select2) {
+define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/fragment', 'core/ajax', 'block_dash/select2', 'core/notification'],
+    function($, jqueryui, Str, ModalFactory, ModalEvents, Fragment, Ajax, Select2, Notification) {
 
     /**
      * Constructor
@@ -189,7 +189,7 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
             },
             done: this.handleFormSubmissionResponse.bind(this, formData, closeWhenDone),
             fail: this.handleFormSubmissionFailure.bind(this, formData)
-        }]);
+        }])[0].fail(Notification.exception);
     };
 
     PreferencesModal.prototype.getModal = function() {

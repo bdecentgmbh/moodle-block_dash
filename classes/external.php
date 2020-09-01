@@ -182,38 +182,41 @@ class external extends external_api {
         $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
 
-        $form = new preferences_form(null, ['block' => $block], 'post', '', [
-            'class' => 'dash-preferences-form',
-            'data-double-submit-protection' => 'off'
-        ], true, $data);
-
-        $validationerrors = true;
-        if ($form->get_data()) {
-            if (!empty($block->config)) {
-                $config = clone($block->config);
-            } else {
-                $config = new \stdClass;
-            }
-            foreach ($data as $configfield => $value) {
-                if (strpos($configfield, 'config_') !== 0) {
-                    continue;
-                }
-                $field = substr($configfield, 7);
-                if (is_array($config->$field) && is_array($value)) {
-                    $value = array_merge($config->$field, $value);
-                }
-                $config->$field = $value;
-            }
-            $block->instance_config_save($config);
-
-            $validationerrors = false;
-        } else if ($errors = $form->is_validated()) {
-            throw new \moodle_exception('generalerror');
+        if (!empty($block->config)) {
+            $config = clone($block->config);
+        } else {
+            $config = new \stdClass;
         }
 
+        if (!isset($config->preferences)) {
+            $config->preferences = [];
+        }
+
+        $config->preferences = self::recursive_config_merge($config->preferences, $data['config_preferences']);
+        $block->instance_config_save($config);
+
         return [
-            'validationerrors' => $validationerrors
+            'validationerrors' => false
         ];
+    }
+
+    /**
+     * Recursively merge in new config.
+     *
+     * @param $existingconfig
+     * @param $newconfig
+     * @return mixed
+     */
+    private static function recursive_config_merge($existingconfig, $newconfig) {
+        foreach ($newconfig as $key => $value) {
+            if (is_scalar($value)) {
+                $existingconfig[$key] = $value;
+            } else if (is_array($value)) {
+                $existingconfig[$key] = self::recursive_config_merge($existingconfig[$key], $newconfig[$key]);
+            }
+        }
+
+        return $existingconfig;
     }
 
     /**

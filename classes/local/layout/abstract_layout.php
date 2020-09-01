@@ -178,10 +178,12 @@ abstract class abstract_layout implements layout_interface, \templatable {
             }
         }
 
-        if ($form->get_tab() == preferences_form::TAB_FILTERS) {
-            if ($this->supports_filtering()) {
+        if ($this->supports_filtering()) {
+            if ($form->get_tab() == preferences_form::TAB_FILTERS) {
                 $filtercollection->build_settings_form($form, $mform, filter::class, 'config_preferences[filters][%s]');
+            }
 
+            if ($form->get_tab() == preferences_form::TAB_CONDITIONS) {
                 $filtercollection->build_settings_form($form, $mform, condition::class, 'config_preferences[filters][%s]');
             }
         }

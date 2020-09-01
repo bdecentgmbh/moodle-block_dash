@@ -211,6 +211,17 @@ class filter implements filter_interface {
     }
 
     /**
+     * Get help text for this filter to help configuration.
+     *
+     * Return array[string_identifier, component], similar to the $mform->addHelpButton() call.
+     *
+     * @return array<string, string>
+     */
+    public function get_help() {
+        return null;
+    }
+
+    /**
      * Get filter SQL operation.
      *
      * @return string
@@ -308,7 +319,7 @@ class filter implements filter_interface {
         $params = [$placeholder => $value];
         $select = $this->get_select();
 
-        switch ($this->operation) {
+        switch ($this->get_operation()) {
             case self::OPERATION_EQUAL:
                 $sql = "$select = :$placeholder";
                 break;
@@ -470,5 +481,10 @@ class filter implements filter_interface {
 
         $totaratitle = block_dash_is_totara() ? $this->get_label() : null;
         $mform->addElement('advcheckbox', $fieldname . '[enabled]', $this->get_label(), $totaratitle);
+
+        if ($this->get_help()) {
+            [$identifier, $component] = $this->get_help();
+            $mform->addHelpButton($fieldname . '[enabled]', $identifier, $component);
+        }
     }
 }

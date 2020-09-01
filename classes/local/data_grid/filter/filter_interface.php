@@ -199,6 +199,15 @@ interface filter_interface {
     public function set_label($label);
 
     /**
+     * Get help text for this filter to help configuration.
+     *
+     * Return array[string_identifier, component], similar to the $mform->addHelpButton() call.
+     *
+     * @return array<string, string>
+     */
+    public function get_help();
+
+    /**
      * Get SQL operation.
      *
      * @return string

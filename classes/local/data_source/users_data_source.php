@@ -140,6 +140,10 @@ class users_data_source extends abstract_data_source {
         $filtercollection->add_filter(new current_course_condition('current_course_groups', 'g.courseid',
             get_string('currentcoursegroups', 'block_dash')));
 
+        if (block_dash_has_pro()) {
+            $filtercollection->add_filter(new \local_dash\data_grid\filter\parent_role_condition('parentrole', 'u.id'));
+        }
+
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
             $filter = new user_profile_field_filter($alias, $alias . '.data', $field->id, $field->name);

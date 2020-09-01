@@ -88,6 +88,7 @@ class course_condition extends condition {
         $courses = $DB->get_records_sql_menu('SELECT id, shortname FROM {course} WHERE format != :format', ['format' => 'site']);
 
         $select = $mform->addElement('select', $fieldname . '[courseids]', get_string('courses'), $courses, ['class' => 'select2-form']);
+        $mform->hideIf($fieldname . '[courseids]',$fieldname . '[enabled]');
         $select->setMultiple(true);
     }
 }

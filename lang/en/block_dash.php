@@ -155,6 +155,8 @@ $string['none'] = 'None';
 $string['nonpublicdashboards'] = 'Hide public dashboards';
 $string['notauthorized'] = 'You do not have access to this dashboard.';
 $string['pagination_summary'] = 'Showing {$a->limit_from} - {$a->limit_to} of {$a->total}';
+$string['parentrole'] = 'Users I manage';
+$string['parentrole_help'] = 'Only includes users that the current user has a role assigned to. See "<a href="https://docs.moodle.org/39/en/Parent_role" target="_blank">Parent role</a>."';
 $string['parseerror'] = 'Parse error. The content cannot be displayed.';
 $string['permissions'] = 'Restrict access to';
 $string['permissionscohort'] = 'Cohort';

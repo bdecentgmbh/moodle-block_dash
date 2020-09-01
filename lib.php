@@ -157,3 +157,12 @@ function block_dash_is_totara() {
     global $CFG;
     return file_exists("$CFG->dirroot/totara");
 }
+
+/**
+ * Check if pro plugin is installed.
+ *
+ * @return bool
+ */
+function block_dash_has_pro() {
+    return array_key_exists('dash', core_component::get_plugin_list('local'));
+}

@@ -42,11 +42,13 @@ class preferences_form extends \moodleform {
     const TAB_GENERAL = 'tabgeneral';
     const TAB_FIELDS = 'tabfields';
     const TAB_FILTERS = 'tabfilters';
+    const TAB_CONDITIONS = 'tabconditions';
 
     const TABS = [
         self::TAB_GENERAL,
         self::TAB_FIELDS,
-        self::TAB_FILTERS
+        self::TAB_FILTERS,
+        self::TAB_CONDITIONS
     ];
 
     /**
@@ -68,6 +70,8 @@ class preferences_form extends \moodleform {
         }
 
         $mform = $this->_form;
+
+        $mform->addElement('html', '<hr>');
 
         //when two elements we need a group
         $buttonarray=array();

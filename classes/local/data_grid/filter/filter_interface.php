@@ -311,7 +311,7 @@ interface filter_interface {
      *
      * @param array $preferences
      */
-    public function set_preferences(array $preferences): void;
+    public function set_preferences(array $preferences = null): void;
 
     /**
      * Get preferences related to this filter.

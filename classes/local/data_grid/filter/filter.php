@@ -456,7 +456,7 @@ class filter implements filter_interface {
      *
      * @param array $preferences
      */
-    public function set_preferences(array $preferences): void {
+    public function set_preferences(array $preferences = null): void {
         $this->preferences = $preferences;
     }
 

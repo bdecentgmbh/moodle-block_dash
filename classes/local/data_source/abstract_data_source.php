@@ -295,9 +295,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @throws \coding_exception
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
-        $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
-
         if ($form->get_tab() == preferences_form::TAB_GENERAL) {
+            $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
+
             $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'),
                 layout_factory::get_layout_form_options());
             $mform->setType('config_preferences[layout]', PARAM_TEXT);
@@ -307,17 +307,19 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $layout->build_preferences_form($form, $mform);
         }
 
-        $sortablefielddefinitions = [];
-        foreach ($this->get_available_field_definitions() as $fielddefinition) {
-            if ($fielddefinition->get_option('supports_sorting') !== false) {
-                $sortablefielddefinitions[] = $fielddefinition;
+        if ($form->get_tab() == preferences_form::TAB_FIELDS) {
+            $sortablefielddefinitions = [];
+            foreach ($this->get_available_field_definitions() as $fielddefinition) {
+                if ($fielddefinition->get_option('supports_sorting') !== false) {
+                    $sortablefielddefinitions[] = $fielddefinition;
+                }
             }
-        }
 
-        $mform->addElement('select', 'config_preferences[default_sort]', get_string('defaultsortfield', 'block_dash'),
-            field_definition_factory::get_field_definition_options($sortablefielddefinitions));
-        $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
-        $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
+            $mform->addElement('select', 'config_preferences[default_sort]', get_string('defaultsortfield', 'block_dash'),
+                field_definition_factory::get_field_definition_options($sortablefielddefinitions));
+            $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
+            $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
+        }
     }
 
     #region Preferences

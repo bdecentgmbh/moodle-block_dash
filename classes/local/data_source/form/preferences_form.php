@@ -71,6 +71,10 @@ class preferences_form extends \moodleform {
 
         $mform = $this->_form;
 
+        if (empty($mform->_elements)) {
+            $mform->addElement('html', '<p class="text-muted">' . get_string('nothingtodisplay') . '</p>');
+        }
+
         $mform->addElement('html', '<hr>');
 
         //when two elements we need a group

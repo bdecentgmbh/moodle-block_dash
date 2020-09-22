@@ -466,6 +466,9 @@ class filter implements filter_interface {
      * @return array
      */
     public function get_preferences(): array {
+        if (!$this->preferences) {
+            return [];
+        }
         return $this->preferences;
     }
 

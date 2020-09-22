@@ -208,3 +208,4 @@ $string['usersnotcompleted'] = 'Users not completed';
 $string['userstat'] = 'User stat';
 $string['viewcourse'] = 'View course';
 $string['viewprofile'] = 'View profile';
+$string['myenrolledcourses'] = 'My enrolled courses';

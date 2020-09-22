@@ -208,6 +208,13 @@ class external extends external_api {
      * @return mixed
      */
     private static function recursive_config_merge($existingconfig, $newconfig) {
+        // If existing config is a scalar value than always overwrite. No point in looping new config.
+        // This allows preferences that were a scalar to be assigned as arrays by new preferences.
+        if (is_scalar($existingconfig)) {
+            return $newconfig;
+        }
+
+        // Recursively overwrite values.
         foreach ($newconfig as $key => $value) {
             if (is_scalar($value)) {
                 $existingconfig[$key] = $value;

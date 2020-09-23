@@ -214,6 +214,11 @@ class external extends external_api {
             return $newconfig;
         }
 
+        // If array contains only scalars, overwrite with new config. No more looping required for this level.
+        if (is_array($existingconfig) && !self::is_array_multidimensional($existingconfig)) {
+            return $newconfig;
+        }
+
         // Recursively overwrite values.
         foreach ($newconfig as $key => $value) {
             if (is_scalar($value)) {
@@ -224,6 +229,22 @@ class external extends external_api {
         }
 
         return $existingconfig;
+    }
+
+    /**
+     * Check if array is multidimensional. True if it contains an array, false meaning all values are scalar.
+     *
+     * @param array $array
+     * @return bool
+     */
+    private static function is_array_multidimensional(array $array): bool {
+        foreach ($array as $element) {
+            if (is_array($element)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

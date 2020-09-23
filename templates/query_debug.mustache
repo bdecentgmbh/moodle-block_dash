@@ -6,7 +6,8 @@
         ModalFactory.create({
             title: '{{#str}}querydebug, block_dash{{/str}}',
             body: trigger.data('body'),
-            type: ModalFactory.types.SAVE_CANCEL
+            type: ModalFactory.types.SAVE_CANCEL,
+            large: true
         }, trigger);
     });
 {{/js}}

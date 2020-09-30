@@ -134,6 +134,34 @@ The following field definition transforms `1,5,123` into `Group 1, Group 5, Grou
 ]
 ```
 
+## Query builder
+
+Under the hood Dash builds queries using a strict API for constructing queries. This API is decoupled from the rest of a dash's lifecycle.
+
+Simple example:
+
+```php
+use block_dash\local\query_builder\builder;
+
+$builder = new builder();
+$results = $builder->select('c.id', 'c_id') // Column aliasing.
+    ->from('course', 'c') // Table aliasing.
+    ->query();
+```
+
+### WHERE clauses
+
+Filter results by adding where clauses.
+
+### Results caching (TODO)
+
+Results caching works by taking a snapshot of a query result. And storing the following info:
+
+* md5 hash of the raw query
+* Raw database results
+* When the query results were cached
+* When to invalidate the cache and query database
+
 ## Change log
 
 ### 1.0.2

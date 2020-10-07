@@ -25,6 +25,8 @@
 namespace block_dash\local\data_source;
 
 use block_dash\local\block_builder;
+use block_dash\local\dash_framework\query_builder\builder;
+use block_dash\local\dash_framework\query_builder\join;
 use block_dash\local\data_grid\field\field_definition_factory;
 use block_dash\local\data_grid\field\field_definition_interface;
 use block_dash\local\data_grid\filter\current_course_participants_condition;
@@ -39,6 +41,7 @@ use block_dash\local\data_grid\filter\participants_condition;
 use block_dash\local\data_grid\filter\user_field_filter;
 use block_dash\local\data_grid\filter\user_profile_field_filter;
 use block_dash\local\data_grid\filter\current_course_condition;
+use coding_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -53,7 +56,7 @@ class users_data_source extends abstract_data_source {
      * Get human readable name of data source.
      *
      * @return string
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function get_name() {
         return get_string('users');
@@ -62,27 +65,35 @@ class users_data_source extends abstract_data_source {
     /**
      * Return query template for retrieving user info.
      *
-     * @return string
+     * @return builder
+     * @throws coding_exception
      */
-    public function get_query_template() {
+    public function get_query_template(): builder {
         global $CFG;
 
         require_once("$CFG->dirroot/user/profile/lib.php");
-        $sql = 'SELECT DISTINCT %%SELECT%% FROM {user} u
-                LEFT JOIN {user_enrolments} ue ON ue.userid = u.id
-                LEFT JOIN {enrol} e ON e.id = ue.enrolid
-                LEFT JOIN {course} c ON c.id = e.courseid
-                LEFT JOIN {groups_members} gm ON gm.userid = u.id
-                LEFT JOIN {groups} g ON g.id = gm.groupid ';
+
+        $builder = new builder();
+        $builder
+            ->select('u.id', 'u_id')
+            ->from('user', 'u')
+            ->join('user_enrolments', 'ue', 'userid', 'u.id', join::TYPE_LEFT_JOIN)
+            ->join('enrol', 'e', 'id', 'ue.enrolid', join::TYPE_LEFT_JOIN)
+            ->join('course', 'c', 'id', 'e.courseid', join::TYPE_LEFT_JOIN)
+            ->join('groups_members', 'gm', 'userid', 'u.id', join::TYPE_LEFT_JOIN)
+            ->join('groups', 'g', 'id', 'gm.groupid', join::TYPE_LEFT_JOIN);
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
-            $sql .= "LEFT JOIN {user_info_data} $alias ON $alias.userid = u.id AND $alias.fieldid = $field->id ";
+
+            $builder
+                ->join('user_info_data', $alias, 'userid', 'u.id')
+                ->join_condition($alias, "$alias.fieldid = $field->id");
         }
 
-        $sql .= ' %%WHERE%% AND u.deleted = 0 %%GROUPBY%% %%ORDERBY%%';
+        $builder->where('u.deleted', [0]);
 
-        return $sql;
+        return $builder;
     }
 
     /**
@@ -107,7 +118,7 @@ class users_data_source extends abstract_data_source {
      * Build and return filter collection.
      *
      * @return filter_collection_interface
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function build_filter_collection() {
         global $CFG;

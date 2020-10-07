@@ -22,16 +22,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\local\query_builder\exception;
+namespace block_dash\local\dash_framework\query_builder\exception;
 
 use moodle_exception;
 
 /**
  * Thrown when a where condition does not have any values.
  *
- * @package block_dash\local\query_builder
+ * @package block_dash\local\dash_framework\query_builder
  */
-class invalid_operator_exception extends moodle_exception {
+class invalid_where_clause_exception extends moodle_exception {
 
     /**
      * Constructor
@@ -40,6 +40,6 @@ class invalid_operator_exception extends moodle_exception {
      * @param string|null $debuginfo optional debugging information
      */
     public function __construct($link = '', $a = NULL, $debuginfo = null) {
-        parent::__construct('invalidoperator', 'block_dash', $link, $a, $debuginfo);
+        parent::__construct('invalidwhereclause', 'block_dash', $link, $a, $debuginfo);
     }
 }

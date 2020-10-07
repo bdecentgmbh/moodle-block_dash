@@ -22,17 +22,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\local\query_builder;
+namespace block_dash\local\dash_framework\query_builder;
 
-use block_dash\local\query_builder\exception\invalid_operator_exception;
-use block_dash\local\query_builder\exception\invalid_where_clause_exception;
+use block_dash\local\dash_framework\query_builder\exception\invalid_operator_exception;
+use block_dash\local\dash_framework\query_builder\exception\invalid_where_clause_exception;
 use coding_exception;
 use dml_exception;
 
 /**
  * Builds a query.
  *
- * @package block_dash\local\query_builder
+ * @package block_dash\local\dash_framework\query_builder
  */
 class where {
 

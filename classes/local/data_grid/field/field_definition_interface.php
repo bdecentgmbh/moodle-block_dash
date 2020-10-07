@@ -25,7 +25,6 @@
 namespace block_dash\local\data_grid\field;
 
 use block_dash\local\data_grid\field\attribute\field_attribute_interface;
-use block_dash\local\data_grid\data_grid_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -50,21 +49,6 @@ interface field_definition_interface {
      * Value to display when empty or null.
      */
     const DEFAULT_EMPTY_VALUE = '-';
-
-    /**
-     * Set data source this field definition is attached to.
-     *
-     * @param data_grid_interface $datagrid
-     * @return mixed
-     */
-    public function set_data_grid(data_grid_interface $datagrid);
-
-    /**
-     * Get data source this field definition is attached to.
-     *
-     * @return data_grid_interface
-     */
-    public function get_data_grid();
 
     /**
      * After records are relieved from database each field has a chance to transform the data.

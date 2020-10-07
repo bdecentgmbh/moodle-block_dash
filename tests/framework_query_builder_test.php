@@ -24,11 +24,10 @@
 
 namespace block_dash\test;
 
-use block_dash\local\data_grid\data_grid_interface;
-use block_dash\local\query_builder\builder;
-use block_dash\local\query_builder\exception\invalid_operator_exception;
-use block_dash\local\query_builder\exception\invalid_where_clause_exception;
-use block_dash\local\query_builder\where;
+use block_dash\local\dash_framework\query_builder\builder;
+use block_dash\local\dash_framework\query_builder\exception\invalid_operator_exception;
+use block_dash\local\dash_framework\query_builder\exception\invalid_where_clause_exception;
+use block_dash\local\dash_framework\query_builder\where;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @group bdecent
  * @group query_builder_test
  */
-class query_builder_test extends \advanced_testcase {
+class block_dash_framework_query_builder_test extends \advanced_testcase {
 
     public function test_where() {
         $this->resetAfterTest();
@@ -171,5 +170,30 @@ class query_builder_test extends \advanced_testcase {
 
         $this->expectException(\coding_exception::class);
         $builder->orderby('c.id', 'wrong');
+    }
+
+    public function test_joins() {
+        $this->resetAfterTest();
+
+        $category = $this->getDataGenerator()->create_category();
+
+        $courses = [];
+        for ($i = 0; $i < 10; $i++) {
+            $courses[] = $this->getDataGenerator()->create_course(['category' => $category->id]);
+        }
+
+        $builder = new builder();
+        $builder
+            ->select('c.id', 'c_id')
+            ->select('cc.name', 'cc_name')
+            ->from('course', 'c')
+            ->join('course_categories', 'cc', 'id', 'c.category')
+            ->join_condition('cc', 'cc.parent = 0');
+
+        $results = array_values($builder->query());
+        $this->assertEquals($category->name, $results[0]->cc_name);
+
+        $this->expectException(\coding_exception::class);
+        $builder->join_condition('missing', '');
     }
 }

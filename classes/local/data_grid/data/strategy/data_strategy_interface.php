@@ -25,7 +25,7 @@
 namespace block_dash\local\data_grid\data\strategy;
 
 use block_dash\local\data_grid\data\data_collection_interface;
-use block_dash\local\data_grid\data_grid_interface;
+use block_dash\local\data_grid\field\field_definition_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,8 +40,8 @@ interface data_strategy_interface {
      * Convert database records into data collections.
      *
      * @param \stdClass[] $records
-     * @param data_grid_interface $datagrid
+     * @param field_definition_interface[] $fielddefinitions
      * @return data_collection_interface
      */
-    public function convert_records_to_data_collection($records, data_grid_interface $datagrid);
+    public function convert_records_to_data_collection($records, array $fielddefinitions);
 }

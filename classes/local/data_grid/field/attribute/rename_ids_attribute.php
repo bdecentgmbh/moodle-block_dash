@@ -53,7 +53,10 @@ class rename_ids_attribute extends abstract_field_attribute {
         if ($data) {
             foreach (explode($this->get_option('delimiter'), $data) as $id) {
                 if ($this->check_id($id)) {
-                    $fields[] = self::get_fields($this->get_option('table'), $this->get_option('field'))[$id];
+                    $fields = self::get_fields($this->get_option('table'), $this->get_option('field'));
+                    if (isset($fields[$id])) {
+                        $fields[] = $fields[$id];
+                    }
                 }
             }
         }

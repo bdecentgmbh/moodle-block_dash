@@ -24,15 +24,15 @@
 
 namespace block_dash\local\data_source;
 
+use block_dash\local\dash_framework\query_builder\builder;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\field\attribute\identifier_attribute;
 use block_dash\local\data_grid\field\field_definition_factory;
 use block_dash\local\data_grid\field\sql_field_definition;
-use block_dash\local\data_grid\sql_data_grid;
 use block_dash\local\data_grid\data\data_collection_interface;
-use block_dash\local\data_grid\data_grid_interface;
 use block_dash\local\data_grid\field\field_definition_interface;
 use block_dash\local\data_grid\filter\filter_collection_interface;
+use block_dash\local\paginator;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
 use block_dash\local\layout\layout_factory;
@@ -51,11 +51,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @var \context
      */
     private $context;
-
-    /**
-     * @var data_grid_interface
-     */
-    private $datagrid;
 
     /**
      * @var data_collection_interface
@@ -93,45 +88,96 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     private $blockinstance = null;
 
     /**
+     * @var builder
+     */
+    private $query;
+
+    /**
+     * @var paginator
+     */
+    private $paginator;
+
+    /**
      * Constructor.
      *
      * @param \context $context
      */
     public function __construct(\context $context) {
         $this->context = $context;
+
+        $this->paginator = new paginator(function () {
+            return $this->get_query()->count();
+        });
     }
 
     /**
-     * Get data grid. Build if necessary.
-     *
-     * @return data_grid_interface
-     * @throws \coding_exception
-     * @throws \moodle_exception
+     * @return paginator
      */
-    public final function get_data_grid() {
-        if (is_null($this->datagrid)) {
-            if (!$this->get_sorted_field_definitions()) {
-                throw new \coding_exception('Data source has no field definitions associated with it.');
+    public function get_paginator(): paginator {
+        return $this->paginator;
+    }
+
+    /**
+     * Get fully built query for execution.
+     *
+     * @return builder
+     */
+    final public function get_query(): builder {
+        if (is_null($this->query)) {
+            $this->query = $this->get_query_template();
+
+            if (count($this->get_available_field_definitions()) == 0) {
+                throw new \moodle_exception('Cannot build empty query in data source.');
             }
 
-            $this->datagrid = new sql_data_grid($this->get_context(), $this);
-            $this->datagrid->set_query_template($this->get_query_template());
-            $this->datagrid->set_count_query_template($this->get_count_query_template());
-            $this->datagrid->set_field_definitions($this->get_sorted_field_definitions());
-            $this->datagrid->set_supports_pagination($this->get_layout()->supports_pagination());
-            $this->datagrid->set_groupby($this->get_groupby());
+            if ($this->get_filter_collection() && $this->get_filter_collection()->has_filters()) {
+                list ($filtersql, $filterparams) = $this->get_filter_collection()->get_sql_and_params();
 
-            foreach ($this->get_sorting() as $fieldname => $direction) {
-                if ($fielddefinition = $this->datagrid->get_field_definition($fieldname)) {
-                    $fielddefinition->set_sort(true);
-                    $fielddefinition->set_sort_direction($direction);
+                $this->query->where_raw($filtersql[0], $filterparams);
+            }
+
+            $fields = $this->get_available_field_definitions();
+
+            foreach ($fields as $field) {
+                if (is_null($field->get_select())) {
+                    continue;
+                }
+
+                $this->query->select($field->get_select(), $field->get_name());
+            }
+
+            /** @var sql_field_definition $field */
+            foreach ($this->get_available_field_definitions() as $field) {
+                if ($field->get_sort()) {
+                    $this->query->orderby($field->get_select(), strtoupper($field->get_sort_direction()));
                 }
             }
 
-            $this->datagrid->init();
+            // If there are multiple identifiers in the data source, construct a unique column.
+            // This is to prevent warnings when multiple rows have the same value in the first column.
+            $identifierselects = [];
+            /** @var sql_field_definition $fielddefinition */
+            foreach ($this->get_available_field_definitions() as $fielddefinition) {
+                if ($fielddefinition->has_attribute(identifier_attribute::class)) {
+                    $identifierselects[] = $fielddefinition->get_select();
+                }
+            }
+            global $DB;
+            $concat = $DB->sql_concat_join("'-'", $identifierselects);
+            if (count($identifierselects) > 1) {
+                $this->query->select($concat, 'unique_id');
+            }
+
+            if ($this->get_layout()->supports_pagination()) {
+                $this->query
+                    ->limitfrom($this->get_paginator()->get_limit_from())
+                    ->limitnum($this->get_paginator()->get_per_page());
+            }
+
+            return $this->query;
         }
 
-        return $this->datagrid;
+        return $this->query;
     }
 
     /**
@@ -167,7 +213,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             if ($this->preferences && isset($this->preferences['available_fields'])) {
                 foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
                     if (isset($preferences['visible'])) {
-                        if ($fielddefinition = $this->get_data_grid()->get_field_definition($fieldname)) {
+                        if ($fielddefinition = $this->get_field_definition($fieldname)) {
                             $fielddefinition->set_visibility($preferences['visible']);
                         }
                     }
@@ -213,12 +259,8 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             $this->before_data();
 
-            $datagrid = $this->get_data_grid();
-            if ($strategy = $this->get_layout()->get_data_strategy()) {
-                $datagrid->set_data_strategy($strategy);
-            }
-            $datagrid->set_filter_collection($this->get_filter_collection());
-            $this->data = $datagrid->get_data();
+            $strategy = $this->get_layout()->get_data_strategy();
+            $this->data = $strategy->convert_records_to_data_collection($this->get_query()->query(), $this->get_available_field_definitions());
 
             if ($modifieddata = $this->after_data($this->data)) {
                 $this->data = $modifieddata;
@@ -383,10 +425,38 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public final function get_available_field_definitions() {
         if (is_null($this->fielddefinitions)) {
-            $this->fielddefinitions = $this->build_available_field_definitions();
+            $this->fielddefinitions = [];
+            foreach ($this->build_available_field_definitions() as $fielddefinition) {
+                $this->fielddefinitions[$fielddefinition->get_name()] = $fielddefinition;
+            }
         }
 
         return $this->fielddefinitions;
+    }
+
+    /**
+     * Check if report has a certain field
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function has_field_definition(string $name): bool {
+        return isset($this->get_available_field_definitions()[$name]);
+    }
+
+    /**
+     * Get field definition by name. Returns false if not found.
+     *
+     * @param string $name
+     * @return bool|field_definition_interface
+     */
+    public function get_field_definition(string $name): ?field_definition_interface {
+        // Field definitions are keyed by name.
+        if ($this->has_field_definition($name)) {
+            return $this->get_available_field_definitions()[$name];
+        }
+
+        return null;
     }
 
     /**

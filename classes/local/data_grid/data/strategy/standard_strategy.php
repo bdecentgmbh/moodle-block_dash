@@ -27,7 +27,6 @@ namespace block_dash\local\data_grid\data\strategy;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
-use block_dash\local\data_grid\data_grid_interface;
 use block_dash\local\data_grid\field\attribute\identifier_attribute;
 use block_dash\local\data_grid\field\field_definition_interface;
 
@@ -44,10 +43,10 @@ class standard_strategy implements data_strategy_interface {
      * Convert records.
      *
      * @param \stdClass[] $records
-     * @param data_grid_interface $datagrid
+     * @param field_definition_interface[] $fielddefinitions
      * @return data_collection_interface
      */
-    public function convert_records_to_data_collection($records, data_grid_interface $datagrid) {
+    public function convert_records_to_data_collection($records, array $fielddefinitions) {
         $griddata = new data_collection();
 
         foreach ($records as $fullrecord) {
@@ -56,8 +55,12 @@ class standard_strategy implements data_strategy_interface {
                 unset($record->unique_id);
             }
             $row = new data_collection();
-            foreach ($datagrid->get_field_definitions() as $fielddefinition) {
+            foreach ($fielddefinitions as $fielddefinition) {
                 $name = $fielddefinition->get_name();
+
+                if (!isset($record->$name)) {
+                    continue;
+                }
 
                 if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
                     continue;

@@ -116,8 +116,7 @@ class external extends external_api {
                     ->apply_filter($filter['name'], $filter['value']);
             }
 
-            $datagrid = $bb->get_configuration()->get_data_source()->get_data_grid();
-            $datagrid->get_paginator()->set_current_page($params['page']);
+            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page($params['page']);
 
             return ['html' => $renderer->render_data_source($bb->get_configuration()->get_data_source())];
         }

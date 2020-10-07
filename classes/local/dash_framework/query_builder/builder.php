@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\local\query_builder;
+namespace block_dash\local\dash_framework\query_builder;
 
 use coding_exception;
 use dml_exception;
@@ -30,7 +30,7 @@ use dml_exception;
 /**
  * Builds a query.
  *
- * @package block_dash\local\query_builder
+ * @package block_dash\local\dash_framework\query_builder
  */
 class builder {
 
@@ -55,6 +55,16 @@ class builder {
     private $wheres = [];
 
     /**
+     * @var string
+     */
+    private $rawwhere;
+
+    /**
+     * @var array
+     */
+    private $rawwhereparameters;
+
+    /**
      * @var int Return a subset of records, starting at this point (optional).
      */
     private $limitfrom = 0;
@@ -70,12 +80,43 @@ class builder {
     private $orderby = [];
 
     /**
+     * @var join[]
+     */
+    private $joins = [];
+
+    /**
+     * Extra conditions to be added in WHERE clause.
+     *
+     * @var array
+     */
+    private $rawconditions = [];
+
+    /**
+     * @var array
+     */
+    private $rawconditionparameters = [];
+
+    /**
      * @param string $field
      * @param string $alias
      * @return builder
      */
     public function select(string $field, string $alias): builder {
         $this->selects[$alias] = $field;
+        return $this;
+    }
+
+    /**
+     * Set all selects on builder.
+     *
+     * @param array $selects [alias => field, ...]
+     * @return $this
+     */
+    public function set_selects(array $selects): builder {
+        $this->selects = [];
+        foreach ($selects as $alias => $select) {
+            $this->selects[$alias] = $select;
+        }
         return $this;
     }
 
@@ -89,6 +130,48 @@ class builder {
     public function from(string $table, string $alias): builder {
         $this->table = $table;
         $this->tablealias = $alias;
+        return $this;
+    }
+
+    /**
+     * Join table in query.
+     *
+     * @param string $table Table name of joined table.
+     * @param string $alias Joined table alias.
+     * @param string $jointablefield Field of joined table to reference in join condition.
+     * @param string $origintablefield Field of origin table to join to.
+     * @param string $jointype SQL join type. See self::TYPE_*
+     * @param array $extraparameters Extra parameters used in join SQL.
+     * @return $this
+     */
+    public function join(string $table, string $alias, string $jointablefield, string $origintablefield,
+                         $jointype = join::TYPE_INNER_JOIN, array $extraparameters = []): builder {
+        $this->joins[] = new join($table, $alias, $jointablefield, $origintablefield, $jointype, $extraparameters);
+        return $this;
+    }
+
+    /**
+     * Add additional join condition to existing join.
+     *
+     * @param string $alias
+     * @param string $condition
+     * @return $this
+     * @throws coding_exception
+     */
+    public function join_condition(string $alias, string $condition): builder {
+        $added = false;
+        foreach ($this->joins as $join) {
+            if ($join->get_alias() == $alias) {
+                $join->add_join_condition($condition);
+                $added = true;
+                break;
+            }
+        }
+
+        if (!$added) {
+            throw new coding_exception('Table alias not found: ' . $alias);
+        }
+
         return $this;
     }
 
@@ -122,6 +205,16 @@ class builder {
     }
 
     /**
+     * @param string $wheresql
+     * @return builder
+     */
+    public function where_raw(string $wheresql, array $parameters = []): builder {
+        $this->rawwhere = $wheresql;
+        $this->rawwhereparameters = $parameters;
+        return $this;
+    }
+
+    /**
      * Order by a field.
      *
      * @param string $field Field or alias to order by.
@@ -135,6 +228,19 @@ class builder {
         }
 
         $this->orderby[$field] = $direction;
+        return $this;
+    }
+
+    /**
+     * Add raw condition to builder.
+     *
+     * @param string $condition
+     * @param array $parameters
+     * @return builder
+     */
+    public function rawcondition(string $condition, array $parameters = []): builder {
+        $this->rawconditions[] = $condition;
+        $this->rawconditionparameters = $parameters;
         return $this;
     }
 
@@ -212,6 +318,11 @@ class builder {
             $params = array_merge($params, $wparams);
         }
 
+        if ($this->rawwhere) {
+            $wheresql[] = $this->rawwhere;
+            $params = array_merge($params, $this->rawwhereparameters);
+        }
+
         return [implode(' AND ', $wheresql), $params];
     }
 
@@ -219,9 +330,15 @@ class builder {
      * @return array<string, array>
      * @throws exception\invalid_operator_exception
      */
-    protected function get_sql_and_params(): array {
+    final public function get_sql_and_params(): array {
         $sql = 'SELECT DISTINCT ' . $this->build_select() . ' FROM {' . $this->table . '} ' . $this->tablealias;
         $params = [];
+
+        foreach ($this->joins as $join) {
+            [$jsql, $jparams] = $join->get_sql_and_params();
+            $sql .= ' ' . $jsql . ' ';
+            $params = array_merge($params, $jparams);
+        }
 
         [$wsql, $wparams] = $this->get_where_sql_and_params();
 
@@ -255,5 +372,20 @@ class builder {
         [$sql, $params] = $this->get_sql_and_params();
 
         return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
+    }
+
+    /**
+     * Get number of records this query will return.
+     *
+     * @return int
+     * @throws dml_exception
+     * @throws exception\invalid_operator_exception
+     */
+    public function count(): int {
+        $builder = clone $this;
+        $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
+        $builder->limitfrom(0)->limitnum(0);
+        $records = $builder->query();
+        return array_values($records)[0]->count;
     }
 }

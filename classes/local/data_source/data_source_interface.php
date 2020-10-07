@@ -24,9 +24,8 @@
 
 namespace block_dash\local\data_source;
 
+use block_dash\local\dash_framework\query_builder\builder;
 use block_dash\local\data_grid\data\data_collection_interface;
-use block_dash\local\data_grid\data\field;
-use block_dash\local\data_grid\data_grid_interface;
 use block_dash\local\data_grid\field\field_definition_interface;
 use block_dash\local\data_grid\filter\filter_collection_interface;
 use block_dash\local\layout\layout_interface;
@@ -46,15 +45,6 @@ interface data_source_interface {
      * @return string
      */
     public function get_name();
-
-    /**
-     * Get data grid. Build if necessary.
-     *
-     * @return data_grid_interface
-     * @throws \coding_exception
-     * @throws \moodle_exception
-     */
-    public function get_data_grid();
 
     /**
      * Get filter collection for data grid. Build if necessary.
@@ -143,11 +133,18 @@ interface data_source_interface {
     public function set_preferences(array $preferences);
 
     /**
-     * Get query template.
+     * Get query builder with basis of query.
      *
-     * @return string
+     * @return builder
      */
-    public function get_query_template();
+    public function get_query_template(): builder;
+
+    /**
+     * Get fully built query for execution.
+     *
+     * @return builder
+     */
+    public function get_query(): builder;
 
     /**
      * Get count query template.

@@ -111,7 +111,8 @@ class block_dash extends block_base {
 
             $this->content = $bb->get_block_content();
         } catch (\Exception $e) {
-            $this->content->text = $OUTPUT->notification($e->getMessage(), 'error');
+            throw $e;
+            //$this->content->text = $OUTPUT->notification($e->getMessage() . $e->getTraceAsString(), 'error');
         }
 
         return $this->content;

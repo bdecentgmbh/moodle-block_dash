@@ -29,9 +29,7 @@ use block_dash\local\data_grid\data\field;
 use block_dash\local\data_grid\data\strategy\data_strategy_interface;
 use block_dash\local\data_grid\data\strategy\standard_strategy;
 use block_dash\local\data_grid\field\attribute\identifier_attribute;
-use block_dash\local\data_grid\filter\condition;
-use block_dash\local\data_grid\filter\filter;
-use block_dash\local\data_grid\paginator;
+use block_dash\local\paginator;
 use block_dash\local\data_source\data_source_interface;
 use block_dash\local\data_source\form\preferences_form;
 
@@ -190,7 +188,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
             }
         }
 
-        if (!$this->supports_filtering() && $form->get_tab() ==preferences_form::TAB_FILTERS) {
+        if (!$this->supports_filtering() && $form->get_tab() == preferences_form::TAB_FILTERS) {
             $mform->addElement('html', $OUTPUT->notification(get_string('layoutdoesnotsupportfiltering', 'block_dash'), 'warning'));
         }
     }
@@ -258,9 +256,9 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $templatedata['error'] .= $OUTPUT->notification($error, 'error');
             }
 
-            if ($this->get_data_source()->get_data_grid()->get_paginator()->get_page_count() > 1) {
+            if ($this->get_data_source()->get_paginator()->get_page_count() > 1) {
                 $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()
-                    ->get_data_grid()->get_paginator()
+                    ->get_paginator()
                     ->export_for_template($OUTPUT));
             }
         }

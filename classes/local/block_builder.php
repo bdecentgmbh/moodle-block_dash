@@ -26,7 +26,6 @@ namespace block_dash\local;
 
 use block_dash\local\configuration\configuration_interface;
 use block_dash\local\configuration\configuration;
-use block_dash\local\data_grid\sql_data_grid;
 use block_dash\output\query_debug;
 use block_dash\output\renderer;
 
@@ -87,7 +86,7 @@ class block_builder {
         if ($this->configuration->is_fully_configured()) {
             $bb = self::create($this->blockinstance);
 
-            $bb->get_configuration()->get_data_source()->get_data_grid()->get_paginator()->set_current_page(0);
+            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page(0);
 
             $text .= $OUTPUT->render_from_template('block_dash/block', [
                 'preloaded' => $renderer->render_data_source($bb->get_configuration()->get_data_source()),
@@ -97,9 +96,9 @@ class block_builder {
                     has_capability('block/dash:addinstance', $this->blockinstance->context)
             ]);
 
-            $datagrid = $bb->get_configuration()->get_data_source()->get_data_grid();
-            if (is_siteadmin() && $datagrid instanceof sql_data_grid) {
-                $text .= $renderer->render(new query_debug($datagrid->get_sql_and_params()[0], $datagrid->get_sql_and_params()[1]));
+            if (is_siteadmin()) {
+                [$sql, $params] = $bb->get_configuration()->get_data_source()->get_query()->get_sql_and_params();
+                $text .= $renderer->render(new query_debug($sql, $params));
             }
         } else {
             $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));

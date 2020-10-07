@@ -134,6 +134,59 @@ The following field definition transforms `1,5,123` into `Group 1, Group 5, Grou
 ]
 ```
 
+# Dash Framework
+
+Dash comprises smaller components that live inside the Dash Framework. These components generic, decoupled, and extendable APIs. A Dash Framework API must be unit tested and well documented.
+
+Dash Framework APIs live in the `<component>\local\dash_framework` namespace of a plugin.
+
+### List of standard Dash Framework APIs
+
+#### [Query builder](#query-builder)
+
+Generate SQL queries to be run by Moodle's Data API
+
+#### [Filtering](#filtering)
+
+Create generic filters.
+
+### Creating a new Dash Framework API 
+
+#### Step 1 - Determine if your code should be an API
+
+Any reusable chunk of functionality can be used as an API. Think of the Moodle File API or Custom Field API. These APIs provide generic functionality to be utilized in specific ways. 
+
+Unit testing will also reveal how portable your API code is. If you cannot test without tightly coupled dependencies, then perhaps the code should be business logic inside of a plugin, rather than a reusable API.
+
+#### Step 2 - Create a new folder for your framework API classes
+
+Add a new folder in `<pluginfolder>/classes/local/dash_framework`
+
+As an example: `blocks/dash/classes/local/dash_framework/result_cache`
+
+#### Step 3 - Create unit tests
+
+Prefix your unit test class with `dash_framework_` and try to keep all tests within a single class. Follow this convention:
+
+`<pluginfolder>/tests/dash_framework_result_cache_test.php`
+
+Strive for full code coverage on your API and make changes that are backwards compatible.
+
+#### Step 4 - Write the API code
+
+"API" is used loosely in this documentation. Create friendly and easy to use PHP classes within your framework namespace. Here's a simple example:
+
+```php
+namespace block_dash\local\dash_framework\result_cache;
+
+interface cacher {
+    
+    public function set(string $cache_identifier, array $datatocache): void; // Use typehints and "SOLID" practices.
+
+    public function get(string $cache_identifier): array; // Public functions should be easy to use methods of consuming.
+}
+```
+
 ## Query builder
 
 Under the hood Dash builds queries using a strict API for constructing queries. This API is decoupled from the rest of a dash's lifecycle.
@@ -141,7 +194,7 @@ Under the hood Dash builds queries using a strict API for constructing queries. 
 Simple example:
 
 ```php
-use block_dash\local\query_builder\builder;
+use block_dash\local\dash_framework\query_builder\builder;
 
 $builder = new builder();
 $results = $builder->select('c.id', 'c_id') // Column aliasing.
@@ -161,6 +214,8 @@ Results caching works by taking a snapshot of a query result. And storing the fo
 * Raw database results
 * When the query results were cached
 * When to invalidate the cache and query database
+
+## Filtering
 
 ## Change log
 

@@ -223,8 +223,27 @@ class field_definition_factory implements field_definition_factory_interface {
      * @throws \coding_exception
      */
     public static function get_field_definitions_by_tables(array $tablealiases) {
-        $fielddefinitions = [];
         $all = self::get_all_field_definitions();
+        $keyedbytable = [];
+
+        foreach ($all as $fielddefinition) {
+            if (!$fielddefinition->get_option('tables')) {
+                continue;
+            }
+            foreach ($fielddefinition->get_option('tables') as $table) {
+                if (!isset($keyedbytable[$table])) {
+                    $keyedbytable[$table] = [];
+                }
+                $keyedbytable[$table][] = $fielddefinition;
+            }
+        }
+
+        $fielddefinitions = [];
+        foreach ($tablealiases as $tablealias) {
+            if (isset($keyedbytable[$tablealias])) {
+                $fielddefinitions = array_merge($fielddefinitions, $keyedbytable[$tablealias]);
+            }
+        }
 
         foreach ($all as $fielddefinition) {
             if ($tables = $fielddefinition->get_option('tables')) {

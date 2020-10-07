@@ -223,7 +223,10 @@ class external extends external_api {
             if (is_scalar($value)) {
                 $existingconfig[$key] = $value;
             } else if (is_array($value)) {
-                $existingconfig[$key] = self::recursive_config_merge($existingconfig[$key], $newconfig[$key]);
+                $v = self::recursive_config_merge($existingconfig[$key], $newconfig[$key]);
+                unset($existingconfig[$key]);
+                $existingconfig[$key] = $v;
+
             }
         }
 

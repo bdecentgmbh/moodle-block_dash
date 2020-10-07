@@ -260,7 +260,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $this->before_data();
 
             $strategy = $this->get_layout()->get_data_strategy();
-            $this->data = $strategy->convert_records_to_data_collection($this->get_query()->query(), $this->get_available_field_definitions());
+            $this->data = $strategy->convert_records_to_data_collection($this->get_query()->query(), $this->get_sorted_field_definitions());
 
             if ($modifieddata = $this->after_data($this->data)) {
                 $this->data = $modifieddata;

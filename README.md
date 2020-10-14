@@ -57,12 +57,59 @@ Typical use cases:
 
 ### Key terms
 
-* **Data source**: A data source defines which query, fields, and filters are used to retrieve data from a data grid.
-* **Field definition**: Represents a predefined field that can be added to a data grid.
+* **Data source**: A data source defines which query, fields, and filters are used to retrieve data.
+* **Field definition**: Represents a predefined field that can be added to a data source.
 * **Field attribute**: An attribute changes how field definition output is formatted. 
-* **Data grid**: Get data to be displayed in a grid or downloaded as a formatted file.
 * **Query template**: Query templates are written by developers to define which data to include. These are typically joins,
 because selects, wheres, ordering, etc is handled elsewhere (and is often dynamic). 
+
+### Custom data source
+
+A developer can create a custom data source in code. Here's the general outline:
+
+1. Create a Moodle plugin (any type)
+2. Define a new class that extends `\block_dash\local\data_source\abstract_data_source` in your plugin's `local\block_dash` namespace
+3. Add a language string to your plugin `$string['datasource:my_data_source'] = 'My data source';`
+
+**local/myplugin/classes/local/block_dash/my_data_source.php**
+
+```php
+namespace local_myplugin\local\block_dash;
+
+use block_dash\local\dash_framework\query_builder\builder;
+use block_dash\local\data_grid\field\field_definition_interface;
+use block_dash\local\data_grid\filter\filter_collection_interface;
+use block_dash\local\data_source\abstract_data_source;
+
+class my_data_source extends abstract_data_source {
+
+    /**
+     * Get query builder with basis of query.
+     *
+     * @return builder
+     */
+    public function get_query_template() : builder {}
+
+    /**
+     * Build available field definitions for this data source.
+     *
+     * @return field_definition_interface[]
+     */
+    public function build_available_field_definitions() {}
+    
+    /**
+     * Build filter collection.
+     *
+     * @return filter_collection_interface
+     */public function build_filter_collection() {}
+}
+```
+
+**lang/en/local_myplugin.php**
+
+```php
+$string['datasource:my_data_source'] = 'My data source';
+```
 
 ### Field definitions
 

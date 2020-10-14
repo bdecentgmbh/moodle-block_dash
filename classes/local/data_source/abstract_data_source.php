@@ -37,6 +37,7 @@ use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
 use block_dash\local\layout\layout_factory;
 use block_dash\local\layout\layout_interface;
+use coding_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -108,6 +109,41 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         $this->paginator = new paginator(function () {
             return $this->get_query()->count();
         });
+    }
+
+    /**
+     * Get human readable name of data source.
+     *
+     * @return string
+     */
+    public function get_name() {
+        return self::get_name_from_class(get_class($this));
+    }
+
+    /**
+     * Get human readable name of data source.
+     *
+     * @param $fullclassname
+     * @return string
+     * @throws coding_exception
+     */
+    public static function get_name_from_class($fullclassname) {
+        $component = explode('\\', $fullclassname)[0];
+        $class = array_reverse(explode('\\', $fullclassname))[0];
+
+        $stringidentifier = "datasource:$class";
+        $stringcomponent = $component;
+
+        $stringmanager = get_string_manager();
+        if ($stringmanager->string_exists($stringidentifier, $stringcomponent)) {
+            $name = get_string($stringidentifier, $stringcomponent);
+        } else if ($stringmanager->string_exists($stringidentifier, 'block_dash')) {
+            $name = get_string($stringidentifier, 'block_dash');
+        } else {
+            $name = '[[' . $stringidentifier . ']]';
+        }
+
+        return $name;
     }
 
     /**
@@ -322,7 +358,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @param \renderer_base $output
      * @return array|\renderer_base|\stdClass|string
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public final function export_for_template(\renderer_base $output) {
         return $this->get_layout()->export_for_template($output);
@@ -334,7 +370,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @param \moodleform $form
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
         if ($form->get_tab() == preferences_form::TAB_GENERAL) {
@@ -509,7 +545,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * Get sorting.
      *
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function get_sorting() {
         global $USER;

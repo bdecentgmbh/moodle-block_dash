@@ -295,8 +295,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             $this->before_data();
 
-            $strategy = $this->get_layout()->get_data_strategy();
-            $this->data = $strategy->convert_records_to_data_collection($this->get_query()->query(), $this->get_sorted_field_definitions());
+            if (!$strategy = $this->get_layout()->get_data_strategy()) {
+                throw new coding_exception('Not fully configured.');
+            }
+            $records = $this->get_query()->query();
+            $this->data = $strategy->convert_records_to_data_collection($records, $this->get_sorted_field_definitions());
 
             if ($modifieddata = $this->after_data($this->data)) {
                 $this->data = $modifieddata;
@@ -361,7 +364,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @throws coding_exception
      */
     public final function export_for_template(\renderer_base $output) {
-        return $this->get_layout()->export_for_template($output);
+        $data = $this->get_layout()->export_for_template($output);
+        $data['datasource'] = $this;
+        return $data;
     }
 
     /**

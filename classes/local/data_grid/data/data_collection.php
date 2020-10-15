@@ -24,6 +24,8 @@
 
 namespace block_dash\local\data_grid\data;
 
+use context;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -42,6 +44,40 @@ class data_collection implements data_collection_interface, \ArrayAccess {
      * @var array type => [array of collections]
      */
     private $children = [];
+
+    /**
+     * @var context
+     */
+    private $context;
+
+    /**
+     * Check if data collection is active.
+     *
+     * @return bool
+     */
+    public function is_active() {
+        global $PAGE;
+
+        if ($PAGE->context && $context = $this->get_context()) {
+            return $PAGE->context->id == $context->id;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param context $context
+     */
+    public function set_context(context $context) {
+        $this->context = $context;
+    }
+
+    /**
+     * @return context|null
+     */
+    public function get_context() {
+        return $this->context;
+    }
 
     /**
      * Get all fields in this data collection.

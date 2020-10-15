@@ -8,15 +8,19 @@
                 <thead>
                     <tr>
                         {{#data.first_child.data}}
-                            <th class="dash-sort" data-sort="{{get_name}}">{{get_label}}</th>
+                            {{#is_visible}}
+                                <th class="dash-sort" data-sort="{{get_name}}">{{get_label}}</th>
+                            {{/is_visible}}
                         {{/data.first_child.data}}
                     </tr>
                 </thead>
                 <tbody>
                     {{#data.rows}}
-                        <tr>
+                        <tr {{#is_active}}class="table-active"{{/is_active}}>
                             {{#data}}
-                                <td>{{{get_value}}}</td>
+                                {{#is_visible}}
+                                    <td>{{{get_value}}}</td>
+                                {{/is_visible}}
                             {{/data}}
                         </tr>
                     {{/data.rows}}

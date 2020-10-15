@@ -49,15 +49,21 @@ class field implements field_interface {
     private $label;
 
     /**
+     * @var bool
+     */
+    private $visible;
+
+    /**
      * Create a new field.
      *
      * @param string $name
      * @param string $value
      * @param string $label
      */
-    public function __construct($name, $value, $label = '') {
+    public function __construct($name, $value, $visible, $label = '') {
         $this->name = $name;
         $this->value = $value;
+        $this->visible = $visible;
         $this->label = $label;
     }
 
@@ -86,5 +92,12 @@ class field implements field_interface {
      */
     public function get_label() {
         return $this->label;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_visible() {
+        return $this->visible;
     }
 }

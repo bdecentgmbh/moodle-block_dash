@@ -27,6 +27,7 @@ namespace block_dash\local\data_grid\data\strategy;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
+use block_dash\local\data_grid\field\attribute\context_attribute;
 use block_dash\local\data_grid\field\attribute\identifier_attribute;
 use block_dash\local\data_grid\field\field_definition_interface;
 
@@ -62,16 +63,12 @@ class standard_strategy implements data_strategy_interface {
                     continue;
                 }
 
-                if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
-                    continue;
-                }
-
-                if ($fielddefinition->has_attribute(identifier_attribute::class)) {
-                    continue;
+                if ($fielddefinition->has_attribute(context_attribute::class)) {
+                    $row->set_context(\context::instance_by_id($record->$name));
                 }
 
                 $row->add_data(new field($name, $fielddefinition->transform_data($record->$name, $fullrecord),
-                    $fielddefinition->get_title()));
+                    $fielddefinition->get_visibility(), $fielddefinition->get_title()));
             }
 
             $griddata->add_child_collection('rows', $row);

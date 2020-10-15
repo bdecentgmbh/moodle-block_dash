@@ -87,18 +87,14 @@ class grouped_strategy implements data_strategy_interface {
             foreach ($fielddefinitions as $fielddefinition) {
                 $name = $fielddefinition->get_name();
 
-                if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
-                    continue;
-                }
-
                 $row->add_data(new field($name, $fielddefinition->transform_data($record->$name, $fullrecord),
-                    $fielddefinition->get_title()));
+                    $fielddefinition->get_visibility(), $fielddefinition->get_title()));
             }
 
             if (!isset($sections[$groupby])) {
                 $sections[$groupby] = new data_collection();
-                $sections[$groupby]->add_data(new field('groupby', $groupby));
-                $sections[$groupby]->add_data(new field('label', $label));
+                $sections[$groupby]->add_data(new field('groupby', $groupby, $fielddefinition->get_visibility()));
+                $sections[$groupby]->add_data(new field('label', $label, $fielddefinition->get_visibility()));
             }
             $sections[$groupby]->add_child_collection('rows', $row);
         }

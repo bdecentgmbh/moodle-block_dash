@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * An attribute changes how a field definition is designated or behaves.
+ * An attribute changes how a field is designated or behaves.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
@@ -24,12 +24,12 @@
 
 namespace block_dash\local\data_grid\field\attribute;
 
-use block_dash\local\data_grid\field\field_definition_interface;
+use block_dash\local\dash_framework\structure\field_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * An attribute changes how field definition output is formatted.
+ * An attribute changes how field output is formatted.
  *
  * @package block_dash
  */
@@ -40,31 +40,40 @@ abstract class abstract_field_attribute implements field_attribute_interface {
      */
     private $options = [];
 
-    private $fielddefinition;
+    private $field;
 
     /**
-     * Set the field definition this attribute is attached to.
+     * New attribute.
      *
-     * @param field_definition_interface $fielddefinition
+     * @param array $options
      */
-    public function set_field_definition(field_definition_interface $fielddefinition) {
-        $this->fielddefinition = $fielddefinition;
+    public function __construct(array $options = []) {
+        $this->set_options($options);
     }
 
     /**
-     * Get the field definition this attribute is attached to.
+     * Set the field this attribute is attached to.
      *
-     * @return field_definition_interface
+     * @param field_interface $field
      */
-    public function get_field_definition() {
-        return $this->fielddefinition;
+    public function set_field(field_interface $field) {
+        $this->field = $field;
+    }
+
+    /**
+     * Get the field this attribute is attached to.
+     *
+     * @return field_interface
+     */
+    public function get_field() {
+        return $this->field;
     }
 
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format
      *
-     * @param mixed $data Raw data associated with this field definition.
+     * @param mixed $data Raw data associated with this field.
      * @param \stdClass $record Full record from database.
      * @return mixed
      */

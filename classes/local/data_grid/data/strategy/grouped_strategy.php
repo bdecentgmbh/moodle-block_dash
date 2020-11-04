@@ -27,7 +27,7 @@ namespace block_dash\local\data_grid\data\strategy;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
-use block_dash\local\data_grid\field\field_definition_interface;
+use block_dash\local\dash_framework\structure\field_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,23 +39,23 @@ defined('MOODLE_INTERNAL') || die();
 class grouped_strategy implements data_strategy_interface {
 
     /**
-     * @var field_definition_interface
+     * @var field_interface
      */
     private $groupbyfielddefinition;
 
     /**
-     * @var field_definition_interface
+     * @var field_interface
      */
     private $grouplabelfielddefinition;
 
     /**
      * Create new grouped strategy.
      *
-     * @param field_definition_interface $groupbyfielddefinition
-     * @param field_definition_interface $grouplabelfielddefinition
+     * @param field_interface $groupbyfielddefinition
+     * @param field_interface $grouplabelfielddefinition
      */
-    public function __construct(field_definition_interface $groupbyfielddefinition,
-                                field_definition_interface $grouplabelfielddefinition) {
+    public function __construct(field_interface $groupbyfielddefinition,
+                                field_interface $grouplabelfielddefinition) {
         $this->groupbyfielddefinition = $groupbyfielddefinition;
         $this->grouplabelfielddefinition = $grouplabelfielddefinition;
     }
@@ -64,7 +64,7 @@ class grouped_strategy implements data_strategy_interface {
      * Convert records.
      *
      * @param \stdClass[] $records
-     * @param field_definition_interface[] $fielddefinitions
+     * @param field_interface[] $fielddefinitions
      * @return data_collection_interface
      */
     public function convert_records_to_data_collection($records, array $fielddefinitions) {

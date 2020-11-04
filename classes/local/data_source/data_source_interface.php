@@ -25,8 +25,9 @@
 namespace block_dash\local\data_source;
 
 use block_dash\local\dash_framework\query_builder\builder;
+use block_dash\local\dash_framework\structure\field_interface;
+use block_dash\local\dash_framework\structure\table;
 use block_dash\local\data_grid\data\data_collection_interface;
-use block_dash\local\data_grid\field\field_definition_interface;
 use block_dash\local\data_grid\filter\filter_collection_interface;
 use block_dash\local\layout\layout_interface;
 
@@ -161,25 +162,48 @@ interface data_source_interface {
     public function get_groupby();
 
     /**
-     * Build available field definitions for this data source.
+     * Add table to this data source. If the table is used in a join in the main query.
      *
-     * @return field_definition_interface[]
+     * @param table $table
      */
-    public function build_available_field_definitions();
+    public function add_table(table $table): void;
 
     /**
-     * Get available field definitions for this data source.
+     * Get tables that are in this data source's main query.
      *
-     * @return field_definition_interface[]
+     * @return array
      */
-    public function get_available_field_definitions();
+    public function get_tables(): array;
 
     /**
-     * Get sorted field definitions based on preferences.
+     * Get available fields for this data source.
      *
-     * @return field_definition_interface[]
+     * @return field_interface[]
      */
-    public function get_sorted_field_definitions();
+    public function get_available_fields();
+
+    /**
+     * Get field by name. Returns null if not found.
+     *
+     * @param string $name
+     * @return ?field_interface
+     */
+    public function get_field(string $name): ?field_interface;
+
+    /**
+     * Check if field exists in data source.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function has_field(string $name): bool;
+
+    /**
+     * Get sorted fields based on preferences.
+     *
+     * @return field_interface[]
+     */
+    public function get_sorted_fields();
 
     /**
      * Build filter collection.

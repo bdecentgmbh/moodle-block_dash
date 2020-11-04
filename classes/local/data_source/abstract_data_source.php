@@ -25,12 +25,11 @@
 namespace block_dash\local\data_source;
 
 use block_dash\local\dash_framework\query_builder\builder;
+use block_dash\local\dash_framework\structure\field_interface;
+use block_dash\local\dash_framework\structure\table;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\field\attribute\identifier_attribute;
-use block_dash\local\data_grid\field\field_definition_factory;
-use block_dash\local\data_grid\field\sql_field_definition;
 use block_dash\local\data_grid\data\data_collection_interface;
-use block_dash\local\data_grid\field\field_definition_interface;
 use block_dash\local\data_grid\filter\filter_collection_interface;
 use block_dash\local\paginator;
 use block_dash\local\data_source\form\preferences_form;
@@ -74,14 +73,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     private $layout;
 
     /**
-     * @var field_definition_interface[]
+     * @var field_interface[]
      */
-    private $fielddefinitions;
+    private $fields;
 
     /**
-     * @var field_definition_interface[]
+     * @var field_interface[]
      */
-    private $sortedfielddefinitions;
+    private $sortedfields;
 
     /**
      * @var \block_base|null
@@ -97,6 +96,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @var paginator
      */
     private $paginator;
+
+    /**
+     * @var table[]
+     */
+    private $tables = [];
 
     /**
      * Constructor.
@@ -147,6 +151,24 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     /**
+     * Add table to this data source. If the table is used in a join in the main query.
+     *
+     * @param table $table
+     */
+    public function add_table(table $table): void {
+        $this->tables[$table->get_alias()] = $table;
+    }
+
+    /**
+     * Get tables that are in this data source's main query.
+     *
+     * @return array
+     */
+    public function get_tables(): array {
+        return $this->tables;
+    }
+
+    /**
      * @return paginator
      */
     public function get_paginator(): paginator {
@@ -162,7 +184,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if (is_null($this->query)) {
             $this->query = $this->get_query_template();
 
-            if (count($this->get_available_field_definitions()) == 0) {
+            if (count($this->get_available_fields()) == 0) {
                 throw new \moodle_exception('Cannot build empty query in data source.');
             }
 
@@ -172,18 +194,17 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 $this->query->where_raw($filtersql[0], $filterparams);
             }
 
-            $fields = $this->get_available_field_definitions();
+            $fields = $this->get_available_fields();
 
             foreach ($fields as $field) {
                 if (is_null($field->get_select())) {
                     continue;
                 }
 
-                $this->query->select($field->get_select(), $field->get_name());
+                $this->query->select($field->get_select(), $field->get_alias());
             }
 
-            /** @var sql_field_definition $field */
-            foreach ($this->get_available_field_definitions() as $field) {
+            foreach ($this->get_available_fields() as $field) {
                 if ($field->get_sort()) {
                     $this->query->orderby($field->get_select(), strtoupper($field->get_sort_direction()));
                 }
@@ -192,10 +213,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             // If there are multiple identifiers in the data source, construct a unique column.
             // This is to prevent warnings when multiple rows have the same value in the first column.
             $identifierselects = [];
-            /** @var sql_field_definition $fielddefinition */
-            foreach ($this->get_available_field_definitions() as $fielddefinition) {
-                if ($fielddefinition->has_attribute(identifier_attribute::class)) {
-                    $identifierselects[] = $fielddefinition->get_select();
+            foreach ($this->get_available_fields() as $field) {
+                if ($field->has_attribute(identifier_attribute::class)) {
+                    $identifierselects[] = $field->get_select();
                 }
             }
             global $DB;
@@ -243,14 +263,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function before_data() {
         if ($this->get_layout()->supports_field_visibility()) {
-            foreach ($this->get_available_field_definitions() as $availablefielddefinition) {
-                $availablefielddefinition->set_visibility(field_definition_interface::VISIBILITY_HIDDEN);
+            foreach ($this->get_available_fields() as $availablefield) {
+                $availablefield->set_visibility(field_interface::VISIBILITY_HIDDEN);
             }
             if ($this->preferences && isset($this->preferences['available_fields'])) {
                 foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
                     if (isset($preferences['visible'])) {
-                        if ($fielddefinition = $this->get_field_definition($fieldname)) {
-                            $fielddefinition->set_visibility($preferences['visible']);
+                        if ($field = $this->get_field($fieldname)) {
+                            $field->set_visibility($preferences['visible']);
                         }
                     }
                 }
@@ -299,7 +319,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 throw new coding_exception('Not fully configured.');
             }
             $records = $this->get_query()->query();
-            $this->data = $strategy->convert_records_to_data_collection($records, $this->get_sorted_field_definitions());
+            $this->data = $strategy->convert_records_to_data_collection($records, $this->get_sorted_fields());
 
             if ($modifieddata = $this->after_data($this->data)) {
                 $this->data = $modifieddata;
@@ -391,15 +411,15 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
 
         if ($form->get_tab() == preferences_form::TAB_FIELDS) {
-            $sortablefielddefinitions = [];
-            foreach ($this->get_available_field_definitions() as $fielddefinition) {
-                if ($fielddefinition->get_option('supports_sorting') !== false) {
-                    $sortablefielddefinitions[] = $fielddefinition;
+            $sortablefields = [];
+            foreach ($this->get_available_fields() as $field) {
+                if ($field->get_option('supports_sorting') !== false) {
+                    $sortablefields[$field->get_alias()] = $field->get_name();
                 }
             }
 
             $mform->addElement('select', 'config_preferences[default_sort]', get_string('defaultsortfield', 'block_dash'),
-                field_definition_factory::get_field_definition_options($sortablefielddefinitions));
+                $sortablefields);
             $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
             $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
         }
@@ -462,39 +482,42 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * Get available field definitions.
      *
-     * @return field_definition_interface[]
+     * @return field_interface[]
      */
-    public final function get_available_field_definitions() {
-        if (is_null($this->fielddefinitions)) {
-            $this->fielddefinitions = [];
-            foreach ($this->build_available_field_definitions() as $fielddefinition) {
-                $this->fielddefinitions[$fielddefinition->get_name()] = $fielddefinition;
+    public final function get_available_fields() {
+        if (is_null($this->fields)) {
+            // Get all available field definitions based on tables.
+            $this->fields = [];
+            foreach ($this->get_tables() as $table) {
+                foreach ($table->get_fields() as $field) {
+                    $this->fields[$field->get_alias()] = $field;
+                }
             }
         }
 
-        return $this->fielddefinitions;
+        return $this->fields;
     }
 
     /**
      * Check if report has a certain field
      *
-     * @param string $name
+     * @param string $alias Field alias.
      * @return bool
      */
-    public function has_field_definition(string $name): bool {
-        return isset($this->get_available_field_definitions()[$name]);
+    public function has_field(string $alias): bool {
+        return isset($this->get_available_fields()[$alias]);
     }
 
     /**
-     * Get field definition by name. Returns false if not found.
+     * Get field by name. Returns null if not found.
      *
-     * @param string $name
-     * @return bool|field_definition_interface
+     * @param string $alias Field alias.
+     * @return ?field_interface
      */
-    public function get_field_definition(string $name): ?field_definition_interface {
-        // Field definitions are keyed by name.
-        if ($this->has_field_definition($name)) {
-            return $this->get_available_field_definitions()[$name];
+    public function get_field(string $alias): ?field_interface {
+        // Fields are keyed by name.
+        if ($this->has_field($alias)) {
+            return $this->get_available_fields()[$alias];
         }
 
         return null;
@@ -503,48 +526,48 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * Get sorted field definitions based on preferences.
      *
-     * @return sql_field_definition[]
+     * @return field_interface[]
      */
-    public function get_sorted_field_definitions() {
-        if (is_null($this->sortedfielddefinitions)) {
-            $fielddefinitions = $this->get_available_field_definitions();;
+    public function get_sorted_fields() {
+        if (is_null($this->sortedfields)) {
+            $fields = $this->get_available_fields();;
 
             if ($this->get_layout()->supports_field_visibility()) {
 
-                $sortedfielddefinitions = [];
+                $sortedfields = [];
 
                 // First add the identifiers, in order, so they always come first in the query.
-                foreach ($fielddefinitions as $key => $fielddefinition) {
-                    if ($fielddefinition->has_attribute(identifier_attribute::class)) {
-                        $sortedfielddefinitions[] = $fielddefinition;
-                        unset($fielddefinitions[$key]);
+                foreach ($fields as $key => $field) {
+                    if ($field->has_attribute(identifier_attribute::class)) {
+                        $sortedfields[] = $field;
+                        unset($fields[$key]);
                     }
                 }
 
                 if ($availablefields = $this->get_preferences('available_fields')) {
-                    foreach ($availablefields as $fieldname => $availablefield) {
-                        foreach ($fielddefinitions as $key => $fielddefinition) {
-                            if ($fielddefinition->get_name() == $fieldname) {
-                                $sortedfielddefinitions[] = $fielddefinition;
-                                unset($fielddefinitions[$key]);
+                    foreach ($availablefields as $fieldalias => $availablefield) {
+                        foreach ($fields as $key => $field) {
+                            if ($field->get_alias() == $fieldalias) {
+                                $sortedfields[] = $field;
+                                unset($fields[$key]);
                                 break;
                             }
                         }
                     }
 
-                    foreach ($fielddefinitions as $fielddefinition) {
-                        $sortedfielddefinitions[] = $fielddefinition;
+                    foreach ($fields as $field) {
+                        $sortedfields[] = $field;
                     }
 
-                    $fielddefinitions = $sortedfielddefinitions;
+                    $fields = $sortedfields;
                 }
 
             }
 
-            $this->sortedfielddefinitions = array_values($fielddefinitions);
+            $this->sortedfields = array_values($fields);
         }
 
-        return $this->sortedfielddefinitions;
+        return $this->sortedfields;
     }
 
     /**

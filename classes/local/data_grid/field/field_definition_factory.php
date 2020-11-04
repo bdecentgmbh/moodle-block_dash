@@ -24,6 +24,7 @@
 
 namespace block_dash\local\data_grid\field;
 
+use block_dash\local\dash_framework\structure\field_interface;
 use block_dash\local\data_grid\field\attribute\field_attribute_interface;
 
 defined('MOODLE_INTERNAL') || die();
@@ -259,16 +260,16 @@ class field_definition_factory implements field_definition_factory_interface {
     /**
      * Get options for form select field.
      *
-     * @param field_definition_interface[] $fielddefinitions
+     * @param field_interface[] $fields
      * @return array
      * @throws \coding_exception
      */
-    public static function get_field_definition_options($fielddefinitions) {
+    public static function get_field_definition_options($fields) {
         $options = [];
-        foreach ($fielddefinitions as $fielddefinition) {
+        foreach ($fields as $field) {
 
             $tablenames = [];
-            if ($tables = $fielddefinition->get_option('tables')) {
+            if ($tables = $field->get_option('tables')) {
                 foreach ($tables as $table) {
                     $tablenames[] = get_string('tablealias_' . $table, 'block_dash');
                 }
@@ -280,9 +281,9 @@ class field_definition_factory implements field_definition_factory_interface {
                 $title = get_string('general');
             }
 
-            $title = $title . ': ' . $fielddefinition->get_title();
+            $title = $title . ': ' . $field->get_title();
 
-            $options[$fielddefinition->get_name()] = $title;
+            $options[$field->get_alias()] = $title;
         }
 
         return $options;

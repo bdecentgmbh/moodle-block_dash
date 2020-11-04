@@ -24,12 +24,11 @@
 
 namespace block_dash\local\data_grid\data\strategy;
 
+use block_dash\local\dash_framework\structure\field_interface;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
 use block_dash\local\data_grid\field\attribute\context_attribute;
-use block_dash\local\data_grid\field\attribute\identifier_attribute;
-use block_dash\local\data_grid\field\field_definition_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,7 +43,7 @@ class standard_strategy implements data_strategy_interface {
      * Convert records.
      *
      * @param \stdClass[] $records
-     * @param field_definition_interface[] $fielddefinitions
+     * @param field_interface[] $fielddefinitions
      * @return data_collection_interface
      */
     public function convert_records_to_data_collection($records, array $fielddefinitions) {
@@ -57,9 +56,9 @@ class standard_strategy implements data_strategy_interface {
             }
             $row = new data_collection();
             foreach ($fielddefinitions as $fielddefinition) {
-                $name = $fielddefinition->get_name();
+                $name = $fielddefinition->get_alias();
 
-                if (!isset($record->$name)) {
+                if (!property_exists($record, $name)) {
                     continue;
                 }
 

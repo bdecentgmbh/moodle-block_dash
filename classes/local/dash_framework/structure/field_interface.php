@@ -15,16 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Represents a predefined field that can be added to a data grid.
+ * Represents a predefined field that can be added to a data source.
  *
  * @package    block_dash
- * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @copyright  2020 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\local\data_grid\field;
+namespace block_dash\local\dash_framework\structure;
 
 use block_dash\local\data_grid\field\attribute\field_attribute_interface;
+use lang_string;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package block_dash
  */
-interface field_definition_interface {
+interface field_interface {
 
     /**
      * Visible to user.
@@ -60,19 +61,49 @@ interface field_definition_interface {
      */
     public function transform_data($data, \stdClass $record);
 
-    /**
-     * Get unique field name.
-     *
-     * @return string
-     */
-    public function get_name();
+    #region Property methods
 
     /**
-     * Get field title.
+     * Get the column name of the field as it appears in the table (e.g. firstname).
      *
      * @return string
      */
-    public function get_title();
+    public function get_name(): string;
+
+    /**
+     * Get field alias for query.
+     *
+     * @return string
+     */
+    public function get_alias(): string;
+
+    /**
+     * Human readable name of field (e.g. Firstname).
+     *
+     * @return lang_string
+     */
+    public function get_title(): lang_string;
+
+    /**
+     * Override field title.
+     *
+     * @param lang_string $title
+     */
+    public function set_title(lang_string $title): void;
+
+    /**
+     * Get table this field belongs to.
+     *
+     * @return table
+     */
+    public function get_table(): table;
+
+    /**
+     * Get SQL select for this field, minus alias.
+     *
+     * @return string
+     */
+    public function get_select(): string;
 
     /**
      * Get field visibility.
@@ -87,6 +118,10 @@ interface field_definition_interface {
      * @param int $visibility
      */
     public function set_visibility($visibility);
+
+    #endregion
+
+    #region Attributes
 
     /**
      * Add attribute to this field definition.
@@ -116,6 +151,10 @@ interface field_definition_interface {
      * @return bool
      */
     public function has_attribute($classname);
+
+    #endregion
+
+    #region Options
 
     /**
      * Get a single option.
@@ -147,10 +186,15 @@ interface field_definition_interface {
      */
     public function get_options();
 
+    #endregion
+
+    #region Sorting
+
     /**
      * Set if field should be sorted.
      *
      * @param bool $sort
+     * @throws \Exception
      */
     public function set_sort($sort);
 
@@ -165,6 +209,7 @@ interface field_definition_interface {
      * Set direction sort should happen for this field.
      *
      * @param string $direction
+     * @throws \Exception
      */
     public function set_sort_direction($direction);
 
@@ -188,4 +233,6 @@ interface field_definition_interface {
      * @return string
      */
     public function get_sort_select();
+
+    #endregion
 }

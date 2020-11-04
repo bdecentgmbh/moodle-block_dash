@@ -134,20 +134,20 @@ abstract class abstract_layout implements layout_interface, \templatable {
         if ($form->get_tab() == preferences_form::TAB_FIELDS) {
             if ($this->supports_field_visibility()) {
                 $group = [];
-                foreach ($this->get_data_source()->get_sorted_field_definitions() as $availablefielddefinition) {
-                    if ($availablefielddefinition->has_attribute(identifier_attribute::class)) {
+                foreach ($this->get_data_source()->get_sorted_fields() as $availablefield) {
+                    if ($availablefield->has_attribute(identifier_attribute::class)) {
                         continue;
                     }
 
-                    if ($availablefielddefinition->has_attribute(context_attribute::class)) {
+                    if ($availablefield->has_attribute(context_attribute::class)) {
                         continue;
                     }
 
-                    $fieldname = 'config_preferences[available_fields][' . $availablefielddefinition->get_name() .
+                    $fieldname = 'config_preferences[available_fields][' . $availablefield->get_alias() .
                         '][visible]';
 
                     $tablenames = [];
-                    if ($tables = $availablefielddefinition->get_option('tables')) {
+                    if ($tables = $availablefield->get_option('tables')) {
                         foreach ($tables as $table) {
                             $tablenames[] = get_string('tablealias_' . $table, 'block_dash');
                         }
@@ -161,7 +161,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
 
                     $icon = $OUTPUT->pix_icon('i/dragdrop', get_string('dragitem', 'block_dash'), 'moodle',
                         ['class' => 'drag-handle']);
-                    $title = $icon . '<b>' . $title . '</b>: ' . $availablefielddefinition->get_title();
+                    $title = $icon . '<b>' . $title . '</b>: ' . $availablefield->get_title();
 
                     $totaratitle = block_dash_is_totara() ? $title : null;
                     $group[] = $mform->createElement('advcheckbox', $fieldname, $title, $totaratitle, [

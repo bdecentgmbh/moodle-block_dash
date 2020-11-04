@@ -15,33 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A strategy for structuring database records into data collections.
+ * Class abstract_data_source.
  *
  * @package    block_dash
- * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @copyright  2020 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\local\data_grid\data\strategy;
-
-use block_dash\local\dash_framework\structure\field_interface;
-use block_dash\local\data_grid\data\data_collection_interface;
+namespace block_dash\local\dash_framework\structure;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * A strategy for structuring database records into data collections.
+ * Class abstract_data_source.
  *
  * @package block_dash
  */
-interface data_strategy_interface {
+interface table_interface {
 
     /**
-     * Convert database records into data collections.
+     * Get name of table without prefix.
      *
-     * @param \stdClass[] $records
-     * @param field_interface[] $fielddefinitions
-     * @return data_collection_interface
+     * @return string
      */
-    public function convert_records_to_data_collection($records, array $fielddefinitions);
+    public function get_table_name(): string;
+
+    /**
+     * Get unique table alias.
+     *
+     * @return string
+     */
+    public function get_alias(): string;
+
+    /**
+     * @return field_interface[]
+     */
+    public function get_fields(): array;
 }

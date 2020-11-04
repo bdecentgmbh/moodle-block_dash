@@ -59,6 +59,7 @@ class data_source_factory implements data_source_factory_interface {
             }
 
             foreach (\core_component::get_component_classes_in_namespace(null, 'local\\block_dash') as $fullclassname => $classpath) {
+
                 self::$datasourceregistry[$fullclassname] = [
                     'identifier' => $fullclassname,
                     'name' => abstract_data_source::get_name_from_class($fullclassname)

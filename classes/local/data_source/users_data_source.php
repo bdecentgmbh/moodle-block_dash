@@ -27,8 +27,8 @@ namespace block_dash\local\data_source;
 use block_dash\local\block_builder;
 use block_dash\local\dash_framework\query_builder\builder;
 use block_dash\local\dash_framework\query_builder\join;
-use block_dash\local\data_grid\field\field_definition_factory;
-use block_dash\local\data_grid\field\field_definition_interface;
+use block_dash\local\dash_framework\structure\table;
+use block_dash\local\dash_framework\structure\user_table;
 use block_dash\local\data_grid\filter\current_course_participants_condition;
 use block_dash\local\data_grid\filter\date_filter;
 use block_dash\local\data_grid\filter\filter;
@@ -42,6 +42,7 @@ use block_dash\local\data_grid\filter\user_field_filter;
 use block_dash\local\data_grid\filter\user_profile_field_filter;
 use block_dash\local\data_grid\filter\current_course_condition;
 use coding_exception;
+use context;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -51,6 +52,17 @@ defined('MOODLE_INTERNAL') || die();
  * @package block_dash
  */
 class users_data_source extends abstract_data_source {
+
+    /**
+     * Constructor.
+     *
+     * @param context $context
+     */
+    public function __construct(context $context) {
+        $this->add_table(new user_table());
+
+        parent::__construct($context);
+    }
 
     /**
      * Get human readable name of data source.
@@ -87,7 +99,7 @@ class users_data_source extends abstract_data_source {
             $alias = 'u_pf_' . strtolower($field->shortname);
 
             $builder
-                ->join('user_info_data', $alias, 'userid', 'u.id')
+                ->join('user_info_data', $alias, 'userid', 'u.id', join::TYPE_LEFT_JOIN)
                 ->join_condition($alias, "$alias.fieldid = $field->id");
         }
 
@@ -103,15 +115,6 @@ class users_data_source extends abstract_data_source {
      */
     public function get_groupby() {
         return false;
-    }
-
-    /**
-     * Return available field definitions.
-     *
-     * @return array|field_definition_interface[]
-     */
-    public function build_available_field_definitions() {
-        return field_definition_factory::get_field_definitions_by_tables(['u']);
     }
 
     /**

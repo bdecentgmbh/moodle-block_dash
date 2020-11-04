@@ -15,33 +15,57 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A strategy for structuring database records into data collections.
+ * Class abstract_data_source.
  *
  * @package    block_dash
  * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\local\data_grid\data\strategy;
-
-use block_dash\local\dash_framework\structure\field_interface;
-use block_dash\local\data_grid\data\data_collection_interface;
+namespace block_dash\local\dash_framework\structure;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * A strategy for structuring database records into data collections.
+ * Class abstract_data_source.
  *
  * @package block_dash
  */
-interface data_strategy_interface {
+abstract class table implements table_interface {
 
     /**
-     * Convert database records into data collections.
-     *
-     * @param \stdClass[] $records
-     * @param field_interface[] $fielddefinitions
-     * @return data_collection_interface
+     * @var string
      */
-    public function convert_records_to_data_collection($records, array $fielddefinitions);
+    private $tablename;
+
+    /**
+     * @var string
+     */
+    private $alias;
+
+    /**
+     * Build a new table.
+     */
+    public function __construct(string $tablename, string $alias) {
+        $this->tablename = $tablename;
+        $this->alias = $alias;
+    }
+
+    /**
+     * Get name of table without prefix.
+     *
+     * @return string
+     */
+    public function get_table_name(): string {
+        return $this->tablename;
+    }
+
+    /**
+     * Get unique table alias.
+     *
+     * @return string
+     */
+    public function get_alias(): string {
+        return $this->alias;
+    }
 }

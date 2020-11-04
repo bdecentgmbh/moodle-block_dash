@@ -146,18 +146,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
                     $fieldname = 'config_preferences[available_fields][' . $availablefield->get_alias() .
                         '][visible]';
 
-                    $tablenames = [];
-                    if ($tables = $availablefield->get_option('tables')) {
-                        foreach ($tables as $table) {
-                            $tablenames[] = get_string('tablealias_' . $table, 'block_dash');
-                        }
-                    }
-
-                    if ($tablenames) {
-                        $title = implode(', ', $tablenames);
-                    } else {
-                        $title = get_string('general');
-                    }
+                    $title = $availablefield->get_table()->get_title();
 
                     $icon = $OUTPUT->pix_icon('i/dragdrop', get_string('dragitem', 'block_dash'), 'moodle',
                         ['class' => 'drag-handle']);

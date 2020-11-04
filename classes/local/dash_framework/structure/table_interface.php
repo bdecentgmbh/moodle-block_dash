@@ -34,6 +34,13 @@ defined('MOODLE_INTERNAL') || die();
 interface table_interface {
 
     /**
+     * Get human readable title for table.
+     *
+     * @return string
+     */
+    public function get_title(): string;
+
+    /**
      * Get name of table without prefix.
      *
      * @return string

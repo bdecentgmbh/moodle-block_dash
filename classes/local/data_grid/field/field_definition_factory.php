@@ -268,20 +268,7 @@ class field_definition_factory implements field_definition_factory_interface {
         $options = [];
         foreach ($fields as $field) {
 
-            $tablenames = [];
-            if ($tables = $field->get_option('tables')) {
-                foreach ($tables as $table) {
-                    $tablenames[] = get_string('tablealias_' . $table, 'block_dash');
-                }
-            }
-
-            if ($tablenames) {
-                $title = implode(', ', $tablenames);
-            } else {
-                $title = get_string('general');
-            }
-
-            $title = $title . ': ' . $field->get_title();
+            $title = $field->get_table()->get_table_name() . ': ' . $field->get_title();
 
             $options[$field->get_alias()] = $title;
         }

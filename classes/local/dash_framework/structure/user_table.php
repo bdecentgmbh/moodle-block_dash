@@ -54,6 +54,15 @@ class user_table extends table {
     }
 
     /**
+     * Get human readable title for table.
+     *
+     * @return string
+     */
+    public function get_title(): string {
+        return get_string('users');
+    }
+
+    /**
      * @return field_interface[]
      */
     public function get_fields(): array {

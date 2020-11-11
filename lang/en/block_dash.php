@@ -215,6 +215,7 @@ $string['tablealias_ccp'] = 'Course completion';
 $string['tablealias_dd'] = 'Dashboard';
 $string['tablealias_e'] = 'Enrollment method';
 $string['tablealias_g'] = 'Group';
+$string['tablealias_sl'] = 'Site logs';
 $string['tablealias_u'] = 'User';
 $string['tablealias_ue'] = 'User enrollment';
 $string['titleoverride'] = 'Title override';

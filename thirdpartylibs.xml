@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>amd/src/datepicker.js</location>
+        <name>Datepicker2 for Bootstrap</name>
+        <version>1.9.0</version>
+        <license>Apache</license>
+        <licenseversion>2.0</licenseversion>
+    </library>
+</libraries>

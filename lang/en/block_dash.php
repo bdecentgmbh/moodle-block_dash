@@ -128,6 +128,7 @@ $string['fieldselect'] = 'Field SQL select';
 $string['footercontent'] = 'Footer content';
 $string['footercontent_help'] = 'Content displayed in the block footer.';
 $string['footerfield'] = 'Footer field';
+$string['footerrightfield'] = 'Footer field (right)';
 $string['fullnamelinked'] = 'Full name (linked to profile)';
 $string['groupby'] = 'Group by';
 $string['grouplabel'] = 'Group label';

@@ -148,7 +148,7 @@ class where {
      * @param string $prefix
      * @return string
      */
-    public static function get_param_name(string $prefix = 'param'): string {
+    public static function get_param_name(string $prefix = 'p_'): string {
         return $prefix . self::$paramcounter++;
     }
 }

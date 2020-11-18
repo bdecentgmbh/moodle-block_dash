@@ -197,6 +197,7 @@ $string['source'] = 'Source';
 $string['stattodisplay'] = 'Figure to display';
 $string['stattodisplayother'] = 'Other figure to display';
 $string['status'] = 'Status';
+$string['subheadingfield'] = 'Subheading field';
 $string['supportsfieldvisibility'] = 'Supports field visibility';
 $string['supportsfieldvisibility_help'] = 'When enabled, allow admin to conditionally enable and disable fields.';
 $string['supportsfiltering'] = 'Supports filtering';

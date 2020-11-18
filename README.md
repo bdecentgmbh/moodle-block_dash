@@ -63,6 +63,45 @@ Typical use cases:
 * **Query template**: Query templates are written by developers to define which data to include. These are typically joins,
 because selects, wheres, ordering, etc is handled elsewhere (and is often dynamic). 
 
+### Styling (CSS)
+
+Use specific scoping when targeting elements or Dashes. Here's some tips on writing CSS that won't conflict with other plugins.
+
+##### Style a specific layout
+
+When configured, each Dash block will have a class representing the chosen layout: 
+
+```css
+.block_dash.block_dash-local-layout-grid_layout a {
+    text-decoration: underline;
+}
+```
+
+##### Style on dashboards only
+
+To apply styling only on custom dashboards:
+
+```css
+body.path-local-dash-dashboard:not .block_dash p {
+    color: red;
+}
+```
+
+##### Styles when editing (or not)
+
+```css
+/* User is not editing */
+body:not(.editing) .block_dash {
+    border-color: green;
+}
+
+/* User IS editing */
+body.editing .block_dash {
+    border-color: orange;                        
+}
+```
+
+
 ### Custom data source
 
 A developer can create a custom data source in code. Here's the general outline:

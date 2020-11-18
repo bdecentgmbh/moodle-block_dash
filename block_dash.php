@@ -132,6 +132,11 @@ class block_dash extends block_base {
         } else {
             $attributes['class'] .= ' dash-block-width-100';
         }
+
+        if (isset($this->config->preferences['layout'])) {
+            $attributes['class'] .= ' ' . str_replace('\\', '-', $this->config->preferences['layout']);
+        }
+
         return $attributes;
     }
 

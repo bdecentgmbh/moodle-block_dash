@@ -223,7 +223,7 @@ class builder {
      * @throws coding_exception
      */
     public function orderby(string $field, string $direction): builder {
-        if (!in_array($direction, ['ASC', 'DESC'])) {
+        if (!in_array(strtolower($direction), ['asc', 'desc'])) {
             throw new coding_exception('Invalid order by direction ' . $direction);
         }
 

@@ -230,7 +230,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                     ->limitnum($this->get_paginator()->get_per_page());
             }
 
-            return $this->query;
+            if ($sorting = $this->get_sorting()) {
+                foreach ($sorting as $field => $direction) {
+                    $this->query->orderby($this->get_field($field)->get_select(), $direction);
+                }
+            }
         }
 
         return $this->query;
@@ -414,7 +418,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $sortablefields = [];
             foreach ($this->get_available_fields() as $field) {
                 if ($field->get_option('supports_sorting') !== false) {
-                    $sortablefields[$field->get_alias()] = $field->get_name();
+                    $sortablefields[$field->get_alias()] = $field->get_table()->get_title() . ': ' . $field->get_title();
                 }
             }
 

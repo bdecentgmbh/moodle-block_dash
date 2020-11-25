@@ -85,6 +85,11 @@ class builder {
     private $joins = [];
 
     /**
+     * @var array ['field1', 'field2', ...]
+     */
+    private $groupby = [];
+
+    /**
      * Extra conditions to be added in WHERE clause.
      *
      * @var array
@@ -232,6 +237,17 @@ class builder {
     }
 
     /**
+     * Group by field for aggregations.
+     *
+     * @param string $field
+     * @return builder
+     */
+    public function groupby(string $field): builder {
+        $this->groupby[] = $field;
+        return $this;
+    }
+
+    /**
      * Add raw condition to builder.
      *
      * @param string $condition
@@ -347,6 +363,10 @@ class builder {
             $params = array_merge($params, $wparams);
         }
 
+        if (count($this->groupby) > 0) {
+            $sql .= ' GROUP BY ' . implode(', ', $this->groupby);
+        }
+
         if ($this->orderby) {
             $orderbys = [];
             foreach ($this->orderby as $field => $direction) {
@@ -385,7 +405,9 @@ class builder {
         $builder = clone $this;
         $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
         $builder->limitfrom(0)->limitnum(0);
-        $records = $builder->query();
+        if (!$records = $builder->query()) {
+            return 0;
+        }
         return array_values($records)[0]->count;
     }
 }

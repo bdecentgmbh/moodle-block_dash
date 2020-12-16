@@ -75,8 +75,8 @@ class grouped_strategy implements data_strategy_interface {
             $record = clone $fullrecord;
             $row = new data_collection();
 
-            $label = $record->{$this->grouplabelfielddefinition->get_name()};
-            if (!$groupby = $record->{$this->groupbyfielddefinition->get_name()}) {
+            $label = $record->{$this->grouplabelfielddefinition->get_alias()};
+            if (!$groupby = $record->{$this->groupbyfielddefinition->get_alias()}) {
                 continue;
             }
 
@@ -85,9 +85,9 @@ class grouped_strategy implements data_strategy_interface {
             }
 
             foreach ($fielddefinitions as $fielddefinition) {
-                $name = $fielddefinition->get_name();
+                $alias = $fielddefinition->get_alias();
 
-                $row->add_data(new field($name, $fielddefinition->transform_data($record->$name, $fullrecord),
+                $row->add_data(new field($alias, $fielddefinition->transform_data($record->$alias, $fullrecord),
                     $fielddefinition->get_visibility(), $fielddefinition->get_title()));
             }
 

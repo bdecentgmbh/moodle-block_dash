@@ -27,11 +27,21 @@ if ($ADMIN->fulltree) {
     require_once("$CFG->dirroot/blocks/dash/lib.php");
 
     // Default high scores.
-    $setting = new admin_setting_configselect('block_dash/bootstrap_version',
+    $settings->add(new admin_setting_configselect(
+        'block_dash/bootstrap_version',
         get_string('bootstrapversion', 'block_dash'),
-        get_string('bootstrapversion_desc', 'block_dash'), block_dash_is_totara() ? 3 : 4, [
+        get_string('bootstrapversion_desc', 'block_dash'),
+        block_dash_is_totara() ? 3 : 4,
+        [
             3 => 'Bootstrap 3.x',
             4 => 'Bootstrap 4.x'
-        ]);
-    $settings->add($setting);
+        ]
+    ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'block_dash/disableall',
+        get_string('disableall', 'block_dash'),
+        get_string('disableall_help', 'block_dash'),
+        0
+    ));
 }

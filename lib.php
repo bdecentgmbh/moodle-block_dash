@@ -166,3 +166,23 @@ function block_dash_is_totara() {
 function block_dash_has_pro() {
     return array_key_exists('dash', core_component::get_plugin_list('local'));
 }
+
+/**
+ * Check if dash output should be disabled.
+ *
+ * @return bool
+ * @throws dml_exception
+ */
+function block_dash_is_disabled() {
+    global $CFG;
+
+    if (get_config('block_dash', 'disableall')) {
+        return true;
+    }
+
+    if (isset($CFG->block_dash_disableall) && $CFG->block_dash_disableall) {
+        return true;
+    }
+
+    return false;
+}

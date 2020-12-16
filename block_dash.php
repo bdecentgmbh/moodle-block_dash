@@ -26,6 +26,8 @@ use block_dash\local\block_builder;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->dirroot/blocks/dash/lib.php");
+
 /**
  * Dash block class.
  */
@@ -99,6 +101,11 @@ class block_dash extends block_base {
         }
 
         $this->content = new \stdClass();
+
+        if (block_dash_is_disabled()) {
+            $this->content->text = is_siteadmin() ? get_string('disableallmessage', 'block_dash') : '';
+            return $this->content;
+        }
 
         try {
             $bb = block_builder::create($this);

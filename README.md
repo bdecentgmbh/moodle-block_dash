@@ -53,6 +53,13 @@ Typical use cases:
 *List all students of a teacher (all participants of all courses where the current user has a teacher role)
 *List all participants including their picture and group
 
+## Troubleshooting
+
+If your site is not loading properly you may wish to temporarily disable Dash from outputting block content. There are two ways to do this:
+
+1. Go to *Site administration / Plugins / Blocks / Dash*. Enable **Disable all Dash output** OR
+2. Edit your `config.php` and add `$CFG->block_dash_disableall = true;`
+
 # Development
 
 ### Key terms

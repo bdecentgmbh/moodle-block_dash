@@ -130,9 +130,7 @@ class users_data_source extends abstract_data_source {
         $filtercollection->add_filter(new logged_in_user_condition('current_user', 'u.id'));
         $filtercollection->add_filter(new participants_condition('participants', 'u.id'));
         $filtercollection->add_filter(new my_groups_condition('my_groups', 'gm300.groupid'));
-        $filtercollection->add_filter(new current_course_condition('current_course', 'c.id'));
-        $filtercollection->add_filter(new current_course_condition('current_course_groups', 'g.courseid',
-            get_string('currentcoursegroups', 'block_dash')));
+        $filtercollection->add_filter(new current_course_condition('current_course', 'ra100.contextid'));
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);

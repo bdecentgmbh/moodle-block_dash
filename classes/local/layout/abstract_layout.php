@@ -175,11 +175,11 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $mform->addElement('static', 'filterslabel', '', '<b>' . get_string('enabledfilters', 'block_dash') . '</b>');
                 $filtercollection->build_settings_form($form, $mform, 'filter', 'config_preferences[filters][%s]');
             }
+        }
 
-            if ($form->get_tab() == preferences_form::TAB_CONDITIONS) {
-                $mform->addElement('static', 'conditionslabel', '', '<b>' . get_string('enabledconditions', 'block_dash') . '</b>');
-                $filtercollection->build_settings_form($form, $mform, 'condition', 'config_preferences[filters][%s]');
-            }
+        if ($form->get_tab() == preferences_form::TAB_CONDITIONS) {
+            $mform->addElement('static', 'conditionslabel', '', '<b>' . get_string('enabledconditions', 'block_dash') . '</b>');
+            $filtercollection->build_settings_form($form, $mform, 'condition', 'config_preferences[filters][%s]');
         }
 
         if (!$this->supports_filtering() && $form->get_tab() == preferences_form::TAB_FILTERS) {

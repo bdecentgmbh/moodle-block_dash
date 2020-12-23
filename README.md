@@ -60,6 +60,40 @@ If your site is not loading properly you may wish to temporarily disable Dash fr
 1. Go to *Site administration / Plugins / Blocks / Dash*. Enable **Disable all Dash output** OR
 2. Edit your `config.php` and add `$CFG->block_dash_disableall = true;`
 
+## Timeline
+
+### Core and custom event strings
+
+Standard Moodle event descriptions are vague and ugly. Dash allows strings to be used instead. Here's an example for the `\core\event\course_completed` event:
+
+lang/en/block_dash.php
+```php
+$string['event_desc_core_event_user_enrolment_created'] = '{$a->relateduserfullname} was enrolled in <a href="{$a->eventurl}" title="View {$a->contextname}">{$a->contextname}</a>';
+```
+
+The string identifier is simply `event_desc_` combined with the event class name, with backslashes `\\` replaced with underscores `_`
+
+The variables available in the string are:
+
+```
+userid: 123
+userfullname: John Doe
+relateduserid: 456
+relateduserfullname: Mr. Affected User
+eventname: Course completed
+eventurl: https://example.com/course/view.php?id=100
+contextname: Course: Test course
+action: created
+```
+
+By adding this string, it will be used for all events of type `\core\event\course_completed` in the timeline data source.
+
+Helpful command to load new strings:
+
+```
+$ php /path/to/moodle/admin/cli/purge_caches.php --lang
+```
+
 # Development
 
 ### Key terms

@@ -252,8 +252,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             if ($this->get_preferences('filters')) {
                 foreach ($this->get_preferences('filters') as $filtername => $filterpreferences) {
-                    if ($this->filtercollection->has_filter($filtername)) {
-                        $this->filtercollection->get_filter($filtername)->set_preferences($filterpreferences);
+                    if (is_array($filterpreferences) || is_object($filterpreferences)) {
+                        if ($this->filtercollection->has_filter($filtername)) {
+                            $this->filtercollection->get_filter($filtername)->set_preferences($filterpreferences);
+                        }
                     }
                 }
             }
@@ -426,6 +428,12 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 $sortablefields);
             $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
             $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
+
+            $mform->addElement('select', 'config_preferences[default_sort_direction]', get_string('defaultsortdirection', 'block_dash'), [
+                'asc' => 'ASC',
+                'desc' => 'DESC'
+            ]);
+            $mform->setType('config_preferences[default_sort_direction]', PARAM_TEXT);
         }
     }
 
@@ -591,7 +599,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
 
         if ($defaultsort = $this->get_preferences('default_sort')) {
-            return [$defaultsort => 'asc'];
+            return [$defaultsort => $this->get_preferences('default_sort_direction') ?? 'asc'];
         }
 
         return [];

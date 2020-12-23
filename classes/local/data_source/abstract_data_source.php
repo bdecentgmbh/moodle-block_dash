@@ -229,7 +229,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             }
 
             if ($this->get_layout()->supports_pagination()) {
-                $perpage = $this->get_paginator()->get_per_page();
+                $perpage = $this->get_per_page();
 
                 // Shorten per page if pagination will exceed max limit.
                 if ($maxlimit = $this->get_max_limit()) {
@@ -436,6 +436,8 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
 
         if ($form->get_tab() == preferences_form::TAB_FIELDS) {
+            $mform->addElement('html', '<hr>');
+
             $sortablefields = [];
             foreach ($this->get_available_fields() as $field) {
                 if ($field->get_option('supports_sorting') !== false) {
@@ -457,6 +459,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $mform->addElement('text', 'config_preferences[maxlimit]', get_string('maxlimit', 'block_dash'));
             $mform->setType('config_preferences[maxlimit]', PARAM_INT);
             $mform->addHelpButton('config_preferences[maxlimit]', 'maxlimit', 'block_dash');
+
+            $mform->addElement('text', 'config_preferences[perpage]', get_string('perpage', 'block_dash'));
+            $mform->setType('config_preferences[perpage]', PARAM_INT);
+            $mform->addHelpButton('config_preferences[perpage]', 'perpage', 'block_dash');
         }
     }
 
@@ -635,6 +641,18 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function get_max_limit() {
         return $this->get_preferences('maxlimit');
+    }
+
+    /**
+     * Get per page number for pagination.
+     *
+     * @return ?int
+     */
+    public function get_per_page() {
+        if ($perpage = $this->get_preferences('perpage')) {
+            return $perpage;
+        }
+        return $this->get_paginator()->get_per_page();
     }
 
     /**

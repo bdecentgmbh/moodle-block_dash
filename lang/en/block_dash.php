@@ -241,6 +241,7 @@ $string['tablealias_g'] = 'Group';
 $string['tablealias_sl'] = 'Site logs';
 $string['tablealias_u'] = 'User';
 $string['tablealias_ue'] = 'User enrollment';
+$string['tags'] = 'Tags';
 $string['timesinceevent'] = 'Time since event';
 $string['titleoverride'] = 'Title override';
 $string['totalactivities'] = 'Total activities';

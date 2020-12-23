@@ -254,3 +254,5 @@ $string['userstat'] = 'User stat';
 $string['viewcourse'] = 'View course';
 $string['viewprofile'] = 'View profile';
 $string['withroles'] = 'With role(s)';
+$string['maxlimit'] = 'Limit to';
+$string['maxlimit_help'] = 'Limit query results to this maximum amount.';

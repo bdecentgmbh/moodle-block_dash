@@ -111,7 +111,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         $this->context = $context;
 
         $this->paginator = new paginator(function () {
-            return $this->get_query()->count();
+            $count = $this->get_query()->count();
+            if ($maxlimit = $this->get_max_limit()) {
+                return $maxlimit < $count ? $maxlimit : $count;
+            }
+            return $count;
         });
     }
 
@@ -225,9 +229,24 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             }
 
             if ($this->get_layout()->supports_pagination()) {
+                $perpage = $this->get_paginator()->get_per_page();
+
+                // Shorten per page if pagination will exceed max limit.
+                if ($maxlimit = $this->get_max_limit()) {
+                    if ($this->get_paginator()->get_limit_from() + $perpage > $maxlimit) {
+                        $offset = $this->get_paginator()->get_limit_from() + $perpage - $maxlimit;
+                        $perpage = $perpage - $offset;
+                    }
+                }
+
                 $this->query
                     ->limitfrom($this->get_paginator()->get_limit_from())
-                    ->limitnum($this->get_paginator()->get_per_page());
+                    ->limitnum($perpage);
+            } else {
+                $this->query->limitfrom(0);
+                if ($maxlimit = $this->get_max_limit()) {
+                    $this->query->limitnum($maxlimit);
+                }
             }
 
             if ($sorting = $this->get_sorting()) {
@@ -434,6 +453,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 'desc' => 'DESC'
             ]);
             $mform->setType('config_preferences[default_sort_direction]', PARAM_TEXT);
+
+            $mform->addElement('text', 'config_preferences[maxlimit]', get_string('maxlimit', 'block_dash'));
+            $mform->setType('config_preferences[maxlimit]', PARAM_INT);
+            $mform->addHelpButton('config_preferences[maxlimit]', 'maxlimit', 'block_dash');
         }
     }
 
@@ -603,6 +626,15 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
 
         return [];
+    }
+
+    /**
+     * Get maximum number of records to query.
+     *
+     * @return ?int
+     */
+    public function get_max_limit() {
+        return $this->get_preferences('maxlimit');
     }
 
     /**

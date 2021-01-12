@@ -104,9 +104,9 @@ class block_dash_edit_form extends block_edit_form {
         $mform->setType('config_backgroundgradient', PARAM_TEXT);
         $mform->addHelpButton('config_backgroundgradient', 'backgroundgradient', 'block_dash');
 
-        $mform->addElement('text', 'config_css[color]', get_string('fontcolor', 'block_dash'));
-        $mform->setType('config_css[color]', PARAM_TEXT);
-        $mform->addHelpButton('config_css[color]', 'fontcolor', 'block_dash');
+        $mform->addElement('text', 'config_headerfootercolor', get_string('fontcolor', 'block_dash'));
+        $mform->setType('config_headerfootercolor', PARAM_TEXT);
+        $mform->addHelpButton('config_headerfootercolor', 'fontcolor', 'block_dash');
 
         $mform->addElement('text', 'config_css[border]', get_string('border', 'block_dash'));
         $mform->setType('config_css[border]', PARAM_TEXT);

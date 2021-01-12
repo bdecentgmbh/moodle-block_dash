@@ -133,7 +133,7 @@ class block_dash extends block_base {
             $this->content = $bb->get_block_content();
 
             if ($css = $this->get_extra_css()) {
-                $this->content->text .= sprintf('<style>%s</style>', $css);
+                $this->content->text .= $css;
             }
         } catch (\Exception $e) {
             $this->content->text = $OUTPUT->notification($e->getMessage() . $e->getTraceAsString(), 'error');
@@ -171,33 +171,37 @@ class block_dash extends block_base {
      * @return string
      */
     public function get_extra_css() {
-        $css = [];
+        global $OUTPUT;
+
+        $blockcss = [];
+        $data = [
+            'block' => $this,
+            'headerfootercolor' => isset($this->config->headerfootercolor) ? $this->config->headerfootercolor : null
+        ];
 
         $backgroundgradient = isset($this->config->backgroundgradient) ? str_replace(';', '', $this->config->backgroundgradient) : null;
 
         if ($this->get_background_image_url()) {
             if ($backgroundgradient) {
-                $css[] = sprintf('background-image: %s, url(%s);', $backgroundgradient, $this->get_background_image_url()->out());
+                $blockcss[] = sprintf('background-image: %s, url(%s);', $backgroundgradient, $this->get_background_image_url()->out());
             } else {
-                $css[] = sprintf('background-image: url(%s);', $this->get_background_image_url());
+                $blockcss[] = sprintf('background-image: url(%s);', $this->get_background_image_url());
             }
         } elseif ($backgroundgradient) {
-            $css[] = sprintf('background: %s', $this->config->backgroundgradient);
+            $blockcss[] = sprintf('background: %s', $this->config->backgroundgradient);
         }
 
         if (isset($this->config->css) && is_array($this->config->css)) {
             foreach ($this->config->css as $property => $value) {
                 if (!empty($value)) {
-                    $css[] = sprintf('%s: %s;', $property, $value);
+                    $blockcss[] = sprintf('%s: %s;', $property, $value);
                 }
             }
         }
 
-        if ($css) {
-            return sprintf('#inst%s { %s }', $this->instance->id, implode(PHP_EOL, $css));
-        }
+        $data['blockcss'] = implode(PHP_EOL, $blockcss);
 
-        return null;
+        return $OUTPUT->render_from_template('block_dash/extra_css', $data);
     }
 
     /**

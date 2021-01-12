@@ -27,6 +27,7 @@ use block_dash\local\block_builder;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->dirroot/blocks/dash/lib.php");
+require_once("$CFG->libdir/filelib.php");
 
 /**
  * Dash block class.

@@ -177,7 +177,7 @@ class block_dash extends block_base {
 
         if ($this->get_background_image_url()) {
             if ($backgroundgradient) {
-                $css[] = sprintf('background: %s, url(%s) no-repeat;', $backgroundgradient, $this->get_background_image_url()->out());
+                $css[] = sprintf('background-image: %s, url(%s);', $backgroundgradient, $this->get_background_image_url()->out());
             } else {
                 $css[] = sprintf('background-image: url(%s);', $this->get_background_image_url());
             }

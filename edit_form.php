@@ -93,5 +93,19 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addElement('editor', 'config_footer_content', get_string('footercontent', 'block_dash'));
         $mform->setType('config_footer_content', PARAM_RAW);
         $mform->addHelpButton('config_footer_content', 'footercontent', 'block_dash');
+
+        $mform->addElement('header', 'apperance', get_string('appearance'));
+
+        $mform->addElement('filemanager', 'config_backgroundimage', get_string('backgroundimage', 'block_dash'), null,
+            ['subdirs' => 0, 'maxfiles' => 1, 'accepted_types' => ['image'], 'return_types'=> FILE_INTERNAL | FILE_EXTERNAL]);
+        $mform->addHelpButton('config_backgroundimage', 'backgroundimage', 'block_dash');
+
+        $mform->addElement('text', 'config_backgroundgradient', get_string('backgroundgradient', 'block_dash'), ['placeholder' => 'linear-gradient(#e66465, #9198e5)']);
+        $mform->setType('config_backgroundgradient', PARAM_TEXT);
+        $mform->addHelpButton('config_backgroundgradient', 'backgroundgradient', 'block_dash');
+
+        $mform->addElement('text', 'config_css[color]', get_string('fontcolor', 'block_dash'));
+        $mform->setType('config_css[color]', PARAM_TEXT);
+        $mform->addHelpButton('config_css[color]', 'fontcolor', 'block_dash');
     }
 }

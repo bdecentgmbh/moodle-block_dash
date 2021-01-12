@@ -35,6 +35,10 @@ body#page-blocks-dash-data-source .ui-sortable-helper {
     white-space: nowrap;
 }
 
+.block_dash {
+    background-size: cover;
+}
+
 /** Block widths **/
 .block_dash.dash-block-width-100 {
     width: 100%;

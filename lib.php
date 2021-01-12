@@ -127,6 +127,41 @@ function block_dash_output_fragment_block_preferences_form($args) {
 }
 
 /**
+ * File serving callback
+ *
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
+ * @return bool false if the file was not found, just send the file otherwise and do not return anything
+ */
+function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+
+    if ($context->contextlevel != CONTEXT_BLOCK) {
+        return false;
+    }
+
+    require_login();
+
+    if ($filearea == 'images') {
+
+        $relativepath = implode('/', $args);
+
+        $fullpath = "/$context->id/block_dash/$filearea/$relativepath";
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        send_stored_file($file, null, 0, $forcedownload, $options);
+    }
+}
+
+/**
  * Flatten array to form field names.
  *
  * @param array $array

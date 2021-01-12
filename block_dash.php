@@ -187,7 +187,9 @@ class block_dash extends block_base {
 
         if (isset($this->config->css) && is_array($this->config->css)) {
             foreach ($this->config->css as $property => $value) {
-                $css[] = sprintf('%s: %s;', $property, $value);
+                if (!empty($value)) {
+                    $css[] = sprintf('%s: %s;', $property, $value);
+                }
             }
         }
 

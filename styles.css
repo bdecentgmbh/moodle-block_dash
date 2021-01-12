@@ -35,8 +35,14 @@ body#page-blocks-dash-data-source .ui-sortable-helper {
     white-space: nowrap;
 }
 
+/** Position background image nicely **/
 .block_dash {
     background-size: cover;
+}
+
+/** Add room between select filters. **/
+.block_dash .select2.select2-container {
+    margin-right: 10px;
 }
 
 /** Block widths **/

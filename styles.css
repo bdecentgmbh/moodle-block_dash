@@ -30,6 +30,10 @@ body#page-blocks-dash-data-source .ui-sortable-helper {
     width: 100%;
     justify-content: left;
 }
+/** Fix fields for totara **/
+.dash-preferences-form #fgroup_id_available_fields .felement > span {
+    display: block;
+}
 
 .block_dash .dash-table th {
     white-space: nowrap;

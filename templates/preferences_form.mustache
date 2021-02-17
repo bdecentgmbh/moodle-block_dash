@@ -7,3 +7,15 @@
 </ul>
 
 {{{formhtml}}}
+
+{{#istotara}}
+    {{! Initialize sortable field list for Totara (due to insufficient modal events) }}
+    {{#js}}
+        require(["jquery", "jqueryui"], function($, jqueryui) {
+            $("#fgroup_id_available_fields fieldset.fgroup div.felement").sortable({
+                handle: ".drag-handle",
+                axis: "y"
+            });
+        });
+    {{/js}}
+{{/istotara}}

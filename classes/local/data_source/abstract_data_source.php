@@ -24,18 +24,19 @@
 
 namespace block_dash\local\data_source;
 
+use block_dash\local\dash_framework\query_builder\builder;
+use block_dash\local\dash_framework\structure\field_interface;
+use block_dash\local\dash_framework\structure\table;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\field\attribute\identifier_attribute;
-use block_dash\local\data_grid\field\field_definition_factory;
-use block_dash\local\data_grid\field\sql_field_definition;
-use block_dash\local\data_grid\sql_data_grid;
 use block_dash\local\data_grid\data\data_collection_interface;
-use block_dash\local\data_grid\data_grid_interface;
-use block_dash\local\data_grid\field\field_definition_interface;
 use block_dash\local\data_grid\filter\filter_collection_interface;
+use block_dash\local\paginator;
+use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
 use block_dash\local\layout\layout_factory;
 use block_dash\local\layout\layout_interface;
+use coding_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -50,11 +51,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @var \context
      */
     private $context;
-
-    /**
-     * @var data_grid_interface
-     */
-    private $datagrid;
 
     /**
      * @var data_collection_interface
@@ -77,19 +73,34 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     private $layout;
 
     /**
-     * @var field_definition_interface[]
+     * @var field_interface[]
      */
-    private $fielddefinitions;
+    private $fields;
 
     /**
-     * @var field_definition_interface[]
+     * @var field_interface[]
      */
-    private $sortedfielddefinitions;
+    private $sortedfields;
 
     /**
      * @var \block_base|null
      */
     private $blockinstance = null;
+
+    /**
+     * @var builder
+     */
+    private $query;
+
+    /**
+     * @var paginator
+     */
+    private $paginator;
+
+    /**
+     * @var table[]
+     */
+    private $tables = [];
 
     /**
      * Constructor.
@@ -98,39 +109,154 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function __construct(\context $context) {
         $this->context = $context;
+
+        $this->paginator = new paginator(function () {
+            $count = $this->get_query()->count();
+            if ($maxlimit = $this->get_max_limit()) {
+                return $maxlimit < $count ? $maxlimit : $count;
+            }
+            return $count;
+        });
     }
 
     /**
-     * Get data grid. Build if necessary.
+     * Get human readable name of data source.
      *
-     * @return data_grid_interface
-     * @throws \coding_exception
-     * @throws \moodle_exception
+     * @return string
      */
-    public final function get_data_grid() {
-        if (is_null($this->datagrid)) {
-            if (!$this->get_sorted_field_definitions()) {
-                throw new \coding_exception('Data source has no field definitions associated with it.');
+    public function get_name() {
+        return self::get_name_from_class(get_class($this));
+    }
+
+    /**
+     * Get human readable name of data source.
+     *
+     * @param $fullclassname
+     * @return string
+     * @throws coding_exception
+     */
+    public static function get_name_from_class($fullclassname) {
+        $component = explode('\\', $fullclassname)[0];
+        $class = array_reverse(explode('\\', $fullclassname))[0];
+
+        $stringidentifier = "datasource:$class";
+        $stringcomponent = $component;
+
+        $stringmanager = get_string_manager();
+        if ($stringmanager->string_exists($stringidentifier, $stringcomponent)) {
+            $name = get_string($stringidentifier, $stringcomponent);
+        } else if ($stringmanager->string_exists($stringidentifier, 'block_dash')) {
+            $name = get_string($stringidentifier, 'block_dash');
+        } else {
+            $name = '[[' . $stringidentifier . ']]';
+        }
+
+        return $name;
+    }
+
+    /**
+     * Add table to this data source. If the table is used in a join in the main query.
+     *
+     * @param table $table
+     */
+    public function add_table(table $table): void {
+        $this->tables[$table->get_alias()] = $table;
+    }
+
+    /**
+     * Get tables that are in this data source's main query.
+     *
+     * @return array
+     */
+    public function get_tables(): array {
+        return $this->tables;
+    }
+
+    /**
+     * @return paginator
+     */
+    public function get_paginator(): paginator {
+        return $this->paginator;
+    }
+
+    /**
+     * Get fully built query for execution.
+     *
+     * @return builder
+     */
+    final public function get_query(): builder {
+        if (is_null($this->query)) {
+            $this->query = $this->get_query_template();
+
+            if (count($this->get_available_fields()) == 0) {
+                throw new \moodle_exception('Cannot build empty query in data source.');
             }
 
-            $this->datagrid = new sql_data_grid($this->get_context(), $this);
-            $this->datagrid->set_query_template($this->get_query_template());
-            $this->datagrid->set_count_query_template($this->get_count_query_template());
-            $this->datagrid->set_field_definitions($this->get_sorted_field_definitions());
-            $this->datagrid->set_supports_pagination($this->get_layout()->supports_pagination());
-            $this->datagrid->set_groupby($this->get_groupby());
+            if ($this->get_filter_collection() && $this->get_filter_collection()->has_filters()) {
+                list ($filtersql, $filterparams) = $this->get_filter_collection()->get_sql_and_params();
 
-            foreach ($this->get_sorting() as $fieldname => $direction) {
-                if ($fielddefinition = $this->datagrid->get_field_definition($fieldname)) {
-                    $fielddefinition->set_sort(true);
-                    $fielddefinition->set_sort_direction($direction);
+                $this->query->where_raw($filtersql[0], $filterparams);
+            }
+
+            $fields = $this->get_available_fields();
+
+            foreach ($fields as $field) {
+                if (is_null($field->get_select())) {
+                    continue;
+                }
+
+                $this->query->select($field->get_select(), $field->get_alias());
+            }
+
+            foreach ($this->get_available_fields() as $field) {
+                if ($field->get_sort()) {
+                    $this->query->orderby($field->get_select(), strtoupper($field->get_sort_direction()));
                 }
             }
 
-            $this->datagrid->init();
+            // If there are multiple identifiers in the data source, construct a unique column.
+            // This is to prevent warnings when multiple rows have the same value in the first column.
+            $identifierselects = [];
+            foreach ($this->get_available_fields() as $field) {
+                if ($field->has_attribute(identifier_attribute::class)) {
+                    $identifierselects[] = $field->get_select();
+                }
+            }
+            global $DB;
+            $concat = $DB->sql_concat_join("'-'", $identifierselects);
+            if (count($identifierselects) > 1) {
+                $this->query->select($concat, 'unique_id');
+            }
+
+            if ($this->get_layout()->supports_pagination()) {
+                $perpage = $this->get_per_page();
+
+                // Shorten per page if pagination will exceed max limit.
+                if ($maxlimit = $this->get_max_limit()) {
+                    if ($this->get_paginator()->get_limit_from() + $perpage > $maxlimit) {
+                        $offset = $this->get_paginator()->get_limit_from() + $perpage - $maxlimit;
+                        $perpage = $perpage - $offset;
+                    }
+                }
+
+                $this->query
+                    ->limitfrom($this->get_paginator()->get_limit_from())
+                    ->limitnum($perpage);
+            } else {
+                $this->query->limitfrom(0);
+                if ($maxlimit = $this->get_max_limit()) {
+                    $this->query->limitnum($maxlimit);
+                }
+            }
+
+            if ($sorting = $this->get_sorting()) {
+                foreach ($sorting as $field => $direction) {
+                    $this->query->orderby($this->get_field($field)->get_select(), $direction);
+                }
+            }
         }
 
-        return $this->datagrid;
+        return $this->query;
     }
 
     /**
@@ -142,6 +268,16 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if (is_null($this->filtercollection)) {
             $this->filtercollection = $this->build_filter_collection();
             $this->filtercollection->init();
+
+            if ($this->get_preferences('filters')) {
+                foreach ($this->get_preferences('filters') as $filtername => $filterpreferences) {
+                    if (is_array($filterpreferences) || is_object($filterpreferences)) {
+                        if ($this->filtercollection->has_filter($filtername)) {
+                            $this->filtercollection->get_filter($filtername)->set_preferences($filterpreferences);
+                        }
+                    }
+                }
+            }
         }
 
         return $this->filtercollection;
@@ -152,14 +288,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function before_data() {
         if ($this->get_layout()->supports_field_visibility()) {
-            foreach ($this->get_available_field_definitions() as $availablefielddefinition) {
-                $availablefielddefinition->set_visibility(field_definition_interface::VISIBILITY_HIDDEN);
+            foreach ($this->get_available_fields() as $availablefield) {
+                $availablefield->set_visibility(field_interface::VISIBILITY_HIDDEN);
             }
             if ($this->preferences && isset($this->preferences['available_fields'])) {
                 foreach ($this->preferences['available_fields'] as $fieldname => $preferences) {
                     if (isset($preferences['visible'])) {
-                        if ($fielddefinition = $this->get_data_grid()->get_field_definition($fieldname)) {
-                            $fielddefinition->set_visibility($preferences['visible']);
+                        if ($field = $this->get_field($fieldname)) {
+                            $field->set_visibility($preferences['visible']);
                         }
                     }
                 }
@@ -204,12 +340,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             $this->before_data();
 
-            $datagrid = $this->get_data_grid();
-            if ($strategy = $this->get_layout()->get_data_strategy()) {
-                $datagrid->set_data_strategy($strategy);
+            if (!$strategy = $this->get_layout()->get_data_strategy()) {
+                throw new coding_exception('Not fully configured.');
             }
-            $datagrid->set_filter_collection($this->get_filter_collection());
-            $this->data = $datagrid->get_data();
+            $records = $this->get_query()->query();
+            $this->data = $strategy->convert_records_to_data_collection($records, $this->get_sorted_fields());
 
             if ($modifieddata = $this->after_data($this->data)) {
                 $this->data = $modifieddata;
@@ -271,10 +406,12 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @param \renderer_base $output
      * @return array|\renderer_base|\stdClass|string
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public final function export_for_template(\renderer_base $output) {
-        return $this->get_layout()->export_for_template($output);
+        $data = $this->get_layout()->export_for_template($output);
+        $data['datasource'] = $this;
+        return $data;
     }
 
     /**
@@ -283,30 +420,50 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @param \moodleform $form
      * @param \MoodleQuickForm $mform
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
-        $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
+        if ($form->get_tab() == preferences_form::TAB_GENERAL) {
+            $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
 
-        $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'),
-            layout_factory::get_layout_form_options());
-        $mform->setType('config_preferences[layout]', PARAM_TEXT);
+            $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'),
+                layout_factory::get_layout_form_options());
+            $mform->setType('config_preferences[layout]', PARAM_TEXT);
+        }
 
         if ($layout = $this->get_layout()) {
             $layout->build_preferences_form($form, $mform);
         }
 
-        $sortablefielddefinitions = [];
-        foreach ($this->get_available_field_definitions() as $fielddefinition) {
-            if ($fielddefinition->get_option('supports_sorting') !== false) {
-                $sortablefielddefinitions[] = $fielddefinition;
-            }
-        }
+        if ($form->get_tab() == preferences_form::TAB_FIELDS) {
+            $mform->addElement('html', '<hr>');
 
-        $mform->addElement('select', 'config_preferences[default_sort]', get_string('defaultsortfield', 'block_dash'),
-            field_definition_factory::get_field_definition_options($sortablefielddefinitions));
-        $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
-        $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
+            $sortablefields = [];
+            foreach ($this->get_available_fields() as $field) {
+                if ($field->get_option('supports_sorting') !== false) {
+                    $sortablefields[$field->get_alias()] = $field->get_table()->get_title() . ': ' . $field->get_title();
+                }
+            }
+
+            $mform->addElement('select', 'config_preferences[default_sort]', get_string('defaultsortfield', 'block_dash'),
+                $sortablefields);
+            $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
+            $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
+
+            $mform->addElement('select', 'config_preferences[default_sort_direction]', get_string('defaultsortdirection', 'block_dash'), [
+                'asc' => 'ASC',
+                'desc' => 'DESC'
+            ]);
+            $mform->setType('config_preferences[default_sort_direction]', PARAM_TEXT);
+
+            $mform->addElement('text', 'config_preferences[maxlimit]', get_string('maxlimit', 'block_dash'));
+            $mform->setType('config_preferences[maxlimit]', PARAM_INT);
+            $mform->addHelpButton('config_preferences[maxlimit]', 'maxlimit', 'block_dash');
+
+            $mform->addElement('text', 'config_preferences[perpage]', get_string('perpage', 'block_dash'));
+            $mform->setType('config_preferences[perpage]', PARAM_INT);
+            $mform->addHelpButton('config_preferences[perpage]', 'perpage', 'block_dash');
+        }
     }
 
     #region Preferences
@@ -366,67 +523,98 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * Get available field definitions.
      *
-     * @return field_definition_interface[]
+     * @return field_interface[]
      */
-    public final function get_available_field_definitions() {
-        if (is_null($this->fielddefinitions)) {
-            $this->fielddefinitions = $this->build_available_field_definitions();
+    public final function get_available_fields() {
+        if (is_null($this->fields)) {
+            // Get all available field definitions based on tables.
+            $this->fields = [];
+            foreach ($this->get_tables() as $table) {
+                foreach ($table->get_fields() as $field) {
+                    $this->fields[$field->get_alias()] = $field;
+                }
+            }
         }
 
-        return $this->fielddefinitions;
+        return $this->fields;
+    }
+
+    /**
+     * Check if report has a certain field
+     *
+     * @param string $alias Field alias.
+     * @return bool
+     */
+    public function has_field(string $alias): bool {
+        return isset($this->get_available_fields()[$alias]);
+    }
+
+    /**
+     * Get field by name. Returns null if not found.
+     *
+     * @param string $alias Field alias.
+     * @return ?field_interface
+     */
+    public function get_field(string $alias): ?field_interface {
+        // Fields are keyed by name.
+        if ($this->has_field($alias)) {
+            return $this->get_available_fields()[$alias];
+        }
+
+        return null;
     }
 
     /**
      * Get sorted field definitions based on preferences.
      *
-     * @return sql_field_definition[]
+     * @return field_interface[]
      */
-    public function get_sorted_field_definitions() {
-        if (is_null($this->sortedfielddefinitions)) {
-            $fielddefinitions = $this->get_available_field_definitions();;
+    public function get_sorted_fields() {
+        if (is_null($this->sortedfields)) {
+            $fields = $this->get_available_fields();;
 
             if ($this->get_layout()->supports_field_visibility()) {
 
-                $sortedfielddefinitions = [];
+                $sortedfields = [];
 
                 // First add the identifiers, in order, so they always come first in the query.
-                foreach ($fielddefinitions as $key => $fielddefinition) {
-                    if ($fielddefinition->has_attribute(identifier_attribute::class)) {
-                        $sortedfielddefinitions[] = $fielddefinition;
-                        unset($fielddefinitions[$key]);
+                foreach ($fields as $key => $field) {
+                    if ($field->has_attribute(identifier_attribute::class)) {
+                        $sortedfields[] = $field;
+                        unset($fields[$key]);
                     }
                 }
 
                 if ($availablefields = $this->get_preferences('available_fields')) {
-                    foreach ($availablefields as $fieldname => $availablefield) {
-                        foreach ($fielddefinitions as $key => $fielddefinition) {
-                            if ($fielddefinition->get_name() == $fieldname) {
-                                $sortedfielddefinitions[] = $fielddefinition;
-                                unset($fielddefinitions[$key]);
+                    foreach ($availablefields as $fieldalias => $availablefield) {
+                        foreach ($fields as $key => $field) {
+                            if ($field->get_alias() == $fieldalias) {
+                                $sortedfields[] = $field;
+                                unset($fields[$key]);
                                 break;
                             }
                         }
                     }
 
-                    foreach ($fielddefinitions as $fielddefinition) {
-                        $sortedfielddefinitions[] = $fielddefinition;
+                    foreach ($fields as $field) {
+                        $sortedfields[] = $field;
                     }
 
-                    $fielddefinitions = $sortedfielddefinitions;
+                    $fields = $sortedfields;
                 }
 
             }
 
-            $this->sortedfielddefinitions = array_values($fielddefinitions);
+            $this->sortedfields = array_values($fields);
         }
 
-        return $this->sortedfielddefinitions;
+        return $this->sortedfields;
     }
 
     /**
      * Get sorting.
      *
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function get_sorting() {
         global $USER;
@@ -440,10 +628,31 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
 
         if ($defaultsort = $this->get_preferences('default_sort')) {
-            return [$defaultsort => 'asc'];
+            return [$defaultsort => $this->get_preferences('default_sort_direction') ?? 'asc'];
         }
 
         return [];
+    }
+
+    /**
+     * Get maximum number of records to query.
+     *
+     * @return ?int
+     */
+    public function get_max_limit() {
+        return $this->get_preferences('maxlimit');
+    }
+
+    /**
+     * Get per page number for pagination.
+     *
+     * @return ?int
+     */
+    public function get_per_page() {
+        if ($perpage = $this->get_preferences('perpage')) {
+            return $perpage;
+        }
+        return $this->get_paginator()->get_per_page();
     }
 
     /**

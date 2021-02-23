@@ -27,8 +27,7 @@ namespace block_dash\local\data_grid\data\strategy;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
-use block_dash\local\data_grid\data_grid_interface;
-use block_dash\local\data_grid\field\field_definition_interface;
+use block_dash\local\dash_framework\structure\field_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,35 +39,35 @@ defined('MOODLE_INTERNAL') || die();
 class grouped_strategy implements data_strategy_interface {
 
     /**
-     * @var field_definition_interface
+     * @var field_interface
      */
     private $groupbyfielddefinition;
 
     /**
-     * @var field_definition_interface
+     * @var field_interface
      */
     private $grouplabelfielddefinition;
 
     /**
      * Create new grouped strategy.
      *
-     * @param field_definition_interface $groupbyfielddefinition
-     * @param field_definition_interface $grouplabelfielddefinition
+     * @param field_interface $groupbyfielddefinition
+     * @param field_interface $grouplabelfielddefinition
      */
-    public function __construct(field_definition_interface $groupbyfielddefinition,
-                                field_definition_interface $grouplabelfielddefinition) {
+    public function __construct(field_interface $groupbyfielddefinition,
+                                field_interface $grouplabelfielddefinition) {
         $this->groupbyfielddefinition = $groupbyfielddefinition;
         $this->grouplabelfielddefinition = $grouplabelfielddefinition;
     }
 
     /**
-     * Convert database records into data collections.
+     * Convert records.
      *
      * @param \stdClass[] $records
-     * @param data_grid_interface $datagrid
+     * @param field_interface[] $fielddefinitions
      * @return data_collection_interface
      */
-    public function convert_records_to_data_collection($records, data_grid_interface $datagrid) {
+    public function convert_records_to_data_collection($records, array $fielddefinitions) {
         $griddata = new data_collection();
 
         $sections = [];
@@ -76,8 +75,8 @@ class grouped_strategy implements data_strategy_interface {
             $record = clone $fullrecord;
             $row = new data_collection();
 
-            $label = $record->{$this->grouplabelfielddefinition->get_name()};
-            if (!$groupby = $record->{$this->groupbyfielddefinition->get_name()}) {
+            $label = $record->{$this->grouplabelfielddefinition->get_alias()};
+            if (!$groupby = $record->{$this->groupbyfielddefinition->get_alias()}) {
                 continue;
             }
 
@@ -85,21 +84,17 @@ class grouped_strategy implements data_strategy_interface {
                 unset($record->unique_id);
             }
 
-            foreach ($datagrid->get_field_definitions() as $fielddefinition) {
-                $name = $fielddefinition->get_name();
+            foreach ($fielddefinitions as $fielddefinition) {
+                $alias = $fielddefinition->get_alias();
 
-                if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
-                    continue;
-                }
-
-                $row->add_data(new field($name, $fielddefinition->transform_data($record->$name, $fullrecord),
-                    $fielddefinition->get_title()));
+                $row->add_data(new field($alias, $fielddefinition->transform_data($record->$alias, $fullrecord),
+                    $fielddefinition->get_visibility(), $fielddefinition->get_title()));
             }
 
             if (!isset($sections[$groupby])) {
                 $sections[$groupby] = new data_collection();
-                $sections[$groupby]->add_data(new field('groupby', $groupby));
-                $sections[$groupby]->add_data(new field('label', $label));
+                $sections[$groupby]->add_data(new field('groupby', $groupby, $fielddefinition->get_visibility()));
+                $sections[$groupby]->add_data(new field('label', $label, $fielddefinition->get_visibility()));
             }
             $sections[$groupby]->add_child_collection('rows', $row);
         }

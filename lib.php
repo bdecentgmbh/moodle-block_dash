@@ -82,16 +82,22 @@ function block_dash_register_layouts() {
  * @return string
  */
 function block_dash_output_fragment_block_preferences_form($args) {
-    global $DB;
+    global $DB, $OUTPUT;
 
     $args = (object) $args;
     $context = $args->context;
-    $o = '';
 
     $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
     $block = block_instance($blockinstance->blockname, $blockinstance);
 
-    $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'dash-preferences-form']);
+    if (!$args->tab) {
+        $args->tab = preferences_form::TAB_GENERAL;
+    }
+
+    $form = new preferences_form(null, ['block' => $block, 'tab' => $args->tab], 'post', '', [
+        'class' => 'dash-preferences-form',
+        'data-double-submit-protection' => 'off'
+    ]);
 
     require_capability('block/dash:addinstance', $context);
 
@@ -102,10 +108,58 @@ function block_dash_output_fragment_block_preferences_form($args) {
 
     ob_start();
     $form->display();
-    $o .= ob_get_contents();
+    $formhtml = ob_get_contents();
     ob_end_clean();
 
-    return $o;
+    $tabs = [];
+    foreach (preferences_form::TABS as $tab) {
+        $tabs[] = [
+            'label' => get_string($tab, 'block_dash'),
+            'active' => $tab == $args->tab,
+            'tabid' => $tab
+        ];
+    }
+
+    return $OUTPUT->render_from_template('block_dash/preferences_form', [
+        'formhtml' => $formhtml,
+        'tabs' => $tabs,
+        'istotara' => block_dash_is_totara()
+    ]);
+}
+
+/**
+ * File serving callback
+ *
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
+ * @return bool false if the file was not found, just send the file otherwise and do not return anything
+ */
+function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+
+    if ($context->contextlevel != CONTEXT_BLOCK) {
+        return false;
+    }
+
+    require_login();
+
+    if ($filearea == 'images') {
+
+        $relativepath = implode('/', $args);
+
+        $fullpath = "/$context->id/block_dash/$filearea/$relativepath";
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        send_stored_file($file, null, 0, $forcedownload, $options);
+    }
 }
 
 /**
@@ -118,7 +172,10 @@ function block_dash_output_fragment_block_preferences_form($args) {
 function block_dash_flatten_array($array, $prefix = '') {
     $result = [];
     foreach ($array as $key => $value) {
-        if (is_array($value)) {
+        if (is_integer($key)) {
+            // Don't flatten arrays with numeric indexes. Otherwise it won't be set on the Moodle form.
+            $result[$prefix] = $array;
+        } else if (is_array($value)) {
             $result = $result + block_dash_flatten_array($value, $prefix . '[' . $key . ']');
         } else {
             $result[$prefix . '[' . $key . ']'] = $value;
@@ -135,4 +192,33 @@ function block_dash_flatten_array($array, $prefix = '') {
 function block_dash_is_totara() {
     global $CFG;
     return file_exists("$CFG->dirroot/totara");
+}
+
+/**
+ * Check if pro plugin is installed.
+ *
+ * @return bool
+ */
+function block_dash_has_pro() {
+    return array_key_exists('dash', core_component::get_plugin_list('local'));
+}
+
+/**
+ * Check if dash output should be disabled.
+ *
+ * @return bool
+ * @throws dml_exception
+ */
+function block_dash_is_disabled() {
+    global $CFG;
+
+    if (get_config('block_dash', 'disableall')) {
+        return true;
+    }
+
+    if (isset($CFG->block_dash_disableall) && $CFG->block_dash_disableall) {
+        return true;
+    }
+
+    return false;
 }

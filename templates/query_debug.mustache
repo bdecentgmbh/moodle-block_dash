@@ -1,0 +1,13 @@
+<button id="query-debug-modal-{{uniqueid}}-trigger" data-body="{{query}} <pre>{{params}}</pre>" class="btn btn-secondary btn-default btn-sm"><i class="fa fa-code"></i> {{#str}}querydebug, block_dash{{/str}}</button>
+
+{{#js}}
+    require(['jquery', 'core/modal_factory'], function($, ModalFactory) {
+        var trigger = $('#query-debug-modal-{{uniqueid}}-trigger');
+        ModalFactory.create({
+            title: '{{#str}}querydebug, block_dash{{/str}}',
+            body: trigger.data('body'),
+            type: ModalFactory.types.SAVE_CANCEL,
+            large: true
+        }, trigger);
+    });
+{{/js}}

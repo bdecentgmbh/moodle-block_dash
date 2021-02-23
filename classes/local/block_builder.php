@@ -26,6 +26,7 @@ namespace block_dash\local;
 
 use block_dash\local\configuration\configuration_interface;
 use block_dash\local\configuration\configuration;
+use block_dash\output\query_debug;
 use block_dash\output\renderer;
 
 defined('MOODLE_INTERNAL') || die();
@@ -85,31 +86,38 @@ class block_builder {
         if ($this->configuration->is_fully_configured()) {
             $bb = self::create($this->blockinstance);
 
-            $bb->get_configuration()->get_data_source()->get_data_grid()->get_paginator()->set_current_page(0);
+            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page(0);
 
-            $text .= $OUTPUT->render_from_template('block_dash/block', [
+            $data = [
                 'preloaded' => $renderer->render_data_source($bb->get_configuration()->get_data_source()),
                 'block_instance_id' => $this->blockinstance->instance->id,
                 'block_context_id' => $this->blockinstance->context->id,
                 'editing' => $PAGE->user_is_editing() &&
                     has_capability('block/dash:addinstance', $this->blockinstance->context)
-            ]);
+            ];
+
+            if (isset($this->blockinstance->config->header_content)) {
+                $data['header_content'] = format_text($this->blockinstance->config->header_content['text'],
+                        $this->blockinstance->config->header_content['format']);
+            }
+
+            if (isset($this->blockinstance->config->footer_content)) {
+                $data['footer_content'] = format_text($this->blockinstance->config->footer_content['text'],
+                    $this->blockinstance->config->footer_content['format']);
+            }
+
+            $text .= $OUTPUT->render_from_template('block_dash/block', $data);
+
+            if (is_siteadmin()) {
+                [$sql, $params] = $bb->get_configuration()->get_data_source()->get_query()->get_sql_and_params();
+                $text .= $renderer->render(new query_debug($sql, $params));
+            }
         } else {
             $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
         }
 
         $content = new \stdClass();
         $content->text = $text;
-
-        if (isset($this->blockinstance->config->header_content)) {
-            $content->text = format_text($this->blockinstance->config->header_content['text'],
-                $this->blockinstance->config->header_content['format']) . $content->text;
-        }
-
-        if (isset($this->blockinstance->config->footer_content)) {
-            $content->footer = format_text($this->blockinstance->config->footer_content['text'],
-                $this->blockinstance->config->footer_content['format']);
-        }
 
         return $content;
     }

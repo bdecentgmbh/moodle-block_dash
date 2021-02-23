@@ -24,6 +24,9 @@
 
 namespace block_dash\local\data_grid\filter;
 
+use moodleform;
+use MoodleQuickForm;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -89,6 +92,11 @@ interface filter_interface {
     const OPERATION_LIKE_WILDCARD = 'like_wild';
 
     /**
+     * Custom operation, such as a subquery.
+     */
+    const OPERATION_CUSTOM = 'custom';
+
+    /**
      * Filter clause is included in "where".
      */
     const CLAUSE_TYPE_WHERE = 'where';
@@ -110,7 +118,8 @@ interface filter_interface {
         self::OPERATION_GREATER_THAN_EQUAL,
         self::OPERATION_IN_OR_EQUAL,
         self::OPERATION_LIKE,
-        self::OPERATION_LIKE_WILDCARD
+        self::OPERATION_LIKE_WILDCARD,
+        self::OPERATION_CUSTOM
     ];
 
     /**
@@ -188,6 +197,15 @@ interface filter_interface {
      * @param string $label
      */
     public function set_label($label);
+
+    /**
+     * Get help text for this filter to help configuration.
+     *
+     * Return array[string_identifier, component], similar to the $mform->addHelpButton() call.
+     *
+     * @return array<string, string>
+     */
+    public function get_help();
 
     /**
      * Get SQL operation.
@@ -280,4 +298,34 @@ interface filter_interface {
      * @return string
      */
     public function get_clause_type();
+
+    /**
+     * Return custom operation SQL.
+     *
+     * @return string
+     */
+    public function get_custom_operation(): string;
+
+    /**
+     * Set preferences on this filter.
+     *
+     * @param array $preferences
+     */
+    public function set_preferences(array $preferences = null): void;
+
+    /**
+     * Get preferences related to this filter.
+     *
+     * @return array
+     */
+    public function get_preferences(): array;
+
+    /**
+     * Add form fields for this filter (and any settings related to this filter.)
+     *
+     * @param moodleform $moodleform
+     * @param MoodleQuickForm $mform
+     * @param string $fieldnameformat
+     */
+    public function build_settings_form_fields(moodleform $moodleform, MoodleQuickForm $mform, $fieldnameformat = 'filters[%s]'): void;
 }

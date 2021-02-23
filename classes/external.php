@@ -53,7 +53,8 @@ class external extends external_api {
             'block_instance_id' => new \external_value(PARAM_INT),
             'filter_form_data' => new \external_value(PARAM_RAW),
             'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
-            'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null)
+            'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
+            'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null)
         ]);
     }
 
@@ -70,14 +71,15 @@ class external extends external_api {
      * @throws \moodle_exception
      * @throws \restricted_context_exception
      */
-    public static function get_block_content($block_instance_id, $filter_form_data, $page, $sort_field) {
+    public static function get_block_content($block_instance_id, $filter_form_data, $page, $sort_field, $sort_direction) {
         global $PAGE, $DB;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
             'block_instance_id' => $block_instance_id,
             'page' => $page,
             'filter_form_data' => $filter_form_data,
-            'sort_field' => $sort_field
+            'sort_field' => $sort_field,
+            'sort_direction' => $sort_direction
         ]);
 
         $public = false;
@@ -103,7 +105,7 @@ class external extends external_api {
 
         if ($block) {
             if ($params['sort_field']) {
-                $block->set_sort($params['sort_field']);
+                $block->set_sort($params['sort_field'], $params['sort_direction']);
             }
 
             $bb = block_builder::create($block);
@@ -114,8 +116,7 @@ class external extends external_api {
                     ->apply_filter($filter['name'], $filter['value']);
             }
 
-            $datagrid = $bb->get_configuration()->get_data_source()->get_data_grid();
-            $datagrid->get_paginator()->set_current_page($params['page']);
+            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page($params['page']);
 
             return ['html' => $renderer->render_data_source($bb->get_configuration()->get_data_source())];
         }
@@ -180,33 +181,72 @@ class external extends external_api {
         $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
 
-        $form = new preferences_form(null, ['block' => $block], 'post', '', ['class' => 'dash-preferences-form'],
-            true, $data);
-
-        $validationerrors = true;
-        if ($form->get_data()) {
-            if (!empty($block->config)) {
-                $config = clone($block->config);
-            } else {
-                $config = new \stdClass;
-            }
-            foreach ($data as $configfield => $value) {
-                if (strpos($configfield, 'config_') !== 0) {
-                    continue;
-                }
-                $field = substr($configfield, 7);
-                $config->$field = $value;
-            }
-            $block->instance_config_save($config);
-
-            $validationerrors = false;
-        } else if ($errors = $form->is_validated()) {
-            throw new \moodle_exception('generalerror');
+        if (!empty($block->config)) {
+            $config = clone($block->config);
+        } else {
+            $config = new \stdClass;
         }
 
+        if (!isset($config->preferences)) {
+            $config->preferences = [];
+        }
+
+        $config->preferences = self::recursive_config_merge($config->preferences, $data['config_preferences']);
+        $block->instance_config_save($config);
+
         return [
-            'validationerrors' => $validationerrors
+            'validationerrors' => false
         ];
+    }
+
+    /**
+     * Recursively merge in new config.
+     *
+     * @param $existingconfig
+     * @param $newconfig
+     * @return mixed
+     */
+    private static function recursive_config_merge($existingconfig, $newconfig) {
+        // If existing config is a scalar value than always overwrite. No point in looping new config.
+        // This allows preferences that were a scalar to be assigned as arrays by new preferences.
+        if (is_scalar($existingconfig)) {
+            return $newconfig;
+        }
+
+        // If array contains only scalars, overwrite with new config. No more looping required for this level.
+        if (is_array($existingconfig) && !self::is_array_multidimensional($existingconfig)) {
+            return $newconfig;
+        }
+
+        // Recursively overwrite values.
+        foreach ($newconfig as $key => $value) {
+            if (is_scalar($value)) {
+                $existingconfig[$key] = $value;
+            } else if (is_array($value)) {
+                $v = self::recursive_config_merge($existingconfig[$key], $newconfig[$key]);
+                unset($existingconfig[$key]);
+                $existingconfig[$key] = $v;
+
+            }
+        }
+
+        return $existingconfig;
+    }
+
+    /**
+     * Check if array is multidimensional. True if it contains an array, false meaning all values are scalar.
+     *
+     * @param array $array
+     * @return bool
+     */
+    private static function is_array_multidimensional(array $array): bool {
+        foreach ($array as $element) {
+            if (is_array($element)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

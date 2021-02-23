@@ -28,10 +28,11 @@ use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
 use block_dash\local\data_grid\data\strategy\data_strategy_interface;
 use block_dash\local\data_grid\data\strategy\standard_strategy;
+use block_dash\local\data_grid\field\attribute\context_attribute;
 use block_dash\local\data_grid\field\attribute\identifier_attribute;
-use block_dash\local\data_grid\filter\condition;
-use block_dash\local\data_grid\paginator;
+use block_dash\local\paginator;
 use block_dash\local\data_source\data_source_interface;
+use block_dash\local\data_source\form\preferences_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -129,96 +130,61 @@ abstract class abstract_layout implements layout_interface, \templatable {
         self::$currentgroupid = random_int(1, 10000);
 
         $filtercollection = $this->get_data_source()->get_filter_collection();
-
-        if ($this->supports_field_visibility()) {
-            $group = [];
-            foreach ($this->get_data_source()->get_sorted_field_definitions() as $availablefielddefinition) {
-                $fieldname = 'config_preferences[available_fields][' . $availablefielddefinition->get_name() .
-                    '][visible]';
-
-                $tablenames = [];
-                if ($tables = $availablefielddefinition->get_option('tables')) {
-                    foreach ($tables as $table) {
-                        $tablenames[] = get_string('tablealias_' . $table, 'block_dash');
+      
+        if ($form->get_tab() == preferences_form::TAB_FIELDS) {
+            if ($this->supports_field_visibility()) {
+                $group = [];
+                foreach ($this->get_data_source()->get_sorted_fields() as $availablefield) {
+                    if ($availablefield->has_attribute(identifier_attribute::class)) {
+                        continue;
                     }
+
+                    if ($availablefield->has_attribute(context_attribute::class)) {
+                        continue;
+                    }
+
+                    $fieldname = 'config_preferences[available_fields][' . $availablefield->get_alias() .
+                        '][visible]';
+
+                    $title = $availablefield->get_table()->get_title();
+
+                    $icon = $OUTPUT->pix_icon('i/dragdrop', get_string('dragitem', 'block_dash'), 'moodle',
+                        ['class' => 'drag-handle']);
+                    $title = $icon . '<b>' . $title . '</b>: ' . $availablefield->get_title();
+
+                    $totaratitle = block_dash_is_totara() ? $title : null;
+                    $group[] = $mform->createElement('advcheckbox', $fieldname, $title, $totaratitle, [
+                        'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
+                        'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
+                        'data-toggle' => 'slave', // For checkbox_toggleall.
+                        'data-action' => 'toggle' // For checkbox_toggleall.
+                    ]);
+                    $mform->setType($fieldname, PARAM_BOOL);
                 }
+                $mform->addGroup($group, 'available_fields', get_string('enabledfields', 'block_dash'),
+                    [''], false);
 
-                if ($tablenames) {
-                    $title = implode(', ', $tablenames);
-                } else {
-                    $title = get_string('general');
-                }
+                $this->add_checkbox_toggleall(self::$currentgroupid, $form, $mform);
 
-                $icon = $OUTPUT->pix_icon('i/dragdrop', get_string('dragitem', 'block_dash'), 'moodle',
-                    ['class' => 'drag-handle']);
-                $title = $icon . '<b>' . $title . '</b>: ' . $availablefielddefinition->get_title();
-
-                $totaratitle = block_dash_is_totara() ? $title : null;
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $title, $totaratitle, [
-                    'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
-                    'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
-                    'data-toggle' => 'slave', // For checkbox_toggleall.
-                    'data-action' => 'toggle' // For checkbox_toggleall.
-                ]);
-                $mform->setType($fieldname, PARAM_BOOL);
+                self::$currentgroupid++;
             }
-            $mform->addGroup($group, null, get_string('enabledfields', 'block_dash'),
-                ['<div style="width: 100%;"></div>']);
-
-            $this->add_checkbox_toggleall(self::$currentgroupid, $form, $mform);
-
-            self::$currentgroupid++;
         }
 
         if ($this->supports_filtering()) {
-            $group = [];
-            foreach ($filtercollection->get_filters() as $filter) {
-                if ($filter instanceof condition) {
-                    // Don't include conditions in this group.
-                    continue;
-                }
-                $fieldname = 'config_preferences[filters][' . $filter->get_name() . '][enabled]';
-
-                $totaratitle = block_dash_is_totara() ? $filter->get_label() : null;
-                $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), $totaratitle, [
-                    'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
-                    'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
-                    'data-toggle' => 'slave', // For checkbox_toggleall.
-                    'data-action' => 'toggle' // For checkbox_toggleall.
-                ]);
-                $mform->setType($fieldname, PARAM_BOOL);
+            if ($form->get_tab() == preferences_form::TAB_FILTERS) {
+                $mform->addElement('static', 'filterslabel', '', '<b>' . get_string('enabledfilters', 'block_dash') . '</b>');
+                $filtercollection->build_settings_form($form, $mform, 'filter', 'config_preferences[filters][%s]');
             }
-            $mform->addGroup($group, null, get_string('enabledfilters', 'block_dash'),
-                ['<div style="width: 100%;"></div>']);
-
-            $this->add_checkbox_toggleall(self::$currentgroupid, $form, $mform);
-
-            self::$currentgroupid++;
         }
 
-        $group = [];
-        foreach ($filtercollection->get_filters() as $filter) {
-            if (!$filter instanceof condition) {
-                // Only include conditions in this group.
-                continue;
-            }
-            $fieldname = 'config_preferences[filters][' . $filter->get_name() . '][enabled]';
-
-            $totaratitle = block_dash_is_totara() ? $filter->get_label() : null;
-            $group[] = $mform->createElement('advcheckbox', $fieldname, $filter->get_label(), $totaratitle, [
-                'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
-                'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
-                'data-toggle' => 'slave', // For checkbox_toggleall.
-                'data-action' => 'toggle' // For checkbox_toggleall.
-            ]);
-            $mform->setType($fieldname, PARAM_BOOL);
+        if ($form->get_tab() == preferences_form::TAB_CONDITIONS) {
+            $mform->addElement('static', 'conditionslabel', '', '<b>' . get_string('enabledconditions', 'block_dash') . '</b>');
+            $filtercollection->build_settings_form($form, $mform, 'condition', 'config_preferences[filters][%s]');
         }
-        $mform->addGroup($group, null, get_string('enabledconditions', 'block_dash'),
-            ['<div style="width: 100%;"></div>']);
 
-        $this->add_checkbox_toggleall(self::$currentgroupid, $form, $mform);
-
-        self::$currentgroupid++;
+        if (!$this->supports_filtering() && $form->get_tab() == preferences_form::TAB_FILTERS) {
+            $mform->addElement('html', $OUTPUT->notification(get_string('layoutdoesnotsupportfiltering', 'block_dash'), 'warning'));
+        }
     }
 
     /**
@@ -284,9 +250,9 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $templatedata['error'] .= $OUTPUT->notification($error, 'error');
             }
 
-            if ($this->get_data_source()->get_data_grid()->get_paginator()->get_page_count() > 1) {
+            if ($this->get_data_source()->get_paginator()->get_page_count() > 1) {
                 $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()
-                    ->get_data_grid()->get_paginator()
+                    ->get_paginator()
                     ->export_for_template($OUTPUT));
             }
         }
@@ -315,7 +281,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
     protected function map_data($mapping, data_collection_interface $datacollection) {
         foreach ($mapping as $newname => $fieldname) {
             if ($fieldname) {
-                $datacollection->add_data(new field($newname, $datacollection[$fieldname]));
+                $datacollection->add_data(new field($newname, $datacollection[$fieldname], true));
             }
         }
 

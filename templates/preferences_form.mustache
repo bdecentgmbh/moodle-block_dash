@@ -1,0 +1,21 @@
+<ul class="nav nav-tabs mb-3">
+    {{#tabs}}
+        <li class="nav-item">
+            <a class="nav-link {{#active}}active{{/active}}" data-action="change-tab" data-tab="{{tabid}}" href="#">{{{label}}}</a>
+        </li>
+    {{/tabs}}
+</ul>
+
+{{{formhtml}}}
+
+{{#istotara}}
+    {{! Initialize sortable field list for Totara (due to insufficient modal events) }}
+    {{#js}}
+        require(["jquery", "jqueryui"], function($, jqueryui) {
+            $("#fgroup_id_available_fields fieldset.fgroup div.felement").sortable({
+                handle: ".drag-handle",
+                axis: "y"
+            });
+        });
+    {{/js}}
+{{/istotara}}

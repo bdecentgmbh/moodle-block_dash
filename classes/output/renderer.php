@@ -139,4 +139,14 @@ class renderer extends \plugin_renderer_base {
         return $this->render_from_template($datasource->get_layout()->get_mustache_template_name(),
             $datasource->export_for_template($this));
     }
+
+    /**
+     * Compatibility for Totara.
+     *
+     * @param query_debug $debug
+     * @return bool|string
+     */
+    public function render_query_debug(query_debug $debug) {
+        return $this->render_from_template('block_dash/query_debug', $debug->export_for_template($this));
+    }
 }

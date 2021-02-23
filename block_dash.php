@@ -26,6 +26,9 @@ use block_dash\local\block_builder;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->dirroot/blocks/dash/lib.php");
+require_once("$CFG->libdir/filelib.php");
+
 /**
  * Dash block class.
  */
@@ -74,6 +77,19 @@ class block_dash extends block_base {
     }
 
     /**
+     * Serialize and store config data
+     */
+    function instance_config_save($data, $nolongerused = false) {
+        if (isset($data->backgroundimage)) {
+            file_save_draft_area_files($data->backgroundimage, $this->context->id, 'block_dash', 'images',
+                0, ['subdirs' => 0, 'maxfiles' => 1]);
+        }
+
+        parent::instance_config_save($data, $nolongerused);
+    }
+
+
+    /**
      * Dashes are suitable on all page types.
      *
      * @return array
@@ -100,6 +116,11 @@ class block_dash extends block_base {
 
         $this->content = new \stdClass();
 
+        if (block_dash_is_disabled()) {
+            $this->content->text = is_siteadmin() ? get_string('disableallmessage', 'block_dash') : '';
+            return $this->content;
+        }
+
         try {
             $bb = block_builder::create($this);
 
@@ -110,8 +131,12 @@ class block_dash extends block_base {
             }
 
             $this->content = $bb->get_block_content();
+
+            if ($css = $this->get_extra_css()) {
+                $this->content->text .= $css;
+            }
         } catch (\Exception $e) {
-            $this->content->text = $OUTPUT->notification($e->getMessage(), 'error');
+            $this->content->text = $OUTPUT->notification($e->getMessage() . $e->getTraceAsString(), 'error');
         }
 
         return $this->content;
@@ -132,7 +157,89 @@ class block_dash extends block_base {
         } else {
             $attributes['class'] .= ' dash-block-width-100';
         }
+
+        if (isset($this->config->preferences['layout'])) {
+            $attributes['class'] .= ' ' . str_replace('\\', '-', $this->config->preferences['layout']);
+        }
+
         return $attributes;
+    }
+
+    /**
+     * Get extra CSS styling for this specific block.
+     *
+     * @return string
+     */
+    public function get_extra_css() {
+        global $OUTPUT;
+
+        $blockcss = [];
+        $data = [
+            'block' => $this,
+            'headerfootercolor' => isset($this->config->headerfootercolor) ? $this->config->headerfootercolor : null
+        ];
+
+        $backgroundgradient = isset($this->config->backgroundgradient) ? str_replace(';', '', $this->config->backgroundgradient) : null;
+
+        if ($this->get_background_image_url()) {
+            if ($backgroundgradient) {
+                $blockcss[] = sprintf('background-image: %s, url(%s);', $backgroundgradient, $this->get_background_image_url()->out());
+            } else {
+                $blockcss[] = sprintf('background-image: url(%s);', $this->get_background_image_url());
+            }
+        } elseif ($backgroundgradient) {
+            $blockcss[] = sprintf('background: %s', $this->config->backgroundgradient);
+        }
+
+        if (isset($this->config->css) && is_array($this->config->css)) {
+            foreach ($this->config->css as $property => $value) {
+                if (!empty($value)) {
+                    $blockcss[] = sprintf('%s: %s;', $property, $value);
+                }
+            }
+        }
+
+        $data['blockcss'] = implode(PHP_EOL, $blockcss);
+
+        return $OUTPUT->render_from_template('block_dash/extra_css', $data);
+    }
+
+    /**
+     * Get background image.
+     *
+     * @return stored_file|null
+     * @throws coding_exception
+     */
+    public function get_background_image() {
+        $fs = get_file_storage();
+        $backgroundimage = null;
+        foreach ($fs->get_area_files($this->context->id, 'block_dash', 'images', 0) as $file) {
+            if ($file->is_valid_image()) {
+                return $file;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get background image URL.
+     *
+     * @return moodle_url|null
+     */
+    public function get_background_image_url() {
+        if ($backgroundimage = $this->get_background_image()) {
+            return moodle_url::make_pluginfile_url(
+                $backgroundimage->get_contextid(),
+                $backgroundimage->get_component(),
+                $backgroundimage->get_filearea(),
+                $backgroundimage->get_itemid(),
+                $backgroundimage->get_filepath(),
+                $backgroundimage->get_filename()
+            );
+        }
+
+        return null;
     }
 
     /**

@@ -25,8 +25,11 @@
 namespace block_dash\local\data_source;
 
 use block_dash\local\block_builder;
-use block_dash\local\data_grid\field\field_definition_factory;
-use block_dash\local\data_grid\field\field_definition_interface;
+use block_dash\local\dash_framework\query_builder\builder;
+use block_dash\local\dash_framework\query_builder\join;
+use block_dash\local\dash_framework\structure\table;
+use block_dash\local\dash_framework\structure\user_table;
+use block_dash\local\data_grid\filter\current_course_participants_condition;
 use block_dash\local\data_grid\filter\date_filter;
 use block_dash\local\data_grid\filter\filter;
 use block_dash\local\data_grid\filter\group_filter;
@@ -38,6 +41,8 @@ use block_dash\local\data_grid\filter\participants_condition;
 use block_dash\local\data_grid\filter\user_field_filter;
 use block_dash\local\data_grid\filter\user_profile_field_filter;
 use block_dash\local\data_grid\filter\current_course_condition;
+use coding_exception;
+use context;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -49,10 +54,21 @@ defined('MOODLE_INTERNAL') || die();
 class users_data_source extends abstract_data_source {
 
     /**
+     * Constructor.
+     *
+     * @param context $context
+     */
+    public function __construct(context $context) {
+        $this->add_table(new user_table());
+
+        parent::__construct($context);
+    }
+
+    /**
      * Get human readable name of data source.
      *
      * @return string
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function get_name() {
         return get_string('users');
@@ -61,22 +77,35 @@ class users_data_source extends abstract_data_source {
     /**
      * Return query template for retrieving user info.
      *
-     * @return string
+     * @return builder
+     * @throws coding_exception
      */
-    public function get_query_template() {
+    public function get_query_template(): builder {
         global $CFG;
 
         require_once("$CFG->dirroot/user/profile/lib.php");
-        $sql = 'SELECT %%SELECT%% FROM {user} u ';
+
+        $builder = new builder();
+        $builder
+            ->select('u.id', 'u_id')
+            ->from('user', 'u')
+            ->join('user_enrolments', 'ue', 'userid', 'u.id', join::TYPE_LEFT_JOIN)
+            ->join('enrol', 'e', 'id', 'ue.enrolid', join::TYPE_LEFT_JOIN)
+            ->join('course', 'c', 'id', 'e.courseid', join::TYPE_LEFT_JOIN)
+            ->join('groups_members', 'gm', 'userid', 'u.id', join::TYPE_LEFT_JOIN)
+            ->join('groups', 'g', 'id', 'gm.groupid', join::TYPE_LEFT_JOIN);
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
-            $sql .= "LEFT JOIN {user_info_data} $alias ON $alias.userid = u.id AND $alias.fieldid = $field->id ";
+
+            $builder
+                ->join('user_info_data', $alias, 'userid', 'u.id', join::TYPE_LEFT_JOIN)
+                ->join_condition($alias, "$alias.fieldid = $field->id");
         }
 
-        $sql .= ' %%WHERE%% AND u.deleted = 0 %%GROUPBY%% %%ORDERBY%%';
+        $builder->where('u.deleted', [0]);
 
-        return $sql;
+        return $builder;
     }
 
     /**
@@ -89,19 +118,10 @@ class users_data_source extends abstract_data_source {
     }
 
     /**
-     * Return available field definitions.
-     *
-     * @return array|field_definition_interface[]
-     */
-    public function build_available_field_definitions() {
-        return field_definition_factory::get_field_definitions_by_tables(['u']);
-    }
-
-    /**
      * Build and return filter collection.
      *
      * @return filter_collection_interface
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function build_filter_collection() {
         global $CFG;
@@ -131,6 +151,10 @@ class users_data_source extends abstract_data_source {
         $filtercollection->add_filter(new participants_condition('participants', 'u.id'));
         $filtercollection->add_filter(new my_groups_condition('my_groups', 'gm300.groupid'));
         $filtercollection->add_filter(new current_course_condition('current_course', 'ra100.contextid'));
+
+        if (block_dash_has_pro()) {
+            $filtercollection->add_filter(new \local_dash\data_grid\filter\parent_role_condition('parentrole', 'u.id'));
+        }
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);

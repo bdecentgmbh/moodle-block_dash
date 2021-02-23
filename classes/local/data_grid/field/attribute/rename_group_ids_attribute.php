@@ -36,8 +36,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class rename_group_ids_attribute extends rename_ids_attribute {
 
-    private $groupsincontext;
-
     /**
      * Check if group exists in context.
      *
@@ -45,28 +43,6 @@ class rename_group_ids_attribute extends rename_ids_attribute {
      * @return bool
      */
     public function check_id($id) {
-        return array_key_exists($id, $this->get_groups_in_context());
-    }
-
-    /**
-     * Query groups in this context once.
-     *
-     * @return array
-     * @throws coding_exception
-     */
-    private function get_groups_in_context() {
-        global $USER;
-
-        if (!isset($this->groupincontext)) {
-            $this->groupsincontext = [];
-
-            if ($context = $this->get_field_definition()->get_data_grid()->get_data_source()->get_context()) {
-                foreach (group_filter::get_user_groups($USER->id, $context) as $group) {
-                    $this->groupsincontext[$group->id] = $group;
-                }
-            }
-        }
-
-        return $this->groupsincontext;
+        return true;
     }
 }

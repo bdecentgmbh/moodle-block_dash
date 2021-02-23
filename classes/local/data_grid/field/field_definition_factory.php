@@ -24,6 +24,7 @@
 
 namespace block_dash\local\data_grid\field;
 
+use block_dash\local\dash_framework\structure\field_interface;
 use block_dash\local\data_grid\field\attribute\field_attribute_interface;
 
 defined('MOODLE_INTERNAL') || die();
@@ -122,6 +123,8 @@ class field_definition_factory implements field_definition_factory_interface {
      * @throws \coding_exception
      */
     public static function build_field_definition($name, array $info) {
+        global $CFG;
+
         if (!self::exists($name)) {
             return null;
         }
@@ -132,8 +135,15 @@ class field_definition_factory implements field_definition_factory_interface {
             return $fielddefinitioninfo['factory']::build_field_definition($name, $info);
         }
 
-        if (!isset($fielddefinitioninfo['select'])) {
-            throw new \coding_exception('Standard SQL fields need a select defined: ' . $name);
+        // Check for db driver specific select statements.
+        if (isset($fielddefinitioninfo['select_' . $CFG->dbtype])) {
+            $select = $fielddefinitioninfo['select_' . $CFG->dbtype];
+        } else {
+            // Otherwise default to agnostic select (not db specific).
+            if (!isset($fielddefinitioninfo['select'])) {
+                throw new \coding_exception('Standard SQL fields need a select defined: ' . $name);
+            }
+            $select = $fielddefinitioninfo['select'];
         }
 
         if (!isset($fielddefinitioninfo['title'])) {
@@ -141,7 +151,7 @@ class field_definition_factory implements field_definition_factory_interface {
         }
 
         $newfielddefinition = new sql_field_definition(
-            $fielddefinitioninfo['select'],
+            $select,
             $fielddefinitioninfo['name'],
             $fielddefinitioninfo['title'],
             isset($fielddefinitioninfo['visibility']) ? $fielddefinitioninfo['visibility'] :
@@ -207,54 +217,19 @@ class field_definition_factory implements field_definition_factory_interface {
     }
 
     /**
-     * Get field definitions by table alias.
-     *
-     * @param array $tablealiases
-     * @return array
-     * @throws \coding_exception
-     */
-    public static function get_field_definitions_by_tables(array $tablealiases) {
-        $fielddefinitions = [];
-        $all = self::get_all_field_definitions();
-
-        foreach ($all as $fielddefinition) {
-            if ($tables = $fielddefinition->get_option('tables')) {
-                if (array_intersect($tablealiases, $tables)) {
-                    $fielddefinitions[] = clone $fielddefinition;
-                }
-            }
-        }
-
-        return $fielddefinitions;
-    }
-
-    /**
      * Get options for form select field.
      *
-     * @param field_definition_interface[] $fielddefinitions
+     * @param field_interface[] $fields
      * @return array
      * @throws \coding_exception
      */
-    public static function get_field_definition_options($fielddefinitions) {
+    public static function get_field_definition_options($fields) {
         $options = [];
-        foreach ($fielddefinitions as $fielddefinition) {
+        foreach ($fields as $field) {
 
-            $tablenames = [];
-            if ($tables = $fielddefinition->get_option('tables')) {
-                foreach ($tables as $table) {
-                    $tablenames[] = get_string('tablealias_' . $table, 'block_dash');
-                }
-            }
+            $title = $field->get_table()->get_table_name() . ': ' . $field->get_title();
 
-            if ($tablenames) {
-                $title = implode(', ', $tablenames);
-            } else {
-                $title = get_string('general');
-            }
-
-            $title = $title . ': ' . $fielddefinition->get_title();
-
-            $options[$fielddefinition->get_name()] = $title;
+            $options[$field->get_alias()] = $title;
         }
 
         return $options;

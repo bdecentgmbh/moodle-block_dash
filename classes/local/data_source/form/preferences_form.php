@@ -39,6 +39,18 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class preferences_form extends \moodleform {
 
+    const TAB_GENERAL = 'tabgeneral';
+    const TAB_FIELDS = 'tabfields';
+    const TAB_FILTERS = 'tabfilters';
+    const TAB_CONDITIONS = 'tabconditions';
+
+    const TABS = [
+        self::TAB_GENERAL,
+        self::TAB_FIELDS,
+        self::TAB_FILTERS,
+        self::TAB_CONDITIONS
+    ];
+
     /**
      * Define form fields.
      *
@@ -48,11 +60,35 @@ class preferences_form extends \moodleform {
     protected function definition() {
         $block = $this->_customdata['block'];
 
+        if (!isset($this->_customdata['tab'])) {
+            $this->_customdata['tab'] = self::TABS[0];
+        }
+
         $configuration = configuration::create_from_instance($block);
         if ($configuration->is_fully_configured()) {
             $configuration->get_data_source()->build_preferences_form($this, $this->_form);
         }
 
-        $this->add_action_buttons();
+        $mform = $this->_form;
+
+        if (empty($mform->_elements)) {
+            $mform->addElement('html', '<p class="text-muted">' . get_string('nothingtodisplay') . '</p>');
+        }
+
+        $mform->addElement('html', '<hr>');
+
+        //when two elements we need a group
+        $buttonarray=array();
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] = &$mform->createElement('button', 'cancelbutton', get_string('cancel'), ['data-action' => 'cancel']);
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
+    }
+
+    /**
+     * Get current tab of preferences form.
+     */
+    public function get_tab(): string {
+        return $this->_customdata['tab'];
     }
 }

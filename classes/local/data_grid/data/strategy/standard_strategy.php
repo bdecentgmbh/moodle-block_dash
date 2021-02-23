@@ -24,11 +24,11 @@
 
 namespace block_dash\local\data_grid\data\strategy;
 
+use block_dash\local\dash_framework\structure\field_interface;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
-use block_dash\local\data_grid\data_grid_interface;
-use block_dash\local\data_grid\field\field_definition_interface;
+use block_dash\local\data_grid\field\attribute\context_attribute;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,10 +43,10 @@ class standard_strategy implements data_strategy_interface {
      * Convert records.
      *
      * @param \stdClass[] $records
-     * @param data_grid_interface $datagrid
+     * @param field_interface[] $fielddefinitions
      * @return data_collection_interface
      */
-    public function convert_records_to_data_collection($records, data_grid_interface $datagrid) {
+    public function convert_records_to_data_collection($records, array $fielddefinitions) {
         $griddata = new data_collection();
 
         foreach ($records as $fullrecord) {
@@ -55,15 +55,19 @@ class standard_strategy implements data_strategy_interface {
                 unset($record->unique_id);
             }
             $row = new data_collection();
-            foreach ($datagrid->get_field_definitions() as $fielddefinition) {
-                $name = $fielddefinition->get_name();
+            foreach ($fielddefinitions as $fielddefinition) {
+                $name = $fielddefinition->get_alias();
 
-                if ($fielddefinition->get_visibility() == field_definition_interface::VISIBILITY_HIDDEN) {
+                if (!property_exists($record, $name)) {
                     continue;
                 }
 
+                if ($fielddefinition->has_attribute(context_attribute::class)) {
+                    $row->set_context(\context::instance_by_id($record->$name));
+                }
+
                 $row->add_data(new field($name, $fielddefinition->transform_data($record->$name, $fullrecord),
-                    $fielddefinition->get_title()));
+                    $fielddefinition->get_visibility(), $fielddefinition->get_title()));
             }
 
             $griddata->add_child_collection('rows', $row);

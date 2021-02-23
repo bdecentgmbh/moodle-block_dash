@@ -25,7 +25,6 @@
 namespace block_dash\local\data_grid\field;
 
 use block_dash\local\data_grid\field\attribute\field_attribute_interface;
-use block_dash\local\data_grid\data_grid_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -79,11 +78,6 @@ abstract class abstract_field_definition implements field_definition_interface {
     private $sortselect;
 
     /**
-     * @var data_grid_interface
-     */
-    private $datagrid;
-
-    /**
      * Constructor.
      *
      * @param string $name String identifier of human readable name of field (e.g. Firstname).
@@ -96,24 +90,6 @@ abstract class abstract_field_definition implements field_definition_interface {
         $this->title = $title;
         $this->visibility = $visibility;
         $this->options = $options;
-    }
-
-    /**
-     * Set data source this field definition is attached to.
-     *
-     * @param data_grid_interface $datagrid
-     */
-    public function set_data_grid(data_grid_interface $datagrid) {
-        $this->datagrid = $datagrid;
-    }
-
-    /**
-     * Get data source this field definition is attached to.
-     *
-     * @return data_grid_interface
-     */
-    public function get_data_grid() {
-        return $this->datagrid;
     }
 
     /**

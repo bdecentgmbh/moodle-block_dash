@@ -24,6 +24,10 @@
 
 namespace block_dash\local\data_grid\filter;
 
+use coding_exception;
+use moodleform;
+use MoodleQuickForm;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -78,6 +82,11 @@ class filter implements filter_interface {
      * @var string
      */
     private $clausetype = self::CLAUSE_TYPE_WHERE;
+
+    /**
+     * @var array
+     */
+    private $preferences;
 
     /**
      * Filter constructor.
@@ -202,6 +211,17 @@ class filter implements filter_interface {
     }
 
     /**
+     * Get help text for this filter to help configuration.
+     *
+     * Return array[string_identifier, component], similar to the $mform->addHelpButton() call.
+     *
+     * @return array<string, string>
+     */
+    public function get_help() {
+        return null;
+    }
+
+    /**
      * Get filter SQL operation.
      *
      * @return string
@@ -214,11 +234,11 @@ class filter implements filter_interface {
      * Set an operation.
      *
      * @param string $operation
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function set_operation($operation) {
         if (!in_array($operation, $this->get_supported_operations())) {
-            throw new \coding_exception(get_class($this) . ' does not support operation: ' . $operation);
+            throw new coding_exception(get_class($this) . ' does not support operation: ' . $operation);
         }
 
         $this->operation = $operation;
@@ -278,11 +298,11 @@ class filter implements filter_interface {
      * Return where SQL and params for placeholders.
      *
      * @return array
-     * @throws \coding_exception|\dml_exception
+     * @throws coding_exception|\dml_exception
      */
     public function get_sql_and_params() {
         if (!$this->initialized) {
-            throw new \coding_exception('Filter was not initialized properly. Did you call parent::init()?');
+            throw new coding_exception('Filter was not initialized properly. Did you call parent::init()?');
         }
 
         if (!$values = $this->get_values()) {
@@ -299,7 +319,7 @@ class filter implements filter_interface {
         $params = [$placeholder => $value];
         $select = $this->get_select();
 
-        switch ($this->operation) {
+        switch ($this->get_operation()) {
             case self::OPERATION_EQUAL:
                 $sql = "$select = :$placeholder";
                 break;
@@ -330,6 +350,9 @@ class filter implements filter_interface {
                 // Convert value to wildcard.
                 $params[$placeholder] = '%'.$params[$placeholder].'%';
                 break;
+            case self::OPERATION_CUSTOM:
+                $sql = $this->get_custom_operation();
+                break;
         }
 
         return [$sql, $params];
@@ -349,7 +372,7 @@ class filter implements filter_interface {
      * Special get in or equal.
      *
      * @return array
-     * @throws \coding_exception
+     * @throws coding_exception
      * @throws \dml_exception
      */
     private function get_in_or_equal() {
@@ -378,7 +401,7 @@ class filter implements filter_interface {
      */
     public function create_form_element(filter_collection_interface $filtercollection,
                                         $elementnameprefix = '') {
-        throw new \coding_exception('Filter element does not exist. Did you forget to override filter::create_form_element()?');
+        throw new coding_exception('Filter element does not exist. Did you forget to override filter::create_form_element()?');
     }
 
     /**
@@ -416,5 +439,55 @@ class filter implements filter_interface {
      */
     public function get_clause_type() {
         return $this->clausetype;
+    }
+
+    /**
+     * Return custom operation SQL.
+     *
+     * @return string
+     * @throws coding_exception
+     */
+    public function get_custom_operation(): string {
+        throw new coding_exception('Must implement get_custom_operation when using OPERATION_CUSTOM');
+    }
+
+    /**
+     * Set preferences on this filter.
+     *
+     * @param array $preferences
+     */
+    public function set_preferences(array $preferences = null): void {
+        $this->preferences = $preferences;
+    }
+
+    /**
+     * Get preferences related to this filter.
+     *
+     * @return array
+     */
+    public function get_preferences(): array {
+        if (!$this->preferences) {
+            return [];
+        }
+        return $this->preferences;
+    }
+
+    /**
+     * Add form fields for this filter (and any settings related to this filter.)
+     *
+     * @param moodleform $moodleform
+     * @param MoodleQuickForm $mform
+     * @param string $fieldnameformat
+     */
+    public function build_settings_form_fields(moodleform $moodleform, MoodleQuickForm $mform, $fieldnameformat = 'filters[%s]'): void {
+        $fieldname = sprintf($fieldnameformat, $this->get_name());
+
+        $totaratitle = block_dash_is_totara() ? $this->get_label() : null;
+        $mform->addElement('advcheckbox', $fieldname . '[enabled]', $this->get_label(), $totaratitle);
+
+        if ($this->get_help()) {
+            [$identifier, $component] = $this->get_help();
+            $mform->addHelpButton($fieldname . '[enabled]', $identifier, $component);
+        }
     }
 }

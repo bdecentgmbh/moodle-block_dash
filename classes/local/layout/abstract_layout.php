@@ -130,7 +130,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
         self::$currentgroupid = random_int(1, 10000);
 
         $filtercollection = $this->get_data_source()->get_filter_collection();
-
+      
         if ($form->get_tab() == preferences_form::TAB_FIELDS) {
             if ($this->supports_field_visibility()) {
                 $group = [];

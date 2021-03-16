@@ -122,7 +122,8 @@ function block_dash_output_fragment_block_preferences_form($args) {
 
     return $OUTPUT->render_from_template('block_dash/preferences_form', [
         'formhtml' => $formhtml,
-        'tabs' => $tabs
+        'tabs' => $tabs,
+        'istotara' => block_dash_is_totara()
     ]);
 }
 

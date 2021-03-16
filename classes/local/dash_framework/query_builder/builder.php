@@ -237,6 +237,16 @@ class builder {
     }
 
     /**
+     * Remove order by conditions.
+     *
+     * @return builder
+     */
+    public function remove_orderby(): builder {
+        $this->orderby = [];
+        return $this;
+    }
+
+    /**
      * Group by field for aggregations.
      *
      * @param string $field
@@ -404,7 +414,7 @@ class builder {
     public function count(): int {
         $builder = clone $this;
         $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
-        $builder->limitfrom(0)->limitnum(0);
+        $builder->limitfrom(0)->limitnum(0)->remove_orderby();
         if (!$records = $builder->query()) {
             return 0;
         }

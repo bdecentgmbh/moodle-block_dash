@@ -68,6 +68,7 @@ $string['createdashboard'] = 'Create dashboard';
 $string['createlayout'] = 'Create custom layout';
 $string['cssclass'] = 'CSS Class';
 $string['currentcourse'] = 'Current course';
+$string['currentcoursecontext'] = 'Current course context';
 $string['currentcoursegroups'] = 'Current course groups';
 $string['custom'] = 'Custom';
 $string['customdatasource'] = 'Custom data source';

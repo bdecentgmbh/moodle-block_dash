@@ -143,8 +143,8 @@ class block_dash extends block_base {
             $this->content->text = $OUTPUT->notification($e->getMessage() . $e->getTraceAsString(), 'error');
         }
 
-        $this->page->requires->css(new \moodle_url('/blocks/dash/select2.min.css'));
-        $this->page->requires->css(new \moodle_url('/blocks/dash/datepicker.css'));
+        $this->page->requires->css(new \moodle_url('/blocks/dash/styles/select2.min.css'));
+        $this->page->requires->css(new \moodle_url('/blocks/dash/styles/datepicker.css'));
 
         return $this->content;
     }

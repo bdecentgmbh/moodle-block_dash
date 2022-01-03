@@ -70,6 +70,7 @@ jobs:
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+          IGNORE_PATHS: 'styles/*.css'
           IGNORE_NAMES: 'extra_css.mustache, select2.js, select2.min.js, select2.min.css, mustache_custom_loader.php'
 
       - name: PHP Lint

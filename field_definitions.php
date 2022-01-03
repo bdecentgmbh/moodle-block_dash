@@ -284,8 +284,10 @@ $definitions = [
     ],
     [
         'name' => 'u_group_names',
-        'select' => "(SELECT group_concat(g200.id, ',') FROM {groups} g200 JOIN {groups_members} gm200 ON gm200.groupid = g200.id WHERE gm200.userid = u.id)",
-        'select_pgsql' => "(SELECT string_agg(g200.id::text, ',') FROM {groups} g200 JOIN {groups_members} gm200 ON gm200.groupid = g200.id AND gm200.userid = u.id)",
+        'select' => "(SELECT group_concat(g200.id, ',') FROM {groups} g200
+            JOIN {groups_members} gm200 ON gm200.groupid = g200.id WHERE gm200.userid = u.id)",
+        'select_pgsql' => "(SELECT string_agg(g200.id::text, ',') FROM {groups} g200
+            JOIN {groups_members} gm200 ON gm200.groupid = g200.id AND gm200.userid = u.id)",
         'title' => get_string('group'),
         'tables' => ['u'],
         'attributes' => [

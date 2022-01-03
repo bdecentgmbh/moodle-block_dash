@@ -32,18 +32,30 @@ use dml_exception;
 /**
  * Builds a query.
  *
- * @package block_dash\local\dash_framework\query_builder
+ * @package block_dash
  */
 class where {
 
     /**
      * @var int Unique counter for param/placeholder names.
      */
-    static $paramcounter = 0;
+    public static $paramcounter = 0;
 
+    /**
+     * Sql equal sign.
+     */
     const OPERATOR_EQUAL = '=';
+    /**
+     * SQL not equal.
+     */
     const OPERATOR_NOT_EQUAL = '!=';
+    /**
+     * SQL IN operator.
+     */
     const OPERATOR_IN = 'in';
+    /**
+     * SQL IN query.
+     */
     const OPERATOR_IN_QUERY = 'in_query';
 
     /**
@@ -85,6 +97,8 @@ class where {
     }
 
     /**
+     * Set sql query to build.
+     *
      * @param string $query
      * @param array $params
      */
@@ -95,6 +109,8 @@ class where {
     }
 
     /**
+     * Get sql query and parameters with processed operators.
+     *
      * @return array<string, array>
      * @throws invalid_operator_exception
      * @throws invalid_where_clause_exception

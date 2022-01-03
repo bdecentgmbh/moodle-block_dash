@@ -61,7 +61,7 @@ interface field_interface {
      */
     public function transform_data($data, \stdClass $record);
 
-    #region Property methods
+    // Region Property methods.
 
     /**
      * Get the column name of the field as it appears in the table (e.g. firstname).
@@ -119,9 +119,9 @@ interface field_interface {
      */
     public function set_visibility($visibility);
 
-    #endregion
+    // Endregion.
 
-    #region Attributes
+    // Region Attributes.
 
     /**
      * Add attribute to this field definition.
@@ -152,9 +152,9 @@ interface field_interface {
      */
     public function has_attribute($classname);
 
-    #endregion
+    // Endregion.
 
-    #region Options
+    // Region Options.
 
     /**
      * Get a single option.
@@ -186,9 +186,9 @@ interface field_interface {
      */
     public function get_options();
 
-    #endregion
+    // Endregion.
 
-    #region Sorting
+    // Region Sorting.
 
     /**
      * Set if field should be sorted.
@@ -234,5 +234,5 @@ interface field_interface {
      */
     public function get_sort_select();
 
-    #endregion
+    // Endregion.
 }

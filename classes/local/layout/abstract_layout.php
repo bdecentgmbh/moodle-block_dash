@@ -130,7 +130,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
         self::$currentgroupid = random_int(1, 10000);
 
         $filtercollection = $this->get_data_source()->get_filter_collection();
-      
+
         if ($form->get_tab() == preferences_form::TAB_FIELDS) {
             if ($this->supports_field_visibility()) {
                 $group = [];
@@ -190,7 +190,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
     /**
      * Add button to select/deselect all checkboxes in group.
      *
-     * @param $uniqueid
+     * @param string $uniqueid
      * @param \moodleform $form
      * @param \MoodleQuickForm $mform
      */
@@ -203,7 +203,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
             // Then you can export for template.
             $mform->addElement('static', 'toggleall' . $uniqueid, '', $OUTPUT->render($masterbutton));
         } else {
-            // Moodle 3.7 and earlier support
+            // Moodle 3.7 and earlier support.
             $form->add_checkbox_controller($uniqueid);
         }
     }

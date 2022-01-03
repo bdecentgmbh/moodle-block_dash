@@ -45,6 +45,8 @@ abstract class table implements table_interface {
 
     /**
      * Build a new table.
+     * @param string $tablename
+     * @param string $alias
      */
     public function __construct(string $tablename, string $alias) {
         $this->tablename = $tablename;

@@ -109,14 +109,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function __construct(\context $context) {
         $this->context = $context;
-
-        $this->paginator = new paginator(function () {
-            $count = $this->get_query()->count();
-            if ($maxlimit = $this->get_max_limit()) {
-                return $maxlimit < $count ? $maxlimit : $count;
-            }
-            return $count;
-        });
     }
 
     /**
@@ -131,7 +123,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * Get human readable name of data source.
      *
-     * @param $fullclassname
+     * @param string $fullclassname
      * @return string
      * @throws coding_exception
      */
@@ -173,9 +165,25 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     /**
+     * Get table pagination class.
      * @return paginator
      */
     public function get_paginator(): paginator {
+        if ($this->get_layout()->supports_pagination()) {
+            $perpage = (int) $this->get_preferences('perpage');
+        }
+        $perpage = isset($perpage) && !empty($perpage) ? $perpage : \block_dash\local\paginator::PER_PAGE_DEFAULT;
+
+        if ($this->paginator == null) {
+            $this->paginator = new paginator(function () {
+                $count = $this->get_query()->count();
+                if ($maxlimit = $this->get_max_limit()) {
+                    return $maxlimit < $count ? $maxlimit : $count;
+                }
+                return $count;
+            }, 0, $perpage);
+        }
+
         return $this->paginator;
     }
 
@@ -264,7 +272,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @return filter_collection_interface
      */
-    public final function get_filter_collection() {
+    final public function get_filter_collection() {
         if (is_null($this->filtercollection)) {
             $this->filtercollection = $this->build_filter_collection();
             $this->filtercollection->init();
@@ -331,7 +339,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @return data_collection_interface
      * @throws \moodle_exception
      */
-    public final function get_data() {
+    final public function get_data() {
         if (is_null($this->data)) {
             // If the block has no preferences do not query any data.
             if (empty($this->get_all_preferences())) {
@@ -408,7 +416,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @return array|\renderer_base|\stdClass|string
      * @throws coding_exception
      */
-    public final function export_for_template(\renderer_base $output) {
+    final public function export_for_template(\renderer_base $output) {
         $data = $this->get_layout()->export_for_template($output);
         $data['datasource'] = $this;
         return $data;
@@ -450,10 +458,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
             $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
 
-            $mform->addElement('select', 'config_preferences[default_sort_direction]', get_string('defaultsortdirection', 'block_dash'), [
-                'asc' => 'ASC',
-                'desc' => 'DESC'
-            ]);
+            $mform->addElement('select', 'config_preferences[default_sort_direction]',
+                get_string('defaultsortdirection', 'block_dash'), [ 'asc' => 'ASC', 'desc' => 'DESC']
+            );
             $mform->setType('config_preferences[default_sort_direction]', PARAM_TEXT);
 
             $mform->addElement('text', 'config_preferences[maxlimit]', get_string('maxlimit', 'block_dash'));
@@ -466,7 +473,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
     }
 
-    #region Preferences
+    // Region Preferences.
 
     /**
      * Get a specific preference.
@@ -474,7 +481,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @param string $name
      * @return mixed|array
      */
-    public final function get_preferences($name) {
+    final public function get_preferences($name) {
         if ($this->preferences && isset($this->preferences[$name])) {
             return $this->preferences[$name];
         }
@@ -487,7 +494,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @return array
      */
-    public final function get_all_preferences() {
+    final public function get_all_preferences() {
         return $this->preferences;
     }
 
@@ -496,11 +503,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @param array $preferences
      */
-    public final function set_preferences(array $preferences) {
+    final public function set_preferences(array $preferences) {
         $this->preferences = $preferences;
     }
 
-    #endregion
+    // Endregion.
 
     /**
      * Get count query template.
@@ -525,7 +532,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @return field_interface[]
      */
-    public final function get_available_fields() {
+    final public function get_available_fields() {
         if (is_null($this->fields)) {
             // Get all available field definitions based on tables.
             $this->fields = [];

@@ -24,10 +24,10 @@
 
 namespace block_dash\test;
 
-use block_dash\local\data_grid\field\attribute\identifier_attribute;
-use block_dash\local\data_grid\field\field_definition_factory;
-use block_dash\local\data_grid\field\field_definition_interface;
-use block_dash\local\data_grid\field\sql_field_definition;
+use \block_dash\local\data_grid\field\attribute\identifier_attribute;
+use \block_dash\local\data_grid\field\field_definition_factory;
+use \block_dash\local\data_grid\field\field_definition_interface;
+use \block_dash\local\data_grid\field\sql_field_definition;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -48,7 +48,7 @@ class field_definition_test extends \advanced_testcase {
     /**
      * This method is called before each test.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->fielddefinition = new sql_field_definition('u.id', 'u_id', 'User ID');
     }
 
@@ -87,4 +87,3 @@ class field_definition_test extends \advanced_testcase {
         $this->assertCount(0, $this->fielddefinition->get_attributes(), 'Ensure no attributes are returned.');
     }
 }
-

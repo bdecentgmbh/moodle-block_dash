@@ -39,11 +39,19 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class preferences_form extends \moodleform {
 
+    /** @var string General tab id. */
     const TAB_GENERAL = 'tabgeneral';
+
+    /** @var string Preference modal fields tab. */
     const TAB_FIELDS = 'tabfields';
+
+    /** @var string Preference modal Filters tab. */
     const TAB_FILTERS = 'tabfilters';
+
+    /** @var string Preference modal Conditions tab. */
     const TAB_CONDITIONS = 'tabconditions';
 
+    /** @var array List of tabs used in preference modal. */
     const TABS = [
         self::TAB_GENERAL,
         self::TAB_FIELDS,
@@ -77,8 +85,8 @@ class preferences_form extends \moodleform {
 
         $mform->addElement('html', '<hr>');
 
-        //when two elements we need a group
-        $buttonarray=array();
+        // When two elements we need a group.
+        $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = &$mform->createElement('button', 'cancelbutton', get_string('cancel'), ['data-action' => 'cancel']);
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);

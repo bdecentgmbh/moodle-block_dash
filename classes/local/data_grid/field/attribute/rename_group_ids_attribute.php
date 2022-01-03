@@ -39,7 +39,7 @@ class rename_group_ids_attribute extends rename_ids_attribute {
     /**
      * Check if group exists in context.
      *
-     * @param $id
+     * @param int $id
      * @return bool
      */
     public function check_id($id) {

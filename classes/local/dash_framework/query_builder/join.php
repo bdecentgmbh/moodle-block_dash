@@ -32,11 +32,18 @@ use dml_exception;
 /**
  * Join a table.
  *
- * @package block_dash\local\dash_framework\query_builder
+ * @package block_dash
  */
 class join {
 
+    /**
+     * Inner JOIN query.
+     */
     const TYPE_INNER_JOIN = 'JOIN';
+
+    /**
+     * SQL Left Join.
+     */
     const TYPE_LEFT_JOIN = 'LEFT JOIN';
 
     /**
@@ -62,11 +69,12 @@ class join {
     private $jointype;
 
     /**
-     * @var array
+     * @var array Extra paramters used in query build.
      */
     private $extraparameters;
 
     /**
+     * Constructors
      * @param string $table Table name of joined table.
      * @param string $alias Joined table alias.
      * @param string $jointablefield Field of joined table to reference in join condition.
@@ -84,6 +92,8 @@ class join {
     }
 
     /**
+     * Get alias mentioned in query.
+     *
      * @return string
      */
     public function get_alias(): string {

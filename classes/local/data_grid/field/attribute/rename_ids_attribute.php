@@ -35,6 +35,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class rename_ids_attribute extends abstract_field_attribute {
 
+
+    /** @var array stored the fields used in current table.*/
     private static $fieldstore = [];
 
     /**
@@ -46,28 +48,25 @@ class rename_ids_attribute extends abstract_field_attribute {
      * @return mixed
      * @throws \moodle_exception
      */
-    public final function transform_data($data, \stdClass $record) {
-
-        $fields = [];
-
+    final public function transform_data($data, \stdClass $record) {
+        $groups = [];
         if ($data) {
             foreach (explode($this->get_option('delimiter'), $data) as $id) {
-                if ($this->check_id($id)) {
+                if ($this->check_id($id) && $id != '') {
                     $fields = self::get_fields($this->get_option('table'), $this->get_option('field'));
                     if (isset($fields[$id])) {
-                        $fields[] = $fields[$id];
+                        $groups[] = $fields[$id];
                     }
                 }
             }
         }
-
-        return implode($this->get_option('delimiter') . ' ', $fields);
+        return implode($this->get_option('delimiter') . ' ', $groups);
     }
 
     /**
      * Override in child class to add additional checks per ID.
      *
-     * @param $id
+     * @param int $id
      * @return bool
      */
     public function check_id($id) {
@@ -75,8 +74,10 @@ class rename_ids_attribute extends abstract_field_attribute {
     }
 
     /**
-     * @param $table
-     * @param $field
+     * Get the fields used in this table.
+     *
+     * @param string $table
+     * @param string $field
      * @return mixed
      * @throws dml_exception
      */

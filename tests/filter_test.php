@@ -54,7 +54,7 @@ class filter_test extends \advanced_testcase {
     /**
      * This method is called before each test.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -100,9 +100,8 @@ class filter_test extends \advanced_testcase {
         $this->assertTrue($this->filtercollection->apply_filter('filter1', 123));
 
         list($sql, $params) = $this->filtercollection->get_sql_and_params();
-
-        $this->assertEquals(' AND table.fieldname = :param1', $sql, 'Ensure SQL is generated.');
-        $this->assertEquals($params, ['param1' => 123], 'Ensure params are returned.');
+        $this->assertEquals('table.fieldname = :param6', $sql[0], 'Ensure SQL is generated.');
+        $this->assertEquals($params, ['param6' => 123], 'Ensure params are returned.');
     }
 
     public function test_required_filters() {
@@ -128,4 +127,3 @@ class filter_test extends \advanced_testcase {
         $this->assertEmpty($this->filtercollection->get_cache($this->user));
     }
 }
-

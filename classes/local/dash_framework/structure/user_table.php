@@ -63,6 +63,7 @@ class user_table extends table {
     }
 
     /**
+     * Get fields and its definition for user table.
      * @return field_interface[]
      */
     public function get_fields(): array {
@@ -75,10 +76,13 @@ class user_table extends table {
             new field('firstname', new lang_string('firstname'), $this),
             new field('lastname', new lang_string('lastname'), $this),
             new field('fullname', new lang_string('fullname'), $this, $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname'])),
-            new field('fullname_linked', new lang_string('fullnamelinked', 'block_dash'), $this, $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']), [
-                new moodle_url_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])]),
-                new link_attribute(['label_field' => 'u_fullname_linked'])
-            ], ['supports_sorting' => false]),
+            new field('fullname_linked', new lang_string('fullnamelinked', 'block_dash'),
+                $this, $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']), [
+                    new moodle_url_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])]),
+                    new link_attribute(['label_field' => 'u_fullname_linked'])
+                ],
+                ['supports_sorting' => false]
+            ),
             new field('email', new lang_string('email'), $this),
             new field('username', new lang_string('username'), $this),
             new field('idnumber', new lang_string('idnumber'), $this),
@@ -99,7 +103,7 @@ class user_table extends table {
                 new image_url_attribute(),
                 new user_image_url_attribute()
             ]),
-            new field('picture', new lang_string('pictureofuser'), $this, null, [
+            new field('picture', new lang_string('pictureofuser'), $this, 'u.id', [
                 new user_image_url_attribute(),
                 new image_attribute(['title' => new lang_string('pictureofuser')])
             ]),
@@ -126,8 +130,10 @@ class user_table extends table {
                 ])
             ]),
             new field('group_names', new lang_string('group'), $this, [
-                'select' => "(SELECT group_concat(g200.id, ',') FROM {groups} g200 JOIN {groups_members} gm200 ON gm200.groupid = g200.id WHERE gm200.userid = u.id)",
-                'select_pgsql' => "(SELECT string_agg(g200.id::text, ',') FROM {groups} g200 JOIN {groups_members} gm200 ON gm200.groupid = g200.id AND gm200.userid = u.id)",
+                'select' => "(SELECT group_concat(g200.id, ',') FROM {groups} g200
+                            JOIN {groups_members} gm200 ON gm200.groupid = g200.id WHERE gm200.userid = u.id)",
+                'select_pgsql' => "(SELECT string_agg(g200.id::text, ',') FROM {groups} g200
+                                    JOIN {groups_members} gm200 ON gm200.groupid = g200.id AND gm200.userid = u.id)",
             ], [
                 new rename_group_ids_attribute([
                     'table' => 'groups',
@@ -141,8 +147,11 @@ class user_table extends table {
 
         $i = 0;
         foreach (profile_get_custom_fields() as $customfield) {
-            $fields[] = new field('pf_' . strtolower($customfield->shortname), new lang_string('customfield', 'block_dash', ['name' => $customfield->name]), $this, "(SELECT profile$i.data FROM {user_info_data} profile$i
-                      WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)");
+            $fields[] = new field('pf_' . strtolower($customfield->shortname),
+                new lang_string('customfield', 'block_dash', ['name' => $customfield->name]),
+                $this, "(SELECT profile$i.data FROM {user_info_data} profile$i
+                      WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)"
+            );
 
             $i++;
         }

@@ -267,3 +267,16 @@ $string['userstat'] = 'User stat';
 $string['viewcourse'] = 'View course';
 $string['viewprofile'] = 'View profile';
 $string['withroles'] = 'With role(s)';
+
+// Course default image settings.
+$string['generalsettings'] = 'General settings';
+$string['courseimage'] = 'Course default image';
+$string['courseimagedesc'] = 'Upload placeholder image to display as course image for empty course image.';
+$string['hidecoursecategory'] = 'Do not show category/course index';
+$string['hidecoursecategorydesc'] = "When a user tries to access the URL /course/index.php, they will be automatically
+redirected to the site's home page, unless a custom URL is specified below.
+If a URL is specified, users shall be redirected to that URL";
+$string['courseredirecturl'] = 'Course redirect URL';
+$string['courseredirecturldesc'] = 'Enter the URL to redirect the users from course index page.';
+$string['courseimagelink'] = 'Course image link';
+$string['backgroundimagefield'] = 'Background image';

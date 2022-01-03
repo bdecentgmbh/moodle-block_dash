@@ -39,7 +39,7 @@ class group_filter extends select_filter {
     /**
      * Get user groups in context.
      *
-     * @param $userid
+     * @param int $userid
      * @param context $context
      * @return array
      * @throws coding_exception

@@ -41,7 +41,7 @@ use external_api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class external extends external_api {
-    #region get_block_content
+    // Region get_block_content.
 
     /**
      * Returns description of get_database_schema_structure() parameters.
@@ -61,25 +61,26 @@ class external extends external_api {
     /**
      * Get block content.
      *
-     * @param int $block_instance_id
-     * @param string $filter_form_data
+     * @param int $blockinstanceid
+     * @param string $filterformdata
      * @param int $page
-     * @param string $sort_field
+     * @param string $sortfield
+     * @param string $sortdirection
      * @return array
      * @throws \coding_exception
      * @throws \invalid_parameter_exception
      * @throws \moodle_exception
      * @throws \restricted_context_exception
      */
-    public static function get_block_content($block_instance_id, $filter_form_data, $page, $sort_field, $sort_direction) {
+    public static function get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection) {
         global $PAGE, $DB;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
-            'block_instance_id' => $block_instance_id,
+            'block_instance_id' => $blockinstanceid,
             'page' => $page,
-            'filter_form_data' => $filter_form_data,
-            'sort_field' => $sort_field,
-            'sort_direction' => $sort_direction
+            'filter_form_data' => $filterformdata,
+            'sort_field' => $sortfield,
+            'sort_direction' => $sortdirection
         ]);
 
         $public = false;
@@ -135,9 +136,9 @@ class external extends external_api {
         ]);
     }
 
-    #endregion
+    // Endregion.
 
-    #region submit_preferences_form
+    // Region submit_preferences_form.
 
     /**
      * Describes the parameters for submit_create_group_form webservice.
@@ -202,8 +203,8 @@ class external extends external_api {
     /**
      * Recursively merge in new config.
      *
-     * @param $existingconfig
-     * @param $newconfig
+     * @param string $existingconfig
+     * @param string $newconfig
      * @return mixed
      */
     private static function recursive_config_merge($existingconfig, $newconfig) {
@@ -215,7 +216,7 @@ class external extends external_api {
 
         // If array contains only scalars, overwrite with new config. No more looping required for this level.
         if (is_array($existingconfig) && !self::is_array_multidimensional($existingconfig)) {
-            return $newconfig;
+            return array_merge($existingconfig, $newconfig);
         }
 
         // Recursively overwrite values.
@@ -261,5 +262,5 @@ class external extends external_api {
         ]);
     }
 
-    #endregion
+    // Endregion.
 }

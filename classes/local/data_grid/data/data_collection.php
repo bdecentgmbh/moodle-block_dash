@@ -66,6 +66,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
     }
 
     /**
+     * Set data context.
      * @param context $context
      */
     public function set_context(context $context) {
@@ -73,6 +74,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
     }
 
     /**
+     * Get data context.
      * @return context|null
      */
     public function get_context() {

@@ -45,11 +45,17 @@ class button_attribute extends abstract_field_attribute {
         global $OUTPUT;
 
         if ($data) {
+            $arialabel = $this->get_option('aria-label');
+            $params = [];
+            if (!empty($arialabel) && isset($record->$arialabel)) {
+                $params = ['aria-label' => $record->$arialabel];
+            }
+
             if ($label = $this->get_option('label')) {
-                return $OUTPUT->single_button($data, $label, 'get');
+                return $OUTPUT->single_button($data, $label, 'get', $params);
             }
             if ($labelfield = $this->get_option('label_field')) {
-                return $OUTPUT->single_button($data, $record->$labelfield, 'get');
+                return $OUTPUT->single_button($data, $record->$labelfield, 'get', $params);
             }
         }
 

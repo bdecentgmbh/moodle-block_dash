@@ -43,6 +43,7 @@ interface field_attribute_interface {
     public function set_field(field_interface $field);
 
     /**
+     * Get field definitions.
      * @return field_interface
      */
     public function get_field();

@@ -108,6 +108,7 @@ abstract class select_filter extends filter {
     }
 
     /**
+     * Get selected options.
      * @return array
      */
     public function get_selected_options() {

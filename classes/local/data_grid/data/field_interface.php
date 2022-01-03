@@ -48,6 +48,7 @@ interface field_interface {
     public function get_value();
 
     /**
+     * Get human readable field label.
      * @return string
      */
     public function get_label();

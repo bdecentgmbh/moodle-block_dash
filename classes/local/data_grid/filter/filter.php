@@ -306,7 +306,6 @@ class filter implements filter_interface {
         }
 
         if (!$values = $this->get_values()) {
-            // Return empty.
             return ['', []];
         }
 
@@ -479,7 +478,10 @@ class filter implements filter_interface {
      * @param MoodleQuickForm $mform
      * @param string $fieldnameformat
      */
-    public function build_settings_form_fields(moodleform $moodleform, MoodleQuickForm $mform, $fieldnameformat = 'filters[%s]'): void {
+    public function build_settings_form_fields(
+        moodleform $moodleform,
+        MoodleQuickForm $mform,
+        $fieldnameformat = 'filters[%s]'): void {
         $fieldname = sprintf($fieldnameformat, $this->get_name());
 
         $totaratitle = block_dash_is_totara() ? $this->get_label() : null;

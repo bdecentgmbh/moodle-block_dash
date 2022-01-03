@@ -78,8 +78,12 @@ class block_dash extends block_base {
 
     /**
      * Serialize and store config data
+     *
+     * @param string $data
+     * @param bool $nolongerused
+     * @return void
      */
-    function instance_config_save($data, $nolongerused = false) {
+    public function instance_config_save($data, $nolongerused = false) {
         if (isset($data->backgroundimage)) {
             file_save_draft_area_files($data->backgroundimage, $this->context->id, 'block_dash', 'images',
                 0, ['subdirs' => 0, 'maxfiles' => 1]);
@@ -104,7 +108,7 @@ class block_dash extends block_base {
      * @return \stdClass
      */
     public function get_content() {
-        global $PAGE, $OUTPUT;
+        global $OUTPUT;
 
         if ($this->content !== null) {
             return $this->content;
@@ -126,7 +130,7 @@ class block_dash extends block_base {
 
             // Conditionally hide the block when empty.
             if (isset($this->config->hide_when_empty) && $this->config->hide_when_empty
-                && $bb->get_configuration()->get_data_source()->get_data()->is_empty() && !$PAGE->user_is_editing()) {
+                && $bb->get_configuration()->get_data_source()->get_data()->is_empty() && !$this->page->user_is_editing()) {
                 return $this->content;
             }
 
@@ -138,6 +142,9 @@ class block_dash extends block_base {
         } catch (\Exception $e) {
             $this->content->text = $OUTPUT->notification($e->getMessage() . $e->getTraceAsString(), 'error');
         }
+
+        $this->page->requires->css(new \moodle_url('/blocks/dash/select2.min.css'));
+        $this->page->requires->css(new \moodle_url('/blocks/dash/datepicker.css'));
 
         return $this->content;
     }
@@ -179,15 +186,18 @@ class block_dash extends block_base {
             'headerfootercolor' => isset($this->config->headerfootercolor) ? $this->config->headerfootercolor : null
         ];
 
-        $backgroundgradient = isset($this->config->backgroundgradient) ? str_replace(';', '', $this->config->backgroundgradient) : null;
+        $backgroundgradient = isset($this->config->backgroundgradient)
+            ? str_replace(';', '', $this->config->backgroundgradient) : null;
 
         if ($this->get_background_image_url()) {
             if ($backgroundgradient) {
-                $blockcss[] = sprintf('background-image: %s, url(%s);', $backgroundgradient, $this->get_background_image_url()->out());
+                $blockcss[] = sprintf('background-image: %s, url(%s);',
+                    $backgroundgradient, $this->get_background_image_url()->out()
+                );
             } else {
                 $blockcss[] = sprintf('background-image: url(%s);', $this->get_background_image_url());
             }
-        } elseif ($backgroundgradient) {
+        } else if ($backgroundgradient) {
             $blockcss[] = sprintf('background: %s', $this->config->backgroundgradient);
         }
 
@@ -279,5 +289,3 @@ class block_dash extends block_base {
         $cache->set($key, [$fieldname => $sorting[$fieldname]]);
     }
 }
-
-

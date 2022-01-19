@@ -25,6 +25,7 @@
 namespace block_dash\local\data_grid\field;
 
 use block_dash\local\data_grid\field\attribute\field_attribute_interface;
+use block_dash\local\data_grid\field\field_definition_interface;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -100,7 +101,7 @@ abstract class abstract_field_definition implements field_definition_interface {
      * @param \stdClass $record Full record from database.
      * @return mixed
      */
-    public final function transform_data($data, \stdClass $record) {
+    final public function transform_data($data, \stdClass $record) {
         foreach ($this->attributes as $attribute) {
             $data = $attribute->transform_data($data, $record);
         }
@@ -108,7 +109,7 @@ abstract class abstract_field_definition implements field_definition_interface {
         return $data;
     }
 
-    #region Property methods
+    // Region Property methods.
 
     /**
      * Get unique field name.
@@ -153,19 +154,19 @@ abstract class abstract_field_definition implements field_definition_interface {
      */
     public function set_visibility($visibility) {
         // Warn the developer if they have used an invalid visibility.
-        // @codeCoverageIgnoreStart
+        // ...@ codeCoverageIgnoreStart.
         if (!in_array($visibility, [self::VISIBILITY_HIDDEN, self::VISIBILITY_VISIBLE])) {
             debugging('Invalid visibility set on field ' . get_class($this) . ': ' . $visibility, DEBUG_DEVELOPER);
             // So the application doesn't break, default to visible.
             $visibility = self::VISIBILITY_VISIBLE;
         }
-        // @codeCoverageIgnoreEnd
+        // ...@ codeCoverageIgnoreEnd.
         $this->visibility = $visibility;
     }
 
-    #endregion
+    // Endregion.
 
-    #region Attributes
+    // Region Attributes.
 
     /**
      * Add attribute to this field definition.
@@ -215,9 +216,9 @@ abstract class abstract_field_definition implements field_definition_interface {
         return false;
     }
 
-    #endregion
+    // Endregion.
 
-    #region Options
+    // Region Options.
 
     /**
      * Get a single option.
@@ -259,9 +260,9 @@ abstract class abstract_field_definition implements field_definition_interface {
         return $this->options;
     }
 
-    #endregion
+    // Endregion.
 
-    #region Sorting
+    // Region Sorting.
 
     /**
      * Set if field should be sorted.
@@ -330,7 +331,7 @@ abstract class abstract_field_definition implements field_definition_interface {
         return $this->get_name();
     }
 
-    #endregion
+    // Endregion.
 
     /**
      * Get custom form.
@@ -342,7 +343,7 @@ abstract class abstract_field_definition implements field_definition_interface {
             . '][enabled]" value="1">';
 
         $html .= '<input type="text" name="available_field_definitions[' . $this->get_name()
-            . '][title_override]" placeholder="' . get_string('titleoverride', 'block_dash') . '" 
+            . '][title_override]" placeholder="' . get_string('titleoverride', 'block_dash') . '"
             value="' . $this->get_title() . '">';
 
         return $html;

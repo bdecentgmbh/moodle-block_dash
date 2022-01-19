@@ -76,10 +76,10 @@ class block_builder {
      * @throws \moodle_exception
      */
     public function get_block_content() {
-        global $OUTPUT, $PAGE;
+        global $OUTPUT;
 
         /** @var renderer $renderer */
-        $renderer = $PAGE->get_renderer('block_dash');
+        $renderer = $this->blockinstance->page->get_renderer('block_dash');
 
         $text = '';
 
@@ -92,7 +92,7 @@ class block_builder {
                 'preloaded' => $renderer->render_data_source($bb->get_configuration()->get_data_source()),
                 'block_instance_id' => $this->blockinstance->instance->id,
                 'block_context_id' => $this->blockinstance->context->id,
-                'editing' => $PAGE->user_is_editing() &&
+                'editing' => $this->blockinstance->page->user_is_editing() &&
                     has_capability('block/dash:addinstance', $this->blockinstance->context)
             ];
 

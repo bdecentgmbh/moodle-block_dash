@@ -173,8 +173,12 @@ interface filter_collection_interface {
      *
      * @param moodleform $form
      * @param MoodleQuickForm $mform
-     * @param $type
+     * @param string $type
      * @param string $fieldnameformat
      */
-    public function build_settings_form(moodleform $form, MoodleQuickForm $mform, string $type = 'filter', $fieldnameformat = 'filters[%s]'): void;
+    public function build_settings_form(
+        moodleform $form,
+        MoodleQuickForm $mform,
+        string $type = 'filter',
+        $fieldnameformat = 'filters[%s]'): void;
 }

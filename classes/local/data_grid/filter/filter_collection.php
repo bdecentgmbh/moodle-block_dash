@@ -362,7 +362,12 @@ class filter_collection implements filter_collection_interface {
      * @param string $type Which type of filters to include.
      * @param string $fieldnameformat
      */
-    public function build_settings_form(moodleform $form, MoodleQuickForm $mform, string $type = 'filter', $fieldnameformat = 'filters[%s]'): void {
+    public function build_settings_form(
+        moodleform $form,
+        MoodleQuickForm $mform,
+        string $type = 'filter',
+        $fieldnameformat = 'filters[%s]'): void {
+
         foreach ($this->get_filters() as $filter) {
             if ($type == 'filter') {
                 if ($filter instanceof condition) {

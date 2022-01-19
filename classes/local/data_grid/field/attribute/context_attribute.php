@@ -31,4 +31,6 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package block_dash
  */
-class context_attribute extends abstract_field_attribute {}
+class context_attribute extends abstract_field_attribute {
+
+}

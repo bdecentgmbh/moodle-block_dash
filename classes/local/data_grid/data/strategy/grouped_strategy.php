@@ -71,6 +71,7 @@ class grouped_strategy implements data_strategy_interface {
         $griddata = new data_collection();
 
         $sections = [];
+
         foreach ($records as $fullrecord) {
             $record = clone $fullrecord;
             $row = new data_collection();

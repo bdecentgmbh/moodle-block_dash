@@ -55,6 +55,7 @@ interface table_interface {
     public function get_alias(): string;
 
     /**
+     * Get all fields from table.
      * @return field_interface[]
      */
     public function get_fields(): array;

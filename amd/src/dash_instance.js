@@ -1,4 +1,5 @@
-define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events', 'block_dash/preferences_modal', 'block_dash/datepicker', 'block_dash/select2'],
+define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events',
+    'block_dash/preferences_modal', 'block_dash/datepicker', 'block_dash/select2'],
     function($, Log, Ajax, Notification, ModalEvents, PreferencesModal) {
 
         var DashInstance = function(root, blockInstanceId, blockContextid, editing) {
@@ -25,8 +26,7 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
 
             if (this.editing) {
                 this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
-                    this.blockContextid, function (e) {
-
+                    this.blockContextid, function () {
                         // Preferences changed, go back to first page.
                         this.currentPage = 0;
                         this.refresh();

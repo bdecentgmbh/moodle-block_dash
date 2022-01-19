@@ -78,7 +78,10 @@ class course_condition extends condition {
      * @param MoodleQuickForm $mform
      * @param string $fieldnameformat
      */
-    public function build_settings_form_fields(moodleform $moodleform, MoodleQuickForm $mform, $fieldnameformat = 'filters[%s]'): void {
+    public function build_settings_form_fields(
+        moodleform $moodleform,
+        MoodleQuickForm $mform,
+        $fieldnameformat = 'filters[%s]'): void {
         global $DB;
 
         parent::build_settings_form_fields($moodleform, $mform, $fieldnameformat); // Always call parent.
@@ -87,8 +90,12 @@ class course_condition extends condition {
 
         $courses = $DB->get_records_sql_menu('SELECT id, shortname FROM {course} WHERE format != :format', ['format' => 'site']);
 
-        $select = $mform->addElement('select', $fieldname . '[courseids]', get_string('courses'), $courses, ['class' => 'select2-form']);
-        $mform->hideIf($fieldname . '[courseids]',$fieldname . '[enabled]');
+        $select = $mform->addElement('select', $fieldname . '[courseids]',
+            get_string('courses'),
+            $courses,
+            ['class' => 'select2-form']
+        );
+        $mform->hideIf($fieldname . '[courseids]', $fieldname . '[enabled]');
         $select->setMultiple(true);
     }
 }

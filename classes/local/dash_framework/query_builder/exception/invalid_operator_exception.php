@@ -29,17 +29,18 @@ use moodle_exception;
 /**
  * Thrown when a where condition does not have any values.
  *
- * @package block_dash\local\dash_framework\query_builder
+ * @package block_dash
  */
 class invalid_operator_exception extends moodle_exception {
 
     /**
      * Constructor
-     * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+     * @param string $link The url where the user will be prompted to continue.
+     * If no url is provided the user will be directed to the site index page.
      * @param mixed $a Extra words and phrases that might be required in the error string
      * @param string|null $debuginfo optional debugging information
      */
-    public function __construct($link = '', $a = NULL, $debuginfo = null) {
+    public function __construct($link = '', $a = null, $debuginfo = null) {
         parent::__construct('invalidoperator', 'block_dash', $link, $a, $debuginfo);
     }
 }

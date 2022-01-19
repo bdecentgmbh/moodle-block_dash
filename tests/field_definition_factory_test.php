@@ -25,6 +25,7 @@
 namespace block_dash\test;
 
 use block_dash\local\data_grid\field\field_definition_factory;
+use block_dash\local\data_grid\field\sql_field_definition;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -57,4 +58,3 @@ class field_definition_factory_test extends \advanced_testcase {
             'Ensure missing field is returned as null');
     }
 }
-

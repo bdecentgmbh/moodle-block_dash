@@ -58,6 +58,7 @@ class field implements field_interface {
      *
      * @param string $name
      * @param string $value
+     * @param string $visible
      * @param string $label
      */
     public function __construct($name, $value, $visible, $label = '') {
@@ -95,6 +96,7 @@ class field implements field_interface {
     }
 
     /**
+     * Check the field is visible.
      * @return bool
      */
     public function is_visible() {

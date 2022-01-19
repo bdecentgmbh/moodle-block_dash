@@ -3,11 +3,11 @@
  *
  * @module     core_group/newgroup
  * @class      PreferencesModal
- * @package    core_group
  * @copyright  2017 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/fragment', 'core/ajax', 'block_dash/select2', 'core/notification'],
+define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_events',
+        'core/fragment', 'core/ajax', 'block_dash/select2', 'core/notification'],
     function($, jqueryui, Str, ModalFactory, ModalEvents, Fragment, Ajax, Select2, Notification) {
 
     /**
@@ -15,6 +15,7 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
      *
      * @param {String} selector used to find triggers for the new group modal.
      * @param {int} contextid
+     * @param {Function} onCloseCallback
      *
      * Each call to init gets it's own instance of this class.
      */
@@ -68,7 +69,7 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
 
             this.modal.getRoot().on('change', '#id_config_preferences_layout', this.submitFormAjax.bind(this, false));
 
-            this.modal.getRoot().on('click', '[data-action=cancel]', (e) => {
+            this.modal.getRoot().on('click', '[data-action=cancel]', () => {
                 this.modal.hide();
             });
 
@@ -78,7 +79,7 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
             // We also catch the form submit event and use it to submit the form with ajax.
             this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this, true));
 
-            this.modal.getRoot().on(ModalEvents.bodyRendered, function(e) {
+            this.modal.getRoot().on(ModalEvents.bodyRendered, function() {
                 $("#fgroup_id_available_fields .form-inline > fieldset > div").sortable({
                     items: ".form-check-inline.fitem",
                     handle: ".drag-handle",
@@ -110,7 +111,9 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
     };
 
     /**
+     * Get modal body content.
      * @method getBody
+     * @param {Object} formdata
      * @private
      * @return {Promise}
      */
@@ -128,7 +131,11 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
     };
 
     /**
+     * Form submission handler.
      * @method handleFormSubmissionResponse
+     * @param {Object} formData
+     * @param {Boolean} closeWhenDone
+     * @param {Object} response
      * @private
      * @return {Promise}
      */
@@ -142,6 +149,7 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
 
     /**
      * @method handleFormSubmissionFailure
+     * @param {Object} data
      * @private
      * @return {Promise}
      */
@@ -156,8 +164,8 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
      *
      * @method submitFormAjax
      * @private
-     * @param {Event} e Form submission event.
      * @param {boolean} closeWhenDone If true modal will close after successful submission.
+     * @param {Event} e Form submission event.
      */
     PreferencesModal.prototype.submitFormAjax = function(closeWhenDone, e) {
         // We don't want to do a real form submission.
@@ -209,7 +217,6 @@ define(['jquery', 'jqueryui', 'core/str', 'core/modal_factory', 'core/modal_even
     };
 
     PreferencesModal.prototype.initSelect2 = function() {
-        var self = this;
         this.modal.getRoot().find('.select2-form select').each(function(index, element) {
             let placeholder = null;
             if ($(element).find("option[value='-1']")) {

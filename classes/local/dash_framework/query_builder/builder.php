@@ -30,7 +30,7 @@ use dml_exception;
 /**
  * Builds a query.
  *
- * @package block_dash\local\dash_framework\query_builder
+ * @package block_dash
  */
 class builder {
 
@@ -102,6 +102,7 @@ class builder {
     private $rawconditionparameters = [];
 
     /**
+     * Fields to retried from sql query. Sql select field.
      * @param string $field
      * @param string $alias
      * @return builder
@@ -210,7 +211,10 @@ class builder {
     }
 
     /**
+     * Add where clause to query.
+     *
      * @param string $wheresql
+     * @param array $parameters
      * @return builder
      */
     public function where_raw(string $wheresql, array $parameters = []): builder {
@@ -271,6 +275,7 @@ class builder {
     }
 
     /**
+     * Get the query where conditions.
      * @return where[]
      */
     public function get_wheres(): array {
@@ -332,6 +337,7 @@ class builder {
     }
 
     /**
+     * Get the query where condition and it parameters.
      * @return array
      * @throws exception\invalid_operator_exception
      */
@@ -353,6 +359,8 @@ class builder {
     }
 
     /**
+     * Get the query and required parameters.
+     *
      * @return array<string, array>
      * @throws exception\invalid_operator_exception
      */

@@ -27,11 +27,11 @@ namespace block_dash\local\data_grid\filter;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Filters results to current course only.
+ * Filters results to current course context only.
  *
  * @package block_dash
  */
-class current_course_condition extends condition {
+class current_course_context_condition extends condition {
 
     /**
      * Get values from filter based on user selection. All filters must return an array of values.
@@ -46,7 +46,7 @@ class current_course_condition extends condition {
             return [null];
         }
 
-        return [$coursecontext->instanceid];
+        return [$coursecontext->id];
     }
 
     /**
@@ -60,6 +60,24 @@ class current_course_condition extends condition {
             return $label;
         }
 
-        return get_string('currentcourse', 'block_dash');
+        return get_string('currentcoursecontext', 'block_dash');
+    }
+
+    /**
+     * Return where SQL and params for placeholders.
+     *
+     * @return array
+     * @throws \coding_exception|\dml_exception
+     */
+    public function get_sql_and_params() {
+        list($sql, $params) = parent::get_sql_and_params();
+
+        if ($sql) {
+            if (!$coursecontext = $this->get_context()->get_course_context(false)) {
+                return ['', []];
+            }
+        }
+
+        return [$sql, $params];
     }
 }

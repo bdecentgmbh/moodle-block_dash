@@ -40,6 +40,11 @@ abstract class abstract_field_attribute implements field_attribute_interface {
      */
     private $options = [];
 
+    /**
+     * Field.
+     *
+     * @var field_interface
+     */
     private $field;
 
     /**
@@ -81,7 +86,7 @@ abstract class abstract_field_attribute implements field_attribute_interface {
         return $data;
     }
 
-    #region Options
+    // Region Options.
 
     /**
      * Get a single option.
@@ -133,5 +138,5 @@ abstract class abstract_field_attribute implements field_attribute_interface {
         $this->options[$name] = $value;
     }
 
-    #endregion
+    // Endregion.
 }

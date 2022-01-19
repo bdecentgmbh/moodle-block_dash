@@ -150,7 +150,7 @@ class users_data_source extends abstract_data_source {
         $filtercollection->add_filter(new logged_in_user_condition('current_user', 'u.id'));
         $filtercollection->add_filter(new participants_condition('participants', 'u.id'));
         $filtercollection->add_filter(new my_groups_condition('my_groups', 'gm300.groupid'));
-        $filtercollection->add_filter(new current_course_condition('current_course', 'ra100.contextid'));
+        $filtercollection->add_filter(new current_course_condition('current_course', 'c.id'));
 
         if (block_dash_has_pro()) {
             $filtercollection->add_filter(new \local_dash\data_grid\filter\parent_role_condition('parentrole', 'u.id'));

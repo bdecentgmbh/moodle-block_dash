@@ -37,20 +37,22 @@ defined('MOODLE_INTERNAL') || die();
 final class query_debug implements \renderable, \templatable {
 
     /**
-     * @var string
+     * @var string SQL compiled raw query.
      */
     private $query;
 
     /**
-     * @var array
+     * @var array parameters used in query.
      */
     private $params;
 
     /**
+     * Constructor.
+     *
      * @param string $query Full SQL query to display to user for debug purposes.
      * @param array $params Any parameters that will be used in query.
      */
-    final public function __construct(string $query, array $params) {
+    public function __construct(string $query, array $params) {
         $this->query = $query;
         $this->params = $params;
     }
@@ -61,7 +63,7 @@ final class query_debug implements \renderable, \templatable {
      * @param int $userid
      * @return bool
      */
-    final public function can_view(int $userid): bool {
+    public function can_view(int $userid): bool {
         return is_siteadmin($userid);
     }
 
@@ -74,10 +76,10 @@ final class query_debug implements \renderable, \templatable {
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
      * @return stdClass|array
      */
-    final public function export_for_template(renderer_base $output): array {
+    public function export_for_template(renderer_base $output): array {
         return [
             'query' => $this->query,
-            'params' => print_r($this->params, true),
+            'params' => json_encode($this->params, true),
             'uniqueid' => uniqid()
         ];
     }

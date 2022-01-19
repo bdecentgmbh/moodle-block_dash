@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @group bdecent
  * @group query_builder_test
  */
-class block_dash_framework_query_builder_test extends \advanced_testcase {
+class framework_query_builder_test extends \advanced_testcase {
 
     public function test_where() {
         $this->resetAfterTest();
@@ -60,7 +60,7 @@ class block_dash_framework_query_builder_test extends \advanced_testcase {
             'category' => $category->id
         ]);
 
-        // Test OPERATOR_EQUAL
+        // Test OPERATOR_EQUAL.
         $builder = new builder();
         $builder
             ->select('c.fullname', 'c_fullname')
@@ -70,7 +70,7 @@ class block_dash_framework_query_builder_test extends \advanced_testcase {
         $this->assertCount(1, $result);
         $this->assertEquals('Testing course 1', $result[0]->c_fullname);
 
-        // Test OPERATOR_IN
+        // Test OPERATOR_IN.
         $builder = new builder();
         $builder
             ->select('c.fullname', 'c_fullname')
@@ -110,7 +110,8 @@ class block_dash_framework_query_builder_test extends \advanced_testcase {
         $builder
             ->select('c.fullname', 'c_fullname')
             ->from('course', 'c')
-            ->where_in_query('c.id', 'SELECT c2.id FROM {course} c2 WHERE c2.startdate > 0 AND c2.startdate <= :y2k', ['y2k' => 946684800]);
+            ->where_in_query('c.id', 'SELECT c2.id FROM {course} c2
+                WHERE c2.startdate > 0 AND c2.startdate <= :y2k', ['y2k' => 946684800]);
 
         $result = array_values($builder->query());
         $this->assertCount(2, $result);

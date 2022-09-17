@@ -26,9 +26,6 @@ namespace block_dash\local\data_grid\filter;
 
 use coding_exception;
 use context;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Filter by groups the user has access to.
  *

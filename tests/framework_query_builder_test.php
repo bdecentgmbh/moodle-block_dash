@@ -22,14 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\test;
+namespace block_dash;
 
 use block_dash\local\dash_framework\query_builder\builder;
 use block_dash\local\dash_framework\query_builder\exception\invalid_operator_exception;
 use block_dash\local\dash_framework\query_builder\exception\invalid_where_clause_exception;
 use block_dash\local\dash_framework\query_builder\where;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Unit test for query building.
@@ -40,6 +38,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class framework_query_builder_test extends \advanced_testcase {
 
+    /**
+     * Test for where() to ensure that the where conditions are correctly applied.
+     *
+     * @covers ::where
+     * @return void
+     */
     public function test_where() {
         $this->resetAfterTest();
 
@@ -87,6 +91,12 @@ class framework_query_builder_test extends \advanced_testcase {
         $builder->query();
     }
 
+    /**
+     * Test for where_in_query() to ensure that the where query.
+     *
+     * @covers ::where_in_query
+     * @return void
+     */
     public function test_where_in_query() {
         $this->resetAfterTest();
 
@@ -124,6 +134,12 @@ class framework_query_builder_test extends \advanced_testcase {
         $builder->query();
     }
 
+    /**
+     * Test for limits() to ensure that the dtatatables limits function.
+     *
+     * @covers ::limits
+     * @return void
+     */
     public function test_limits() {
         $this->resetAfterTest();
 
@@ -146,6 +162,12 @@ class framework_query_builder_test extends \advanced_testcase {
         $this->assertEquals($users[6]->id, $results[1]->u_id);
     }
 
+    /**
+     * Test for orderby() to confirm the order by of datasource works.
+     *
+     * @covers ::orderby
+     * @return void
+     */
     public function test_orderby() {
         $this->resetAfterTest();
 
@@ -173,6 +195,12 @@ class framework_query_builder_test extends \advanced_testcase {
         $builder->orderby('c.id', 'wrong');
     }
 
+    /**
+     * Test for joins() to ensure that the table joins works.
+     *
+     * @covers ::joins
+     * @return void
+     */
     public function test_joins() {
         $this->resetAfterTest();
 

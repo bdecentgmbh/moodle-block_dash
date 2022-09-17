@@ -26,9 +26,6 @@ namespace block_dash\local\data_grid\filter;
 
 use moodleform;
 use MoodleQuickForm;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Container for a collection of filters.
  *

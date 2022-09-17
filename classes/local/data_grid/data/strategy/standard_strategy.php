@@ -29,9 +29,6 @@ use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
 use block_dash\local\data_grid\field\attribute\context_attribute;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class standard_strategy.
  *

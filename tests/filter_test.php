@@ -22,15 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_dash\test;
+namespace block_dash;
 
 use block_dash\local\data_grid\filter\choice_filter;
 use block_dash\local\data_grid\filter\filter;
 use block_dash\local\data_grid\filter\filter_collection;
 use block_dash\local\data_grid\filter\filter_collection_interface;
 use block_dash\local\data_grid\filter\filter_interface;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Unit test for filtering.
@@ -67,6 +65,12 @@ class filter_test extends \advanced_testcase {
         $this->filtercollection->init();
     }
 
+    /**
+     * Test for general_stuff() to ensure that the basic data testing are working.
+     *
+     * @covers ::general_stuff
+     * @return void
+     */
     public function test_general_stuff() {
         $this->assertEquals('testing', $this->filtercollection->get_unique_identifier());
         $this->assertCount(1, $this->filtercollection->get_filters());
@@ -74,6 +78,12 @@ class filter_test extends \advanced_testcase {
         $this->assertFalse($this->filtercollection->has_filter('missing'));
     }
 
+    /**
+     * Test for remove_filter() to ensure that the removing filters works fine.
+     *
+     * @covers ::remove_filter
+     * @return void
+     */
     public function test_remove_filter() {
         $filter = $this->filtercollection->get_filter('filter1');
         $this->filtercollection->remove_filter($filter);
@@ -83,6 +93,12 @@ class filter_test extends \advanced_testcase {
             'Ensure false is returend when filter was already removed.');
     }
 
+    /**
+     * Test for applying_filter() to ensure that the filters are working properely.
+     *
+     * @covers ::applying_filter
+     * @return void
+     */
     public function test_applying_filter() {
         $this->assertCount(0, $this->filtercollection->get_applied_filters());
         $this->assertCount(0, $this->filtercollection->get_filters_with_values());
@@ -96,14 +112,25 @@ class filter_test extends \advanced_testcase {
         $this->assertCount(1, $this->filtercollection->get_filters_with_values());
     }
 
+    /**
+     * Test for filter_sql_and_params_collection() to ensure that the filter returns the sql and params collections.
+     *
+     * @covers ::filter_sql_and_params_collection
+     * @return void
+     */
     public function test_filter_sql_and_params_collection() {
         $this->assertTrue($this->filtercollection->apply_filter('filter1', 123));
 
         list($sql, $params) = $this->filtercollection->get_sql_and_params();
-        $this->assertEquals('table.fieldname = :param6', $sql[0], 'Ensure SQL is generated.');
-        $this->assertEquals($params, ['param6' => 123], 'Ensure params are returned.');
+        $this->assertEquals('table.fieldname = :param1', $sql[0], 'Ensure SQL is generated.');
+        $this->assertEquals($params, ['param1' => 123], 'Ensure params are returned.');
     }
-
+    /**
+     * Test for required_filters() to ensure that the fields are correctly loaded for attributes.
+     *
+     * @covers ::required_filters
+     * @return void
+     */
     public function test_required_filters() {
         $this->assertFalse($this->filtercollection->has_required_filters());
         $this->assertCount(0, $this->filtercollection->get_required_filters());
@@ -116,6 +143,12 @@ class filter_test extends \advanced_testcase {
         $this->assertCount(1, $this->filtercollection->get_required_filters());
     }
 
+    /**
+     * Test for caching() to confirm the filter data are cached.
+     *
+     * @covers ::caching
+     * @return void
+     */
     public function test_caching() {
         $this->filtercollection->apply_filter('filter1', 234);
         $this->filtercollection->cache($this->user);

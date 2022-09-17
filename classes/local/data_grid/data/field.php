@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local\data_grid\data;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * A field is a simple container for a single value within a row/collection.
  *

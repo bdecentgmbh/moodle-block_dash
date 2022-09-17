@@ -36,9 +36,6 @@ use block_dash\local\data_grid\field\attribute\rename_group_ids_attribute;
 use block_dash\local\data_grid\field\attribute\user_image_url_attribute;
 use lang_string;
 use moodle_url;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class abstract_data_source.
  *

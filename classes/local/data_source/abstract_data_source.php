@@ -38,8 +38,6 @@ use block_dash\local\layout\layout_factory;
 use block_dash\local\layout\layout_interface;
 use coding_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class abstract_data_source.
  *
@@ -124,10 +122,11 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * Get human readable name of data source.
      *
      * @param string $fullclassname
+     * @param bool $help Returns the help.
      * @return string
      * @throws coding_exception
      */
-    public static function get_name_from_class($fullclassname) {
+    public static function get_name_from_class($fullclassname, $help=false) {
         $component = explode('\\', $fullclassname)[0];
         $class = array_reverse(explode('\\', $fullclassname))[0];
 
@@ -137,13 +136,20 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         $stringmanager = get_string_manager();
         if ($stringmanager->string_exists($stringidentifier, $stringcomponent)) {
             $name = get_string($stringidentifier, $stringcomponent);
+            $helpid = ['name' => $stringidentifier, 'component' => $stringcomponent];
         } else if ($stringmanager->string_exists($stringidentifier, 'block_dash')) {
             $name = get_string($stringidentifier, 'block_dash');
+            $helpid = ['name' => $stringidentifier, 'component' => 'block_dash'];
         } else {
             $name = '[[' . $stringidentifier . ']]';
+            $helpid = [];
         }
 
-        return $name;
+        if ($help && !empty($helpid)) {
+            return ($stringmanager->string_exists($helpid['name'].'_help', $helpid['component'])) ? $helpid : [];
+        }
+
+        return ($help) ? $helpid : $name;
     }
 
     /**
@@ -679,4 +685,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     public function get_block_instance() {
         return $this->blockinstance;
     }
+
+    /**
+     * Set the data source supports debug.
+     *
+     * @return bool;
+     */
+    public function supports_debug() {
+        return true;
+    }
+
 }

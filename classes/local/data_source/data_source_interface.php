@@ -30,9 +30,6 @@ use block_dash\local\dash_framework\structure\table;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\filter\filter_collection_interface;
 use block_dash\local\layout\layout_interface;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * A data source defines which query, fields, and filters are used to retrieve data from a data grid.
  *

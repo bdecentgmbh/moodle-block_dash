@@ -28,7 +28,9 @@ use block_dash\local\layout\accordion_layout;
 use block_dash\local\layout\one_stat_layout;
 use block_dash\local\data_source\users_data_source;
 
-defined('MOODLE_INTERNAL') || die();
+use block_dash\local\widget\mylearning\mylearning_widget;
+use block_dash\local\widget\groups\groups_widget;
+use block_dash\local\widget\contacts\contacts_widget;
 
 /**
  * Register field definitions.
@@ -55,8 +57,9 @@ function block_dash_register_data_sources() {
     return [
         [
             'name' => get_string('users'),
+            'help' => ['name' => 'users', 'component' => 'block_dash'],
             'identifier' => users_data_source::class
-        ]
+        ],
     ];
 }
 
@@ -71,6 +74,33 @@ function block_dash_register_layouts() {
         [
             'name' => get_string('layoutgrid', 'block_dash'),
             'identifier' => grid_layout::class
+        ]
+    ];
+}
+
+/**
+ * Register widgets.
+ *
+ * @return array
+ * @throws coding_exception
+ */
+function block_dash_register_widget() {
+
+    return [
+        [
+            'name' => get_string('widget:mylearning', 'block_dash'),
+            'identifier' => mylearning_widget::class,
+            'help' => 'widget:mylearning',
+        ],
+        [
+            'name' => get_string('widget:mycontacts', 'block_dash'),
+            'identifier' => contacts_widget::class,
+            'help' => 'widget:mycontacts',
+        ],
+        [
+            'name' => get_string('widget:mygroups', 'block_dash'),
+            'identifier' => groups_widget::class,
+            'help' => 'widget:mygroups',
         ]
     ];
 }
@@ -154,7 +184,7 @@ function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forced
         $fullpath = "/$context->id/block_dash/$filearea/$relativepath";
 
         $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
             return false;
         }
 
@@ -221,4 +251,27 @@ function block_dash_is_disabled() {
     }
 
     return false;
+}
+
+/**
+ * Fragment to load the widget methods.
+ *
+ * @param stdclass $args
+ * @return string Returns the widget content.
+ */
+function block_dash_output_fragment_loadwidget($args) {
+    global $DB;
+    $args = (object) $args;
+    $context = $args->context;
+
+    $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
+    $block = block_instance($blockinstance->blockname, $blockinstance);
+    $datasource = block_dash\local\block_builder::create($block)->get_configuration()->get_data_source();
+
+    if (isset($datasource->iswidget)) {
+        $method = $args->method;
+        $params = json_decode($args->args);
+        return (method_exists($datasource, $method)) ? $datasource->$method($context, $params) : '';
+    }
+    return null;
 }

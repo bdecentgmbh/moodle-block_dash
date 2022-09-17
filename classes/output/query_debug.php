@@ -26,9 +26,6 @@ namespace block_dash\output;
 
 use renderer_base;
 use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Display query info to admin for better debugging and troubleshooting.
  *

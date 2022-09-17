@@ -18,14 +18,14 @@
  * Version details
  *
  * @package    block_dash
- * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @copyright  2022 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022010304;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2022011904;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2017051509;        // Requires this Moodle version.
 $plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_BETA;
-$plugin->release = '1.1';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release = '1.2';

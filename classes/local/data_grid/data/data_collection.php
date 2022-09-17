@@ -25,9 +25,6 @@
 namespace block_dash\local\data_grid\data;
 
 use context;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Container for structuring data, usually from a database.
  *

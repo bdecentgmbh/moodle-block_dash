@@ -27,9 +27,6 @@ namespace block_dash\local\layout;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\strategy\data_strategy_interface;
 use block_dash\local\data_source\data_source_interface;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * A layout contains information on how to display data.
  *

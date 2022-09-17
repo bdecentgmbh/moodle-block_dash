@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local\layout;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * A layout contains information on how to display data.
  * @see abstract_layout for creating new layouts.

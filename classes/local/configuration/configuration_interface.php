@@ -25,9 +25,6 @@
 namespace block_dash\local\configuration;
 
 use block_dash\local\data_source\data_source_interface;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Configuration helps with building block instance content.
  *

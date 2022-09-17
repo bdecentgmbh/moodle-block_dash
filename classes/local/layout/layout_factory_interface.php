@@ -25,9 +25,6 @@
 namespace block_dash\local\layout;
 
 use block_dash\local\data_source\data_source_interface;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Responsible for creating layouts on request.
  *

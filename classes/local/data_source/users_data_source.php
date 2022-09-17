@@ -43,9 +43,6 @@ use block_dash\local\data_grid\filter\user_profile_field_filter;
 use block_dash\local\data_grid\filter\current_course_condition;
 use coding_exception;
 use context;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class users_data_source.
  *

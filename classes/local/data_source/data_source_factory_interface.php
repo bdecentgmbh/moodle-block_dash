@@ -24,8 +24,6 @@
 
 namespace block_dash\local\data_source;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Responsible for creating data sources on request.
  *

@@ -39,15 +39,6 @@ class groups_widget extends abstract_widget {
     public const MEMBERSCOUNT = 10;
 
     /**
-     * Confirm the groups datasource is widget.
-     *
-     * @return bool
-     */
-    public function is_widget() {
-        return true;
-    }
-
-    /**
      * Get the name of widget.
      *
      * @return void
@@ -88,19 +79,40 @@ class groups_widget extends abstract_widget {
     }
 
     /**
+     * Add the create groups option next to header.
+     *
+     * @param array $data
+     * @return void
+     */
+    public function update_data_before_render(&$data) {
+        global $OUTPUT;
+
+        $context = $this->get_block_instance()->context;
+        $option = [
+            'headermenu' => 'true',
+            'creategroup' => has_capability('block/dash:mygroups_creategroup', $context)
+        ];
+        $data['blockmenu'] = $OUTPUT->render_from_template('block_dash/widget_groups', $option);
+    }
+
+    /**
      * Build widget data and send to layout thene the layout will render the widget.
      *
      * @return void
      */
     public function build_widget() {
         global $USER, $CFG, $PAGE;
+
+        static $jsincluded = false;
+
         $userid = $USER->id;
         require_once($CFG->dirroot.'/lib/grouplib.php');
         require_once($CFG->dirroot . '/user/selector/lib.php');
         $potentialmembersselector = new \group_non_members_selector('addselect', array('groupid' => 2, 'courseid' => 13));
         $context = $this->get_block_instance()->context;
-        $mygroups = groups_get_my_groups();
         $creategroup = has_capability('block/dash:mygroups_creategroup', $context);
+
+        $mygroups = groups_get_my_groups();
 
         array_walk($mygroups, function($group) use ($context) {
             $newgroup = groups_get_group($group->id);
@@ -123,6 +135,7 @@ class groups_widget extends abstract_widget {
                 $members = array_slice($members, 0, self::MEMBERSCOUNT);
             }
             $group->members = array_values($members);
+
             array_walk($group->members, function($member) {
                 global $PAGE;
                 // Set the user picture data.
@@ -135,7 +148,7 @@ class groups_widget extends abstract_widget {
 
         });
 
-        $this->data = [
+        $this->data = (!empty($mygroups)) ? [
             'groups' => array_values($mygroups),
             'contextid' => $context->id,
             'viewgroups' => has_capability('block/dash:mygroups_view', $context),
@@ -143,8 +156,12 @@ class groups_widget extends abstract_widget {
             'leavegroup' => has_capability('block/dash:mygroups_leavegroup', $context),
             'viewmembers' => has_capability('block/dash:mygroups_viewmembers', $context),
             'creategroup' => has_capability('block/dash:mygroups_creategroup', $context),
-        ];
-        $PAGE->requires->js_call_amd('block_dash/groups', 'init', ['contextid' => $context->id]);
+        ] : [];
+
+        if (!$jsincluded) {
+            $PAGE->requires->js_call_amd('block_dash/groups', 'init', ['contextid' => $context->id]);
+            $jsincluded = true;
+        }
 
         return $this->data;
     }

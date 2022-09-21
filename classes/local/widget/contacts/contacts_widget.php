@@ -34,15 +34,6 @@ use moodle_url;
 class contacts_widget extends abstract_widget {
 
     /**
-     * Confirm the contacts datasource is widget.
-     *
-     * @return bool
-     */
-    public function is_widget() {
-        return true;
-    }
-
-    /**
      * Get the name of widget.
      *
      * @return void
@@ -89,12 +80,13 @@ class contacts_widget extends abstract_widget {
      */
     public function build_widget() {
         global $USER, $DB, $PAGE;
+        static $jsincluded = false;
         $userid = $USER->id;
         $contactslist = (method_exists('\core_message\api', 'get_user_contacts'))
             ? \core_message\api::get_user_contacts($userid) : \core_message\api::get_contacts($userid);
 
         if (defined('\core_message\api::MESSAGE_ACTION_READ')) {
-            $unreadcountssql = 'SELECT m.useridfrom, m.conversationid, count(m.id) as unreadcount
+            $unreadcountssql = 'SELECT DISTINCT m.useridfrom, m.conversationid, count(m.id) as unreadcount
                                 FROM {messages} m
                             INNER JOIN {message_conversations} mc
                                     ON mc.id = m.conversationid
@@ -106,7 +98,7 @@ class contacts_widget extends abstract_widget {
                                 WHERE mcm.userid = ?
                                 AND m.useridfrom != ?
                                 AND mua.id is NULL
-                            GROUP BY m.conversationid';
+                            GROUP BY m.useridfrom';
             $unreadcounts = $DB->get_records_sql($unreadcountssql,
                 [$userid, \core_message\api::MESSAGE_ACTION_READ, \core_message\api::MESSAGE_ACTION_DELETED,
                 $userid, $userid]
@@ -135,9 +127,12 @@ class contacts_widget extends abstract_widget {
         });
 
         $contextid = $this->get_block_instance()->context->id;
-        $this->data = ['contacts' => array_values($contactslist), 'contextid' => $contextid];
+        $this->data = (!empty($contactslist)) ? ['contacts' => array_values($contactslist), 'contextid' => $contextid] : [];
 
-        $PAGE->requires->js_call_amd('block_dash/contacts', 'init', ['contextid' => $contextid]);
+        if (!$jsincluded) {
+            $PAGE->requires->js_call_amd('block_dash/contacts', 'init', ['contextid' => $contextid]);
+            $jsincluded = true;
+        }
 
         return $this->data;
     }

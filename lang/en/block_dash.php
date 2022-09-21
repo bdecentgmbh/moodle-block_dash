@@ -327,3 +327,5 @@ $string['datasource:completions_data_source_help'] = 'Users compelted courses li
 $string['datasource:courses_data_source_help'] = 'List of available courses for the current user.';
 $string['datasource:dashboard_data_source_help'] = 'List of Dashboard';
 $string['datasource:logstore_data_source_help'] = 'Datasource of site logs';
+$string['confirmleavegroup'] = 'Do you really want to leave the group {$a}';
+$string['fieldalert'] = 'The chosen layout can not be customised';

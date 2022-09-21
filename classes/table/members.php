@@ -46,10 +46,10 @@ class members extends \table_sql implements dynamic_table {
      */
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
 
-        $columns = ['fullname', 'lastaccess'];
+        $columns = ['fullname', 'roles'];
         $headers = [
             get_string('fullname'),
-            get_string('lastaccess'),
+            get_string('roles'),
         ];
 
         $this->define_columns($columns);
@@ -60,6 +60,8 @@ class members extends \table_sql implements dynamic_table {
             $this->group = current($this->group);
         }
 
+        $this->collapsible(false);
+        $this->no_sorting('roles');
         $this->guess_base_url();
         parent::out($pagesize, $useinitialsbar, $downloadhelpbutton);
     }
@@ -94,7 +96,8 @@ class members extends \table_sql implements dynamic_table {
         global $USER;
 
         $select = '*';
-        $from = ' {groups_members} gm JOIN {groups} g ON g.id = gm.groupid JOIN {user} u ON u.id = gm.userid ';
+        $from = ' {groups_members} gm JOIN {groups} g ON g.id = gm.groupid 
+        JOIN {user} u ON u.id = gm.userid ';
         $where = ' gm.userid != :userid AND g.id = :groupid AND g.id IN (
             SELECT groupid FROM {groups_members} WHERE userid = :currentuser
         )';
@@ -103,12 +106,24 @@ class members extends \table_sql implements dynamic_table {
     }
 
     /**
+     * Generate the fullname column.
+     *
+     * @param \stdClass $data
+     * @return string
+     */
+    public function col_fullname($row) {
+        global $OUTPUT;
+
+        return $OUTPUT->user_picture($row, array('size' => 35, 'courseid' => $row->courseid, 'includefullname' => true));
+    }
+
+    /**
      * User lastaccess to the group in the user readable format.
      *
      * @param stdclass $row
      * @return string
      */
-    public function col_lastaccess($row) {
-        return userdate($row->lastaccess, get_string('strftimedatetimeshort', 'langconfig'));
+    public function col_roles($row) {
+        return get_user_roles_in_course($row->userid, $row->courseid);
     }
 }

@@ -116,16 +116,24 @@ body .select2-container {
 
 /* Widget css - groups */
 /*Groups block*/
-
-.group-block .heading-block {
-    text-align: right;
-    margin-bottom: 20px;
+.block_dash.block .card-body {
+    position: relative;
 }
-.group-block .heading-block h3 {
+.block_dash.block .dash-custom-menu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+.dash-custom-menu .heading-block h3 {
     float: left;
 }
-.group-block .heading-block .edit-block {
-    display: inline-block;
+.dash-custom-menu .heading-block .edit-block .dropdown button.dropdown-toggle {
+    border: 0;
+    background: none;
+    padding: 0;
+}
+.dash-custom-menu .heading-block .edit-block .dropdown button.dropdown-toggle:after {
+    display: none;
 }
 .group-block .group-element {
     clear: both;
@@ -154,7 +162,6 @@ body .select2-container {
 .group-block .group-element .list-block .right-block .img-element {
     text-align: right;
     display: inline-block;
-    /* margin-right: 15px; */
 }
 .group-block .group-element .list-block .right-block .edit-block {
     display: inline-block;
@@ -227,6 +234,10 @@ body .select2-container {
 /*Contact block*/
 .block_dash-community-block .contact-block {
     margin: 40px 0;
+}
+#block-region-side-pre .block_dash-community-block .contact-block .contact-element .row > div {
+    max-width: none;
+    flex: auto;
 }
 .block_dash-community-block .contact-img-block {
     text-align: center;
@@ -390,6 +401,14 @@ body .select2-container {
 .block_dash-info-element {
     margin: 40px 0;
 }
+.block_dash-info-element .course-info-block .row {
+    margin-bottom: 50px;
+    border-bottom: 1px solid #eee;
+}
+.block_dash-info-element .course-info-block .row:last-child {
+    border-bottom: 0;
+}
+
 /*Left block*/
 .block_dash-info-element .course-info-block .left-block,
 .block_dash-info-element .course-info-block .right-block {
@@ -402,6 +421,7 @@ body .select2-container {
     object-fit: cover;
     border-radius: 50%;
 }
+
 .block_dash-info-element .course-info-block .left-block > div,
 .block_dash-info-element .course-info-block .left-block .customfields-container .field-item {
     margin-top: 25px;
@@ -430,7 +450,7 @@ body .select2-container {
     margin-right: 30px;
 }
 .block_dash-info-element .course-info-block .left-block .course-staff-block ul li {
-    width: 65px;
+    width: 24%;
     text-align: center;
     display: inline-block;
     vertical-align: top;
@@ -468,9 +488,10 @@ body .select2-container {
     color: #00132e;
     margin-bottom: 30px;
 }
-.block_dash-info-element .course-info-block .right-block .desc-block p {
+.block_dash-info-element .course-info-block .right-block .desc-block .text_to_html {
     font-size: 20px;
     color: #00132e;
+    margin-bottom: 15px;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
@@ -486,18 +507,20 @@ body .select2-container {
     background-color: rgba(40, 167, 69, .2);
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-header h5 {
-    text-align: right;
     padding: 10px 20px;
+    position: relative;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-header h5 button {
+    width: 100%;
     color: #00132e;
     font-size: 18px;
     font-weight: 500;
     line-height: 20px;
+    text-align: left;
     text-decoration: none;
     box-shadow: none;
-    padding: 0;
-    float: left;
+    padding: 0 40px 0 0;
+    display: block;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-header
 h5 button:before {
@@ -513,6 +536,10 @@ h5 button.collapsed:before {
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-header
 h5 .completion-card {
     display: inline-block;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    z-index: -1;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-header
 h5 .completion-card p {
@@ -529,15 +556,21 @@ h5 .completion-card.restricted p {
 h5 .completion-card.completed p i {
     font-size: 22px;
 }
+.dash-block-content .dash-filters form.filter-form > * {
+    margin: 10px;
+}
+.block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body {
+    padding-top: 0;
+    padding-bottom: 0;
+}
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body
 .section-block {
-    text-align: right;
     border-bottom: 1px solid #e0e0e0;
     padding: 15px 10px 10px;
+    position: relative;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body
 .section-block:last-child {
-    padding-bottom: 0;
     border: 0;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body
@@ -545,23 +578,29 @@ h5 .completion-card.completed p i {
     font-size: 15px;
     line-height: 20px;
     color: #00132e;
-    float: left;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body
-.section-block h5:before {
-    content: '\f187';
-    font-family: fontawesome;
-    margin-right: 5px;
+.section-block h5 img {
+    width: 20px;
+    float: left;
+    margin-right: 10px;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body
 .section-block h5 a {
+    width: 100%;
     color: #00132e;
     font-weight: normal;
     text-decoration: none;
+    background: none;
+    box-shadow: none;
+    display: block;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body
 .section-block .section-action {
     display: inline-block;
+    position: absolute;
+    top: 15px;
+    right: 20px;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body
 .section-block.completed .section-action {
@@ -602,13 +641,13 @@ h5:before,
 }
 
 @media (min-width: 1400px) {
-    .block_dash-info-element .course-info-block .left-block .course-staff-block ul li {
-        width: 24%;
-    }
     .block_dash-info-element .course-info-block .left-block .img-block {
         max-width: 400px;
         width: 100%;
         height: 400px;
+    }
+    #topofscroll.main-inner .block_dash-info-element .course-info-block .left-block .img-block {
+        height: 300px;
     }
 }
 
@@ -639,6 +678,9 @@ h5:before,
 }
 
 @media (max-width: 767px) {
+    .block_dash-info-element .course-info-block .row {
+        margin-bottom: 20px;
+    }
     .block_dash-info-element .course-info-block .left-block .img-block {
         max-width: 300px;
         width: 100%;
@@ -682,7 +724,6 @@ h5:before,
 #page-wrapper #page #page-content .mform #id_dashconfigheader .fcontainer .col-form-label {
     max-width: none;
     width: auto;
-    /* display: block !important; */
     flex: auto;
 }
 #page-wrapper #page #page-content .mform #id_dashconfigheader .fcontainer .form-inline fieldset .form-check-label {
@@ -721,9 +762,6 @@ h5:before,
     margin-left: 0;
     margin-right: 0;
 }
-/* #page #page-content .mform fieldset .fcontainer .datasource-content {
-    display: none;
-} */
 #page #page-content .mform #fgroup_id_datasources fieldset .felement span,
 #page #page-content .mform #fgroup_id_widgets fieldset .felement span {
     display: block;

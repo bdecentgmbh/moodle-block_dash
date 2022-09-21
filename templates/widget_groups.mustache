@@ -23,27 +23,30 @@
 		"courseurl": "https://localhost/moodle/course/view.php?id=2"
     }
 }}
-<div class="block_dash-community-block">
-    <div class="group-block">
-        <!--Group heading block -->
-        <div class="heading-block">
-            <h3> {{#str}} widget:mygroups, block_dash {{/str}} </h3>
-            <!--Groups Edit block -->
-            <div class="edit-block">
-                <div class="dropdown">
-                    <!--Groups Edit button block -->
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="icon fa fa-ellipsis-h fa-fw "></i>
-                    </button>
-                    <!--Groups dropdown block -->
-                    {{#data.creategroup}}
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item create-group" href="javascript::void(0);" > {{#str}} widget:groups:creategroup, block_dash {{/str}} </a>
-                    </div>
-                    {{/data.creategroup}}
-                </div>
+
+{{#headermenu}}
+<!--Group heading block -->
+<div class="heading-block">
+    <!--Groups Edit block -->
+    <div class="edit-block">
+        {{#creategroup}}
+        <div class="dropdown">
+            <!--Groups Edit button block -->
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="icon fa fa-ellipsis-h fa-fw "></i>
+            </button>
+            <!--Groups dropdown block -->
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item create-group" href="javascript::void(0);" > {{#str}} widget:groups:creategroup, block_dash {{/str}} </a>
             </div>
         </div>
+        {{/creategroup}}
+    </div>
+</div>
+{{/headermenu}}
+{{^headermenu}}
+<div class="block_dash-community-block">
+    <div class="group-block">
         {{{#data.viewgroups}}}
         <div class="group-element">
             {{#data.groups}}
@@ -90,7 +93,7 @@
                                 </a>
                                 {{/data.viewmembers}}
                                 {{#data.leavegroup}}
-                                <a class="dropdown-item group-widget-leavegroup" data-group="{{id}}" href="#">
+                                <a class="dropdown-item group-widget-leavegroup" data-groupname="{{{name}}}" data-group="{{id}}" href="#">
                                     {{#str}} widget:groups:leavegroup, block_dash {{/str}}
                                 </a>
                                 {{/data.leavegroup}}
@@ -108,3 +111,4 @@
         {{{/data.viewgroups}}}
     </div>
 </div>
+{{/headermenu}}

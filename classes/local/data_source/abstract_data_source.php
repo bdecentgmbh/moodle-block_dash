@@ -357,11 +357,15 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             if (!$strategy = $this->get_layout()->get_data_strategy()) {
                 throw new coding_exception('Not fully configured.');
             }
-            $records = $this->get_query()->query();
-            $this->data = $strategy->convert_records_to_data_collection($records, $this->get_sorted_fields());
+            if ($this->is_widget()) {
+                $this->data = $this->get_widget_data();
+            } else {
+                $records = $this->get_query()->query();
+                $this->data = $strategy->convert_records_to_data_collection($records, $this->get_sorted_fields());
 
-            if ($modifieddata = $this->after_data($this->data)) {
-                $this->data = $modifieddata;
+                if ($modifieddata = $this->after_data($this->data)) {
+                    $this->data = $modifieddata;
+                }
             }
         }
 
@@ -687,12 +691,31 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     }
 
     /**
+     * Update the block fetched data before render.
+     *
+     * @param array $data
+     * @return void
+     */
+    public function update_data_before_render(&$data) {
+        return null;
+    }
+
+    /**
      * Set the data source supports debug.
      *
      * @return bool;
      */
     public function supports_debug() {
         return true;
+    }
+
+    /**
+     * Type of the data source.
+     *
+     * @return boolean
+     */
+    public function is_widget() {
+        return false;
     }
 
 }

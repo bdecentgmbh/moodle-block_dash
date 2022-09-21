@@ -27,10 +27,6 @@
 <div class="block_dash-community-block">
 
     <div class="contact-block">
-        <!--Contact heading block -->
-        <div class="heading-block">
-            <h3>{{#str}} widget:mycontacts, block_dash {{/str}}</h3>
-        </div>
 
         <!--Contact Users-->
         <div class="contact-element">
@@ -68,10 +64,10 @@
                     </div>
                 </div>
                 {{/data.contacts}}
-                {{^data.contacts}}
-                <span>{{#str}} nocontactsavailable, block_dash {{/str}} </span>
-                {{/data.contacts}}
             </div>
+            {{^data.contacts}}
+                <span>{{#str}} nocontactsavailable, block_dash {{/str}} </span>
+            {{/data.contacts}}
         </div>
     </div>
 </div>

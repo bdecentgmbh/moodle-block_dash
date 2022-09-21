@@ -159,7 +159,7 @@ class block_dash_edit_form extends block_edit_form {
             } else {
                 $label = get_string('datasourcemissing', 'block_dash');
             }
-            $datalabel = (method_exists($ds, 'is_widget')
+            $datalabel = ($ds->is_widget()
             ? get_string('widget', 'block_dash') : get_string('datasource', 'block_dash'));
 
             $mform->addElement('static', 'data_source_label', $datalabel.' : '.$label);

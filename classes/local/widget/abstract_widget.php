@@ -80,18 +80,25 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
      * @return array
      */
     public function get_widget_data() {
+        global $PAGE;
         $querydata = ($this->supports_query()) ? $this->get_query_template()->query() : [];
         $this->data = $querydata;
-        return $this->build_widget();
+        $this->build_widget();
+        return $this->data;
     }
 
     /**
-     * Build widget data.
+     * Build widget data from child widget classes..
      *
      * @return array
      */
     public function build_widget() {
         return $this->data;
+    }
+
+    public function is_empty() {
+        $this->build_widget();
+        return (empty($this->data)) ? true : false;
     }
 
     /**
@@ -109,7 +116,8 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
                 $mform->removeElement('config_preferences[layout]');
             }
         } else {
-            parent::build_preferences_form($form, $mform);
+            // parent::build_preferences_form($form, $mform);
+            $mform->addElement('html', get_string('fieldalert', 'block_dash'), 'fieldalert');
         }
     }
 
@@ -148,5 +156,24 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
      */
     public function supports_query() {
         return false;
+    }
+
+    /**
+     * Confirm the groups datasource is widget.
+     *
+     * @return bool
+     */
+    public function is_widget() {
+        return true;
+    }
+
+    /**
+     * Update the block fetched data before render.
+     *
+     * @param array $data
+     * @return void
+     */
+    public function update_data_before_render(&$data) {
+        return null;
     }
 }

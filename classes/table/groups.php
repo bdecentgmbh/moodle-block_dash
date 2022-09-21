@@ -45,9 +45,8 @@ class groups extends \table_sql implements dynamic_table {
      */
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
 
-        $columns = ['groupid', 'groupname', 'course'];
+        $columns = ['groupname', 'course'];
         $headers = [
-            get_string('id', 'tag'),
             get_string('groupname', 'group'),
             get_string('course')
         ];
@@ -59,9 +58,18 @@ class groups extends \table_sql implements dynamic_table {
             $values = $this->filterset->get_filter('contactuser')->get_filter_values();
             $this->contactuser = isset($values[0]) ? current($values) : '';
         }
-
+        $this->collapsible(false);
         $this->guess_base_url();
         parent::out($pagesize, $useinitialsbar, $downloadhelpbutton);
+    }
+
+    /**
+     * Set the context of the current block.
+     *
+     * @return void
+     */
+    public function get_context(): \context {
+        return \context_block::instance($this->uniqueid);
     }
 
     /**

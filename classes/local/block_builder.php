@@ -85,7 +85,7 @@ class block_builder {
 
             $supportsdebug = false;
             $prefernece = true;
-            if (method_exists($bb->get_configuration()->get_data_source(), 'is_widget') != null) {
+            if ($bb->get_configuration()->get_data_source()->is_widget()) {
                 $source = $bb->get_configuration()->get_data_source();
                 $preload = $renderer->render_data_source($source);
             } else {
@@ -113,6 +113,8 @@ class block_builder {
                 $data['footer_content'] = format_text($this->blockinstance->config->footer_content['text'],
                     $this->blockinstance->config->footer_content['format']);
             }
+
+            $source->update_data_before_render($data);
 
             $text .= $OUTPUT->render_from_template('block_dash/block', $data);
 

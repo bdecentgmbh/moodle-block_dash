@@ -1,6 +1,6 @@
 
 define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/fragment', 'core/templates', 'core/ajax'],
-    function($, Str, Modal, ModalEvents, Fragment, Templates, AJAX) {
+function($, Str, Modal, ModalEvents, Fragment, Templates, AJAX) {
 
     return {
         init: function(contextID) {
@@ -98,18 +98,21 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
                     e.preventDefault();
                     var target = e.target;
                     var group = target.getAttribute('data-group');
+                    var groupname = target.getAttribute('data-groupname');
+
                     Modal.create({
                         type: Modal.types.SAVE_CANCEL,
                         title: Str.get_string('groups', 'core' ),
                     }).then(function(modal) {
+                        Str.get_string('confirm', 'core').then((html) => {
+                            modal.setSaveButtonText(html);
+                        })
                         modal.show();
+
                         modal.getRoot().on(ModalEvents.shown, function() {
-                            var args = JSON.stringify({group: group});
-                            var params = {widget: 'groups', method: 'viewmembers', args: args};
-                            Fragment.loadFragment('block_dash', 'loadwidget', contextID, params).then((html, js) => {
+                            Str.get_string('confirmleavegroup', 'block_dash', groupname).then((html) => {
                                 modal.setBody(html);
-                                Templates.runTemplateJS(js);
-                            });
+                            })
                         });
                         modal.getRoot().on(ModalEvents.save, (e) => {
                             e.preventDefault();

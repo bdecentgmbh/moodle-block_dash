@@ -47,15 +47,6 @@ class mylearning_widget extends abstract_widget {
     }
 
     /**
-     * Confirm the groups datasource is widget.
-     *
-     * @return bool
-     */
-    public function is_widget() {
-        return true;
-    }
-
-    /**
      * Check the widget support uses the query method to build the widget.
      *
      * @return bool
@@ -102,7 +93,15 @@ class mylearning_widget extends abstract_widget {
             ['userid' => $userid]
         );
         $completedcourses = array_column($completed, 'course');
-        $courses = enrol_get_my_courses(null, null, 0, [], false, 0, $completedcourses);
+        $basefields = [
+            'id', 'category', 'sortorder',
+            'shortname', 'fullname', 'idnumber', 'summary',
+            'startdate', 'visible',
+            'groupmode', 'groupmodeforce', 'cacherev',
+            'showactivitydates', 'showcompletionconditions',
+        ];
+        $courses = enrol_get_my_courses($basefields, null, 0, [], false, 0, $completedcourses);
+
         array_walk($courses, function($course) {
             $course->courseimage = $this->courseimage($course);
             $course->category = (class_exists('\core_course_category'))
@@ -112,8 +111,10 @@ class mylearning_widget extends abstract_widget {
             $course->contacts = $this->contacts($course);
             $course->customfields = $this->customfields($course);
             $course->courseurl = new \moodle_url('/course/view.php', ['id' => $course->id]);
+            $course->summary = format_text($course->summary);
         });
-        $this->data = ['courses' => array_values($courses)];
+
+        $this->data = (!empty($courses)) ? ['courses' => array_values($courses)] : [];
 
         return $this->data;
     }
@@ -476,6 +477,7 @@ class mylearning_widget extends abstract_widget {
                     $sectionvalues['completed'] = 1;
                 }
                 $sectionvalues['modules'] = $sectioncontents;
+                $sectionvalues['hidemodules'] = count($sectioncontents) > 0 ? false : true;
                 // Assign result to $coursecontents.
                 $coursecontents[$key] = $sectionvalues;
                 // Break the loop if we are filtering.

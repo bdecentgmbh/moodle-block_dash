@@ -27,6 +27,7 @@ namespace block_dash\local\widget\groups;
 use block_dash\local\widget\abstract_widget;
 use context_block;
 use moodle_url;
+use html_writer;
 
 /**
  * Groups widget contains list of available contacts.
@@ -178,16 +179,23 @@ class groups_widget extends abstract_widget {
         require_once($CFG->dirroot.'/lib/grouplib.php');
         $groupid = (int) $args->group;
 
-        $filterset = new \block_dash\table\members_filterset('dash-groups-'.$context->id);
-        $group = new \core_table\local\filter\integer_filter('group');
-        $group->add_filter_value($groupid);
-        $filterset->add_filter($group);
+        if (block_dash_is_totara()) {
+            $table = new \block_dash\table\members_totara($context->instanceid);
+            $table->set_filterset($groupid);
+        } else {
+            $filterset = new \block_dash\table\members_filterset('dash-groups-'.$context->id);
+            $group = new \core_table\local\filter\integer_filter('group');
+            $group->add_filter_value($groupid);
+            $filterset->add_filter($group);
 
-        $table = new \block_dash\table\members($context->instanceid);
-        $table->set_filterset($filterset);
+            $table = new \block_dash\table\members($context->instanceid);
+            $table->set_filterset($filterset);
+        }
 
         ob_start();
+        echo html_writer::start_div('dash-widget-table');
         $table->out(10, true);
+        echo html_writer::end_div();
         $tablehtml = ob_get_contents();
         ob_end_clean();
 

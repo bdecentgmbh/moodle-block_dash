@@ -96,6 +96,11 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
         return $this->data;
     }
 
+    /**
+     * Check the widget contains any data to render.
+     *
+     * @return bool
+     */
     public function is_empty() {
         $this->build_widget();
         return (empty($this->data)) ? true : false;
@@ -116,7 +121,6 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
                 $mform->removeElement('config_preferences[layout]');
             }
         } else {
-            // parent::build_preferences_form($form, $mform);
             $mform->addElement('html', get_string('fieldalert', 'block_dash'), 'fieldalert');
         }
     }

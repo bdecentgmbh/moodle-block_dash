@@ -101,7 +101,8 @@ class block_builder {
                 'preloaded' => $preload,
                 'block_instance_id' => $this->blockinstance->instance->id,
                 'block_context_id' => $this->blockinstance->context->id,
-                'editing' => $editing
+                'editing' => $editing,
+                'istotara' => block_dash_is_totara()
             ];
 
             if (isset($this->blockinstance->config->header_content)) {

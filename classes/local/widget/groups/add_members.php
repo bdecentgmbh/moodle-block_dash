@@ -59,7 +59,7 @@ class add_members extends \moodleform {
         $options = [
             'ajax' => 'block_dash/group-user-selector',
             'multiple' => true,
-            'noselectionstring' => get_string('allusers', 'search'),
+            'noselectionstring' => get_string('users'),
             'data-groupid' => $groupid,
             'valuehtmlcallback' => function($value) {
                 global $DB, $OUTPUT;

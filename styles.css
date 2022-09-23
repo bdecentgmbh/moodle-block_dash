@@ -115,7 +115,19 @@ body .select2-container {
 }
 
 /* Widget css - groups */
-/*Groups block*/
+/* Groups block */
+.block_dash.block .block-header .block-title {
+    padding-right: 40px;
+}
+.block_dash.block .block-content .edit-block .dropdown .dropdown-menu {
+    padding: 0;
+    left: auto;
+    right: 0;
+}
+.block_dash.block .block-content .edit-block .dropdown .dropdown-menu a.dropdown-item {
+    padding: 5px 15px;
+    display: block;
+}
 .block_dash.block .card-body {
     position: relative;
 }
@@ -123,6 +135,9 @@ body .select2-container {
     position: absolute;
     top: 20px;
     right: 20px;
+}
+.editing .block_dash.block .dash-custom-menu {
+    right: 90px;
 }
 .dash-custom-menu .heading-block h3 {
     float: left;
@@ -409,6 +424,27 @@ body .select2-container {
     border-bottom: 0;
 }
 
+@media (min-width: 768px) {
+    .block_dash-info-element .course-info-block .row .col-md-5.d-none.d-md-block,
+    .block_dash-info-element .course-info-block .row .col-md-7.d-none.d-md-block {
+        display: block;
+    }
+    .block_dash-info-element .course-info-block .row .col-12.d-md-none.d-block {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .block_dash-info-element .course-info-block .row .col-md-5.d-none.d-md-block,
+    .block_dash-info-element .course-info-block .row .col-md-7.d-none.d-md-block {
+        display: none;
+    }
+    .block_dash-info-element .course-info-block .row .col-12.d-md-none.d-block {
+        display: block;
+        padding: 0 15px;
+    }
+}
+
 /*Left block*/
 .block_dash-info-element .course-info-block .left-block,
 .block_dash-info-element .course-info-block .right-block {
@@ -430,6 +466,12 @@ body .select2-container {
     margin-bottom: 15px;
     opacity: .4;
 }
+/*totara*/
+.editing .block_dash-info-element .course-info-block .left-block .badge-block ul li {
+    margin-right: 15px;
+}
+/*totara*/
+
 .block_dash-info-element .course-info-block .left-block .badge-block ul li.collected {
     opacity: 1;
 }
@@ -775,4 +817,8 @@ h5:before,
     #page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_datasources_label {
         width: 20rem;
     }
+}
+
+.path-totara .dash-widget-table .resettable {
+    display: none;
 }

@@ -96,7 +96,7 @@ class members extends \table_sql implements dynamic_table {
         global $USER;
 
         $select = '*';
-        $from = ' {groups_members} gm JOIN {groups} g ON g.id = gm.groupid 
+        $from = ' {groups_members} gm JOIN {groups} g ON g.id = gm.groupid
         JOIN {user} u ON u.id = gm.userid ';
         $where = ' gm.userid != :userid AND g.id = :groupid AND g.id IN (
             SELECT groupid FROM {groups_members} WHERE userid = :currentuser
@@ -108,7 +108,7 @@ class members extends \table_sql implements dynamic_table {
     /**
      * Generate the fullname column.
      *
-     * @param \stdClass $data
+     * @param \stdClass $row
      * @return string
      */
     public function col_fullname($row) {

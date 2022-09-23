@@ -124,6 +124,7 @@ class contacts_widget extends abstract_widget {
                 (isset($unreadcounts[$user->id]->unreadcount)
                     ? $unreadcounts[$user->id]->unreadcount : $unreadcounts[$user->id]->count) : false;
             $value->profileurl = new \moodle_url('/user/profile.php', ['id' => $muserid]);
+            $value->id = $muserid; // Totara support.
         });
 
         $contextid = $this->get_block_instance()->context->id;
@@ -149,16 +150,23 @@ class contacts_widget extends abstract_widget {
         require_once($CFG->dirroot.'/lib/grouplib.php');
         $contactuserid = (int) $args->contactuser;
 
-        $filterset = new \block_dash\table\groups_filterset('dash-groups-'.$context->id);
-        $contactuser = new \core_table\local\filter\integer_filter('contactuser');
-        $contactuser->add_filter_value($contactuserid);
-        $filterset->add_filter($contactuser);
+        if (block_dash_is_totara()) {
+            $table = new \block_dash\table\groups_totara($context->instanceid);
+            $table->set_filterset($contactuserid);
+        } else {
+            $filterset = new \block_dash\table\groups_filterset('dash-groups-'.$context->id);
+            $contactuser = new \core_table\local\filter\integer_filter('contactuser');
+            $contactuser->add_filter_value($contactuserid);
+            $filterset->add_filter($contactuser);
 
-        $table = new \block_dash\table\groups($context->instanceid);
-        $table->set_filterset($filterset);
+            $table = new \block_dash\table\groups($context->instanceid);
+            $table->set_filterset($filterset);
+        }
 
         ob_start();
+        echo \html_writer::start_div('dash-widget-table');
         $table->out(10, true);
+        echo \html_writer::end_div();
         $tablehtml = ob_get_contents();
         ob_end_clean();
 

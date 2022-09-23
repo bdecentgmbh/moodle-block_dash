@@ -275,3 +275,32 @@ function block_dash_output_fragment_loadwidget($args) {
     }
     return null;
 }
+
+/**
+ * Load the table pagination via ajax. withou page refresh.
+ *
+ * @param stdclass $args
+ * @return string
+ */
+function block_dash_output_fragment_loadtable($args) {
+    global $DB;
+
+    $args = (object) $args;
+    $context = $args->context;
+
+    $classstr = 'block_dash\table\\'.$args->handler;
+    $table = new $classstr($args->uniqueid);
+    $table->set_filterset(json_decode($args->filter));
+    $table->set_sort_column($args->sort);
+    $table->currentpage = isset($args->page) ? $args->page : 0;
+
+    ob_start();
+    echo html_writer::start_div('dash-widget-table');
+    $table->out(10, true);
+    echo html_writer::end_div();
+    $tablehtml = ob_get_contents();
+    ob_end_clean();
+
+    return $tablehtml;
+
+}

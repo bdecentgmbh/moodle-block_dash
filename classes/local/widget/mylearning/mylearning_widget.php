@@ -97,21 +97,22 @@ class mylearning_widget extends abstract_widget {
             'id', 'category', 'sortorder',
             'shortname', 'fullname', 'idnumber', 'summary',
             'startdate', 'visible',
-            'groupmode', 'groupmodeforce', 'cacherev',
-            'showactivitydates', 'showcompletionconditions',
+            'groupmode', 'groupmodeforce', 'cacherev'
         ];
         $courses = enrol_get_my_courses($basefields, null, 0, [], false, 0, $completedcourses);
 
         array_walk($courses, function($course) {
+
+            $category = (class_exists('\core_course_category'))
+            ? \core_course_category::get($course->category) : \coursecat::get($course->category);
             $course->courseimage = $this->courseimage($course);
-            $course->category = (class_exists('\core_course_category'))
-                ? \core_course_category::get($course->category)->name : \coursecat::get($course->category)->name;
+            $course->category = (isset($category->name) ? $category->name : '');
             $course->badges = $this->badges($course);
             $course->coursecontent = $this->coursecontent($course);
             $course->contacts = $this->contacts($course);
             $course->customfields = $this->customfields($course);
             $course->courseurl = new \moodle_url('/course/view.php', ['id' => $course->id]);
-            $course->summary = format_text($course->summary);
+            $course->summary = shorten_text(format_text($course->summary), 200);
         });
 
         $this->data = (!empty($courses)) ? ['courses' => array_values($courses)] : [];
@@ -336,10 +337,7 @@ class mylearning_widget extends abstract_widget {
 
         if ($course->id != SITEID) {
             // Check course format exist.
-            if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
-                throw new \moodle_exception('cannotgetcoursecontents', 'webservice', '', null,
-                                            get_string('courseformatnotfound', 'error', $course->format));
-            } else {
+            if (file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
                 require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
             }
         }

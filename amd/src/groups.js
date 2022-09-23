@@ -15,13 +15,11 @@ function($, Str, Modal, ModalEvents, Fragment, Templates, AJAX) {
                         title: Str.get_string('groups', 'core')
                     }).then(function(modal) {
                         modal.show();
-                        modal.getRoot().on(ModalEvents.shown, function() {
-                            var args = JSON.stringify({group: group});
-                            var params = {widget: 'groups', method: 'viewmembers', args: args};
-                            Fragment.loadFragment('block_dash', 'loadwidget', contextID, params).then((html, js) => {
-                                modal.setBody(html);
-                                Templates.runTemplateJS(js);
-                            });
+                        var args = JSON.stringify({group: group});
+                        var params = {widget: 'groups', method: 'viewmembers', args: args};
+                        Fragment.loadFragment('block_dash', 'loadwidget', contextID, params).then((html, js) => {
+                            modal.setBody(html);
+                            Templates.runTemplateJS(js);
                         });
                         modal.getRoot().on(ModalEvents.hidden, function() {
                             modal.destroy();
@@ -42,38 +40,37 @@ function($, Str, Modal, ModalEvents, Fragment, Templates, AJAX) {
                     }).then(function(modal) {
                         modal.setLarge(true);
                         modal.show();
-                        modal.getRoot().on(ModalEvents.shown, function() {
-                            var args = JSON.stringify({group: group});
-                            var params = {widget: 'groups', method: 'addmembers', args: args};
-                            Fragment.loadFragment('block_dash', 'loadwidget', contextID, params).then((html, js) => {
-                                modal.setBody(html);
 
-                                modal.getRoot().get(0).querySelectorAll('form').forEach(form => {
-                                    form.addEventListener('submit', function(e) {
-                                        e.preventDefault();
-                                        var formdata = new FormData(e.target);
-                                        if (e.target.querySelector('[name="users[]"]').value == '') {
-                                            return false;
+                        var args = JSON.stringify({group: group});
+                        var params = {widget: 'groups', method: 'addmembers', args: args};
+                        Fragment.loadFragment('block_dash', 'loadwidget', contextID, params).then((html, js) => {
+                            modal.setBody(html);
+
+                            modal.getRoot().get(0).querySelectorAll('form').forEach(form => {
+                                form.addEventListener('submit', function(e) {
+                                    e.preventDefault();
+                                    var formdata = new FormData(e.target);
+                                    if (e.target.querySelector('[name="users[]"]').value == '') {
+                                        return false;
+                                    }
+
+                                    var formdatastr = new URLSearchParams(formdata).toString();
+                                    var promises = AJAX.call([{
+                                        methodname: 'block_dash_groups_add_members',
+                                        args: {formdata: formdatastr}
+                                    }]);
+
+                                    promises[0].done((response) => {
+                                        if (response == true) {
+                                            window.location.reload();
+                                        } else {
+                                            // TODO: Error Notification.
                                         }
-
-                                        var formdatastr = new URLSearchParams(formdata).toString();
-                                        var promises = AJAX.call([{
-                                            methodname: 'block_dash_groups_add_members',
-                                            args: {formdata: formdatastr}
-                                        }]);
-
-                                        promises[0].done((response) => {
-                                            if (response == true) {
-                                                window.location.reload();
-                                            } else {
-                                                // TODO: Error Notification.
-                                            }
-                                        });
                                     });
                                 });
-
-                                Templates.runTemplateJS(js);
                             });
+
+                            Templates.runTemplateJS(js);
                         });
 
                         modal.getRoot().on(ModalEvents.hidden, function() {
@@ -106,14 +103,13 @@ function($, Str, Modal, ModalEvents, Fragment, Templates, AJAX) {
                     }).then(function(modal) {
                         Str.get_string('confirm', 'core').then((html) => {
                             modal.setSaveButtonText(html);
-                        })
+                        });
                         modal.show();
 
-                        modal.getRoot().on(ModalEvents.shown, function() {
-                            Str.get_string('confirmleavegroup', 'block_dash', groupname).then((html) => {
-                                modal.setBody(html);
-                            })
+                        Str.get_string('confirmleavegroup', 'block_dash', groupname).then((html) => {
+                            modal.setBody(html);
                         });
+
                         modal.getRoot().on(ModalEvents.save, (e) => {
                             e.preventDefault();
                             var promises = AJAX.call([{
@@ -133,6 +129,11 @@ function($, Str, Modal, ModalEvents, Fragment, Templates, AJAX) {
                         modal.getRoot().on(ModalEvents.hidden, function() {
                             modal.destroy();
                         });
+
+                        modal.getRoot().on(ModalEvents.destroyed, function() {
+                            modal.remove();
+                            modal.attachmentPoint.remove();
+                        });
                     });
                 });
             });
@@ -147,33 +148,32 @@ function($, Str, Modal, ModalEvents, Fragment, Templates, AJAX) {
                         title: Str.get_string('groups', 'core'),
                     }).then(function(modal) {
                         modal.show();
-                        modal.getRoot().on(ModalEvents.shown, function() {
-                            var args = "";
-                            var params = {widget: 'groups', method: 'creategroup', args: args};
-                            Fragment.loadFragment('block_dash', 'loadwidget', contextID, params).then((html, js) => {
-                                modal.setBody(html);
-                                Templates.runTemplateJS(js);
-                                modal.getRoot().get(0).querySelectorAll('form').forEach(form => {
-                                    form.addEventListener('submit', function(e) {
-                                        e.preventDefault();
-                                        var formdata = new FormData(e.target);
-                                        if (e.target.querySelector('[name="name"]').value == ""
-                                            || e.target.querySelector('[name="courseid"]').value == '') {
-                                            return false;
-                                        }
-                                        var formdatastr = new URLSearchParams(formdata).toString();
-                                        var promises = AJAX.call([{
-                                            methodname: 'block_dash_groups_create_group',
-                                            args: {formdata: formdatastr}
-                                        }]);
 
-                                        promises[0].done((response) => {
-                                            if (response == true) {
-                                                window.location.reload();
-                                            } else {
-                                                // TODO: Error Notification.
-                                            }
-                                        });
+                        var args = "";
+                        var params = {widget: 'groups', method: 'creategroup', args: args};
+                        Fragment.loadFragment('block_dash', 'loadwidget', contextID, params).then((html, js) => {
+                            modal.setBody(html);
+                            Templates.runTemplateJS(js);
+                            modal.getRoot().get(0).querySelectorAll('form').forEach(form => {
+                                form.addEventListener('submit', function(e) {
+                                    e.preventDefault();
+                                    var formdata = new FormData(e.target);
+                                    if (e.target.querySelector('[name="name"]').value == ""
+                                        || e.target.querySelector('[name="courseid"]').value == '') {
+                                        return false;
+                                    }
+                                    var formdatastr = new URLSearchParams(formdata).toString();
+                                    var promises = AJAX.call([{
+                                        methodname: 'block_dash_groups_create_group',
+                                        args: {formdata: formdatastr}
+                                    }]);
+
+                                    promises[0].done((response) => {
+                                        if (response == true) {
+                                            window.location.reload();
+                                        } else {
+                                            // TODO: Error Notification.
+                                        }
                                     });
                                 });
                             });

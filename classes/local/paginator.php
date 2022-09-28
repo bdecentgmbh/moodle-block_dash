@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local;
-
-defined('MOODLE_INTERNAL') || die();
-
 use renderer_base;
 
 /**

@@ -110,6 +110,16 @@ class block_dash extends block_base {
     public function get_content() {
         global $OUTPUT;
 
+        // Prevent the jqueryui conflict with bootstrap tooltip.
+        if (class_exists('\core\navigation\views\secondary')) {
+            $this->page->requires->js_init_code(
+                'require(["jquery", "jqueryui"], function($, ui) {
+                    $.widget.bridge("uibutton", $.ui.button);
+                    $.widget.bridge("uitooltip", $.ui.tooltip);
+                });'
+            );
+        }
+
         if ($this->content !== null) {
             return $this->content;
         }
@@ -128,9 +138,12 @@ class block_dash extends block_base {
         try {
             $bb = block_builder::create($this);
 
+            $datasource = $bb->get_configuration()->get_data_source();
             // Conditionally hide the block when empty.
             if (isset($this->config->hide_when_empty) && $this->config->hide_when_empty
-                && $bb->get_configuration()->get_data_source()->get_data()->is_empty() && !$this->page->user_is_editing()) {
+                && (($datasource->is_widget() && $datasource->is_empty())
+                || (!$datasource->is_widget() && $datasource->get_data()->is_empty()))
+                && !$this->page->user_is_editing()) {
                 return $this->content;
             }
 

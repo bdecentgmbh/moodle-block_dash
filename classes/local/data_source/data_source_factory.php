@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local\data_source;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Responsible for creating data sources on request.
  *
@@ -62,8 +59,19 @@ class data_source_factory implements data_source_factory_interface {
                 if (is_subclass_of($fullclassname, abstract_data_source::class)) {
                     self::$datasourceregistry[$fullclassname] = [
                         'identifier' => $fullclassname,
-                        'name' => abstract_data_source::get_name_from_class($fullclassname)
+                        'name' => abstract_data_source::get_name_from_class($fullclassname),
+                        'help' => abstract_data_source::get_name_from_class($fullclassname, true)
                     ];
+                }
+            }
+
+            if ($pluginsfunction = get_plugins_with_function('register_widget')) {
+                foreach ($pluginsfunction as $plugintype => $plugins) {
+                    foreach ($plugins as $pluginfunction) {
+                        foreach ($pluginfunction() as $callback) {
+                            self::$datasourceregistry[$callback['identifier']] = $callback + ['type' => 'widget'];
+                        }
+                    }
                 }
             }
         }
@@ -123,15 +131,31 @@ class data_source_factory implements data_source_factory_interface {
     /**
      * Get options array for select form fields.
      *
+     * @param string $type
      * @return array
      */
-    public static function get_data_source_form_options() {
+    public static function get_data_source_form_options($type='') {
         $options = [];
 
         foreach (self::get_data_source_registry() as $identifier => $datasourceinfo) {
-            $options[$identifier] = $datasourceinfo['name'];
+            if ($type) {
+                if (isset($datasourceinfo['type']) && $datasourceinfo['type'] == $type) {
+                    $options[$identifier] = [
+                        'name' => $datasourceinfo['name'],
+                        'help' => isset($datasourceinfo['help']) ? $datasourceinfo['help'] : ''
+                    ];
+                }
+            } else {
+                if (!isset($datasourceinfo['type'])) {
+                    $options[$identifier] = [
+                        'name' => $datasourceinfo['name'],
+                        'help' => isset($datasourceinfo['help']) ? $datasourceinfo['help'] : ''
+                    ];
+                }
+            }
         }
 
         return $options;
     }
+
 }

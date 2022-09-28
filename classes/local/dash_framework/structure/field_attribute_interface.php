@@ -25,9 +25,6 @@
 namespace block_dash\local\dash_framework\structure;
 
 use block_dash\local\dash_framework\structure\field_interface;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * An attribute changes how a field definition is designated or behaves.
  *

@@ -28,9 +28,6 @@ use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
 use block_dash\local\dash_framework\structure\field_interface;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Group data by a certain field.
  *

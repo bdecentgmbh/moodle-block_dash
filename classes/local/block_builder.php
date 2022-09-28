@@ -28,9 +28,6 @@ use block_dash\local\configuration\configuration_interface;
 use block_dash\local\configuration\configuration;
 use block_dash\output\query_debug;
 use block_dash\output\renderer;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Helper class for creating block instance content.
  *
@@ -86,14 +83,26 @@ class block_builder {
         if ($this->configuration->is_fully_configured()) {
             $bb = self::create($this->blockinstance);
 
-            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page(0);
+            $supportsdebug = false;
+            $prefernece = true;
+            if ($bb->get_configuration()->get_data_source()->is_widget()) {
+                $source = $bb->get_configuration()->get_data_source();
+                $preload = $renderer->render_data_source($source);
+            } else {
+                $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page(0);
+                $supportsdebug = true;
+                $source = $bb->get_configuration()->get_data_source();
+                $preload = $renderer->render_data_source($source);
+            }
 
+            $editing = ($this->blockinstance->page->user_is_editing() &&
+            has_capability('block/dash:addinstance', $this->blockinstance->context) && $prefernece);
             $data = [
-                'preloaded' => $renderer->render_data_source($bb->get_configuration()->get_data_source()),
+                'preloaded' => $preload,
                 'block_instance_id' => $this->blockinstance->instance->id,
                 'block_context_id' => $this->blockinstance->context->id,
-                'editing' => $this->blockinstance->page->user_is_editing() &&
-                    has_capability('block/dash:addinstance', $this->blockinstance->context)
+                'editing' => $editing,
+                'istotara' => block_dash_is_totara()
             ];
 
             if (isset($this->blockinstance->config->header_content)) {
@@ -106,9 +115,11 @@ class block_builder {
                     $this->blockinstance->config->footer_content['format']);
             }
 
+            $source->update_data_before_render($data);
+
             $text .= $OUTPUT->render_from_template('block_dash/block', $data);
 
-            if (is_siteadmin()) {
+            if (is_siteadmin() && $supportsdebug) {
                 [$sql, $params] = $bb->get_configuration()->get_data_source()->get_query()->get_sql_and_params();
                 $text .= $renderer->render(new query_debug($sql, $params));
             }

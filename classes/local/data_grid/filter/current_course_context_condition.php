@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local\data_grid\filter;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Filters results to current course context only.
  *

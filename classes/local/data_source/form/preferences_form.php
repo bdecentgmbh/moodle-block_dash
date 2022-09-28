@@ -26,7 +26,7 @@ namespace block_dash\local\data_source\form;
 
 use block_dash\local\configuration\configuration;
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die('No direct access');
 
 require_once($CFG->libdir . '/formslib.php');
 

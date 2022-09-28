@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local\data_grid\field\attribute;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Transforms data to image element.
  *
@@ -43,7 +40,10 @@ class image_attribute extends abstract_field_attribute {
      */
     public function transform_data($data, \stdClass $record) {
         if ($data) {
-            return \html_writer::img($data, $this->get_option('title'), ['class' => 'img-responsive']);
+            return \html_writer::img($data, $this->get_option('title'), [
+                'class' => 'img-responsive',
+                'role' => 'presentation '
+            ]);
         }
 
         return $data;

@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local\dash_framework\structure;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class abstract_data_source.
  *

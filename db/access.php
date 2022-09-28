@@ -41,7 +41,59 @@ $capabilities = [
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes'   => [
             'manager' => CAP_ALLOW,
-            'user' => CAP_PREVENT,
+            'user'    => CAP_PREVENT,
+        ]
+    ],
+    // View members.
+    'block/dash:mygroups_view' => [
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype'      => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'user'    => CAP_ALLOW,
+        ]
+    ],
+    // View members.
+    'block/dash:mygroups_viewmembers' => [
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype'      => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'user'    => CAP_ALLOW,
+        ]
+    ],
+    'block/dash:mygroups_addusers' => [
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype'      => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'user'    => CAP_PREVENT,
+        ]
+    ],
+    'block/dash:mygroups_leavegroup' => [
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype'      => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'user'    => CAP_ALLOW,
+        ]
+    ],
+    'block/dash:mygroups_creategroup' => [
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype'      => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'user'    => CAP_PREVENT,
         ]
     ],
 ];

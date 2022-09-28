@@ -26,9 +26,6 @@ namespace block_dash\local\data_grid\data\strategy;
 
 use block_dash\local\dash_framework\structure\field_interface;
 use block_dash\local\data_grid\data\data_collection_interface;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * A strategy for structuring database records into data collections.
  *

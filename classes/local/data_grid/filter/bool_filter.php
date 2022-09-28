@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local\data_grid\filter;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Simple yes or no filter.
  *

@@ -26,9 +26,6 @@ namespace block_dash\local\data_grid\filter;
 
 use moodleform;
 use MoodleQuickForm;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * A filter will limit a result set.
  *

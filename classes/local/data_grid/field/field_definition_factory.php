@@ -26,9 +26,6 @@ namespace block_dash\local\data_grid\field;
 
 use block_dash\local\dash_framework\structure\field_interface;
 use block_dash\local\data_grid\field\attribute\field_attribute_interface;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Responsible for building field definitions and retrieving them as needed.
  *

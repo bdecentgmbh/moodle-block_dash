@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local\data_grid\field\attribute;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Transform data to user's profile image URL.
  *

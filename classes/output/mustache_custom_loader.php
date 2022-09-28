@@ -25,9 +25,6 @@
 namespace block_dash\output;
 
 use core\output\mustache_template_finder;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Perform some custom name mapping for template file names.
  *

@@ -26,9 +26,6 @@ namespace block_dash\local\dash_framework\structure;
 
 use block_dash\local\data_grid\field\attribute\field_attribute_interface;
 use lang_string;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Represents a predefined field that can be added to a data grid.
  *

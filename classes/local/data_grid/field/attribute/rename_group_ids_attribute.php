@@ -26,9 +26,6 @@ namespace block_dash\local\data_grid\field\attribute;
 
 use block_dash\local\data_grid\filter\group_filter;
 use coding_exception;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Transform data by renaming delimited group IDs to group names. Remove groups not in context.
  *

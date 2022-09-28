@@ -23,9 +23,6 @@
  */
 
 namespace block_dash\local\data_grid\field;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class sql_field_definition.
  *

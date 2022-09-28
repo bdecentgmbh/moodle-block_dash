@@ -1,8 +1,8 @@
-define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events',
-    'block_dash/preferences_modal', 'block_dash/datepicker', 'block_dash/select2'],
-    function($, Log, Ajax, Notification, ModalEvents, PreferencesModal) {
+define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events',
+    'block_dash/preferences_modal', 'block_dash/datepicker', 'block_dash/select2', 'core/fragment', 'core/templates'],
+    function($, UI, Log, Ajax, Notification, ModalEvents, PreferencesModal, DatePicker, Select2, Fragment, Templates) {
 
-        var DashInstance = function(root, blockInstanceId, blockContextid, editing) {
+        var DashInstance = function(root, blockInstanceId, blockContextid, editing, istotara) {
             this.root = $(root);
             this.blockInstanceId = blockInstanceId;
             this.blockContextid = blockContextid;
@@ -11,6 +11,7 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
             this.editing = editing;
             this.sortField = null;
             this.sortDirections = {};
+            this.isTotara = istotara;
 
             this.init();
         };
@@ -64,6 +65,10 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
                 }
                 this.refresh();
             }.bind(this));
+
+            if (this.isTotara) {
+                this.setDynamicTable();
+            }
         };
 
         /**
@@ -157,6 +162,49 @@ define(['jquery', 'core/log', 'core/ajax', 'core/notification', 'core/modal_even
                     }
                 });
             }.bind(this));
+        };
+
+        DashInstance.prototype.setDynamicTable = function() {
+
+            $('body').delegate('[data-table-dynamic="true"] thead th a', 'click', function(e) {
+                e.preventDefault();
+                updateTable($(this));
+            });
+
+            $('body').delegate('.modal-body .paging a', 'click', function(e) {
+                e.preventDefault();
+                updateTable($(this));
+            });
+
+            var updateTable = function(element) {
+                var table = element.parents('.modal-body').find('table');
+
+                var href = element.attr('href');
+                var params = new URL(href).searchParams;
+                var page = params.get('page');
+                var sortfield = params.get('tsort');
+                if (sortfield == '') {
+                    sortfield = table.data('table-sort');
+                }
+
+                var tablehandler = table.data('table-handler');
+                var filter = table.data('table-filter');
+                var uniqueid = table.data('table-uniqueid');
+                var context = table.data('table-context');
+
+                var data = {
+                    handler: tablehandler,
+                    filter: filter,
+                    uniqueid: uniqueid,
+                    sort: sortfield,
+                    page: page
+                };
+
+                Fragment.loadFragment('block_dash', 'loadtable', context, data).then((html, js) => {
+                    $('.modal-body').html(html);
+                    Templates.runTemplateJS(js);
+                });
+            };
         };
 
         return DashInstance;

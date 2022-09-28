@@ -267,7 +267,9 @@ $string['userstat'] = 'User stat';
 $string['viewcourse'] = 'View course';
 $string['viewprofile'] = 'View profile';
 $string['withroles'] = 'With role(s)';
-
+$string['headerfooter'] = 'Header & Footer';
+$string['choosefeature'] = 'Choose Feature';
+$string['datasources'] = 'Datasources';
 // Course default image settings.
 $string['generalsettings'] = 'General settings';
 $string['courseimage'] = 'Course default image';
@@ -280,3 +282,50 @@ $string['courseredirecturl'] = 'Course redirect URL';
 $string['courseredirecturldesc'] = 'Enter the URL to redirect the users from course index page.';
 $string['courseimagelink'] = 'Course image link';
 $string['backgroundimagefield'] = 'Background image';
+// 1.3
+$string['status:completed'] = 'Completed';
+$string['status:inprogress'] = 'In Progress';
+$string['status:enrolled'] = 'Enrolled';
+$string['widget:mycontacts'] = 'My Contacts';
+$string['widget:groups:groupmembers'] = 'View Members';
+$string['widget:groups:adduser'] = 'Add user';
+$string['widget:groups:chat'] = 'Chat';
+$string['widget:groups:leavegroup'] = 'Leave Group';
+$string['widget:groups:creategroup'] = 'Create Group';
+$string['widget'] = 'Widget';
+$string['widget:mylearning'] = 'My learning';
+$string['widget:mygroups'] = 'My groups';
+$string['customfields'] = 'Custom fields';
+$string['contacts'] = 'Contacts';
+$string['badges'] = 'Badges';
+$string['coursecontent'] = 'Course content';
+$string['category'] = 'Category name';
+$string['badgestitle'] = 'Badges';
+$string['coursestafftitle'] = 'Course staff';
+$string['secondarynav'] = 'Add to course navigation';
+$string['dash:mygroups_addusers'] = 'Add users into groups';
+$string['dash:mygroups_creategroup'] = 'Create groups in enrolled courses';
+$string['dash:mygroups_leavegroup'] = 'Leave from groups';
+$string['dash:mygroups_viewmembers'] = 'View members in assigned groups';
+$string['nogroupsavailable'] = 'No groups available';
+$string['nocontactsavailable'] = 'No contacts available';
+$string['openmodule'] = 'Open module';
+$string['dash:mygroups_view'] = 'View my own groups';
+$string['buildown'] = 'Build your own';
+$string['buildown_help'] = 'Datasources are highly configurable, You can use the datasources in various purpose. Filter, Sorting, Pagination features are supported';
+
+$string['readymatewidgets'] = 'Ready to use widgets';
+$string['readymatewidgets_help'] = 'Use the bellow widgets, widgets are easy to use, there is no need to setup additional configurations.';
+
+$string['widget:mylearning_help'] = 'List of user enrolled courses with basic course informations such as staffs and available badges and list of course sections and modules';
+$string['widget:mycontacts_help'] = 'List of users available in the contacts list.';
+$string['widget:mygroups_help'] = 'List of assigned groups for the user, Can able to view other members in the group, add memebers to the group, Leave from the groups and more';
+
+$string['users'] = 'Users';
+$string['users_help'] = 'Users Datasource display the list of available users from the LMS';
+$string['datasource:completions_data_source_help'] = 'Users compelted courses list.';
+$string['datasource:courses_data_source_help'] = 'List of available courses for the current user.';
+$string['datasource:dashboard_data_source_help'] = 'List of Dashboard';
+$string['datasource:logstore_data_source_help'] = 'Datasource of site logs';
+$string['confirmleavegroup'] = 'Do you really want to leave the group {$a}';
+$string['fieldalert'] = 'The chosen layout can not be customised';

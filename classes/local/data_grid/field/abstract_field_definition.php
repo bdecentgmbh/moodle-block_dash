@@ -27,8 +27,6 @@ namespace block_dash\local\data_grid\field;
 use block_dash\local\data_grid\field\attribute\field_attribute_interface;
 use block_dash\local\data_grid\field\field_definition_interface;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Represents a predefined field that can be added to a data grid.
  *

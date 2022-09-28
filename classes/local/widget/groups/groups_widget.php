@@ -18,7 +18,7 @@
  * Groups widget class contains the layout information and generate the data for widget.
  *
  * @package    block_dash
- * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @copyright  2022 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -109,7 +109,7 @@ class groups_widget extends abstract_widget {
         $userid = $USER->id;
         require_once($CFG->dirroot.'/lib/grouplib.php');
         require_once($CFG->dirroot . '/user/selector/lib.php');
-        $potentialmembersselector = new \group_non_members_selector('addselect', array('groupid' => 2, 'courseid' => 13));
+
         $context = $this->get_block_instance()->context;
         $creategroup = has_capability('block/dash:mygroups_creategroup', $context);
 
@@ -119,7 +119,10 @@ class groups_widget extends abstract_widget {
             $newgroup = groups_get_group($group->id);
             global $USER;
 
-            $coursecontext = \context_course::instance($group->courseid);
+            $coursecontext = \context_course::instance($group->courseid, IGNORE_MISSING);
+            if (empty($coursecontext)) {
+                return null;
+            }
             $conversation = (method_exists('\core_message\api', 'get_conversation_by_area'))
                 ? \core_message\api::get_conversation_by_area(
                     'core_group', 'groups', $group->id, $coursecontext->id

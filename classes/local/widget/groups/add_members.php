@@ -18,7 +18,7 @@
  * Add members to group - moodle form.
  *
  * @package    block_dash
- * @copyright  2019 bdecent gmbh <https://bdecent.de>
+ * @copyright  2022 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -61,13 +61,6 @@ class add_members extends \moodleform {
             'multiple' => true,
             'noselectionstring' => get_string('users'),
             'data-groupid' => $groupid,
-            'valuehtmlcallback' => function($value) {
-                global $DB, $OUTPUT;
-                $user = $DB->get_record('user', ['id' => (int)$value], '*', IGNORE_MISSING);
-                $details = user_get_user_details($user);
-                return $OUTPUT->render_from_template(
-                        'core_search/form-user-selector-suggestion', $details);
-            }
         ];
         $mform->addElement('autocomplete', 'users', get_string('user'), [], $options);
         $mform->addRule('users', get_string('required'), 'required', '', 'client');

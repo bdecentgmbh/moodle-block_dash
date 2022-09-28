@@ -125,6 +125,7 @@ class filter_test extends \advanced_testcase {
         $this->assertEquals('table.fieldname = :param1', $sql[0], 'Ensure SQL is generated.');
         $this->assertEquals($params, ['param1' => 123], 'Ensure params are returned.');
     }
+
     /**
      * Test for required_filters() to ensure that the fields are correctly loaded for attributes.
      *

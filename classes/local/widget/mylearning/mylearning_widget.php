@@ -86,6 +86,7 @@ class mylearning_widget extends abstract_widget {
         global $USER, $CFG, $DB;
         $userid = $USER->id;
         require_once($CFG->dirroot.'/lib/enrollib.php');
+        require_once($CFG->dirroot.'/course/renderer.php');
 
         $completed = $DB->get_records_sql(
             'SELECT * FROM {course_completions} cc
@@ -94,7 +95,7 @@ class mylearning_widget extends abstract_widget {
         );
         $completedcourses = array_column($completed, 'course');
         $basefields = [
-            'id', 'category', 'sortorder',
+            'id', 'category', 'sortorder', 'format',
             'shortname', 'fullname', 'idnumber', 'summary',
             'startdate', 'visible',
             'groupmode', 'groupmodeforce', 'cacherev'
@@ -102,6 +103,10 @@ class mylearning_widget extends abstract_widget {
         $courses = enrol_get_my_courses($basefields, null, 0, [], false, 0, $completedcourses);
 
         array_walk($courses, function($course) {
+            $courseelement = (class_exists('\core_course_list_element'))
+            ? new \core_course_list_element($course) : new \course_in_list($course);
+            $summary = (new \coursecat_helper($course))->get_course_formatted_summary($courseelement);
+
             $category = (class_exists('\core_course_category'))
             ? \core_course_category::get($course->category) : \coursecat::get($course->category);
             $course->courseimage = $this->courseimage($course);
@@ -111,7 +116,7 @@ class mylearning_widget extends abstract_widget {
             $course->contacts = $this->contacts($course);
             $course->customfields = $this->customfields($course);
             $course->courseurl = new \moodle_url('/course/view.php', ['id' => $course->id]);
-            $course->summary = shorten_text(format_text($course->summary), 200);
+            $course->summary = shorten_text($summary, 200);
         });
 
         $this->data = (!empty($courses)) ? ['courses' => array_values($courses)] : [];

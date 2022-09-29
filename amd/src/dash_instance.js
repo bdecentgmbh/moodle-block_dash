@@ -27,14 +27,14 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
 
             if (this.editing) {
                 this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
-                    this.blockContextid, function () {
+                    this.blockContextid, function() {
                         // Preferences changed, go back to first page.
                         this.currentPage = 0;
                         this.refresh();
                     }.bind(this));
             }
 
-            this.getRoot().on('change', 'select, input', function (e) {
+            this.getRoot().on('change', 'select, input', function(e) {
                 e.preventDefault();
 
                 Log.debug('Submitting filter form');
@@ -109,11 +109,11 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
             var request = {
                 methodname: 'block_dash_get_block_content',
                 args: {
-                    block_instance_id: this.blockInstanceId,
-                    filter_form_data: JSON.stringify(this.getFilterForm().serializeArray()),
-                    page: this.currentPage,
-                    sort_field: this.sortField,
-                    sort_direction: sortDirection
+                    "block_instance_id": this.blockInstanceId,
+                    "filter_form_data": JSON.stringify(this.getFilterForm().serializeArray()),
+                    "page": this.currentPage,
+                    "sort_field": this.sortField,
+                    "sort_direction": sortDirection
                 }
             };
 
@@ -144,7 +144,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 let placeholder = null;
                 if ($(element).find("option[value='-1']")) {
                     placeholder = {
-                        id: '-1', // the value of the option
+                        id: '-1', // The value of the option.
                         text: $(element).find("option[value='-1']").text()
                     };
                 }
@@ -203,7 +203,8 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 Fragment.loadFragment('block_dash', 'loadtable', context, data).then((html, js) => {
                     $('.modal-body').html(html);
                     Templates.runTemplateJS(js);
-                });
+                    return html;
+                }).catch(Notification.exception);
             };
         };
 

@@ -213,7 +213,8 @@ class contacts_widget extends abstract_widget {
         if (!empty($cohorts) && $cohortstatus) {
             list($insql, $inparams) = $DB->get_in_or_equal($cohorts, SQL_PARAMS_NAMED, 'ch');
             $sql = "SELECT cm.*, ch.name FROM {cohort_members} cm
-                    JOIN {cohort} ch WHERE cm.userid <> :userid AND cm.cohortid $insql";
+                    JOIN {cohort} ch ON ch.id = cm.cohortid
+                    WHERE cm.userid <> :userid AND cm.cohortid $insql";
             $members = $DB->get_records_sql($sql, $inparams + ['userid' => $userid]);
         }
         if (isset($members) && !empty($members)) {

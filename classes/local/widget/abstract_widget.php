@@ -31,6 +31,7 @@ use block_dash\local\dash_framework\query_builder\builder;
 use block_dash\local\data_grid\filter\filter_collection;
 use block_dash\local\layout\layout_interface;
 use renderer_base;
+use block_dash\local\paginator;
 
 /**
  * Widgets extend class for new widgets.
@@ -179,5 +180,33 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
      */
     public function update_data_before_render(&$data) {
         return null;
+    }
+
+    /**
+     * Get widget count based on the data. Define the steps to check the count of records.
+     *
+     * @return int
+     */
+    public function widget_data_count() {
+        return 0;
+    }
+
+    /**
+     * Get table pagination class.
+     * @return paginator
+     */
+    public function get_paginator(): paginator {
+
+        if ($this->get_layout()->supports_pagination()) {
+            $perpage = (int) $this->get_preferences('perpage');
+        }
+        $perpage = isset($perpage) && !empty($perpage) ? $perpage : \block_dash\local\paginator::PER_PAGE_DEFAULT;
+
+        if (!isset($this->paginator) || $this->paginator == null) {
+            $this->paginator = new paginator(function () {
+                return $this->widget_data_count();
+            }, 0, $perpage);
+        }
+        return $this->paginator;
     }
 }

@@ -34,7 +34,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     }.bind(this));
             }
 
-            this.getRoot().on('change', 'select, input', function(e) {
+            this.getRoot().on('change', 'select:not(.norefresh), input:not(.norefresh)', function(e) {
                 e.preventDefault();
 
                 Log.debug('Submitting filter form');

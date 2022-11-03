@@ -329,3 +329,46 @@ $string['datasource:dashboard_data_source_help'] = 'List of Dashboard';
 $string['datasource:logstore_data_source_help'] = 'Datasource of site logs';
 $string['confirmleavegroup'] = 'Do you really want to leave the group {$a}';
 $string['fieldalert'] = 'The chosen layout can not be customised';
+
+$string['enroldate_asc'] = 'Sort by enrolment date (oldest first)';
+$string['enroldate_desc'] = 'Sort by enrolment date (newest first)';
+$string['alpha_asc'] = 'Sort alphabetically A-Z';
+$string['alpha_desc'] = 'Sort alphabetically Z-A';
+$string['coursestartdate_asc'] = 'By course start date (newest first)';
+$string['coursestartdate_desc'] = 'By course start date (oldest first)';
+$string['course_enrolments:progress'] = 'Display progress';
+$string['course_enrolments:expandable'] = 'Expandable';
+$string['course_enrolments:abovecourseform'] = 'Above the courses';
+$string['course_enrolments:belowcourseform'] = 'Below the courses';
+$string['course_enrolments:displayaddcourse'] = 'Display add course form';
+$string['course_enrolments:disabled'] = 'Disabled';
+$string['sortalpha'] = 'Alphabetically';
+$string['sortenrolmentdate'] = 'Enrolment date';
+$string['sortcoursestartdate'] = 'Course start date';
+
+// Contacts suggestions.
+$string['suggestinterests'] = 'Suggest users that have same interests';
+$string['suggestinterests_desc'] = 'Display the users with same interests users contact list block';
+$string['suggestcohort'] = 'Suggest users that have same cohort';
+$string['suggestcohort_desc'] = 'Display the users with same interests users contact list block';
+$string['suggestgroups'] = 'Suggest users that have same groups';
+$string['suggestgroups_desc'] = 'Display the users with same interests users contact list block';
+$string['suggestusers'] = 'Suggest users that have same users';
+$string['suggestusers_desc'] = 'Display the users with same interests users contact list block';
+
+$string['suggestion:interest'] = 'Also interested in {$a->interest}';
+$string['suggestion:cohort'] = 'Also member of {$a->cohort}';
+$string['suggestion:groups'] = 'In your group {$a->group}';
+$string['suggestion:users'] = 'Recommended on this site';
+$string['addtocontacts'] = 'Add to contacts';
+$string['suggestcontacts'] = 'Suggested contacts';
+
+$string['emptystateheading'] = 'Empty state';
+$string['enroled'] = 'Enrolled';
+$string['enrolnow'] = 'Enrol Now';
+$string['course_enrol_role'] = 'Role for enrol using enrolment widget';
+$string['datasource:enrolments_widget'] = 'Enrolments Widget';
+$string['widget:course_enrols'] = 'Enrolments Widget';
+$string['widget:course_enrols_help'] = 'Display the list of enrolled courses with completion progress';
+$string['viewdetails'] = 'View details';
+$string['progress_help'] = 'Display the completion progress of the course';

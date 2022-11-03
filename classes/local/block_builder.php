@@ -73,7 +73,7 @@ class block_builder {
      * @throws \moodle_exception
      */
     public function get_block_content() {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
 
         /** @var renderer $renderer */
         $renderer = $this->blockinstance->page->get_renderer('block_dash');
@@ -85,11 +85,11 @@ class block_builder {
 
             $supportsdebug = false;
             $prefernece = true;
+            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page(0);
             if ($bb->get_configuration()->get_data_source()->is_widget()) {
                 $source = $bb->get_configuration()->get_data_source();
                 $preload = $renderer->render_data_source($source);
             } else {
-                $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page(0);
                 $supportsdebug = true;
                 $source = $bb->get_configuration()->get_data_source();
                 $preload = $renderer->render_data_source($source);
@@ -119,7 +119,7 @@ class block_builder {
 
             $text .= $OUTPUT->render_from_template('block_dash/block', $data);
 
-            if (is_siteadmin() && $supportsdebug) {
+            if (is_siteadmin() && $supportsdebug && $CFG->debug > 0) {
                 [$sql, $params] = $bb->get_configuration()->get_data_source()->get_query()->get_sql_and_params();
                 $text .= $renderer->render(new query_debug($sql, $params));
             }

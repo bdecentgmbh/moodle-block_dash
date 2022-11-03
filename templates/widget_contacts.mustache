@@ -64,10 +64,45 @@
                     </div>
                 </div>
                 {{/data.contacts}}
+                
             </div>
             {{^data.contacts}}
-                <span>{{#str}} nocontactsavailable, block_dash {{/str}} </span>
+                {{#noresult}} {{{noresult}}} {{/noresult}}
             {{/data.contacts}}
+            <div class="suggested-contact">
+                <h4>{{#str}} suggestcontacts, block_dash{{/str}}</h4>
+                <div class="row">
+                    {{#data.suggestions}}
+                    <div class="col-md-3">
+                        <div class="contact-element">
+                            <div class="img-block">
+                                {{#profiletext}}
+                                <h3 class="user-letter-circle">{{profiletext}}</h3>
+                                {{/profiletext}}
+                                {{^profiletext}}
+                                <img src="{{{profileimageurl}}}" alt="{{{fullname}}}" title="{{{fullname}}}" role="presentation"> <!--Contact User img-->
+                                {{/profiletext}}
+                            </div>
+                            <div class="suggested-element">                        
+                                <div class="info">
+                                    {{#suggestinfo}}
+                                    <h6> {{{.}}} </h6>
+                                    {{/suggestinfo}}
+                                </div>
+                                <h5>{{{fullname}}}</h5>
+                                <div class="btn-block">
+                                    <a data-currentuserid="{{data.currentuser}}" data-userid="{{id}}" class="ajax-contact-button btn toggle-contact-button"  >
+                                        {{#pix}} t/addcontact, core, addtocontacts {{/pix}}
+                                        {{#str}} addtocontacts, block_dash {{/str}}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/data.suggestions}}
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

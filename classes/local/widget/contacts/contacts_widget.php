@@ -128,7 +128,13 @@ class contacts_widget extends abstract_widget {
         });
 
         $contextid = $this->get_block_instance()->context->id;
-        $this->data = (!empty($contactslist)) ? ['contacts' => array_values($contactslist), 'contextid' => $contextid] : [];
+        $this->data = (!empty($contactslist)) ? [
+            'contacts' => array_values($contactslist),
+            'contextid' => $contextid,
+
+        ] : [];
+
+        $this->include_suggest_contacts();
 
         if (!$jsincluded) {
             $PAGE->requires->js_call_amd('block_dash/contacts', 'init', ['contextid' => $contextid]);
@@ -136,6 +142,160 @@ class contacts_widget extends abstract_widget {
         }
 
         return $this->data;
+    }
+
+    /**
+     * Get user picture url for contact.
+     *
+     * @param stdclass $userid
+     * @param string $suggestiontext
+     * @return stdclass
+     */
+    public function get_user_data($userid, $suggestiontext) {
+        global $PAGE;
+        $user = \core_user::get_user($userid);
+        $user->fullname = fullname($user);
+        $user->suggestinfo[] = $suggestiontext;
+        if (isset($user->picture) && $user->picture == 0) {
+            $user->profiletext = ucwords($user->fullname)[0];
+        }
+        $userpicture = new \user_picture($user);
+        $userpicture->size = 1; // Size f1.
+        $user->profileimageurl = $userpicture->get_url($PAGE)->out(false);
+        return $user;
+    }
+
+    /**
+     * Include suggest contacts.
+     *
+     * @return array
+     */
+    public function include_suggest_contacts() {
+        global $USER, $DB, $CFG;
+        require_once($CFG->dirroot. '/cohort/lib.php');
+        $userid = $USER->id;
+        // User interests.
+        $interests = \core_tag_tag::get_item_tags_array('core', 'user', $userid);
+        $intereststatus = get_config('block_dash', 'suggestinterests');
+
+        if (!empty($interests) && $intereststatus) {
+            list($insql, $inparams) = $DB->get_in_or_equal($interests, SQL_PARAMS_NAMED, 'tg');
+
+            $sql = "SELECT ti.*, tg.name, tg.rawname FROM {tag_instance} ti
+            JOIN {tag} tg ON tg.id = ti.tagid
+            WHERE ti.itemid <> :userid AND ti.tagid IN ( SELECT id FROM {tag} t WHERE t.name $insql )";
+            $lists = $DB->get_records_sql($sql, $inparams + ['userid' => $userid]);
+        }
+
+        $suggestions = [];
+        if (isset($lists) && !empty($lists)) {
+
+            $i = 0;
+            foreach ($lists as $list) {
+                $suggestiontext = get_string('suggestion:interest', 'block_dash', ['interest' => $list->name]);
+                if (in_array($list->itemid, array_keys($suggestions))) {
+                    $suggestions[$list->itemid]->suggestinfo[] = $suggestiontext;
+                } else {
+                    if ($intereststatus <= $i) {
+                        continue;
+                    }
+                    $i++;
+                    $user = $this->get_user_data($list->itemid, $suggestiontext);
+                    $suggestions[$user->id]  = $user;
+                }
+            }
+        }
+
+        // Cohort suggestions.
+        $usercohorts = cohort_get_user_cohorts($userid);
+        $cohorts = array_column($usercohorts, 'id');
+        $cohortstatus = get_config('block_dash', 'suggestcohort');
+        if (!empty($cohorts) && $cohortstatus) {
+            list($insql, $inparams) = $DB->get_in_or_equal($cohorts, SQL_PARAMS_NAMED, 'ch');
+            $sql = "SELECT cm.*, ch.name FROM {cohort_members} cm
+                    JOIN {cohort} ch WHERE cm.userid <> :userid AND cm.cohortid $insql";
+            $members = $DB->get_records_sql($sql, $inparams + ['userid' => $userid]);
+        }
+        if (isset($members) && !empty($members)) {
+            $i = 0;
+            foreach ($members as $member) {
+                $suggestiontext = get_string('suggestion:cohort', 'block_dash',
+                    ['cohort' => $member->name]);
+                if (in_array($member->userid, array_keys($suggestions))) {
+                    $suggestions[$member->userid]->suggestinfo[] = $suggestiontext;
+                } else {
+                    if ($cohortstatus <= $i) {
+                        continue;
+                    }
+                    $i++;
+
+                    $user = $this->get_user_data($member->userid, $suggestiontext);
+                    $suggestions[$user->id]  = $user;
+                }
+            }
+        }
+
+        // Groups suggestion.
+        $sql = 'SELECT * FROM {groups_members} gm
+        JOIN {groups} g ON g.id = gm.groupid
+        JOIN {user} u ON u.id = gm.userid
+        WHERE gm.userid != :userid AND g.id IN (
+            SELECT groupid FROM {groups_members} WHERE userid = :currentuserid
+        ) GROUP BY u.id';
+        $groups = $DB->get_records_sql($sql, ['userid' => $userid, 'currentuserid' => $userid]);
+
+        $groupstatus = get_config('block_dash', 'suggestgroups');
+        $i = 0;
+        if (!empty($groups) && $groupstatus) {
+            foreach ($groups as $group) {
+                $suggestiontext = get_string('suggestion:groups', 'block_dash', ['group' => $group->name]);
+                if (in_array($group->userid, array_keys($suggestions))) {
+                    $suggestions[$group->userid]->suggestinfo[] = $suggestiontext;
+                } else {
+                    if ($groupstatus <= $i) {
+                        continue;
+                    }
+                    $i++;
+                    $user = $this->get_user_data($group->userid, $suggestiontext);
+                    $suggestions[$user->id]  = $user;
+                }
+            }
+        }
+
+        $suggestusers = get_config('block_dash', 'suggestusers');
+        $users = explode(',', $suggestusers);
+        $suggestiontext = get_string('suggestion:users', 'block_dash');
+
+        if (!empty($users)) {
+            foreach ($users as $suggestuser) {
+                if (in_array($suggestuser, array_keys($suggestions))) {
+                    $suggestions[$suggestuser]->suggestinfo[] = $suggestiontext;
+                } else {
+                    $user = $this->get_user_data($suggestuser, $suggestiontext);
+                    $suggestions[$user->id]  = $user;
+                }
+            }
+        }
+
+        $this->data['suggestions'] = array_values($suggestions);
+        $this->data['currentuser'] = $userid;
+    }
+
+    /**
+     * Requires the JS libraries for the toggle contact button.
+     *
+     * @return void
+     */
+    public static function togglecontact_requirejs() {
+        global $PAGE;
+
+        static $done = false;
+        if ($done) {
+            return;
+        }
+
+        $PAGE->requires->js_call_amd('core_message/toggle_contact_button', 'enhance', array('.toggle-contact-button'));
+        $done = true;
     }
 
     /**

@@ -70,7 +70,7 @@ if ($ADMIN->fulltree) {
         get_string('suggestusers', 'block_dash'),
         get_string('suggestusers_desc', 'block_dash'), [], $users)
     );
-    
+
     $PAGE->requires->js_amd_inline("
         require(['core/form-autocomplete'], function(module) {
             module.enhance('#id_s_block_dash_suggestusers');

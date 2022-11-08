@@ -152,7 +152,7 @@ class contacts_widget extends abstract_widget {
      * @return stdclass
      */
     public function get_user_data($userid, $suggestiontext) {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
         $user = \core_user::get_user($userid);
         $user->fullname = fullname($user);
         $user->suggestinfo[] = $suggestiontext;
@@ -162,6 +162,8 @@ class contacts_widget extends abstract_widget {
         $userpicture = new \user_picture($user);
         $userpicture->size = 1; // Size f1.
         $user->profileimageurl = $userpicture->get_url($PAGE)->out(false);
+        $user->addcontacticon = $icon = $OUTPUT->pix_icon('t/addcontact', get_string('addtocontacts', 'block_dash'), 'moodle',
+        ['class' => 'drag-handle']);
         return $user;
     }
 
@@ -183,8 +185,8 @@ class contacts_widget extends abstract_widget {
 
             $sql = "SELECT ti.*, tg.name, tg.rawname FROM {tag_instance} ti
             JOIN {tag} tg ON tg.id = ti.tagid
-            WHERE ti.itemid <> :userid AND ti.tagid IN ( SELECT id FROM {tag} t WHERE t.name $insql )";
-            $lists = $DB->get_records_sql($sql, $inparams + ['userid' => $userid]);
+            WHERE ti.itemid <> :userid AND ti.itemtype = :itemtype AND ti.tagid IN ( SELECT id FROM {tag} t WHERE t.name $insql )";
+            $lists = $DB->get_records_sql($sql, $inparams + ['userid' => $userid, 'itemtype' => 'user']);
         }
 
         $suggestions = [];
@@ -207,7 +209,11 @@ class contacts_widget extends abstract_widget {
         }
 
         // Cohort suggestions.
-        $usercohorts = cohort_get_user_cohorts($userid);
+        $sql = 'SELECT c.*
+        FROM {cohort} c
+        JOIN {cohort_members} cm ON c.id = cm.cohortid
+        WHERE cm.userid = ? AND c.visible = 1';
+        $usercohorts = $DB->get_records_sql($sql, array($userid));
         $cohorts = array_column($usercohorts, 'id');
         $cohortstatus = get_config('block_dash', 'suggestcohort');
         if (!empty($cohorts) && $cohortstatus) {
@@ -229,7 +235,6 @@ class contacts_widget extends abstract_widget {
                         continue;
                     }
                     $i++;
-
                     $user = $this->get_user_data($member->userid, $suggestiontext);
                     $suggestions[$user->id]  = $user;
                 }
@@ -266,7 +271,7 @@ class contacts_widget extends abstract_widget {
         $suggestusers = get_config('block_dash', 'suggestusers');
         $users = explode(',', $suggestusers);
         $suggestiontext = get_string('suggestion:users', 'block_dash');
-
+        $users = array_filter($users, function($value) { return !is_null($value) && $value !== ''; });
         if (!empty($users)) {
             foreach ($users as $suggestuser) {
                 if (in_array($suggestuser, array_keys($suggestions))) {

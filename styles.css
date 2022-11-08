@@ -52,6 +52,7 @@ body#page-blocks-dash-data-source .ui-sortable-helper {
 /** Block widths **/
 .block_dash.dash-block-width-100 {
     width: 100%;
+    min-height: 160px;
 }
 .block_dash.dash-block-width-50 {
     width: calc(50% - 1rem);
@@ -878,4 +879,19 @@ h5:before,
 
 .suggested-contact {
     margin-top: 20px;
+}
+
+
+#page-admin-setting-blocksettingdash .settingsform .form-item .form-setting .form-select {
+    max-width: 300px;
+    position: relative;
+}
+#page-admin-setting-blocksettingdash .settingsform .form-item .form-setting .form-select .form-autocomplete-downarrow {
+    position: absolute;
+    top: 30px;
+    right: 15px;
+    left: auto;
+}
+#page-admin-setting-blocksettingdash #page #page-content #region-main {
+    overflow: visible;
 }

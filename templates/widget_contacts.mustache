@@ -64,7 +64,6 @@
                     </div>
                 </div>
                 {{/data.contacts}}
-                
             </div>
             {{^data.contacts}}
                 {{#noresult}} {{{noresult}}} {{/noresult}}
@@ -83,7 +82,7 @@
                                 <img src="{{{profileimageurl}}}" alt="{{{fullname}}}" title="{{{fullname}}}" role="presentation"> <!--Contact User img-->
                                 {{/profiletext}}
                             </div>
-                            <div class="suggested-element">                        
+                            <div class="suggested-element">
                                 <div class="info">
                                     {{#suggestinfo}}
                                     <h6> {{{.}}} </h6>
@@ -92,7 +91,7 @@
                                 <h5>{{{fullname}}}</h5>
                                 <div class="btn-block">
                                     <a data-currentuserid="{{data.currentuser}}" data-userid="{{id}}" class="ajax-contact-button btn toggle-contact-button"  >
-                                        {{#pix}} t/addcontact, core, addtocontacts {{/pix}}
+                                        {{#addcontacticon}} {{{addcontacticon}}} {{/addcontacticon}}
                                         {{#str}} addtocontacts, block_dash {{/str}}
                                     </a>
                                 </div>

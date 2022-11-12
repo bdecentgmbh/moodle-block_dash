@@ -22,12 +22,23 @@ Feature: Add user contacts widget in dash block
       | student2 | Student   | Two   | student2@example.com |
       | student3 | Student   | Three   | student3@example.com |
       | teacher1 | Teacher   | First    | teacher1@example.com |
+      | user1    | user      | First    | teacher1@example.com |
+      | student4 | Student   | Four    | student2@example.com |
+      | student5 | Student   | Five   | student3@example.com |
     And the following "course enrolments" exist:
       | user | course | role           |
       | student1 | C1 | student |
       | student2 | C1 | teacher |
+      | user1    | C1 | student |
       | student1 | C2 | student |
       | student1 | C3 | student |
+    And the following "cohorts" exist:
+      | name | idnumber |
+      | Cohort 1 | CH1 |
+    And the following "cohort members" exist:
+      | user  | cohort |
+      | student3 | CH1    |
+      | user1    | CH1    |
     And the following "groups" exist:
       | name    | course | idnumber | enablemessaging |
       | Group 1 | C1     | G1       | 1               |
@@ -35,6 +46,7 @@ Feature: Add user contacts widget in dash block
       | user     | group |
       | student1 | G1 |
       | student2 | G1 |
+      | user1 | G1 |
     And the following "group messages" exist:
       | user     | group  | message                   |
       | student1 | G1     | Hi!                       |
@@ -68,14 +80,45 @@ Feature: Add user contacts widget in dash block
     Given I log in as "student1"
     And I should see "Student Two" in the "Dash" "block"
     And I should see "Student Three" in the "Dash" "block"
-    And I should see "2" in the ".block_dash-community-block .contact-element .row div:nth-child(1) .badge-block" "css_element"
+    And I should see "2" in the ".block_dash-community-block .contact-element .row div.col-xl-3:nth-child(1) .badge-block" "css_element"
     And ".badge-block" "css_element" should not exist in the ".block_dash-community-block .contact-element .row div:nth-child(2)" "css_element"
-    And I hover ".block_dash-community-block .contact-element .row div:nth-child(1)" "css_element"
-    And I click on ".contact-widget-viewgroup" "css_element" in the ".block_dash-community-block .contact-element .row div:nth-child(1)" "css_element"
+    And I hover ".block_dash-community-block .contact-element .row div.col-xl-3:nth-child(1)" "css_element"
+    And I click on ".contact-widget-viewgroup" "css_element" in the ".block_dash-community-block .contact-element .row div.col-xl-3:nth-child(1)" "css_element"
     And I should see "Groups" in the ".modal-title" "css_element"
     And "Group 1" "table_row" should exist
     And I click on ".close" "css_element" in the ".modal-header" "css_element"
-    And I hover ".block_dash-community-block .contact-element .row div:nth-child(2) .contact-img-block" "css_element"
-    And I click on ".contact-widget-viewgroup" "css_element" in the ".block_dash-community-block .contact-element .row div:nth-child(2) .contact-img-block" "css_element"
+    And I hover ".block_dash-community-block .contact-element .row div.col-xl-3:nth-child(2)" "css_element"
+    And I click on ".contact-widget-viewgroup" "css_element" in the ".block_dash-community-block .contact-element .row div.col-xl-3:nth-child(2)" "css_element"
     And I should see "Groups" in the ".modal-title" "css_element"
     Then I should see "Nothing to display" in the ".modal-body h2" "css_element"
+
+  @javascript
+  Scenario: Check the suggest user display options.
+    Given I log in as "user1"
+    And I should not see "Student First" in the "Dash" "block"
+    And I should not see "Student Two" in the "Dash" "block"
+    And I should not see "Student Three" in the "Dash" "block"
+    And I should not see "Student Four" in the "Dash" "block"
+    And I should not see "Student Five" in the "Dash" "block"
+    Then I log in as "admin"
+    Then I navigate to "Plugins > Blocks > Dash" in site administration
+    Then I should see "Suggest users that have same groups"
+    And I set the field "Suggest users that have same groups" to "5"
+    And I press "Save changes"
+    Then I log in as "user1"
+    And I should see "Student First" in the "Dash" "block"
+    And I should see "Student Two" in the "Dash" "block"
+    Then I log in as "admin"
+    Then I navigate to "Plugins > Blocks > Dash" in site administration
+    Then I should see "Suggest users that have same cohort"
+    And I set the field "Suggest users that have same cohort" to "5"
+    And I press "Save changes"
+    Then I log in as "user1"
+    And I should see "Student Three" in the "Dash" "block"
+    Then I log in as "admin"
+    Then I navigate to "Plugins > Blocks > Dash" in site administration
+    Then I should see "Suggest users that have same users"
+    And I set the field "Suggest users that have same users" to "Student Four"
+    And I press "Save changes"
+    Then I log in as "user1"
+    And I should see "Student Four" in the "Dash" "block"

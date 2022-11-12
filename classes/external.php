@@ -192,7 +192,8 @@ class external extends external_api {
             $config->preferences = [];
         }
 
-        $config->preferences = self::recursive_config_merge($config->preferences, $data['config_preferences']);
+        $configpreferences = isset($data['config_preferences']) ? $data['config_preferences'] : [];
+        $config->preferences = self::recursive_config_merge($config->preferences, $configpreferences);
         $block->instance_config_save($config);
 
         return [

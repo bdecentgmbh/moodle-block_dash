@@ -20,6 +20,7 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
       | username | firstname | lastname | email                |
       | student1 | Student   | First    | student1@example.com |
       | teacher1 | Teacher   | First    | teacher1@example.com |
+      | student2 | Student   | Two      | student2@example.com |
 
     And the following "activities" exist:
       | activity | course | idnumber |section | name           | intro                 | completion | completionview |
@@ -41,6 +42,7 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
     And I click on "#id_config_data_source_idnumber_block_dashlocalwidgetmylearningmylearning_widget" "css_element"
     And I set the following fields to these values:
       | Region  | content |
+      | Content | My learaning empty state content|
     And I press "Save changes"
     And I click on "Reset Dashboard for all users" "button"
     And I log out
@@ -77,7 +79,6 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
   Scenario: Course badges list in Mylearning widget
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    # Issue badge 1 of 2
     And I navigate to "Badges > Add a new badge" in current page administration
     And I set the following fields to these values:
       | id_name | Badge 1 |
@@ -96,3 +97,12 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
     And I log out
     When I log in as "student1"
     Then ".collected .activatebadge[alt=\"Badge 1\"]" "css_element" should exist in the "Dash" "block"
+
+  @javascript
+  Scenario: Check the empty state option.
+    Given I log in as "student2"
+    Then I should see "My learaning empty state content" in the "Dash" "block"
+    And I log out
+    When I log in as "student1"
+    Then I should not see "My learaning empty state content" in the "Dash" "block"
+    And I log out

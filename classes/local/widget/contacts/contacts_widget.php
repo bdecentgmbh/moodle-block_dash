@@ -247,9 +247,8 @@ class contacts_widget extends abstract_widget {
         JOIN {user} u ON u.id = gm.userid
         WHERE gm.userid != :userid AND g.id IN (
             SELECT groupid FROM {groups_members} WHERE userid = :currentuserid
-        ) GROUP BY u.id';
+        )';
         $groups = $DB->get_records_sql($sql, ['userid' => $userid, 'currentuserid' => $userid]);
-
         $groupstatus = get_config('block_dash', 'suggestgroups');
         $i = 0;
         if (!empty($groups) && $groupstatus) {
@@ -271,7 +270,9 @@ class contacts_widget extends abstract_widget {
         $suggestusers = get_config('block_dash', 'suggestusers');
         $users = explode(',', $suggestusers);
         $suggestiontext = get_string('suggestion:users', 'block_dash');
-        $users = array_filter($users, function($value) { return !is_null($value) && $value !== ''; });
+        $users = array_filter($users, function($value) {
+            return !is_null($value) && $value !== '';
+        });
         if (!empty($users)) {
             foreach ($users as $suggestuser) {
                 if (in_array($suggestuser, array_keys($suggestions))) {

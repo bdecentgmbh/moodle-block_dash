@@ -113,10 +113,13 @@ class contacts_widget extends abstract_widget {
             $unreadcounts = $DB->get_records_sql($unreadcountssql, [$userid]);
         }
 
-        array_walk($contactslist, function($value) use ($unreadcounts) {
+        array_walk($contactslist, function($value) use ($unreadcounts, $PAGE) {
             $muserid = (isset($value->id)) ? $value->id : $value->userid; // Totara support.
             $value->contacturl = new \moodle_url('/message/index.php', ['id' => $muserid]);
             $user = \core_user::get_user($muserid);
+            $userpicture = new \user_picture($user);
+            $userpicture->size = 200; // Size f1.
+            $value->profileimageurl = $userpicture->get_url($PAGE)->out(false);
             if ($user->picture == 0) {
                 $value->profiletext = ucwords($value->fullname)[0];
             }
@@ -283,7 +286,14 @@ class contacts_widget extends abstract_widget {
                 }
             }
         }
-
+        $contactslist = (method_exists('\core_message\api', 'get_user_contacts'))
+            ? \core_message\api::get_user_contacts($userid) : \core_message\api::get_contacts($userid);
+        $contactusers = array_keys($contactslist);
+        $suggestions = array_filter($suggestions, function($value) use ($contactusers) {
+            if (!in_array($value->id, $contactusers)) {
+                return $value;
+            }
+        });
         $this->data['suggestions'] = array_values($suggestions);
         $this->data['currentuser'] = $userid;
     }

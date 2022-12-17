@@ -599,9 +599,6 @@ h5 .completion-card.restricted p {
 h5 .completion-card.completed p i {
     font-size: 22px;
 }
-.dash-block-content .dash-filters form.filter-form > * {
-    margin: 10px;
-}
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body {
     padding-top: 0;
     padding-bottom: 0;

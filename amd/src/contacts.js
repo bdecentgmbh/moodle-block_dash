@@ -1,6 +1,6 @@
-define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
-'core/fragment', 'core/templates', 'core/notification'],
-    function($, Str, Modal, ModalEvents, Fragment, Templates, Notification) {
+define(['core/str', 'core/modal_factory', 'core/modal_events',
+'core/fragment', 'core/templates', 'core/notification', 'core_message/toggle_contact_button'],
+    function(Str, Modal, ModalEvents, Fragment, Templates, Notification, Contact) {
 
     return {
         init: function(contextID) {
@@ -37,6 +37,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
                 element.addEventListener('click', function(e) {
                     e.preventDefault();
                     if (e.target.dataset.userid != undefined) {
+                        Contact.enhance(e.target);
                     }
                 });
             });

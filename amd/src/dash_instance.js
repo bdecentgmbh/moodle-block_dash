@@ -2,7 +2,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
     'block_dash/preferences_modal', 'block_dash/datepicker', 'block_dash/select2', 'core/fragment', 'core/templates'],
     function($, UI, Log, Ajax, Notification, ModalEvents, PreferencesModal, DatePicker, Select2, Fragment, Templates) {
 
-        var DashInstance = function(root, blockInstanceId, blockContextid, editing, istotara) {
+        var DashInstance = function(root, blockInstanceId, blockContextid, editing, istotara, pagelayout) {
             this.root = $(root);
             this.blockInstanceId = blockInstanceId;
             this.blockContextid = blockContextid;
@@ -12,7 +12,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
             this.sortField = null;
             this.sortDirections = {};
             this.isTotara = istotara;
-
+            this.pageLayout = pagelayout;
             this.init();
         };
 
@@ -113,7 +113,8 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     "filter_form_data": JSON.stringify(this.getFilterForm().serializeArray()),
                     "page": this.currentPage,
                     "sort_field": this.sortField,
-                    "sort_direction": sortDirection
+                    "sort_direction": sortDirection,
+                    "pagelayout" : this.pageLayout,
                 }
             };
 

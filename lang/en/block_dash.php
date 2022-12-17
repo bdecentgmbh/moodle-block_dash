@@ -285,6 +285,7 @@ $string['backgroundimagefield'] = 'Background image';
 // 1.3
 $string['status:completed'] = 'Completed';
 $string['status:inprogress'] = 'In Progress';
+$string['status:all'] = 'All';
 $string['status:enrolled'] = 'Enrolled';
 $string['widget:mycontacts'] = 'My Contacts';
 $string['widget:groups:groupmembers'] = 'View Members';
@@ -380,3 +381,4 @@ $string['enroldetails'] = "Enrolment details";
 $string['edituserenrolment'] = 'Edit {$a}\'s enrolment';
 $string['savechanges'] = "Save changes";
 $string['participationnotcurrent'] = "Not current";
+$string['nocourses'] = "No courses available";

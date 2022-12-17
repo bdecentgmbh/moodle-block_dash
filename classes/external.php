@@ -54,7 +54,8 @@ class external extends external_api {
             'filter_form_data' => new \external_value(PARAM_RAW),
             'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
             'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
-            'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null)
+            'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
+            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_OPTIONAL),
         ]);
     }
 
@@ -66,23 +67,27 @@ class external extends external_api {
      * @param int $page
      * @param string $sortfield
      * @param string $sortdirection
+     * @param string $pagelayout
      * @return array
      * @throws \coding_exception
      * @throws \invalid_parameter_exception
      * @throws \moodle_exception
      * @throws \restricted_context_exception
      */
-    public static function get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection) {
+    public static function get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
+        $pagelayout = '') {
         global $PAGE, $DB;
-
         $params = self::validate_parameters(self::get_block_content_parameters(), [
             'block_instance_id' => $blockinstanceid,
             'page' => $page,
             'filter_form_data' => $filterformdata,
             'sort_field' => $sortfield,
-            'sort_direction' => $sortdirection
+            'sort_direction' => $sortdirection,
+            'pagelayout' => $pagelayout
         ]);
-
+        if ($pagelayout) {
+            $PAGE->set_pagelayout($pagelayout);
+        }
         $public = false;
         $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
         $block = block_instance($blockinstance->blockname, $blockinstance);

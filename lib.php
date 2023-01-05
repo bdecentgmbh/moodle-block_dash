@@ -184,7 +184,8 @@ function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forced
         $fullpath = "/$context->id/block_dash/$filearea/$relativepath";
 
         $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
+        $file = $fs->get_file_by_hash(sha1($fullpath));
+        if (!$file || $file->is_directory()) {
             return false;
         }
 

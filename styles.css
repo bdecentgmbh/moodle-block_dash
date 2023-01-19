@@ -52,6 +52,7 @@ body#page-blocks-dash-data-source .ui-sortable-helper {
 /** Block widths **/
 .block_dash.dash-block-width-100 {
     width: 100%;
+    min-height: 160px;
 }
 .block_dash.dash-block-width-50 {
     width: calc(50% - 1rem);
@@ -598,9 +599,6 @@ h5 .completion-card.restricted p {
 h5 .completion-card.completed p i {
     font-size: 22px;
 }
-.dash-block-content .dash-filters form.filter-form > * {
-    margin: 10px;
-}
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body {
     padding-top: 0;
     padding-bottom: 0;
@@ -821,4 +819,76 @@ h5:before,
 
 .path-totara .dash-widget-table .resettable {
     display: none;
+}
+
+/*Suggested contact*/
+.suggested-contact h4 {
+    font-size: 20px;
+    color: #000;
+    margin-bottom: 30px;
+}
+.suggested-contact .contact-element {
+    display: inline-block;
+    margin-bottom: 30px;
+}
+.suggested-contact .contact-element .img-block {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #dadada;
+    margin-right: 15px;
+    float: left;
+}
+.suggested-contact .contact-element .img-block img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.suggested-contact .contact-element .img-block h3.user-letter-circle {
+    height: 100%;
+    line-height: 45px;
+    text-align: center;
+}
+.suggested-contact .contact-element .suggested-element {
+    margin-left: 70px;
+
+}
+.suggested-contact .contact-element .suggested-element h6 {
+    font-size: 14px;
+    color: #000;
+    opacity: .5;
+    margin-bottom: 5px;
+}
+.suggested-contact .contact-element .suggested-element h5 {
+    font-size: 16px;
+    color: #000;
+    margin-bottom: 10px;
+}
+.suggested-contact .contact-element .suggested-element .btn-block a {
+    font-size: 12px;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    background-color: #121212;
+    display: inline-block;
+}
+
+.suggested-contact {
+    margin-top: 20px;
+}
+
+
+#page-admin-setting-blocksettingdash .settingsform .form-item .form-setting .form-select {
+    max-width: 300px;
+    position: relative;
+}
+#page-admin-setting-blocksettingdash .settingsform .form-item .form-setting .form-select .form-autocomplete-downarrow {
+    position: absolute;
+    top: 30px;
+    right: 15px;
+    left: auto;
+}
+#page-admin-setting-blocksettingdash #page #page-content #region-main {
+    overflow: visible;
 }

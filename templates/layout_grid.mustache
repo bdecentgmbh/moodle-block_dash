@@ -26,7 +26,7 @@
 {{< block_dash/layout }}
     {{$body}}
         {{^data.rows}}
-            <p class="text-muted">{{#str}}noresults{{/str}}</p>
+            {{#noresult}}{{{noresult}}}{{/noresult}}
         {{/data.rows}}
         <div class="table-responsive">
             <table class="table dash-table">

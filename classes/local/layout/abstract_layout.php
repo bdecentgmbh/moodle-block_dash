@@ -225,6 +225,9 @@ abstract class abstract_layout implements layout_interface, \templatable {
     public function export_for_template(\renderer_base $output) {
         global $OUTPUT;
 
+        $config = $this->get_data_source()->get_block_instance()->config;
+        $noresulttxt = \html_writer::tag('p', get_string('noresults'), ['class' => 'text-muted']);
+
         $templatedata = [
             'error' => '',
             'paginator' => '',
@@ -232,8 +235,10 @@ abstract class abstract_layout implements layout_interface, \templatable {
             'uniqueid' => uniqid(),
             'is_totara' => block_dash_is_totara(),
             'bootstrap3' => get_config('block_dash', 'bootstrap_version') == 3,
-            'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4
+            'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4,
+            'noresult' => (isset($config->emptystate)) ? $config->emptystate['text'] : $noresulttxt
         ];
+
         if (!empty($this->get_data_source()->get_all_preferences())) {
             try {
                 $templatedata['data'] = $this->get_data_source()->get_data();

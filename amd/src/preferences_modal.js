@@ -137,7 +137,6 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
      * @param {Boolean} closeWhenDone
      * @param {Object} response
      * @private
-     * @return {Promise}
      */
     PreferencesModal.prototype.handleFormSubmissionResponse = function(formData, closeWhenDone, response) {
         if (response.validationerrors || !closeWhenDone) {
@@ -151,7 +150,6 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
      * @method handleFormSubmissionFailure
      * @param {Object} data
      * @private
-     * @return {Promise}
      */
     PreferencesModal.prototype.handleFormSubmissionFailure = function(data) {
         // Oh noes! Epic fail :(
@@ -221,7 +219,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
             let placeholder = null;
             if ($(element).find("option[value='-1']")) {
                 placeholder = {
-                    id: '-1', // the value of the option
+                    id: '-1', // The value of the option
                     text: $(element).find("option[value='-1']").text()
                 };
             }

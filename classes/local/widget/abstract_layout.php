@@ -26,6 +26,7 @@ namespace block_dash\local\widget;
 
 use \block_dash\local\layout\layout_interface;
 use moodle_exception;
+use block_dash\local\paginator;
 
 /**
  * widget layout definitions.
@@ -42,6 +43,8 @@ abstract class abstract_layout extends \block_dash\local\layout\abstract_layout 
     public function export_for_template($output) {
         global $OUTPUT;
 
+        $config = $this->get_data_source()->get_block_instance()->config;
+        $noresulttxt = \html_writer::tag('p', get_string('noresults'), ['class' => 'text-muted']);
         $templatedata = [
             'error' => '',
             'paginator' => '',
@@ -49,7 +52,8 @@ abstract class abstract_layout extends \block_dash\local\layout\abstract_layout 
             'uniqueid' => uniqid(),
             'is_totara' => block_dash_is_totara(),
             'bootstrap3' => get_config('block_dash', 'bootstrap_version') == 3,
-            'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4
+            'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4,
+            'noresult' => isset($config->emptystate['text']) ? $config->emptystate['text'] : $noresulttxt
         ];
 
         if (!empty($this->get_data_source()->get_all_preferences())) {
@@ -76,6 +80,12 @@ abstract class abstract_layout extends \block_dash\local\layout\abstract_layout 
                 'supports_pagination' => $this->supports_pagination(),
                 'preferences' => $this->process_preferences($this->get_data_source()->get_all_preferences())
             ]);
+        }
+
+        if ($this->get_data_source()->get_paginator()->get_page_count() > 1) {
+            $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()
+                ->get_paginator()
+                ->export_for_template($OUTPUT));
         }
 
         return $templatedata;

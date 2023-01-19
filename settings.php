@@ -45,4 +45,35 @@ if ($ADMIN->fulltree) {
         get_string('disableall_help', 'block_dash'),
         0
     ));
+
+    $settings->add(new admin_setting_configtext(
+        'block_dash/suggestinterests',
+        get_string('suggestinterests', 'block_dash'),
+        get_string('suggestinterests_desc', 'block_dash'), 0, PARAM_INT)
+    );
+
+    $settings->add(new admin_setting_configtext(
+        'block_dash/suggestcohort',
+        get_string('suggestcohort', 'block_dash'),
+        get_string('suggestcohort_desc', 'block_dash'), 0, PARAM_INT)
+    );
+
+    $settings->add(new admin_setting_configtext(
+        'block_dash/suggestgroups',
+        get_string('suggestgroups', 'block_dash'),
+        get_string('suggestgroups_desc', 'block_dash'), 0, PARAM_INT)
+    );
+
+    $users = block_dash_get_suggest_users();
+    $settings->add(new admin_setting_configmultiselect(
+        'block_dash/suggestusers',
+        get_string('suggestusers', 'block_dash'),
+        get_string('suggestusers_desc', 'block_dash'), [], $users)
+    );
+
+    $PAGE->requires->js_amd_inline("
+        require(['core/form-autocomplete'], function(module) {
+            module.enhance('#id_s_block_dash_suggestusers');
+        });
+    ");
 }

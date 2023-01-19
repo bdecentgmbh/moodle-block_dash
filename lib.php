@@ -184,7 +184,8 @@ function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forced
         $fullpath = "/$context->id/block_dash/$filearea/$relativepath";
 
         $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
+        $file = $fs->get_file_by_hash(sha1($fullpath));
+        if (!$file || $file->is_directory()) {
             return false;
         }
 
@@ -271,6 +272,9 @@ function block_dash_output_fragment_loadwidget($args) {
     if (isset($datasource->iswidget)) {
         $method = $args->method;
         $params = json_decode($args->args);
+        if (isset($params->page)) {
+            $datasource->get_paginator()->set_current_page($params->page);
+        }
         return (method_exists($datasource, $method)) ? $datasource->$method($context, $params) : '';
     }
     return null;
@@ -303,4 +307,19 @@ function block_dash_output_fragment_loadtable($args) {
 
     return $tablehtml;
 
+}
+
+/**
+ * Get list of all suggest users for contact list.
+ */
+function block_dash_get_suggest_users() {
+    global $DB, $CFG;
+
+    $users = $DB->get_records_sql("SELECT *
+                                   FROM {user}
+                                  WHERE confirmed = 1 AND deleted = 0 AND id <> ?", array($CFG->siteguest));
+    foreach ($users as $user) {
+        $list[$user->id] = fullname($user);
+    }
+    return isset($list) ? $list : [];
 }

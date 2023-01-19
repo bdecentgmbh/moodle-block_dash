@@ -208,7 +208,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             if ($this->get_filter_collection() && $this->get_filter_collection()->has_filters()) {
                 list ($filtersql, $filterparams) = $this->get_filter_collection()->get_sql_and_params();
-
                 $this->query->where_raw($filtersql[0], $filterparams);
             }
 

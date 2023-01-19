@@ -105,7 +105,7 @@
             </div>
             {{/data.groups}}
             {{^data.groups}}
-            <span>{{#str}} nogroupsavailable, block_dash {{/str}} </span>
+                {{#noresult}} {{{noresult}}} {{/noresult}}
             {{/data.groups}}
         </div>
         {{{/data.viewgroups}}}

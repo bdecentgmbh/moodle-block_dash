@@ -101,6 +101,12 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_css[min-height]', get_string('minheight', 'block_dash'));
         $mform->setType('config_css[min-height]', PARAM_TEXT);
         $mform->addHelpButton('config_css[min-height]', 'minheight', 'block_dash');
+
+        $mform->addElement('header', 'emptystateheading', get_string('emptystateheading', 'block_dash'));
+
+        $mform->addElement('editor', 'config_emptystate', get_string('content'), ['rows' => 5]);
+        $mform->setType('config_emptystate', PARAM_CLEANHTML);
+
     }
 
     /**

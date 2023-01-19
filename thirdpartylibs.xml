@@ -14,4 +14,18 @@
         <license>Apache</license>
         <licenseversion>2.0</licenseversion>
     </library>
+    <library>
+        <location>styles/datepicker.css</location>
+        <name>Datepicker2 for Bootstrap</name>
+        <version>2.0</version>
+        <license>Apache</license>
+        <licenseversion>2.0</licenseversion>
+    </library>
+    <library>
+        <location>styles/select2.min.css</location>
+        <name>Searchable select</name>
+        <version>2.0</version>
+        <license>Apache</license>
+        <licenseversion>2.0</licenseversion>
+    </library>
 </libraries>

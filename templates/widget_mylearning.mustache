@@ -228,9 +228,11 @@
                         <!-- E.O Course contents -->
                     </div>
                 </div>
-                
             </div>
         </div>
+        {{/data.courses}}
+        {{^data.courses}}
+            {{#noresult}} {{{noresult}}} {{/noresult}}
         {{/data.courses}}
     </div>
 

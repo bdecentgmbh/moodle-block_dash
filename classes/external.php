@@ -221,7 +221,8 @@ class external extends external_api {
 
         // If array contains only scalars, overwrite with new config. No more looping required for this level.
         if (is_array($existingconfig) && !self::is_array_multidimensional($existingconfig)) {
-            if ($arraykey == 'coursecategories') {
+            if ($arraykey == 'coursecategories' || $arraykey == 'courseids' || $arraykey == 'roleids'
+                || $arraykey == 'completionstatus' || $arraykey == 'eventnames') {
                 $existingconfig = $newconfig;
             } else {
                 return array_merge($existingconfig, $newconfig);

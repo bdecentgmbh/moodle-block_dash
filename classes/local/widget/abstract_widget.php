@@ -39,6 +39,13 @@ use block_dash\local\paginator;
 abstract class abstract_widget extends abstract_data_source implements data_source_interface, widget_interface, \templatable {
 
     /**
+     * List of data to generate widget template content.
+     *
+     * @var array
+     */
+    public $data = [];
+
+    /**
      * Check the datasource is widget.
      *
      * @var bool

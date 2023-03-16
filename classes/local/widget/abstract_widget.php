@@ -62,6 +62,7 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
         $this->set_widget_layout();
         $this->set_widget_preference();
     }
+
     /**
      * Set widget preferences
      *

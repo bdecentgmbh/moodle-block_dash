@@ -76,7 +76,8 @@ class external extends external_api {
      */
     public static function get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
         $pagelayout = '') {
-        global $PAGE, $DB;
+        global $PAGE, $DB, $OUTPUT;
+
         $params = self::validate_parameters(self::get_block_content_parameters(), [
             'block_instance_id' => $blockinstanceid,
             'page' => $page,
@@ -124,10 +125,22 @@ class external extends external_api {
 
             $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page($params['page']);
 
-            return ['html' => $renderer->render_data_source($bb->get_configuration()->get_data_source())];
+            // Cloned from moodle lib\external\externalib.php 422.
+            // Hack alert: Set a default URL to stop the annoying debug.
+            $PAGE->set_url('/');
+            // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
+            $OUTPUT->header();
+
+            $PAGE->start_collecting_javascript_requirements();
+
+            $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
+
+            $javascript = $PAGE->requires->get_end_code();
+
+            return ['html' => $datarendered, 'scripts' => $javascript];
         }
 
-        return ['html' => 'Error'];
+        return ['html' => 'Error', 'scripts' => ''];
     }
 
     /**
@@ -137,7 +150,8 @@ class external extends external_api {
      */
     public static function get_block_content_returns() {
         return new \external_single_structure([
-            'html' => new \external_value(PARAM_RAW)
+            'html' => new \external_value(PARAM_RAW),
+            'scripts' => new \external_value(PARAM_RAW)
         ]);
     }
 
@@ -197,6 +211,7 @@ class external extends external_api {
 
         $configpreferences = isset($data['config_preferences']) ? $data['config_preferences'] : [];
         $config->preferences = self::recursive_config_merge($config->preferences, $configpreferences, '');
+
         $block->instance_config_save($config);
 
         return [
@@ -208,7 +223,7 @@ class external extends external_api {
      * Recursively merge in new config.
      *
      * @param string $existingconfig
-     * @param string $newconfig
+     * @param array|object $newconfig
      * @param string $arraykey
      * @return mixed
      */
@@ -221,12 +236,7 @@ class external extends external_api {
 
         // If array contains only scalars, overwrite with new config. No more looping required for this level.
         if (is_array($existingconfig) && !self::is_array_multidimensional($existingconfig)) {
-            if ($arraykey == 'coursecategories' || $arraykey == 'courseids' || $arraykey == 'roleids'
-                || $arraykey == 'completionstatus' || $arraykey == 'eventnames') {
-                $existingconfig = $newconfig;
-            } else {
-                return array_merge($existingconfig, $newconfig);
-            }
+            return $newconfig;
         }
 
         // Recursively overwrite values.
@@ -238,7 +248,6 @@ class external extends external_api {
                     : [], $newconfig[$key], $key);
                 unset($existingconfig[$key]);
                 $existingconfig[$key] = $v;
-
             }
         }
 

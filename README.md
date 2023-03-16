@@ -100,9 +100,9 @@ $ php /path/to/moodle/admin/cli/purge_caches.php --lang
 
 * **Data source**: A data source defines which query, fields, and filters are used to retrieve data.
 * **Field definition**: Represents a predefined field that can be added to a data source.
-* **Field attribute**: An attribute changes how field definition output is formatted. 
+* **Field attribute**: An attribute changes how field definition output is formatted.
 * **Query template**: Query templates are written by developers to define which data to include. These are typically joins,
-because selects, wheres, ordering, etc is handled elsewhere (and is often dynamic). 
+because selects, wheres, ordering, etc is handled elsewhere (and is often dynamic).
 
 ### Styling (CSS)
 
@@ -110,7 +110,7 @@ Use specific scoping when targeting elements or Dashes. Here's some tips on writ
 
 ##### Style a specific layout
 
-When configured, each Dash block will have a class representing the chosen layout: 
+When configured, each Dash block will have a class representing the chosen layout:
 
 ```css
 .block_dash.block_dash-local-layout-grid_layout a {
@@ -138,7 +138,7 @@ body:not(.editing) .block_dash {
 
 /* User IS editing */
 body.editing .block_dash {
-    border-color: orange;                        
+    border-color: orange;
 }
 ```
 
@@ -176,7 +176,7 @@ class my_data_source extends abstract_data_source {
      * @return field_definition_interface[]
      */
     public function build_available_field_definitions() {}
-    
+
     /**
      * Build filter collection.
      *
@@ -203,7 +203,7 @@ lib.php
  */
 function pluginname_register_field_definitions() {
     global $CFG;
-    
+
     return require("$CFG->dirroot/plugintype/pluginname/field_definitions.php");
 }
 ```
@@ -225,7 +225,7 @@ return [
 ```
 
 #### Supporting multiple DB types
-If your field definition requires something DB specific, use `select_<dbtype>`.  
+If your field definition requires something DB specific, use `select_<dbtype>`.
 ```php
 [ // Field definition.
     'name' => 'subquery',
@@ -277,11 +277,11 @@ Generate SQL queries to be run by Moodle's Data API
 
 Create generic filters.
 
-### Creating a new Dash Framework API 
+### Creating a new Dash Framework API
 
 #### Step 1 - Determine if your code should be an API
 
-Any reusable chunk of functionality can be used as an API. Think of the Moodle File API or Custom Field API. These APIs provide generic functionality to be utilized in specific ways. 
+Any reusable chunk of functionality can be used as an API. Think of the Moodle File API or Custom Field API. These APIs provide generic functionality to be utilized in specific ways.
 
 Unit testing will also reveal how portable your API code is. If you cannot test without tightly coupled dependencies, then perhaps the code should be business logic inside of a plugin, rather than a reusable API.
 
@@ -307,7 +307,7 @@ Strive for full code coverage on your API and make changes that are backwards co
 namespace block_dash\local\dash_framework\result_cache;
 
 interface cacher {
-    
+
     public function set(string $cache_identifier, array $datatocache): void; // Use typehints and "SOLID" practices.
 
     public function get(string $cache_identifier): array; // Public functions should be easy to use methods of consuming.

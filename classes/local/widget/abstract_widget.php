@@ -181,6 +181,15 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
     }
 
     /**
+     * Is the widget needs to load the js when it the content updated using JS.
+     *
+     * @return bool
+     */
+    public function supports_currentscript() {
+        return false;
+    }
+
+    /**
      * Update the block fetched data before render.
      *
      * @param array $data

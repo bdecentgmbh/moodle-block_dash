@@ -46,6 +46,13 @@ interface widget_interface {
     public function supports_query();
 
     /**
+     * Is the widget needs to load the js when it the content updated using JS.
+     *
+     * @return bool
+     */
+    public function supports_currentscript();
+
+    /**
      * Get tables if the widget uses query method
      *
      * @return void

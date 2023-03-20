@@ -367,7 +367,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 }
             }
         }
-
         return $this->data;
     }
 
@@ -494,7 +493,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if ($this->preferences && isset($this->preferences[$name])) {
             return $this->preferences[$name];
         }
-
         return null;
     }
 

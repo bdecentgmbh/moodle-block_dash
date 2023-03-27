@@ -286,8 +286,11 @@ class contacts_widget extends abstract_widget {
                 }
             }
         }
-        $contactslist = (method_exists('\core_message\api', 'get_user_contacts'))
-            ? \core_message\api::get_user_contacts($userid) : \core_message\api::get_contacts($userid);
+
+        $contactslist = (method_exists('\core_message\api', 'get_user_contacts')) ?
+            \core_message\api::get_user_contacts($userid) :
+            array_flip(array_column(\core_message\api::get_contacts($userid), 'userid'));
+
         $contactusers = array_keys($contactslist);
         $suggestions = array_filter($suggestions, function($value) use ($contactusers) {
             if (!in_array($value->id, $contactusers)) {

@@ -39,6 +39,13 @@ use block_dash\local\paginator;
 abstract class abstract_widget extends abstract_data_source implements data_source_interface, widget_interface, \templatable {
 
     /**
+     * List of data to generate widget template content.
+     *
+     * @var array
+     */
+    public $data = [];
+
+    /**
      * Check the datasource is widget.
      *
      * @var bool
@@ -55,6 +62,7 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
         $this->set_widget_layout();
         $this->set_widget_preference();
     }
+
     /**
      * Set widget preferences
      *
@@ -170,6 +178,15 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
      */
     public function is_widget() {
         return true;
+    }
+
+    /**
+     * Is the widget needs to load the js when it the content updated using JS.
+     *
+     * @return bool
+     */
+    public function supports_currentscript() {
+        return false;
     }
 
     /**

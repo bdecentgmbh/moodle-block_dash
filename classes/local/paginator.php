@@ -106,6 +106,7 @@ class paginator {
      * @return int
      */
     public function get_per_page() {
+
         return $this->perpage;
     }
 

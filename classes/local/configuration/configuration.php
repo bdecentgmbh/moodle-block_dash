@@ -50,7 +50,9 @@ class configuration extends abstract_configuration {
                 throw new \coding_exception('Missing data source.');
             }
 
-            if (isset($blockinstance->config->preferences) && is_array($blockinstance->config->preferences)) {
+            if (isset($blockinstance->config->preferences)
+                && is_array($blockinstance->config->preferences)
+                && !empty($blockinstance->config->preferences)) {
                 $datasource->set_preferences($blockinstance->config->preferences);
             }
 

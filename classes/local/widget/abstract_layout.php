@@ -57,7 +57,6 @@ abstract class abstract_layout extends \block_dash\local\layout\abstract_layout 
         ];
 
         if (!empty($this->get_data_source()->get_all_preferences())) {
-
             try {
                 $templatedata['data'] = $this->get_data_source()->get_widget_data();
 

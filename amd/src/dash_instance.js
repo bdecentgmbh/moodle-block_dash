@@ -129,6 +129,9 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     this.getBlockContentArea().css('opacity', 1);
                     this.initDatePickers();
                     this.initSelect2();
+                    if (response.scripts) {
+                        Templates.runTemplateJS($(response.scripts).html() || response.scripts);
+                    }
                 }.bind(this))
                 .catch(Notification.exception);
         };

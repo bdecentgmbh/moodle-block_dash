@@ -690,7 +690,7 @@ h5:before,
 .block_dash-info-element .course-info-block .left-block .img-block {
     width: 100%;
     height: auto;
-    aspect-ratio: 1;
+    aspect-ratio: 1/1;
 }
 
 @media (min-width: 1200px) and (max-width: 1399px) {

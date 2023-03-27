@@ -5,6 +5,24 @@ Changes
 -------
 
 
+## 1.5
+
+### FREE
+
+- My learning: Improved styling
+
+### PRO
+
+- New widget: Skill graph — display the user's competencies in a competency radar
+- New widget: Course completions — display the aggregated course completion progress as donuts
+- New field: Smart course button — displays appropriate actions depending on enrolment options
+- New field: Enrolment options — displays information about possible enrolment options
+- New condition: Enrolment options (with support for self enrolment, auto enrolment, course credit enrolment, enrolment upon payment)
+- New condition: Hide my courses — can be used to hide courses that the current user is already enrolled into.
+
+Compatibility: Moodle 3.11, Moodle 4.0, Moodle 4.1, Totara TXP (13+)
+
+
 ## 1.4
 
 ### FREE
@@ -38,6 +56,7 @@ Compatibility: Moodle 3.11, Moodle 4.0, Moodle 4.1, Totara TXP (13+)
 - More options for grid layout (columns)
 
 Compatibility: Moodle 3.11, Moodle 4.0, Totara TXP (13+)
+
 
 ## 1.2
 

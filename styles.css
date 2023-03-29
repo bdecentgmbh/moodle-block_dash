@@ -457,11 +457,15 @@ body .select2-container {
     max-height: none;
     object-fit: cover;
     border-radius: 50%;
+    box-shadow: 0 0 10px #ccc;
+}
+.block_dash-info-element .course-info-block .left-block .img-block {
+    margin-bottom: 50px;
 }
 
 .block_dash-info-element .course-info-block .left-block > div,
 .block_dash-info-element .course-info-block .left-block .customfields-container .field-item {
-    margin-top: 25px;
+    margin-top: 10px;
 }
 .block_dash-info-element .course-info-block .left-block .badge-block ul li {
     margin-bottom: 15px;
@@ -478,7 +482,7 @@ body .select2-container {
 }
 .block_dash-info-element .course-info-block .left-block > div h5 {
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 2px;
 }
 .block_dash-info-element .course-info-block .left-block .badge-block ul,
 .block_dash-info-element .course-info-block .left-block .course-staff-block ul {
@@ -683,51 +687,21 @@ h5:before,
     opacity: .5;
 }
 
-@media (min-width: 1400px) {
-    .block_dash-info-element .course-info-block .left-block .img-block {
-        max-width: 400px;
-        width: 100%;
-        height: 400px;
-    }
-    #topofscroll.main-inner .block_dash-info-element .course-info-block .left-block .img-block {
-        height: 300px;
-    }
+.block_dash-info-element .course-info-block .left-block .img-block {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1/1;
 }
 
 @media (min-width: 1200px) and (max-width: 1399px) {
-    .block_dash-info-element .course-info-block .left-block .img-block {
-        max-width: 310px;
-        height: 300px;
-    }
     .block_dash-info-element .course-info-block .left-block .course-staff-block ul li {
         width: 33%;
-    }
-}
-
-@media (min-width: 992px) and (max-width: 1199px) {
-    .block_dash-info-element .course-info-block .left-block .img-block {
-        max-width: 300px;
-        width: 100%;
-        height: 300px;
-    }
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-    .block_dash-info-element .course-info-block .left-block .img-block {
-        max-width: 250px;
-        width: 100%;
-        height: 250px;
     }
 }
 
 @media (max-width: 767px) {
     .block_dash-info-element .course-info-block .row {
         margin-bottom: 20px;
-    }
-    .block_dash-info-element .course-info-block .left-block .img-block {
-        max-width: 300px;
-        width: 100%;
-        height: 300px;
     }
     .block_dash-info-element .course-info-block .right-block {
         margin-top: 40px;

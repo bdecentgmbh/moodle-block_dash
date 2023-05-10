@@ -126,8 +126,8 @@ class external extends external_api {
             $datasource = $bb->get_configuration()->get_data_source();
 
             $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page($params['page']);
-
-            if ($datasource->is_widget() && $datasource->supports_currentscript()) {
+            if (get_class($datasource->get_layout()) == 'local_dash\layout\cards_layout' || $datasource->is_widget()
+                    && $datasource->supports_currentscript()) {
                 // Cloned from moodle lib\external\externalib.php 422.
                 // Hack alert: Set a default URL to stop the annoying debug.
                 $PAGE->set_url('/');
@@ -139,11 +139,11 @@ class external extends external_api {
                 $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
 
                 $javascript = $PAGE->requires->get_end_code();
-
             } else {
                 $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
                 $javascript = '';
             }
+
 
             return ['html' => $datarendered, 'scripts' => $javascript];
         }

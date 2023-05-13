@@ -480,8 +480,17 @@ $string['promotionoptions'] = "Featured\nNormal\nDimmed";
 $string['strcssclass'] = "Cssclass";
 
 $string['strmasonrysearch'] = "Search box";
-$string['strmasonrysort'] = "Filter option";
+$string['strmasonrysort'] = "Sorting";
 $string['strasc'] = "Asc";
 $string['strdesc'] = "Desc";
 $string['styleoptions'] = "Styling options (Custom fields)";
 $string['strinfo'] = "Info";
+$string['strgrid'] = "Grid";
+
+// Details area.
+$string['details_title'] = "Details Title";
+$string['details_body_1'] = "Details Body 1";
+$string['details_body_2'] = "Details Body 2";
+$string['details_body_3'] = "Details Body 3";
+$string['details_footer_left'] = "Details Footer left";
+$string['details_footer_right'] = "Details Footer right";

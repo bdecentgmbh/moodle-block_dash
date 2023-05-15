@@ -143,8 +143,6 @@ class external extends external_api {
                 $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
                 $javascript = '';
             }
-
-
             return ['html' => $datarendered, 'scripts' => $javascript];
         }
 

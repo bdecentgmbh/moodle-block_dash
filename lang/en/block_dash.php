@@ -483,9 +483,10 @@ $string['strmasonrysearch'] = "Search box";
 $string['strmasonrysort'] = "Sorting";
 $string['strasc'] = "Asc";
 $string['strdesc'] = "Desc";
-$string['styleoptions'] = "Styling options (Custom fields)";
+$string['styleoptions'] = "Styling options";
 $string['strinfo'] = "Info";
 $string['strgrid'] = "Grid";
+$string['styleoptions_help'] = "In order to apply individual styles to items, you can use custom fields. Pick the custom fields that you should be applied as CSS class to the grid item. Note: You have to create CSS styles yourself, Dash does not come with predefined CSS styles (but we plan to add the in the next version).";
 
 // Details area.
 $string['details_title'] = "Details Title";

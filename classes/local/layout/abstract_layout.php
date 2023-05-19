@@ -258,7 +258,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
             }
         }
 
-        $formhtml = $this->get_data_source()->get_filter_collection()->create_form_elements();
+        $layout = isset($config->preferences['layout']) ? $config->preferences['layout'] : '';
+        $formhtml = $this->get_data_source()->get_filter_collection()->create_form_elements('', $layout);
 
         if (!is_null($templatedata['data'])) {
             $templatedata = array_merge($templatedata, [
@@ -281,12 +282,15 @@ abstract class abstract_layout implements layout_interface, \templatable {
      */
     protected function map_data($mapping, data_collection_interface $datacollection) {
         foreach ($mapping as $newname => $fieldname) {
-
-            if ($fieldname) {
+            if ($fieldname && !is_array($fieldname) && isset($datacollection[$fieldname])) {
                 $datacollection->add_data(new field($newname, $datacollection[$fieldname], true));
+            } else if ($fieldname && is_array($fieldname)) {
+                $value = array_map(function($field) use ($datacollection) {
+                    return $datacollection[$field];
+                }, $fieldname);
+                $datacollection->add_data(new field($newname, implode(" ", $value), true));
             }
         }
-
         return $datacollection;
     }
 

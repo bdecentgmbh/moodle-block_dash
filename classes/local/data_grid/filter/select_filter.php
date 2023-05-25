@@ -145,10 +145,26 @@ abstract class select_filter extends filter {
 
         $options = $this->options;
         asort($options);
+        $options = array_filter($options);
+
+        // Display the select box as tags only for grid layouts.
+        $tags = ($filtercollection->layout == 'local_dash\layout\cards_layout'
+            && count($options) > 1
+            && count($options) <= BLOCK_DASH_FILTER_TABS_COUNT
+            ) ? true : false;
 
         // If All option is present, send it to top.
         if (isset($options[self::ALL_OPTION])) {
             $options = array(self::ALL_OPTION => $options[self::ALL_OPTION]) + $options;
+
+            if (isset($options[self::ALL_OPTION]) && $tags) {
+                $expstring = explode(" ", $options[self::ALL_OPTION]);
+                if (isset($expstring[1])) {
+                    array_shift($expstring); // Remove first string.
+                    $selectlabel = implode(" ", $expstring);
+                }
+                unset($options[self::ALL_OPTION]);
+            }
         }
 
         $newoptions = [];
@@ -161,7 +177,9 @@ abstract class select_filter extends filter {
         return $OUTPUT->render_from_template('block_dash/filter_select', [
             'name' => $name,
             'options' => $newoptions,
-            'multiple' => true
+            'multiple' => true,
+            'tabs' => $tags,
+            'label' => $selectlabel ?? ''
         ]);
     }
 }

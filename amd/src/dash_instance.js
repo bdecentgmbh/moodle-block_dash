@@ -46,6 +46,40 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 this.refresh();
             }.bind(this));
 
+            // Adding support for tab filters.
+            this.getRoot().on('click', 'button.tab-filter', function(e) {
+                e.preventDefault();
+                var elem = $(e.currentTarget);
+
+                var value = $(e.currentTarget).attr('data-value');
+                var select = $(e.currentTarget).parents('.sort-group').find('select');
+                var prevVal = select.val();
+                // Remove checked is already checked.
+                if (elem.hasClass('is-checked')) {
+                    elem.removeClass('is-checked');
+                    elem.removeClass('btn-primary');
+                    if (select.prop('multiple')) {
+                        var index = prevVal.indexOf(value.toString());
+                        if (index > -1) {
+                            prevVal.splice(index, 1);
+                            value = prevVal;
+                        }
+                    }
+                } else {
+                    elem.addClass('is-checked');
+                    elem.addClass('btn-primary');
+                    if (select.prop('multiple')) {
+                        prevVal.push(value);
+                        value = prevVal;
+                    }
+                }
+                // Set value for select.
+                select.val(value);
+                // Filter results, go back to first page.
+                this.currentPage = 0;
+                this.refresh();
+            }.bind(this));
+
             this.getBlockContentArea().on('click', '.page-link', function(e) {
                 e.preventDefault();
                 this.currentPage = $(e.target).data('page');

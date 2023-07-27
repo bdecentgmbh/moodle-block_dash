@@ -416,3 +416,87 @@ $string['hidemycourses'] = 'Hide my enrolled courses';
 $string['datasource:completion_widget'] = 'Course completions widget';
 $string['coursedates'] = 'Course dates';
 $string['enrollmentoptions'] = 'Enrolment methods';
+
+
+$string['strslider'] = "Slider";
+$string['strmasonry'] = "Masonry";
+$string['layoutmode'] = "Layout mode";
+$string['layoutmode_help'] = "Select which mode appers on the widget";
+$string['autoplay'] = 'Autoplay';
+$string['autoplaySpeed'] = 'Autoplay speed (ms)';
+$string['arrows'] = 'Show arrows';
+$string['centerMode'] = 'Center mode';
+$string['centerPadding'] = 'Center padding (px)';
+$string['dots'] = 'Show dots';
+$string['draggable'] = 'Draggable';
+$string['fade'] = 'Fade';
+$string['infinite'] = 'Infinite loop';
+$string['rows'] = 'Rows';
+$string['slidesPerRow'] = 'Slides per row';
+$string['slidesToShow'] = 'Slides to show';
+$string['slidesToScroll'] = 'Slides to scroll';
+$string['speed'] = 'Transition speed (ms)';
+$string['swipeToSlide'] = 'Swipe to slide';
+$string['variableWidth'] = 'Variable width';
+$string['vertical'] = 'Vertical';
+$string['verticalSwiping'] = 'Vertical swiping';
+
+$string['autoplay_help'] = 'Autoplay';
+$string['autoplaySpeed_help'] = 'Set the speed of the autoplay in milliseconds.';
+$string['arrows_help'] = 'Display arrow buttons for next/previous slide navigation.';
+$string['centerMode_help'] = 'Enables centered view with partial prev/next slides. Use with odd numbered slidesToShow counts.';
+$string['centerPadding_help'] = 'Side padding when in center mode (px).';
+$string['dots_help'] = 'Display dot indicators for slide navigation.';
+$string['draggable_help'] = 'Enables dragging and flicking of slides.';
+$string['fade_help'] = 'Enables fade effect on slides transition.';
+$string['infinite_help'] = 'Enables infinite loop sliding.';
+$string['rows_help'] = 'Number of rows to display when using multiple rows with slidesPerRow option.';
+$string['slidesPerRow_help'] = 'Number of slides to display in one row.';
+$string['slidesToShow_help'] = 'Number of slides to display at once.';
+$string['slidesToScroll_help'] = 'Number of slides to scroll at once.';
+$string['speed_help'] = 'Set the speed of the slide transition in milliseconds.';
+$string['swipeToSlide_help'] = 'Enables swiping/dragging to slide to the closest slide after releasing touch.';
+$string['variableWidth_help'] = 'Enables variable width slides.';
+$string['vertical_help'] = 'Vertical slide orientation.';
+$string['verticalSwiping_help'] = 'Enables vertical swiping/dragging of slides.';
+
+$string['details_area'] = 'Details area';
+$string['details_area_help'] = 'Choose how you want to display the details area.';
+$string['details_area_size'] = 'Details area size';
+$string['details_area_size_help'] = 'Choose how you want to size the details area.';
+$string['like_item'] = 'Like item';
+$string['like_item_help'] = 'Make the details area the same size as the card.';
+$string['fit_content'] = 'Fit content';
+$string['fit_content_help'] = 'Make the height of the details area the same as the card, and let the width be determined by the content.';
+$string['details_area_locations'] = 'Details area locations';
+$string['details_area_locations_help'] = 'Enter the details for each location you want to display in the details area.';
+$string['details_bg_color'] = 'Details Background color';
+$string['details_text_color'] = 'Details Text color';
+$string['masonrycustomfield'] = "Dash settings";
+$string['strgridsize'] = "Grid size";
+$string['gridsizeoptions'] = "Wide\nTall\nSquare";
+$string['strpromotion'] = "Promotion";
+$string['promotionoptions'] = "Featured\nNormal\nDimmed";
+$string['strcssclass'] = "CSS classes";
+
+$string['strmasonrysearch'] = "Search box";
+$string['strmasonrysort'] = "Sorting";
+$string['strasc'] = "Asc";
+$string['strdesc'] = "Desc";
+$string['styleoptions'] = "Styling options";
+$string['strinfo'] = "Info";
+$string['strgrid'] = "Grid";
+$string['styleoptions_help'] = "In order to apply individual styles to items, you can use custom fields. Pick the custom fields that you should be applied as CSS class to the grid item. Note: You have to create CSS styles yourself, Dash does not come with predefined CSS styles (but we plan to add the in the next version).";
+
+// Details area.
+$string['details_title'] = "Details Title";
+$string['details_body_1'] = "Details Body 1";
+$string['details_body_2'] = "Details Body 2";
+$string['details_body_3'] = "Details Body 3";
+$string['details_footer_left'] = "Details Footer left";
+$string['details_footer_right'] = "Details Footer right";
+$string['strdisabled'] = "Disabled";
+$string['strexpanding'] = "Expanding";
+$string['strfloating'] = "Floating";
+$string['strmodal'] = "Modal";
+

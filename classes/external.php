@@ -126,8 +126,8 @@ class external extends external_api {
             $datasource = $bb->get_configuration()->get_data_source();
 
             $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page($params['page']);
-
-            if ($datasource->is_widget() && $datasource->supports_currentscript()) {
+            if (get_class($datasource->get_layout()) == 'local_dash\layout\cards_layout' || $datasource->is_widget()
+                    && $datasource->supports_currentscript()) {
                 // Cloned from moodle lib\external\externalib.php 422.
                 // Hack alert: Set a default URL to stop the annoying debug.
                 $PAGE->set_url('/');
@@ -139,12 +139,10 @@ class external extends external_api {
                 $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
 
                 $javascript = $PAGE->requires->get_end_code();
-
             } else {
                 $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
                 $javascript = '';
             }
-
             return ['html' => $datarendered, 'scripts' => $javascript];
         }
 
@@ -232,10 +230,10 @@ class external extends external_api {
      *
      * @param string $existingconfig
      * @param array|object $newconfig
-     * @param string $arraykey
+     * @param bool $recursive
      * @return mixed
      */
-    private static function recursive_config_merge($existingconfig, $newconfig, $arraykey = '') {
+    private static function recursive_config_merge($existingconfig, $newconfig, $recursive = false) {
         // If existing config is a scalar value than always overwrite. No point in looping new config.
         // This allows preferences that were a scalar to be assigned as arrays by new preferences.
         if (is_scalar($existingconfig)) {
@@ -244,7 +242,11 @@ class external extends external_api {
 
         // If array contains only scalars, overwrite with new config. No more looping required for this level.
         if (is_array($existingconfig) && !self::is_array_multidimensional($existingconfig)) {
-            return $newconfig;
+            if (!$recursive) {
+                return array_merge($existingconfig, $newconfig);
+            } else {
+                return $newconfig;
+            }
         }
 
         // Recursively overwrite values.
@@ -253,7 +255,7 @@ class external extends external_api {
                 $existingconfig[$key] = $value;
             } else if (is_array($value)) {
                 $v = self::recursive_config_merge(isset($existingconfig[$key]) ? $existingconfig[$key]
-                    : [], $newconfig[$key], $key);
+                    : [], $newconfig[$key], true);
                 unset($existingconfig[$key]);
                 $existingconfig[$key] = $v;
             }

@@ -134,7 +134,6 @@ class block_dash extends block_base {
             $this->content->text = is_siteadmin() ? get_string('disableallmessage', 'block_dash') : '';
             return $this->content;
         }
-
         try {
             $bb = block_builder::create($this);
 
@@ -146,7 +145,6 @@ class block_dash extends block_base {
                 && !$this->page->user_is_editing()) {
                 return $this->content;
             }
-
             $this->content = $bb->get_block_content();
 
             if ($css = $this->get_extra_css()) {
@@ -158,7 +156,7 @@ class block_dash extends block_base {
 
         $this->page->requires->css(new \moodle_url('/blocks/dash/styles/select2.min.css'));
         $this->page->requires->css(new \moodle_url('/blocks/dash/styles/datepicker.css'));
-
+        $this->page->requires->css(new \moodle_url('/blocks/dash/styles/slick.css'));
         return $this->content;
     }
 

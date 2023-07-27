@@ -23,8 +23,35 @@
 		"courseurl": "https://localhost/moodle/course/view.php?id=2"
     }
 }}
+{{^tabs}}
+<div class="sort-group">
 <select name="{{#name}}{{name}}{{/name}}{{^name}}name{{/name}}" class="form-control filter-form-control select2" {{#multiple}}multiple{{/multiple}} style="min-width: 300px;">
     {{#options}}
         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
     {{/options}}
 </select>
+</div>
+{{/tabs}}
+
+{{#tabs}}
+<div class="sort-group">
+    <select name="{{#name}}{{name}}{{/name}}{{^name}}name{{/name}}" class="form-control filter-form-control" {{#multiple}}multiple{{/multiple}} style="display:none;">
+        {{#options}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+        {{/options}}
+    </select>
+    <h4 class="sort-title">{{label}}</h4>
+    <div class="sort-by button-group" data-filter-select="[name={{#name}}{{name}}{{/name}}{{^name}}name{{/name}}]" >
+        {{#options}}
+        <button
+            class="btn tab-filter {{#selected}}btn-primary is-checked{{/selected}} {{^selected}} btn-outline-secondary {{/selected}}"
+            data-sort-by="{{value}}"
+            data-value="{{value}}"
+            data-selected="{{#selected}}true{{/selected}}{{^selected}}false{{/selected}}"
+        >
+            {{label}}
+        </button>
+        {{/options}}
+    </div>
+</div>
+{{/tabs}}

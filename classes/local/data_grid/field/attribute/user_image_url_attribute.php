@@ -43,7 +43,7 @@ class user_image_url_attribute extends abstract_field_attribute {
         global $PAGE, $DB;
         if ($user = $DB->get_record('user', ['id' => $data])) {
             $picture = new \user_picture($user);
-            $picture->size = 1;
+            $picture->size = 500;
             $data = $picture->get_url($PAGE);
         }
 

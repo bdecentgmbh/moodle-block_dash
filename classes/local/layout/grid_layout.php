@@ -23,6 +23,8 @@
  */
 
 namespace block_dash\local\layout;
+
+use block_dash\local\data_source\form\preferences_form;
 /**
  * A layout contains information on how to display data.
  * @see abstract_layout for creating new layouts.
@@ -40,6 +42,13 @@ class grid_layout extends abstract_layout {
      */
     public function get_mustache_template_name() {
         return 'block_dash/layout_grid';
+    }
+
+    /**
+     * If the layout supports options.
+     */
+    public function supports_download() {
+        return true;
     }
 
     /**
@@ -76,5 +85,37 @@ class grid_layout extends abstract_layout {
      */
     public function supports_sorting() {
         return true;
+    }
+
+    /**
+     * Add form elements to the preferences form when a user is configuring a block.
+     *
+     * This extends the form built by the data source. When a user chooses a layout, specific form elements may be
+     * displayed after a quick refresh of the form.
+     *
+     * Be sure to call parent::build_preferences_form() if you override this method.
+     *
+     * @param \moodleform $form
+     * @param \MoodleQuickForm $mform
+     * @throws \coding_exception
+     */
+    public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
+
+        if ($form->get_tab() == preferences_form::TAB_FIELDS) {
+
+            // Hide the table.
+            $mform->addElement('advcheckbox', 'config_preferences[hidetable]', get_string('hidetable', 'block_dash'));
+            $mform->setType('config_preferences[hidetable]', PARAM_BOOL);
+            $mform->addHelpButton('config_preferences[hidetable]', 'hidetable', 'block_dash');
+            $mform->setDefault('config_preferences[hidetable]', false);
+
+            // Export the data.
+            $mform->addElement('advcheckbox', 'config_preferences[exportdata]', get_string('enabledownload', 'block_dash'));
+            $mform->setType('config_preferences[exportdata]', PARAM_BOOL);
+            $mform->addHelpButton('config_preferences[exportdata]', 'enabledownload', 'block_dash');
+            $mform->setDefault('config_preferences[exportdata]', get_config('block_dash', 'exportdata'));
+        }
+        parent::build_preferences_form($form, $mform);
+
     }
 }

@@ -500,3 +500,13 @@ $string['strexpanding'] = "Expanding";
 $string['strfloating'] = "Floating";
 $string['strmodal'] = "Modal";
 
+
+// Export download option.
+$string['downloadcsv'] = 'Download in CSV format';
+$string['enabledownload'] = "Export data";
+$string['enabledownload_help'] = "This setting enables users to download the data in both CSV and XLS formats.";
+$string['defaultexportdata'] = "Dash export data";
+$string['defaultexportdata_help'] = "This setting allows the configuration to enable/disable the dash datasource export data.";
+$string['hidetable'] = "Hide the table content.";
+$string['hidetable_help'] = " Enabling this option allows users to hide the table content in dash instance. Only the header and footer blocks will remain visible.";
+$string['strdatasource'] = "datasource";

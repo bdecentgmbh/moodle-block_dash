@@ -42,7 +42,10 @@ class time_attribute extends abstract_field_attribute {
     public function transform_data($data, \stdClass $record) {
         if (is_numeric($data) && $data > 0) {
             $t = $data;
-            return sprintf('%02d:%02d:%02d', ($t / 3600), ($t / (60 % 60)), $t % 60);
+            $hours = floor($t / 3600);
+            $minutes = floor(($t % 3600) / 60);
+            $seconds = $t % 60;
+            return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
         }
 
         return null;

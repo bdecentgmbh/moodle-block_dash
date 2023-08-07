@@ -28,7 +28,7 @@
         {{^data.rows}}
             {{#noresult}}{{{noresult}}}{{/noresult}}
         {{/data.rows}}
-        <div class="table-responsive">
+        <div class="table-responsive{{#preferences.hidetable}} d-none{{/preferences.hidetable}}">
             <table class="table dash-table">
                 <thead>
                     <tr>

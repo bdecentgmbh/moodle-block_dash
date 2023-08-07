@@ -25,6 +25,10 @@
 }}
 <div>
     {{$header}}
+
+        {{#supports_download}}
+            {{{downloadcontent}}}
+        {{/supports_download}}
         {{#supports_filtering}}
             <div class="dash-filters mb-2">
                 {{>block_dash/filter_form}}

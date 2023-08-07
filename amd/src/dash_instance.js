@@ -46,6 +46,51 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 this.refresh();
             }.bind(this));
 
+            this.getRoot().on('submit', '.downloadreport .reportoption form', function(e) {
+                e.preventDefault();
+                let params = new URLSearchParams($(e.target).serialize());
+                let sortDirection = null;
+                if (this.sortField && this.sortDirections.hasOwnProperty(this.sortField)) {
+                    sortDirection = this.sortDirections[this.sortField];
+                }
+                var args = {
+                    'download' : params.get('download'),
+                    "block_instance_id": this.blockInstanceId,
+                    "filter_form_data": JSON.stringify(this.getFilterForm().serializeArray()),
+                    "page": this.currentPage,
+                    "sort_field": this.sortField,
+                    "sort_direction": sortDirection,
+                };
+                let url = M.cfg.wwwroot + '/blocks/dash/download.php';
+                // Create a new form element.
+                const form = $('<form>', {
+                    method: 'post',
+                    action: url,
+                    target: '_self',
+                });
+
+                // Add input fields with your data
+                form.append($('<input>', { type: 'hidden', name: 'download', value: args.download }));
+                form.append($('<input>', { type: 'hidden', name: 'block_instance_id', value: args.block_instance_id }));
+                form.append($('<input>', { type: 'hidden', name: 'filter_form_data', value: args.filter_form_data }));
+                form.append($('<input>', { type: 'hidden', name: 'page', value: args.page }));
+                form.append($('<input>', { type: 'hidden', name: 'sort_field', value: args.sort_field }));
+                form.append($('<input>', { type: 'hidden', name: 'sort_direction', value: args.sort_direction }));
+
+                // Append the form to the body and submit it
+                form.appendTo('body').submit();
+
+                /* $.ajax({
+                    url: 'http://localhost/moodle/moodle-40/blocks/dash/download.php',
+                    type: 'POST',
+                    data: args,
+                    success: function(data) {
+                        //window.location = 'http://localhost/moodle/moodle-40/blocks/dash/download.php';
+                        console.log(data);
+                    }
+                }); */
+            }.bind(this));
+
             // Adding support for tab filters.
             this.getRoot().on('click', 'button.tab-filter', function(e) {
                 e.preventDefault();
@@ -82,7 +127,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
 
             this.getBlockContentArea().on('click', '.page-link', function(e) {
                 e.preventDefault();
-                this.currentPage = $(e.target).data('page');
+				this.currentPage = $(e.target).data('page');
                 this.refresh();
             }.bind(this));
 
@@ -151,7 +196,6 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     "pagelayout" : this.pageLayout,
                 }
             };
-
             return Ajax.call([request])[0];
         };
 

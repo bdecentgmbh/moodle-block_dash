@@ -51,7 +51,9 @@ class create_group extends moodleform {
         $courses = enrol_get_my_courses();
         $courselist = [];
         foreach ($courses as $course) {
-            $courselist[$course->id] = $course->fullname;
+            $courseelement = (class_exists('\core_course_list_element'))
+            ? new \core_course_list_element($course) : new \course_in_list($course);
+            $courselist[$course->id] = $courseelement->get_formatted_fullname();
         }
         $mform->addElement('autocomplete', 'courseid', get_string('course'), $courselist);
         $mform->addRule('courseid', get_string('required'), 'required', null, 'client');

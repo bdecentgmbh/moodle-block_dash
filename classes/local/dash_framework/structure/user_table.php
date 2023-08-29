@@ -145,7 +145,7 @@ class user_table extends table {
         $i = 0;
         foreach (profile_get_custom_fields() as $customfield) {
             $fields[] = new field('pf_' . strtolower($customfield->shortname),
-                new lang_string('customfield', 'block_dash', ['name' => $customfield->name]),
+                new lang_string('customfield', 'block_dash', ['name' => format_string($customfield->name)]),
                 $this, "(SELECT profile$i.data FROM {user_info_data} profile$i
                       WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)"
             );

@@ -90,7 +90,7 @@ abstract class select_filter extends filter {
      * @param string $label
      */
     public function add_option($value, $label) {
-        $this->options[$value] = $label;
+        $this->options[$value] = format_string($label, false);
     }
 
     /**
@@ -100,7 +100,7 @@ abstract class select_filter extends filter {
      */
     public function add_options($options) {
         foreach ($options as $key => $option) {
-            $this->options[$key] = $option;
+            $this->options[$key] = format_string($option, false);
         }
     }
 

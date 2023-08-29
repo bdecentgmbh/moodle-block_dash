@@ -311,7 +311,7 @@ foreach (profile_get_custom_fields() as $customfield) {
         'name' => 'u_pf_' . strtolower($customfield->shortname),
         'select' => "(SELECT profile$i.data FROM {user_info_data} profile$i
                       WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)",
-        'title' => $customfield->name,
+        'title' => format_string($customfield->name),
         'tables' => ['u']
     ];
 

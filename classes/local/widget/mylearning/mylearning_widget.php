@@ -101,7 +101,6 @@ class mylearning_widget extends abstract_widget {
             'groupmode', 'groupmodeforce', 'cacherev'
         ];
         $courses = enrol_get_my_courses($basefields, null, 0, [], false, 0, $completedcourses);
-
         array_walk($courses, function($course) {
             $courseelement = (class_exists('\core_course_list_element'))
             ? new \core_course_list_element($course) : new \course_in_list($course);
@@ -110,15 +109,15 @@ class mylearning_widget extends abstract_widget {
             $category = (class_exists('\core_course_category'))
             ? \core_course_category::get($course->category) : \coursecat::get($course->category);
             $course->courseimage = $this->courseimage($course);
-            $course->category = (isset($category->name) ? $category->name : '');
+            $course->category = (isset($category->name) ? format_string($category->name) : '');
             $course->badges = $this->badges($course);
             $course->coursecontent = $this->coursecontent($course);
             $course->contacts = $this->contacts($course);
             $course->customfields = $this->customfields($course);
             $course->courseurl = new \moodle_url('/course/view.php', ['id' => $course->id]);
             $course->summary = shorten_text($summary, 200);
+            $course->fullname = $courseelement->get_formatted_fullname();
         });
-
         $this->data = (!empty($courses)) ? ['courses' => array_values($courses)] : [];
 
         return $this->data;
@@ -259,7 +258,7 @@ class mylearning_widget extends abstract_widget {
             if ($course->has_custom_fields()) {
                 foreach ($course->get_custom_fields() as $field) {
                     $output[] = [
-                        'fieldname' => $field->get_field()->get('name'),
+                        'fieldname' => format_string($field->get_field()->get('name')),
                         'value' => ($field->export_value()) ? $field->export_value() : '-'
                     ];
                 }
@@ -274,7 +273,7 @@ class mylearning_widget extends abstract_widget {
                         require_once($CFG->dirroot.'/totara/customfield/field/'.$type.'/field.class.php');
                         $classname = 'customfield_'.$type;
                         $output[] = [
-                            'fieldname' => $field->fullname,
+                            'fieldname' => format_string($field->fullname),
                             'value' => $classname::display_item_data($field->data)
                         ];
                     }

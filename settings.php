@@ -46,6 +46,13 @@ if ($ADMIN->fulltree) {
         0
     ));
 
+    $settings->add(new admin_setting_configcheckbox(
+        'block_dash/exportdata',
+        get_string('defaultexportdata', 'block_dash'),
+        get_string('defaultexportdata_help', 'block_dash'),
+        0
+    ));
+
     $settings->add(new admin_setting_configtext(
         'block_dash/suggestinterests',
         get_string('suggestinterests', 'block_dash'),

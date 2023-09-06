@@ -128,6 +128,7 @@ class groups_widget extends abstract_widget {
                     'core_group', 'groups', $group->id, $coursecontext->id
                 ) : '';
 
+            $group->name = format_string($group->name);
             $group->chaturl = ($conversation && $conversation->enabled)
                 ? new \moodle_url('/message/index.php', ['convid' => $conversation->id]) : '';
 

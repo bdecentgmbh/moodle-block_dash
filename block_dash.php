@@ -327,6 +327,9 @@ class block_dash extends block_base {
 
         $bc = parent::get_content_for_output($output);
 
+        if (!isset($bc->controls)) {
+            return $bc;
+        }
         // Move icon.
         $str = new lang_string('preferences', 'core');
         $icon = $output->render(new pix_icon('i/dashboard', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')));

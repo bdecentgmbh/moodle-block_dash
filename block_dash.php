@@ -299,4 +299,46 @@ class block_dash extends block_base {
 
         $cache->set($key, [$fieldname => $sorting[$fieldname]]);
     }
+
+    /**
+     * Dash back is added, now open the modal with configurarions.
+     *
+     * @return void
+     */
+    public function instance_create() {
+        global $CFG;
+
+        $pageurl = $this->page->url;
+        $pageurl->param('bui_editid', $this->instance->id);
+
+        require_once($CFG->dirroot.'/blocks/edit_form.php');
+        if (!is_subclass_of('block_edit_form', '\core_form\dynamic_form')) {
+            redirect($pageurl);
+        }
+    }
+
+    /**
+     * Include the preference option to the blocks controls before genreate the output.
+     *
+     * @param \core_renderer $output
+     * @return \block_contents
+     */
+    public function get_content_for_output($output) {
+
+        $bc = parent::get_content_for_output($output);
+
+        // Move icon.
+        $str = new lang_string('preferences', 'core');
+        $icon = $output->render(new pix_icon('i/dashboard', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')));
+
+        $newcontrols = [];
+        foreach ($bc->controls as $controls) {
+            $newcontrols[] = $controls;
+            if ($controls->text instanceof lang_string && $controls->text->get_identifier() == 'configureblock') {
+                $newcontrols[] = html_writer::link('javascript:void(0);', $icon . $str, array('class' => 'dash-edit-preferences'));
+            }
+        }
+        $bc->controls = $newcontrols;
+        return $bc;
+    }
 }

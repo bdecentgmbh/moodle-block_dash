@@ -500,7 +500,6 @@ $string['strexpanding'] = "Expanding";
 $string['strfloating'] = "Floating";
 $string['strmodal'] = "Modal";
 
-
 // Export download option.
 $string['downloadcsv'] = 'Download in CSV format';
 $string['enabledownload'] = "Export data";
@@ -510,3 +509,23 @@ $string['defaultexportdata_help'] = "This setting allows the configuration to en
 $string['hidetable'] = "Hide the table content.";
 $string['hidetable_help'] = " Enabling this option allows users to hide the table content in dash instance. Only the header and footer blocks will remain visible.";
 $string['strdatasource'] = "datasource";
+// ...Custom feature type.
+$string['customfeaturetype'] = 'Custom feature type';
+// ...Dashaddon content strings.
+$string['contenteditor'] = 'Content';
+$string['contentmodaltitle'] = 'Update the dash content';
+$string['backgroundcolor'] = 'Background color';
+$string['textcolor'] = 'Text color';
+// ...Content addon layout options.
+$string['layoutfull'] = 'Full layout';
+$string['layoutdoubleequal'] = 'Double equal';
+$string['layoutdoubleleft'] = 'Double (1/3, 2/3) ';
+$string['layoutdoubleright'] = 'Double (2/3, 1/3)';
+$string['layouttriple'] = 'Triple equal';
+$string['contentlayout'] = 'Content layout';
+$string['selectlayout'] = 'Select the content layout in preferences to add content';
+$string['otheraddons'] = 'Other addons';
+$string['contentdisplayallpage'] = 'Course main + section';
+$string['contentdisplaysection'] = 'Section pages';
+$string['contentdisplay'] = 'Display';
+$string['contentsections'] = 'Sections to display';

@@ -36,7 +36,10 @@ class mustache_custom_loader extends \Mustache_Loader_FilesystemLoader {
      * Provide a default no-args constructor (we don't really need anything).
      */
     public function __construct() {
+        global $CFG;
 
+        $baseDir = '';
+        parent::__construct($baseDir, []);
     }
 
     /**

@@ -761,25 +761,29 @@ h5:before,
 }
 #page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_datasources_label p,
 #page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_datasources p,
-#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_widgets p {
+#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_widgets p,
+#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_customfeature p {
     width: auto;
     font-weight: bold;
     text-transform: capitalize;
     padding-bottom: 15px;
 }
 #page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_datasources .form-label-addon,
-#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_widgets .form-label-addon {
+#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_widgets .form-label-addon,
+#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_customfeature .form-label-addon {
     margin-left: 5px;
 }
 #page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_datasources,
-#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_widgets {
+#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_widgets,
+#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_customfeature {
     width: auto;
     float: left;
     padding-bottom: 30px;
     margin: 0;
 }
 #page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_datasources .form-inline,
-#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_widgets .form-inline {
+#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_widgets .form-inline,
+#page-wrapper #page #page-content .mform fieldset .fcontainer #fgroup_id_customfeature .form-inline {
     max-width: none;
     flex: auto;
 }
@@ -788,7 +792,8 @@ h5:before,
     width: auto;
     flex: auto;
 }
-#page-wrapper #page #page-content .mform #id_dashconfigheader .fcontainer .form-inline fieldset .form-check-label {
+#page-wrapper #page #page-content .mform #id_dashconfigheader .fcontainer .form-inline fieldset .form-check-label,
+.modal .mform .fcontainer .form-inline fieldset .datasource-item .form-check-label {
     display: inline-block;
     margin: 0;
 }
@@ -797,17 +802,20 @@ h5:before,
 
 #page #page-content .mform #fgroup_id_datasources fieldset legend,
 #page #page-content .mform #fgroup_id_widgets fieldset legend,
+#page #page-content .mform #fgroup_id_customfeature fieldset legend,
 #page #page-content .mform #fgroup_id_datasources_label fieldset legend {
     width: auto;
     float: none;
 }
 #page #page-content .mform #fgroup_id_datasources fieldset legend .legend,
 #page #page-content .mform #fgroup_id_widgets fieldset legend .legend,
+#page #page-content .mform #fgroup_id_customfeature fieldset legend .legend,
 #page #page-content .mform #fgroup_id_datasources_label fieldset legend .legend {
     text-transform: capitalize;
 }
 #page #page-content .mform #fgroup_id_datasources fieldset .felement,
-#page #page-content .mform #fgroup_id_widgets fieldset .felement {
+#page #page-content .mform #fgroup_id_widgets fieldset .felement,
+#page #page-content .mform #fgroup_id_customfeature fieldset .felement {
     width: auto;
     float: none;
 }
@@ -817,7 +825,8 @@ h5:before,
     margin-right: 0;
 }
 #page #page-content .mform fieldset .fcontainer #fgroup_id_datasources,
-#page #page-content .mform fieldset .fcontainer #fgroup_id_widgets {
+#page #page-content .mform fieldset .fcontainer #fgroup_id_widgets,
+#page #page-content .mform fieldset .fcontainer #fgroup_id_customfeature {
     width: auto;
     display: inline-block;
     vertical-align: top;
@@ -825,11 +834,13 @@ h5:before,
     margin-right: 0;
 }
 #page #page-content .mform #fgroup_id_datasources fieldset .felement span,
-#page #page-content .mform #fgroup_id_widgets fieldset .felement span {
+#page #page-content .mform #fgroup_id_widgets fieldset .felement span,
+#page #page-content .mform #fgroup_id_customfeature fieldset .felement span {
     display: block;
 }
 #page #page-content .mform #fgroup_id_datasources fieldset .felement span input,
-#page #page-content .mform #fgroup_id_widgets fieldset .felement span input {
+#page #page-content .mform #fgroup_id_widgets fieldset .felement span input,
+#page #page-content .mform #fgroup_id_customfeature fieldset .felement span input {
     vertical-align: inherit;
 }
 
@@ -923,4 +934,8 @@ h5:before,
 .path-totara.used-region-side-pre.used-region-side-post .dash-block-content
 .dash-filters form.filter-form > .form-control:last-child {
     max-width: none;
+}
+
+.block_dash .dash-container {
+    clear: both;
 }

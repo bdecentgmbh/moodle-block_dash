@@ -199,7 +199,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset) {
+    public function offsetExists($offset) : bool {
         if ($offset == 'data') {
             return true;
         }
@@ -215,7 +215,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
      * @return mixed Can return all value types.
      * @since 5.0.0
      */
-    public function offsetGet($offset) {
+    public function offsetGet(mixed $offset) : mixed {
         if ($offset == 'data') {
             return $this->get_data();
         }
@@ -239,7 +239,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
      * @return void
      * @since 5.0.0
      */
-    public function offsetSet($offset, $value) {
+    public function offsetSet(mixed $offset, mixed $value) : void {
         throw new \coding_exception('Setting data not supported with array access.');
     }
 
@@ -252,7 +252,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
      * @return void
      * @since 5.0.0
      */
-    public function offsetUnset($offset) {
+    public function offsetUnset(mixed $offset) : void {
         throw new \coding_exception('Unsetting data not supported with array access.');
     }
 }

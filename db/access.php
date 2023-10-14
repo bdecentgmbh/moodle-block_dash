@@ -96,4 +96,26 @@ $capabilities = [
             'user'    => CAP_PREVENT,
         ]
     ],
+
+    'block/dash:managewidget' => [
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'user'    => CAP_PREVENT,
+        ]
+    ],
+
+    'block/dash:managedatasource' => [
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'user'    => CAP_PREVENT,
+        ]
+    ],
 ];

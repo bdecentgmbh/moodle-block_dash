@@ -32,9 +32,6 @@
     <div class="dash-header-content">
         {{{header_content}}}
     </div>
-    {{#editing}}
-        <button class="dash-edit-preferences btn btn-sm btn-primary mb-2" style="width: 100%;">{{#str}}preferences{{/str}}</button>
-    {{/editing}}
     <div class="dash-block-content">
         {{{preloaded}}}
     </div>
@@ -45,6 +42,6 @@
 
 {{#js}}
     require(["block_dash/dash_instance"], function(DashInstance) {
-        new DashInstance("#dash-{{block_instance_id}}", "{{block_instance_id}}", "{{block_context_id}}", {{#editing}}true{{/editing}}{{^editing}}false{{/editing}}, "{{istotara}}", "{{pagelayout}}");
+        new DashInstance("#inst{{block_instance_id}}", "{{block_instance_id}}", "{{block_context_id}}", {{#editing}}true{{/editing}}{{^editing}}false{{/editing}}, "{{istotara}}", "{{pagelayout}}");
     });
 {{/js}}

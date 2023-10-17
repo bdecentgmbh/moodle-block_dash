@@ -313,7 +313,29 @@ class block_dash extends block_base {
 
         $bc = parent::get_content_for_output($output);
 
-        if (!isset($bc->controls)) {
+        $datasource = $this->config->data_source_idnumber ?? '';
+
+        if ($datasource) {
+            $info = \block_dash\local\data_source\data_source_factory::get_data_source_info($datasource);
+            $type = $info['type'] ?? 'datasource';
+
+            switch($type) {
+                case 'datasource':
+                    $hascapability = has_capability('block/dash:managedatasource', $this->context);
+                    break;
+                case 'widget':
+                    $hascapability = has_capability('block/dash:managewidget', $this->context);
+                    break;
+                case 'custom':
+                    $hascapability = $datasource::has_capbility($this->context);
+                    break;
+            }
+
+        } else {
+            $hascapability = true;
+        }
+
+        if (!isset($bc->controls) || !$hascapability) {
             return $bc;
         }
         // Move icon.

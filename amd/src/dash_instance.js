@@ -30,6 +30,10 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 this.getRoot()
                     .find('[data-target="subsource-config"] [type=radio], [name="config_data_source_idnumber"]')
                     .addClass('norefresh');
+
+                // Hide the preference link for others.
+                this.getRoot().find('.dash-edit-preferences').hide();
+
                 // Select the parent datasource for the sub config.
                 this.getRoot().on('change', '[data-target="subsource-config"] [type=radio]', function(e) {
                     var subConfig;
@@ -54,7 +58,11 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                             contextid: this.blockContextid,
                             jsonformdata: JSON.stringify(formData)
                         },
-                        done: this.refresh.bind(this),
+                        done: function() {
+                            // Hide the preference link for others.
+                            this.getRoot().find('.dash-edit-preferences').show();
+                            this.refresh();
+                        }.bind(this),
                     }])[0].fail(Notification.exception);
                 }.bind(this));
 

@@ -75,7 +75,7 @@ class block_builder {
      * @throws \moodle_exception
      */
     public function get_block_content() {
-        global $OUTPUT, $CFG;
+        global $OUTPUT, $CFG, $PAGE;
 
         /** @var renderer $renderer */
         $renderer = $this->blockinstance->page->get_renderer('block_dash');
@@ -131,17 +131,20 @@ class block_builder {
                 $text .= $renderer->render(new query_debug($sql, $params));
             }
         } else {
-            // $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
-            require_once($CFG->dirroot.'/blocks/edit_form.php');
-            require_once($CFG->dirroot.'/blocks/dash/edit_form.php');
 
-            $form = new \block_dash_featuresform(null, ['block' => $this->blockinstance->context]);
+            if ($PAGE->user_is_editing()) {
+                require_once($CFG->dirroot.'/blocks/edit_form.php');
+                require_once($CFG->dirroot.'/blocks/dash/edit_form.php');
 
-            $desc = html_writer::tag('p', get_string('choosefeature', 'block_dash'));
-            $data['preloaded'] = html_writer::tag('div',
-                $desc.$form->render(), ['class' => 'dash-configuration-form hide']);
-            $text .= $OUTPUT->render_from_template('block_dash/block', $data);
+                $form = new \block_dash_featuresform(null, ['block' => $this->blockinstance->context]);
 
+                $desc = html_writer::tag('p', get_string('choosefeature', 'block_dash'));
+                $data['preloaded'] = html_writer::tag('div',
+                    $desc.$form->render(), ['class' => 'dash-configuration-form hide']);
+                $text .= $OUTPUT->render_from_template('block_dash/block', $data);
+            } else {
+                $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
+            }
         }
 
         $content = new \stdClass();

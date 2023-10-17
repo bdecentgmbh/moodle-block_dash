@@ -27,12 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = [
     'block/dash:addinstance' => [
         'riskbitmask' => RISK_SPAM | RISK_XSS,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => [
-            'editingteacher' => CAP_PREVENT,
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
         ],
     ],
     'block/dash:myaddinstance' => [
@@ -41,6 +41,7 @@ $capabilities = [
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes'   => [
             'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
             'user'    => CAP_PREVENT,
         ]
     ],
@@ -103,7 +104,8 @@ $capabilities = [
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes'   => [
             'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
             'user'    => CAP_PREVENT,
         ]
     ],
@@ -114,7 +116,8 @@ $capabilities = [
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes'   => [
             'manager' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
             'user'    => CAP_PREVENT,
         ]
     ],

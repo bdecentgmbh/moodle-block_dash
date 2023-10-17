@@ -28,6 +28,8 @@ use block_dash\local\configuration\configuration_interface;
 use block_dash\local\configuration\configuration;
 use block_dash\output\query_debug;
 use block_dash\output\renderer;
+use html_writer;
+
 /**
  * Helper class for creating block instance content.
  *
@@ -79,6 +81,16 @@ class block_builder {
         $renderer = $this->blockinstance->page->get_renderer('block_dash');
 
         $text = '';
+        $editing = ($this->blockinstance->page->user_is_editing() &&
+            has_capability('block/dash:addinstance', $this->blockinstance->context));
+        $data = [
+            'block_instance_id' => $this->blockinstance->instance->id,
+            'block_context_id' => $this->blockinstance->context->id,
+            'editing' => $editing,
+            'istotara' => block_dash_is_totara(),
+            'pagelayout' => $this->blockinstance->page->pagelayout,
+        ];
+
         if ($this->configuration->is_fully_configured()) {
             $bb = self::create($this->blockinstance);
 
@@ -95,14 +107,10 @@ class block_builder {
             }
 
             $editing = ($this->blockinstance->page->user_is_editing() &&
-            has_capability('block/dash:addinstance', $this->blockinstance->context) && $prefernece);
-            $data = [
+                has_capability('block/dash:addinstance', $this->blockinstance->context) && $prefernece);
+            $data += [
                 'preloaded' => $preload,
-                'block_instance_id' => $this->blockinstance->instance->id,
-                'block_context_id' => $this->blockinstance->context->id,
                 'editing' => $editing,
-                'istotara' => block_dash_is_totara(),
-                'pagelayout' => $this->blockinstance->page->pagelayout,
             ];
             if (isset($this->blockinstance->config->header_content)) {
                 $data['header_content'] = format_text($this->blockinstance->config->header_content['text'],
@@ -123,7 +131,17 @@ class block_builder {
                 $text .= $renderer->render(new query_debug($sql, $params));
             }
         } else {
-            $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
+            // $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
+            require_once($CFG->dirroot.'/blocks/edit_form.php');
+            require_once($CFG->dirroot.'/blocks/dash/edit_form.php');
+
+            $form = new \block_dash_featuresform(null, ['block' => $this->blockinstance->context]);
+
+            $desc = html_writer::tag('p', get_string('choosefeature', 'block_dash'));
+            $data['preloaded'] = html_writer::tag('div',
+                $desc.$form->render(), ['class' => 'dash-configuration-form hide']);
+            $text .= $OUTPUT->render_from_template('block_dash/block', $data);
+
         }
 
         $content = new \stdClass();
@@ -142,4 +160,5 @@ class block_builder {
     public static function create(\block_base $blockinstance) {
         return new block_builder($blockinstance);
     }
+
 }

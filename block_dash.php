@@ -23,6 +23,7 @@
  */
 
 use block_dash\local\block_builder;
+use block_dash\local\data_source\data_source_factory;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -300,22 +301,7 @@ class block_dash extends block_base {
         $cache->set($key, [$fieldname => $sorting[$fieldname]]);
     }
 
-    /**
-     * Dash back is added, now open the modal with configurarions.
-     *
-     * @return void
-     */
-    public function instance_create() {
-        global $CFG;
 
-        $pageurl = $this->page->url;
-        $pageurl->param('bui_editid', $this->instance->id);
-
-        require_once($CFG->dirroot.'/blocks/edit_form.php');
-        if (!is_subclass_of('block_edit_form', '\core_form\dynamic_form')) {
-            redirect($pageurl);
-        }
-    }
 
     /**
      * Include the preference option to the blocks controls before genreate the output.
@@ -344,4 +330,7 @@ class block_dash extends block_base {
         $bc->controls = $newcontrols;
         return $bc;
     }
+
+
+
 }

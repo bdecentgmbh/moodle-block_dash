@@ -46,7 +46,7 @@ abstract class abstract_custom_type extends abstract_widget implements \templata
      */
     public $data = [];
 
-    abstract public function build_features_list(&$mform, &$custom);
+    abstract static public function get_features_config(&$mform, $source);
 
     abstract public function get_mustache_template_name() : string;
 

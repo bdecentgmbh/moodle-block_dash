@@ -114,12 +114,12 @@ class block_builder {
             ];
             if (isset($this->blockinstance->config->header_content)) {
                 $data['header_content'] = format_text($this->blockinstance->config->header_content['text'],
-                        $this->blockinstance->config->header_content['format']);
+                        $this->blockinstance->config->header_content['format'], ['noclean' => true]);
             }
 
             if (isset($this->blockinstance->config->footer_content)) {
                 $data['footer_content'] = format_text($this->blockinstance->config->footer_content['text'],
-                    $this->blockinstance->config->footer_content['format']);
+                    $this->blockinstance->config->footer_content['format'], ['noclean' => true]);
             }
 
             $source->update_data_before_render($data);

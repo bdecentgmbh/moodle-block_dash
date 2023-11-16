@@ -53,7 +53,8 @@ abstract class abstract_layout extends \block_dash\local\layout\abstract_layout 
             'is_totara' => block_dash_is_totara(),
             'bootstrap3' => get_config('block_dash', 'bootstrap_version') == 3,
             'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4,
-            'noresult' => isset($config->emptystate['text']) ? format_text($config->emptystate['text'], FORMAT_HTML) : $noresulttxt,
+            'noresult' => isset($config->emptystate['text'])
+                ? format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]) : $noresulttxt,
             'editing' => $PAGE->user_is_editing()
         ];
 

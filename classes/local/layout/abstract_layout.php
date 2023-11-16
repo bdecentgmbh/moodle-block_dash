@@ -246,7 +246,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
             'is_totara' => block_dash_is_totara(),
             'bootstrap3' => get_config('block_dash', 'bootstrap_version') == 3,
             'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4,
-            'noresult' => (isset($config->emptystate)) ? format_text($config->emptystate['text'], FORMAT_HTML) : $noresulttxt
+            'noresult' => (isset($config->emptystate))
+                ? format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]) : $noresulttxt
         ];
 
         if (!empty($this->get_data_source()->get_all_preferences())) {

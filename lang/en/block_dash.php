@@ -528,12 +528,13 @@ $string['otheraddons'] = 'Other addons';
 $string['contentdisplayallpage'] = 'All pages';
 $string['contentdisplaysection'] = 'Section pages';
 $string['contentdisplay'] = 'Display';
+$string['contentsectiondisplay'] = 'Display sections';
 $string['contentsections'] = 'Sections to display';
 $string['dash:managedatasource'] = 'Manage Datasources';
 $string['dash:managewidget'] = 'Manage Widgets';
 $string['addcontent'] = 'Add content';
 $string['editcontent'] = 'Edit content';
-// ...featurechooser strings.
+// ...Feature chooser strings.
 $string['dashaddoncontentdesc'] = 'Choose from the following layouts';
 $string['widgetsdesc'] = 'Pick a ready-to-use content widget and configure it';
 $string['datasourcedesc'] = 'Add dynamic content with data sources and layouts';

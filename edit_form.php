@@ -224,7 +224,7 @@ class block_dash_edit_form extends block_edit_form {
      * @return bool
      */
     public static function display_form_when_adding(): bool {
-        return true;
+        return false;
     }
 }
 

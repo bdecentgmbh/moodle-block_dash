@@ -55,14 +55,14 @@ class builder {
     private $wheres = [];
 
     /**
-     * @var string
+     * @var array
      */
     private $rawwhere;
 
     /**
      * @var array
      */
-    private $rawwhereparameters;
+    private $rawwhereparameters = [];
 
     /**
      * @var int Return a subset of records, starting at this point (optional).
@@ -218,8 +218,9 @@ class builder {
      * @return builder
      */
     public function where_raw(string $wheresql, array $parameters = []): builder {
-        $this->rawwhere = $wheresql;
-        $this->rawwhereparameters = $parameters;
+        $this->rawwhere[] = $wheresql;
+        $this->rawwhereparameters = array_merge($this->rawwhereparameters, $parameters);
+
         return $this;
     }
 
@@ -351,7 +352,9 @@ class builder {
         }
 
         if ($this->rawwhere) {
-            $wheresql[] = $this->rawwhere;
+            foreach ($this->rawwhere as $where) {
+                $wheresql[] = $where;
+            }
             $params = array_merge($params, $this->rawwhereparameters);
         }
 

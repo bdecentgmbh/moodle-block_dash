@@ -61,5 +61,4 @@ abstract class abstract_custom_type extends abstract_widget implements \templata
         return new custom_layout($this);
     }
 
-
 }

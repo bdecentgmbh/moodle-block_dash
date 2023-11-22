@@ -76,7 +76,7 @@ class external extends external_api {
      */
     public static function get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
         $pagelayout = '') {
-        global $PAGE, $DB, $OUTPUT;
+        global $PAGE, $DB, $OUTPUT, $SITE;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
             'block_instance_id' => $blockinstanceid,
@@ -102,7 +102,15 @@ class external extends external_api {
         }
 
         if (!$public) {
-            self::validate_context($block->context);
+            // Verify the block created for frontpage. and user not loggedin allow to access the block content.
+            list($unused, $course, $cm) = get_context_info_array($block->context->id);
+            if ($course->id == $SITE->id && !isloggedin()) {
+                require_course_login($course);
+                $coursecontext = \context_course::instance($course->id);
+                $PAGE->set_context($coursecontext);
+            } else {
+                self::validate_context($block->context);
+            }
         } else {
             $PAGE->set_context($block->context);
         }

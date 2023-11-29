@@ -44,14 +44,14 @@ class standard_strategy implements data_strategy_interface {
      * @return data_collection_interface
      */
     public function convert_records_to_data_collection($records, array $fielddefinitions) {
-        $griddata = new data_collection();
+        $griddata = block_dash_get_data_collection();
 
         foreach ($records as $fullrecord) {
             $record = clone $fullrecord;
             if (isset($record->unique_id)) {
                 unset($record->unique_id);
             }
-            $row = new data_collection();
+            $row = block_dash_get_data_collection();
             foreach ($fielddefinitions as $fielddefinition) {
                 $name = $fielddefinition->get_alias();
 

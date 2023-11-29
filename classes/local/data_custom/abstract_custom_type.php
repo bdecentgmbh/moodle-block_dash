@@ -46,10 +46,28 @@ abstract class abstract_custom_type extends abstract_widget implements \templata
      */
     public $data = [];
 
-    abstract static public function get_features_config(&$mform, $source);
+    /**
+     * Get the features config moodleform elements to display on the configuration.
+     *
+     * @param moodle_form $mform
+     * @param datasource $source
+     * @return void
+     */
+    abstract public static function get_features_config(&$mform, $source);
 
+    /**
+     * Template name to render the datasourse.
+     *
+     * @return string
+     */
     abstract public function get_mustache_template_name() : string;
 
+    /**
+     * Verify the user has capability ti config the widget.
+     *
+     * @param context $context
+     * @return bool
+     */
     abstract public static function has_capbility($context) : bool;
 
     /**

@@ -279,13 +279,12 @@ abstract class abstract_layout implements layout_interface, \templatable {
             $downloadlist = '';
             $options['sesskey'] = sesskey();
             $options["download"] = "csv";
-            $button =  $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadcsv", 'block_dash'), 'get');
+            $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadcsv", 'block_dash'), 'get');
             $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
 
             $options["download"] = "xls";
             $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadexcel"), 'get');
             $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
-
 
             $downloadlist .= html_writer::tag('ul', implode('', $downloadoptions), array('class' => 'list-inline inline'));
             $downloadlist .= html_writer::tag('div', '', array('class' => 'clearfloat'));

@@ -75,7 +75,10 @@ class block_builder {
      * @throws \moodle_exception
      */
     public function get_block_content() {
+        // @codingStandardsIgnoreStart
         global $OUTPUT, $CFG, $PAGE;
+        // Ignore the phplint due to block class not allowed to include the PAGE global variable.
+        // @codingStandardsIgnoreEnd
 
         /** @var renderer $renderer */
         $renderer = $this->blockinstance->page->get_renderer('block_dash');
@@ -131,8 +134,10 @@ class block_builder {
                 $text .= $renderer->render(new query_debug($sql, $params));
             }
         } else {
-
+            // @codingStandardsIgnoreStart
+            // Ignore the phplint due to block class not allowed to include the PAGE global variable.
             if ($PAGE->user_is_editing()) {
+                // @codingStandardsIgnoreEnd
                 require_once($CFG->dirroot.'/blocks/edit_form.php');
                 require_once($CFG->dirroot.'/blocks/dash/edit_form.php');
 

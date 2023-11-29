@@ -568,7 +568,8 @@ body .select2-container {
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-header
 h5 button:before {
     content: '\f107';
-    font-family: fontawesome;
+    font-family: var(--fa-style-family, "Font Awesome 6 Free", fontawesome);
+    font-weight: var(--fa-style, 900);
     font-size: 20px;
     margin-right: 10px;
 }
@@ -680,7 +681,8 @@ h5 .completion-card.completed p i {
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body
 .section-block.inprogress .section-action a:after {
     content: '\f178';
-    font-family: 'fontawesome';
+    font-family: var(--fa-style-family, "Font Awesome 6 Free", fontawesome);
+    font-weight: var(--fa-style, 900);
     margin-left: 10px;
 }
 .block_dash-info-element .course-info-block .right-block .info-block .accordion-block .card-body .section-block.restricted h5,
@@ -696,7 +698,7 @@ h5:before,
 
 @media (min-width: 1400px) {
     .block_dash-info-element .course-info-block .left-block .img-block {
-        max-width: 400px;
+        max-width: 300px;
         width: 100%;
         height: 400px;
     }

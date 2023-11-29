@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_dash\local\data_source\data_source_factory;
 
 /**
@@ -127,7 +129,7 @@ class block_dash_edit_form extends block_edit_form {
 
         if (!isset($config->data_source_idnumber)) {
 
-            self::dash_features_list($mform, $this->block->context);
+            self::dash_features_list($mform, $this->block->context, $this->page);
 
         } else {
             if ($ds = data_source_factory::build_data_source($config->data_source_idnumber,
@@ -143,8 +145,8 @@ class block_dash_edit_form extends block_edit_form {
         }
     }
 
-    public static function dash_features_list(&$mform, $context) {
-        global $OUTPUT, $PAGE;
+    public static function dash_features_list(&$mform, $context, $page) {
+        global $OUTPUT;
         // Group of datasources.
         if (has_capability('block/dash:managedatasource', $context)) {
             $datasources = data_source_factory::get_data_source_form_options();
@@ -193,7 +195,6 @@ class block_dash_edit_form extends block_edit_form {
         // Content layout.
         $customfeatures = data_source_factory::get_data_source_form_options('custom');
         if ($customfeatures) {
-            // $customoptions[] = $mform->createElement('html', html_writer::start_div('custom-addon'));
             foreach ($customfeatures as $id => $source) {
                 if ($id::has_capbility($context)) {
                     $id::get_features_config($mform, $source);
@@ -202,7 +203,7 @@ class block_dash_edit_form extends block_edit_form {
             }
             if (isset($showcustom)) {
 
-                $PAGE->requires->js_amd_inline('require(["jquery"], function($) {
+                $page->requires->js_amd_inline('require(["jquery"], function($) {
                         $("body").on("change", "[data-target=\"subsource-config\"] [type=radio]", function(e) {
                             var subConfig;
                             if (subConfig = e.target.closest("[data-target=\"subsource-config\"]")) {
@@ -228,15 +229,31 @@ class block_dash_edit_form extends block_edit_form {
     }
 }
 
+/**
+ * Dash features form to configure the data source or widget.
+ */
 class block_dash_featuresform extends \moodleform {
 
+    /**
+     * Defined the form fields for the datasource selector list.
+     *
+     * @return void
+     */
     public function definition() {
+        // @codingStandardsIgnoreStart
+        global $PAGE;
+        // Ignore the phplint due to block class not allowed to include the PAGE global variable.
+        // @codingStandardsIgnoreEnd
+
         $mform = $this->_form;
 
         $mform->updateAttributes(['class' => 'form-inline']);
         $mform->updateAttributes(['id' => 'dash-configuration']);
 
         $block = $this->_customdata['block'] ?? '';
-        block_dash_edit_form::dash_features_list($mform, $block);
+        // @codingStandardsIgnoreStart
+        // Ignore the phplint due to block class not allowed to include the PAGE global variable.
+        block_dash_edit_form::dash_features_list($mform, $block, $PAGE);
+        // @codingStandardsIgnoreEnd
     }
 }

@@ -245,7 +245,7 @@ class contacts_widget extends abstract_widget {
         }
 
         // Groups suggestion.
-        $sql = 'SELECT * FROM {groups_members} gm
+        $sql = 'SELECT *, gm.id FROM {groups_members} gm
         JOIN {groups} g ON g.id = gm.groupid
         JOIN {user} u ON u.id = gm.userid
         WHERE gm.userid != :userid AND g.id IN (

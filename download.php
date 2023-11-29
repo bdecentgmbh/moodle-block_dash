@@ -22,18 +22,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require(__DIR__.'/../../config.php');
 
 if (!defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', true);
 }
 
-require(__DIR__.'/../../config.php');
+require_login();
 
 use block_dash\local\block_builder;
 
 $download = optional_param('download', 'csv', PARAM_TEXT);
 $instanceid = required_param('block_instance_id', PARAM_INT);
-$filterform_data = optional_param('filter_form_data', '', PARAM_TEXT);
+$filterformdata = optional_param('filter_form_data', '', PARAM_TEXT);
 $currentpage = optional_param('page', 0, PARAM_INT);
 $sortfield = optional_param('sort_field', '', PARAM_TEXT);
 $sortdir = optional_param('sort_direction', '', PARAM_TEXT);
@@ -50,7 +51,7 @@ $bbdownload = block_builder::create($block);
 if (!$bbdownload->get_configuration()->get_data_source()->get_preferences('exportdata') ) {
     return false;
 }
-foreach (json_decode($filterform_data, true) as $filter) {
+foreach (json_decode($filterformdata, true) as $filter) {
     $bbdownload->get_configuration()
         ->get_data_source()
         ->get_filter_collection()
@@ -59,18 +60,18 @@ foreach (json_decode($filterform_data, true) as $filter) {
 $bbdownload->get_configuration()->get_data_source()->get_paginator()->set_current_page($currentpage);
 $bbdownloadsource = $bbdownload->get_configuration()->get_data_source();
 $file = $bbdownload->get_configuration()->get_data_source()->get_name();
-$filename =  $file . "_" . get_string('strdatasource', 'block_dash');
+$filename = $file . "_" . get_string('strdatasource', 'block_dash');
 if ($download == "xls") {
     require_once("$CFG->libdir/excellib.class.php");
-    /// Calculate file name
-    /// Creating a workbook
+    // Calculate file name.
+    // Creating a workbook.
     $workbook = new \MoodleExcelWorkbook("-");
-    /// Send HTTP headers
+    // Send HTTP headers.
     $filename .= "_" . time();
     $workbook->send($filename);
-    /// Creating the first worksheet
+    // Creating the first worksheet.
     $myxls = $workbook->add_worksheet('dash');
-    /// Print names of all the fields
+    // Print names of all the fields.
     $i = 0;
     foreach ($bbdownloadsource->export_for_template($renderer)['data']->first_child()['data'] as $col) {
         if ($col->is_visible()) {
@@ -92,7 +93,7 @@ if ($download == "xls") {
             $j++;
         }
     }
-    /// Close the workbook
+    // Close the workbook.
     $workbook->close();
 } else if ($download == 'csv') {
     require_once("$CFG->libdir/csvlib.class.php");

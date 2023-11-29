@@ -52,6 +52,8 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
      */
     public $iswidget = true;
 
+
+
     /**
      * Constructor.
      *

@@ -43,8 +43,8 @@ class time_attribute extends abstract_field_attribute {
         if (is_numeric($data) && $data > 0) {
             $t = $data;
             $hours = floor($t / 3600);
-            $minutes = floor(($t % 3600) / 60);
-            $seconds = $t % 60;
+            $minutes = floor((intval($t) % 3600) / 60);
+            $seconds = intval($t) % 60;
             return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
         }
 

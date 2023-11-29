@@ -93,6 +93,33 @@ class block_dash extends block_base {
         parent::instance_config_save($data, $nolongerused);
     }
 
+    /**
+     * Copy any block-specific data when copying to a new block instance.
+     *
+     * @param int $fromid the id number of the block instance to copy from
+     * @return boolean
+     */
+    public function instance_copy($frominstanceid) {
+
+        // Copy the block instance background image.
+        $fromcontext = \context_block::instance($frominstanceid);
+        $fs = get_file_storage();
+        // Do not use draft files hacks outside of forms.
+        $files = $fs->get_area_files($fromcontext->id, 'block_dash', 'images', 0, 'id ASC', false);
+        foreach ($files as $file) {
+            $filerecord = ['contextid' => $this->context->id];
+            $fs->create_file_from_storedfile($filerecord, $file);
+        }
+
+        // Copy the datasource images and files.
+        $bb = block_builder::create($this);
+        $datasource = $bb->get_configuration()->get_data_source();
+        if (!empty($datasource) && method_exists($datasource, 'instance_copy')) {
+            $datasource->instance_copy($frominstanceid, $this->context->id);
+        }
+
+        return true;
+    }
 
     /**
      * Dashes are suitable on all page types.

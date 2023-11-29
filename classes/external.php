@@ -104,7 +104,7 @@ class external extends external_api {
         if (!$public) {
             // Verify the block created for frontpage. and user not loggedin allow to access the block content.
             list($unused, $course, $cm) = get_context_info_array($block->context->id);
-            if ($course->id == $SITE->id && !isloggedin()) {
+            if (isset($course->id) && $course->id == $SITE->id && !isloggedin()) {
                 require_course_login($course);
                 $coursecontext = \context_course::instance($course->id);
                 $PAGE->set_context($coursecontext);
@@ -231,8 +231,6 @@ class external extends external_api {
         }
 
         $block->instance_config_save($config);
-
-        // print_r($data);
 
         return [
             'validationerrors' => false

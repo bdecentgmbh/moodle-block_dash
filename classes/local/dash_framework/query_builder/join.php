@@ -86,7 +86,10 @@ class join {
                                 $jointype = self::TYPE_INNER_JOIN, array $extraparameters = []) {
         $this->table = $table;
         $this->alias = $alias;
-        $this->joinconditions[] = sprintf('%s.%s = %s', $alias, $jointablefield, $origintablefield);
+        // Join table field.
+        if (!empty($jointablefield)) {
+            $this->joinconditions[] = sprintf('%s.%s = %s', $alias, $jointablefield, $origintablefield);
+        }
         $this->jointype = $jointype;
         $this->extraparameters = $extraparameters;
     }

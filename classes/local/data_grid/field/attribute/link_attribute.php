@@ -23,6 +23,9 @@
  */
 
 namespace block_dash\local\data_grid\field\attribute;
+
+use block_dash\local\data_source\abstract_data_source;
+
 /**
  * Transforms data to URL.
  *
@@ -39,15 +42,46 @@ class link_attribute extends abstract_field_attribute {
      * @return mixed
      */
     public function transform_data($data, \stdClass $record) {
+
         if ($data) {
+
             if ($label = $this->get_option('label')) {
                 return \html_writer::link($data, $label);
             }
+
+            if (($url = $this->get_option('customurl')) && ($labelfield = $this->get_option('label_field'))) {
+                $url = $this->update_placeholders($record, urldecode($url));
+                return \html_writer::link($url, $record->$labelfield);
+            }
+
             if ($labelfield = $this->get_option('label_field')) {
                 return \html_writer::link($data, $record->$labelfield);
             }
         }
 
         return $data;
+    }
+
+    /**
+     * Need custom value for transform data, which table uses the attribute dynamically.
+     *
+     * @return bool
+     */
+    public function is_needs_construct_data() {
+        return true;
+    }
+
+    /**
+     * Set the options before transform the data. this will usefull for dynamic field setup.
+     *
+     * @param string $field
+     * @return void
+     */
+    public function set_transform_field($field, $customvalue=null) {
+        $this->set_option('label_field', $field);
+
+        if ($customvalue !== null) {
+            $this->set_option('customurl', new \moodle_url($customvalue));
+        }
     }
 }

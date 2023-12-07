@@ -48,4 +48,25 @@ class linked_icon_attribute extends abstract_field_attribute {
 
         return $data;
     }
+
+    /**
+     * Need custom value for transform data, which table uses the attribute dynamically.
+     *
+     * @return bool
+     */
+    public function is_needs_construct_data() {
+        return true;
+    }
+
+    /**
+     * Set the options before transform the data. this will usefull for dynamic field setup.
+     *
+     * @param string $field
+     * @return void
+     */
+    public function set_transform_field($field, $customvalue=null) {
+        if ($customvalue !== null) {
+            $this->set_option('icon', $customvalue);
+        }
+    }
 }

@@ -23,6 +23,9 @@
  */
 
 namespace block_dash\local\data_grid\field\attribute;
+
+use moodle_url;
+
 /**
  * Transforms data to moodle_url.
  *
@@ -54,5 +57,26 @@ class moodle_url_attribute extends abstract_field_attribute {
         }
 
         return $url;
+    }
+
+    /**
+     * Need custom value for transform data, which table uses the attribute dynamically.
+     *
+     * @return bool
+     */
+    public function is_needs_construct_data() {
+        return true;
+    }
+
+    /**
+     * Set the options before transform the data. this will usefull for dynamic field setup.
+     *
+     * @param string $field
+     * @return void
+     */
+    public function set_transform_field($field, $customvalue=null) {
+        if ($customvalue !== null) {
+            $this->set_option('url', new moodle_url($customvalue));
+        }
     }
 }

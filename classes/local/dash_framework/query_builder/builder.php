@@ -187,10 +187,13 @@ class builder {
      * @param string $selector Field or alias of where clause.
      * @param array $values Values that where clause will compare to.
      * @param string $operator Equals, greater than, in, etc etc. See where::OPERATOR_*
+     * @param string $conjunctive AND, OR etc etc. See where::CONJUCTIVE_OPERATOR_*
+     *
      * @return where
      */
-    public function where(string $selector, array $values, string $operator = where::OPERATOR_EQUAL): where {
-        $where = new where($selector, $values, $operator);
+    public function where(string $selector, array $values, string $operator = where::OPERATOR_EQUAL,
+        string $conjunctive = where::CONJUNCTIVE_OPERATOR_AND): where {
+        $where = new where($selector, $values, $operator, $conjunctive);
         $this->wheres[] = $where;
         return $where;
     }
@@ -345,11 +348,15 @@ class builder {
     protected function get_where_sql_and_params(): array {
         $wheresql = [];
         $params = [];
+        $wsql = ''; // Where builder queryies.
         foreach ($this->get_wheres() as $where) {
-            [$wsql, $wparams] = $where->get_sql_and_params();
-            $wheresql[] = $wsql;
+            [$sql, $wparams] = $where->get_sql_and_params();
+            $conjunc = $where->get_conjunctive_operator() ?: 'AND';
+            $wsql .= !empty($wsql) ? sprintf(' %s %s ', $conjunc, $sql) : $sql;
             $params = array_merge($params, $wparams);
         }
+
+        $wheresql[] = $wsql;
 
         if ($this->rawwhere) {
             foreach ($this->rawwhere as $where) {

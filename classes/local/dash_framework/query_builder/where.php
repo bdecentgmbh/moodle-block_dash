@@ -59,6 +59,51 @@ class where {
     const OPERATOR_IN_QUERY = 'in_query';
 
     /**
+     * SQL grader than.
+     */
+    const OPERATOR_GREATERTHAN = '>';
+
+    /**
+     * SQL greater than or equal.
+     */
+    const OPERATOR_GREATERTHAN_EQUAL = '>=';
+
+    /**
+     * SQL less than.
+     */
+    const OPERATOR_LESSTHAN = '<';
+
+    /**
+     * SQL less than or equal.
+     */
+    const OPERATOR_LESSTHAN_EQUAL = '<=';
+
+    /**
+     * SQL Like query.
+     */
+    const OPERATOR_LIKE = 'like';
+
+    /**
+     * SQL Not like query.
+     */
+    const OPERATOR_NOT_LIKE = 'not_like';
+
+    /**
+     * SQL Not IN.
+     */
+    const OPERATOR_NOT_IN = 'not_in';
+
+    /**
+     * SQL Not IN query.
+     */
+    const OPERATOR_NOT_IN_QUERY = 'not_in_query';
+
+    const CONJUNCTIVE_OPERATOR_OR = 'OR';
+
+    const CONJUNCTIVE_OPERATOR_AND = 'AND';
+
+
+    /**
      * @var string Field or subquery.
      */
     private $selector;
@@ -84,16 +129,25 @@ class where {
     private $queryparams;
 
     /**
+     * Conjunctive operator.
+     *
+     * @var string
+     */
+    private $conjunctive;
+
+    /**
      * Create new where condition.
      *
      * @param string $selector
      * @param array $values
      * @param string $operator
      */
-    public function __construct(string $selector, array $values, string $operator = self::OPERATOR_EQUAL) {
+    public function __construct(string $selector, array $values, string $operator = self::OPERATOR_EQUAL,
+        string $conjunctive = self::CONJUNCTIVE_OPERATOR_AND) {
         $this->selector = $selector;
         $this->values = array_values($values);
         $this->operator = $operator;
+        $this->conjunctive = $conjunctive;
     }
 
     /**
@@ -106,6 +160,15 @@ class where {
         $this->query = $query;
         $this->queryparams = $params;
         $this->operator = self::OPERATOR_IN_QUERY;
+    }
+
+    /**
+     * Conjunctive operator for this where clasuse with previous.
+     *
+     * @return string
+     */
+    public function get_conjunctive_operator() {
+        return $this->conjunctive ?: self::CONJUNCTIVE_OPERATOR_AND;
     }
 
     /**
@@ -133,10 +196,15 @@ class where {
                 break;
         }
 
+
         // Build SQL and params.
         switch ($this->operator) {
             case self::OPERATOR_EQUAL:
             case self::OPERATOR_NOT_EQUAL:
+            case self::OPERATOR_GREATERTHAN:
+            case self::OPERATOR_LESSTHAN:
+            case self::OPERATOR_GREATERTHAN_EQUAL:
+            case self::OPERATOR_LESSTHAN_EQUAL:
                 $placeholder = self::get_param_name();
                 $sql = sprintf('%s %s :%s', $this->selector, $this->operator, $placeholder);
                 $params[$placeholder] = $this->values[0];
@@ -147,9 +215,29 @@ class where {
                 $sql = sprintf('%s %s', $this->selector, $psql);
                 $params = array_merge($params, $pparams);
                 break;
+            case self::OPERATOR_NOT_IN:
+                // At this point we are guaranteed at least one value being applied.
+                [$psql, $pparams] = $DB->get_in_or_equal($this->values, SQL_PARAMS_NAMED, 'p', false);
+                $sql = sprintf('%s %s', $this->selector, $psql);
+                $params = array_merge($params, $pparams);
+                break;
             case self::OPERATOR_IN_QUERY:
                 $sql = sprintf('%s IN (%s)', $this->selector, $this->query);
                 $params = array_merge($params, $this->queryparams);
+                break;
+            case self::OPERATOR_NOT_IN_QUERY:
+                $sql = sprintf('%s NOT IN (%s)', $this->selector, $this->query);
+                $params = array_merge($params, $this->queryparams);
+                break;
+            case self::OPERATOR_LIKE:
+                $placeholder = self::get_param_name();
+                $sql = $DB->sql_like($this->selector, ':'.$placeholder);
+                $params[$placeholder] = isset($this->values[0]) ? '%'.$this->values[0].'%' : '';
+                break;
+            case self::OPERATOR_NOT_LIKE:
+                $placeholder = self::get_param_name();
+                $sql = $DB->sql_like($this->selector, ':'.$placeholder, true, true, true);
+                $params[$placeholder] = isset($this->values[0]) ? '%'.$DB->sql_like_escape($this->values[0]).'%' : '';
                 break;
             default:
                 throw new invalid_operator_exception('', ['operator' => $this->operator]);

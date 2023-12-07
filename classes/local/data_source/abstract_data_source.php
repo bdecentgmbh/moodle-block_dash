@@ -264,6 +264,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             if ($sorting = $this->get_sorting()) {
                 foreach ($sorting as $field => $direction) {
+                    // Configured field is removed then remove the order.
+                    if (is_null($this->get_field($field))) {
+                        continue;
+                    }
                     $this->query->orderby($this->get_field($field)->get_select(), $direction);
                 }
             }

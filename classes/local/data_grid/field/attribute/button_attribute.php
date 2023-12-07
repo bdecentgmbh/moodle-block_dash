@@ -51,11 +51,42 @@ class button_attribute extends abstract_field_attribute {
             if ($label = $this->get_option('label')) {
                 return $OUTPUT->single_button($data, $label, 'get', $params);
             }
+
+            // Support for dynamic field setup.
+            if (($url = $this->get_option('customurl')) && ($labelfield = $this->get_option('label_field'))) {
+                $url = $this->update_placeholders($record, urldecode($url));
+                return $OUTPUT->single_button($url, $record->$labelfield, 'get', $params);
+            }
+
             if ($labelfield = $this->get_option('label_field')) {
                 return $OUTPUT->single_button($data, $record->$labelfield, 'get', $params);
             }
+
         }
 
         return $data;
+    }
+
+    /**
+     * Need custom value for transform data, which table uses the attribute dynamically.
+     *
+     * @return bool
+     */
+    public function is_needs_construct_data() {
+        return true;
+    }
+
+    /**
+     * Set the options before transform the data. this will usefull for dynamic field setup.
+     *
+     * @param string $field
+     * @return void
+     */
+    public function set_transform_field($field, $customvalue=null) {
+        $this->set_option('label_field', $field);
+
+        if ($customvalue !== null) {
+            $this->set_option('customurl', new \moodle_url($customvalue));
+        }
     }
 }

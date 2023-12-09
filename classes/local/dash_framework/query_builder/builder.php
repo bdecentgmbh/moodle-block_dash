@@ -365,7 +365,7 @@ class builder {
             $params = array_merge($params, $this->rawwhereparameters);
         }
 
-        return [implode(' AND ', $wheresql), $params];
+        return [implode(' AND ', array_filter($wheresql)), $params];
     }
 
     /**

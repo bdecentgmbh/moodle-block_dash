@@ -585,7 +585,7 @@ Enter the values with comma(,) for IN conditions';
 // ...Developer datasource and table.
 $string['attribute'] = 'Attribute';
 $string['maintablenotconfigured'] = 'Main table not configured for the developer data source';
-$string['persistenttablealias'] = 'Custom source main table';
+$string['persistenttablealias'] = 'Custom table';
 $string['developerfield'] = '{$a}';
 $string['developerfieldid'] = 'id';
 $string['tablejoinshdr'] = 'Join tables';

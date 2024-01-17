@@ -93,7 +93,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * @var paginator
      */
-    private $paginator;
+    protected $paginator;
 
     /**
      * @var table[]
@@ -264,6 +264,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
             if ($sorting = $this->get_sorting()) {
                 foreach ($sorting as $field => $direction) {
+                    // Configured field is removed then remove the order.
+                    if (is_null($this->get_field($field))) {
+                        continue;
+                    }
                     $this->query->orderby($this->get_field($field)->get_select(), $direction);
                 }
             }
@@ -348,7 +352,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if (is_null($this->data)) {
             // If the block has no preferences do not query any data.
             if (empty($this->get_all_preferences())) {
-                return new data_collection();
+                return block_dash_get_data_collection();
             }
 
             $this->before_data();

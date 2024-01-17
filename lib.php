@@ -325,3 +325,8 @@ function block_dash_get_suggest_users() {
     }
     return isset($list) ? $list : [];
 }
+
+function block_dash_get_data_collection() {
+    return version_compare(phpversion(), '8.1', '<')
+        ? new block_dash\local\data_grid\data\data_collection() : new \block_dash\local\data_grid\data\data_collection_new();
+}

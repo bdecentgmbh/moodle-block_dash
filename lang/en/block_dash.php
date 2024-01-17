@@ -500,7 +500,6 @@ $string['strexpanding'] = "Expanding";
 $string['strfloating'] = "Floating";
 $string['strmodal'] = "Modal";
 
-
 // Export download option.
 $string['downloadcsv'] = 'Download in CSV format';
 $string['enabledownload'] = "Export data";
@@ -510,3 +509,107 @@ $string['defaultexportdata_help'] = "This setting allows the configuration to en
 $string['hidetable'] = "Hide the table content.";
 $string['hidetable_help'] = " Enabling this option allows users to hide the table content in dash instance. Only the header and footer blocks will remain visible.";
 $string['strdatasource'] = "datasource";
+// ...Custom feature type.
+$string['customfeaturetype'] = 'Custom feature type';
+// ...Dashaddon content strings.
+$string['contenteditor'] = 'Content';
+$string['contentmodaltitle'] = 'Update the dash content';
+$string['backgroundcolor'] = 'Background color';
+$string['textcolor'] = 'Text color';
+// ...Content addon layout options.
+$string['layoutfull'] = 'Full layout';
+$string['layoutdoubleequal'] = 'Double equal';
+$string['layoutdoubleleft'] = 'Double (1/3, 2/3) ';
+$string['layoutdoubleright'] = 'Double (2/3, 1/3)';
+$string['layouttriple'] = 'Triple equal';
+$string['contentlayout'] = 'Content layout';
+$string['selectlayout'] = 'Select the content layout in preferences to add content';
+$string['otheraddons'] = 'Other addons';
+$string['contentdisplayallpage'] = 'All pages';
+$string['contentdisplaysection'] = 'Section pages';
+$string['contentdisplay'] = 'Display';
+$string['contentsectiondisplay'] = 'Display sections';
+$string['contentsections'] = 'Sections to display';
+
+$string['dash:managedatasource'] = 'Manage Datasources';
+$string['dash:managewidget'] = 'Manage Widgets';
+$string['addcontent'] = 'Add content';
+$string['editcontent'] = 'Edit content';
+// ...Feature chooser strings.
+$string['dashaddoncontentdesc'] = 'Choose from the following layouts';
+$string['widgetsdesc'] = 'Pick a ready-to-use content widget and configure it';
+$string['datasourcedesc'] = 'Add dynamic content with data sources and layouts';
+// ...Conditions strings.
+$string['showhiddencourses'] = 'Show hidden courses';
+$string['maintable'] = 'Select main table <b>(mnt)</b> ';
+$string['maintable_help'] = 'Choose the main table for field generation';
+// ...Developer addon strings.
+
+// ...Operators strings.
+$string['operatorequal'] = '=';
+$string['operatornotequal'] = '!=';
+$string['operatorgreaterthan'] = '>';
+$string['operatorgreaterthanequal'] = '>=';
+$string['operatorlessthan'] = '<';
+$string['operatorlessthanequal'] = '<=';
+$string['operatorlike'] = 'LIKE';
+$string['operatorlikebetween'] = 'LIKE %..%';
+$string['operatornotlike'] = 'NOT LIKE';
+$string['operatorin'] = 'IN (...)';
+$string['operatornotin'] = 'NOT IN (...)';
+$string['operatorinquery'] = 'IN (Query)';
+$string['operator'] = 'Operator';
+
+// ...Form section headers.
+$string['fieldssection'] = 'Fields setup';
+$string['conditionsection'] = 'Condition setup';
+$string['fields'] = 'Fields';
+$string['field'] = 'Field';
+$string['fieldtransformdata'] = 'Transform the format';
+$string['fieldtransformdata_help'] = 'Transform the format of the value when displayed in the table';
+
+$string['fieldcustomdata'] = 'Additional format value';
+$string['fieldcustomdata_help'] = 'Enter the additional data related to the selected attribute
+<b>For example: </b>
+1. For the link attribute, enter the link and use the field values as parameters <br>
+2. For the percent attribute, Use the outof value. For the grades use 10 otherwise it uses 100
+';
+
+$string['operatorcondition'] = 'Condition';
+$string['conditionvalue'] = 'Value';
+$string['customcondition'] = 'Custom condition query';
+$string['conditionaddfields'] = 'Add {no} condition(s)';
+$string['conditionvalue_help'] = 'Condition Value - Enter the specific value against which the condition will be checked. This value is crucial in determining when the condition is met or satisfied.
+Enter the values with comma(,) for IN conditions';
+
+// ...Developer datasource and table.
+$string['attribute'] = 'Attribute';
+$string['maintablenotconfigured'] = 'Main table not configured for the developer data source';
+$string['persistenttablealias'] = 'Custom table';
+$string['developerfield'] = '{$a}';
+$string['developerfieldid'] = 'id';
+$string['tablejoinshdr'] = 'Join tables';
+
+$string['tablejoin'] = 'Select Join table';
+$string['tablejoin_help'] = 'Choose the table to join with main table. Use the alias for conditions.';
+$string['tablejoinon'] = 'Enter condition query to join';
+$string['deletejoin'] = 'Delete this join table';
+
+$string['placeholderfields'] = 'Placeholder fields';
+$string['placeholderfields_help'] = 'Select the fields and use those fields in the field additional custom values with {field_name}, this will be replaced with its corresponding values.';
+$string['generateattributes'] = 'Generate field attributes';
+$string['fieldattributeshdr'] = 'Transform field data format';
+$string['transformformat'] = 'Transform format of {$a}';
+$string['enablejoins'] = 'Enable joins';
+$string['enableconditions'] = 'Enable conditions';
+$string['generatefields'] = 'Generate fields';
+$string['addjointable'] = 'Add {no} join table to form';
+$string['deletefield'] = 'Delete this field';
+$string['deletecondition'] = 'Delete this condition';
+$string['tablejoinstatichdr'] = 'Joint table #{$a}';
+$string['tablejoinsalias'] = 'Table alias';
+$string['fieldstatichdr'] = 'Field #0';
+$string['conditionstatichdr'] = 'Condition #0';
+$string['operatorcondition_help'] = 'Conjunctive Operator - Choose between "AND" and "OR" to define how multiple conditions are combined.
+- "AND" requires that all conditions must be true for the overall condition to be met.
+- "OR" requires that at least one of the conditions must be true for the overall condition to be met.';

@@ -80,8 +80,8 @@ class field implements field_interface {
      * @return mixed|string
      */
     public function get_value() {
-        if (!filter_var($this->value, FILTER_VALIDATE_URL))  {
-            return format_text($this->value, FORMAT_HTML);
+        if (!filter_var($this->value, FILTER_VALIDATE_URL)) {
+            return format_text($this->value, FORMAT_HTML, ['noclean' => true]);
         }
         return $this->value;
     }

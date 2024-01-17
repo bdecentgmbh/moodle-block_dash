@@ -25,6 +25,8 @@
 namespace block_dash\local\data_grid\field\attribute;
 
 use block_dash\local\dash_framework\structure\field_interface;
+use stdClass;
+
 /**
  * An attribute changes how field output is formatted.
  *
@@ -43,6 +45,13 @@ abstract class abstract_field_attribute implements field_attribute_interface {
      * @var field_interface
      */
     private $field;
+
+    /**
+     * List of placeholder fields.
+     *
+     * @var [type]
+     */
+    protected $placeholders;
 
     /**
      * New attribute.
@@ -135,5 +144,51 @@ abstract class abstract_field_attribute implements field_attribute_interface {
         $this->options[$name] = $value;
     }
 
+    /**
+     * Is the attribute needs to receive the data.
+     *
+     * @return bool
+     */
+    public function is_needs_construct_data() {
+        return false;
+    }
+
+    /**
+     * Set the custom data options to transform the data.
+     *
+     * @param mixed $field
+     * @return void
+     */
+    public function set_transform_field($field) {
+    }
+
+    public function set_placeholders(array $placeholders) {
+        $this->placeholders = $placeholders;
+    }
+
+    /**
+     * Update the placeholder fields values with data.
+     *
+     * @param \stdClass $data
+     * @param string $valuestr
+     * @return void
+     */
+    public function update_placeholders(\stdClass $data, string $valuestr) {
+
+        $amethods = $this->placeholders;
+
+        foreach ($amethods as $fieldname) {
+            $replacement = "{" . $fieldname . "}";
+            // Message text placeholder update.
+            if (stripos($valuestr, $replacement) !== false) {
+                $alias = str_replace('.', '_', $fieldname);
+                $val = $data->$alias ?? '';
+                // Placeholder found on the text, then replace with data.
+                $valuestr = str_ireplace($replacement, $val, $valuestr);
+            }
+        }
+        // echo $valuestr;exit;
+        return $valuestr ?? '';
+    }
     // Endregion.
 }

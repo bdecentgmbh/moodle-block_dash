@@ -331,8 +331,10 @@ class mylearning_widget extends abstract_widget {
      */
     public static function get_course_contents($courseid) {
         global $CFG, $DB, $USER, $PAGE;
+        // Include library files.
         require_once($CFG->dirroot . "/course/lib.php");
         require_once($CFG->libdir . '/completionlib.php');
+        require_once($CFG->libdir . '/externallib.php');
 
         $filters = array();
         // Retrieve the course.

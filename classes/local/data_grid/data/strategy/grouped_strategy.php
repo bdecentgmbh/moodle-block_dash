@@ -65,13 +65,13 @@ class grouped_strategy implements data_strategy_interface {
      * @return data_collection_interface
      */
     public function convert_records_to_data_collection($records, array $fielddefinitions) {
-        $griddata = new data_collection();
+        $griddata = block_dash_get_data_collection();
 
         $sections = [];
 
         foreach ($records as $fullrecord) {
             $record = clone $fullrecord;
-            $row = new data_collection();
+            $row = block_dash_get_data_collection();
 
             $label = $record->{$this->grouplabelfielddefinition->get_alias()};
             if (!$groupby = $record->{$this->groupbyfielddefinition->get_alias()}) {
@@ -90,7 +90,7 @@ class grouped_strategy implements data_strategy_interface {
             }
 
             if (!isset($sections[$groupby])) {
-                $sections[$groupby] = new data_collection();
+                $sections[$groupby] = block_dash_get_data_collection();
                 $sections[$groupby]->add_data(new field('groupby', $groupby, $fielddefinition->get_visibility()));
                 $sections[$groupby]->add_data(new field('label', $label, $fielddefinition->get_visibility()));
             }

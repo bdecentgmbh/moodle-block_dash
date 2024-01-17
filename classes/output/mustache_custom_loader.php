@@ -36,9 +36,13 @@ class mustache_custom_loader extends \Mustache_Loader_FilesystemLoader {
      * Provide a default no-args constructor (we don't really need anything).
      */
     public function __construct() {
+        global $CFG;
 
+        $basedir = '';
+        parent::__construct($basedir, []);
     }
 
+    // @codingStandardsIgnoreStart
     /**
      * Helper function for getting a Mustache template file name.
      * Uses the leading component to restrict us specific directories.
@@ -48,7 +52,7 @@ class mustache_custom_loader extends \Mustache_Loader_FilesystemLoader {
      */
     protected function getFileName($name) {
         global $CFG;
-
+        // @codingStandardsIgnoreEnd
         if (strpos($name, '_custom') === 0) {
             return "$CFG->localcachedir/block_dash/templates/" . str_replace('_custom/', '', $name);
         }

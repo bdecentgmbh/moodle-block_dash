@@ -23,6 +23,7 @@
  */
 
 use block_dash\local\block_builder;
+use block_dash\local\data_source\data_source_factory;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -92,6 +93,33 @@ class block_dash extends block_base {
         parent::instance_config_save($data, $nolongerused);
     }
 
+    /**
+     * Copy any block-specific data when copying to a new block instance.
+     *
+     * @param int $fromid the id number of the block instance to copy from
+     * @return boolean
+     */
+    public function instance_copy($frominstanceid) {
+
+        // Copy the block instance background image.
+        $fromcontext = \context_block::instance($frominstanceid);
+        $fs = get_file_storage();
+        // Do not use draft files hacks outside of forms.
+        $files = $fs->get_area_files($fromcontext->id, 'block_dash', 'images', 0, 'id ASC', false);
+        foreach ($files as $file) {
+            $filerecord = ['contextid' => $this->context->id];
+            $fs->create_file_from_storedfile($filerecord, $file);
+        }
+
+        // Copy the datasource images and files.
+        $bb = block_builder::create($this);
+        $datasource = $bb->get_configuration()->get_data_source();
+        if (!empty($datasource) && method_exists($datasource, 'instance_copy')) {
+            $datasource->instance_copy($frominstanceid, $this->context->id);
+        }
+
+        return true;
+    }
 
     /**
      * Dashes are suitable on all page types.
@@ -299,4 +327,59 @@ class block_dash extends block_base {
 
         $cache->set($key, [$fieldname => $sorting[$fieldname]]);
     }
+
+
+
+    /**
+     * Include the preference option to the blocks controls before genreate the output.
+     *
+     * @param \core_renderer $output
+     * @return \block_contents
+     */
+    public function get_content_for_output($output) {
+
+        $bc = parent::get_content_for_output($output);
+
+        $datasource = $this->config->data_source_idnumber ?? '';
+
+        if ($datasource) {
+            $info = \block_dash\local\data_source\data_source_factory::get_data_source_info($datasource);
+            $type = $info['type'] ?? 'datasource';
+
+            switch($type) {
+                case 'datasource':
+                    $hascapability = has_capability('block/dash:managedatasource', $this->context);
+                    break;
+                case 'widget':
+                    $hascapability = has_capability('block/dash:managewidget', $this->context);
+                    break;
+                case 'custom':
+                    $hascapability = $datasource::has_capbility($this->context);
+                    break;
+            }
+
+        } else {
+            $hascapability = true;
+        }
+
+        if (!isset($bc->controls) || !$hascapability) {
+            return $bc;
+        }
+        // Move icon.
+        $str = new lang_string('preferences', 'core');
+        $icon = $output->render(new pix_icon('i/dashboard', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')));
+
+        $newcontrols = [];
+        foreach ($bc->controls as $controls) {
+            $newcontrols[] = $controls;
+            if ($controls->text instanceof lang_string && $controls->text->get_identifier() == 'configureblock') {
+                $newcontrols[] = html_writer::link('javascript:void(0);', $icon . $str, array('class' => 'dash-edit-preferences'));
+            }
+        }
+        $bc->controls = $newcontrols;
+        return $bc;
+    }
+
+
+
 }

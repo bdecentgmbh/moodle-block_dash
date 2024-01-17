@@ -40,7 +40,7 @@ abstract class select_filter extends filter {
      *
      * @var array
      */
-    private $options = [];
+    protected $options = [];
 
     /**
      * Initialize the filter. It must be initialized before values are extracted or SQL generated.

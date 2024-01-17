@@ -246,7 +246,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
             'is_totara' => block_dash_is_totara(),
             'bootstrap3' => get_config('block_dash', 'bootstrap_version') == 3,
             'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4,
-            'noresult' => (isset($config->emptystate)) ? format_text($config->emptystate['text'], FORMAT_HTML) : $noresulttxt
+            'noresult' => (isset($config->emptystate))
+                ? format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]) : $noresulttxt
         ];
 
         if (!empty($this->get_data_source()->get_all_preferences())) {
@@ -278,13 +279,12 @@ abstract class abstract_layout implements layout_interface, \templatable {
             $downloadlist = '';
             $options['sesskey'] = sesskey();
             $options["download"] = "csv";
-            $button =  $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadcsv", 'block_dash'), 'get');
+            $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadcsv", 'block_dash'), 'get');
             $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
 
             $options["download"] = "xls";
             $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadexcel"), 'get');
             $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
-
 
             $downloadlist .= html_writer::tag('ul', implode('', $downloadoptions), array('class' => 'list-inline inline'));
             $downloadlist .= html_writer::tag('div', '', array('class' => 'clearfloat'));

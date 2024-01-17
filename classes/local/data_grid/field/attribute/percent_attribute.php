@@ -40,6 +40,32 @@ class percent_attribute extends abstract_field_attribute {
      * @throws \coding_exception
      */
     public function transform_data($data, \stdClass $record) {
+
+        if (($percentfor = $this->get_option('outof'))) {
+            $data = $data / $percentfor;
+        }
+
         return round($data * 100) . '%';
+    }
+
+    /**
+     * Need custom value for transform data, which table uses the attribute dynamically.
+     *
+     * @return bool
+     */
+    public function is_needs_construct_data() {
+        return true;
+    }
+
+    /**
+     * Set the options before transform the data. this will usefull for dynamic field setup.
+     *
+     * @param string $field
+     * @return void
+     */
+    public function set_transform_field($field, $customvalue=null) {
+        $customvalue = $customvalue ?: 100;
+        $customvalue = intval($customvalue);
+        $this->set_option('outof', $customvalue);
     }
 }

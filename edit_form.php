@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_dash\local\data_source\data_source_factory;
 
 /**
@@ -121,12 +123,38 @@ class block_dash_edit_form extends block_edit_form {
 
         $label[] = $mform->createElement('html', html_writer::start_div('datasource-content heading'));
         $label[] = $mform->createElement('html', html_writer::end_div());
+
         $mform->addGroup($label, 'datasources_label', get_string('choosefeature', 'block_dash'), array(' '), false);
         $mform->setType('datasources_label', PARAM_TEXT);
 
         if (!isset($config->data_source_idnumber)) {
-            // Group of datasources.
+
+            self::dash_features_list($mform, $this->block->context, $this->page);
+
+        } else {
+            if ($ds = data_source_factory::build_data_source($config->data_source_idnumber,
+                $this->block->context)) {
+                $label = $ds->get_name();
+            } else {
+                $label = get_string('datasourcemissing', 'block_dash');
+            }
+            $datalabel = ($ds->is_widget()
+            ? get_string('widget', 'block_dash') : get_string('datasource', 'block_dash'));
+
+            $mform->addElement('static', 'data_source_label', $datalabel.' : ', $label);
+        }
+    }
+
+    public static function dash_features_list(&$mform, $context, $page) {
+        global $OUTPUT;
+        // Group of datasources.
+        if (has_capability('block/dash:managedatasource', $context)) {
             $datasources = data_source_factory::get_data_source_form_options();
+
+            // Description of the datasources.
+            $group[] = $mform->createElement('html',
+                html_writer::tag('p', get_string('datasourcedesc', 'block_dash'), ['class' => 'dash-source-desc']));
+
             $group[] = $mform->createElement('html', html_writer::start_div('datasource-content'));
             foreach ($datasources as $id => $source) {
                 $group[] = $mform->createElement('html', html_writer::start_div('datasource-item'));
@@ -141,10 +169,15 @@ class block_dash_edit_form extends block_edit_form {
             $mform->addGroup($group, 'datasources', get_string('buildown', 'block_dash'), array(' '), false);
             $mform->setType('datasources', PARAM_TEXT);
             $mform->addHelpButton('datasources', 'buildown', 'block_dash');
+        }
 
-            // Widgets data source.
+        // Widgets data source.
+        if (has_capability('block/dash:managewidget', $context)) {
             $widgetlist = data_source_factory::get_data_source_form_options('widget');
+            $widgets[] = $mform->createElement('html',
+                html_writer::tag('p', get_string('widgetsdesc', 'block_dash'), ['class' => 'dash-source-desc']));
             $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-content'));
+
             foreach ($widgetlist as $id => $source) {
                 $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-item'));
                 $widgets[] = $mform->createElement('radio', 'config_data_source_idnumber', '', $source['name'], $id);
@@ -157,19 +190,70 @@ class block_dash_edit_form extends block_edit_form {
             $mform->addGroup($widgets, 'widgets', get_string('readymatewidgets', 'block_dash'), array(' '), false);
             $mform->setType('widgets', PARAM_TEXT);
             $mform->addHelpButton('widgets', 'readymatewidgets', 'block_dash');
-
-        } else {
-            if ($ds = data_source_factory::build_data_source($config->data_source_idnumber,
-                $this->block->context)) {
-                $label = $ds->get_name();
-            } else {
-                $label = get_string('datasourcemissing', 'block_dash');
-            }
-            $datalabel = ($ds->is_widget()
-            ? get_string('widget', 'block_dash') : get_string('datasource', 'block_dash'));
-
-            $mform->addElement('static', 'data_source_label', $datalabel.' : '.$label);
         }
+
+        // Content layout.
+        $customfeatures = data_source_factory::get_data_source_form_options('custom');
+        if ($customfeatures) {
+            foreach ($customfeatures as $id => $source) {
+                if ($id::has_capbility($context)) {
+                    $id::get_features_config($mform, $source);
+                    $showcustom = true;
+                }
+            }
+            if (isset($showcustom)) {
+
+                $page->requires->js_amd_inline('require(["jquery"], function($) {
+                        $("body").on("change", "[data-target=\"subsource-config\"] [type=radio]", function(e) {
+                            var subConfig;
+                            if (subConfig = e.target.closest("[data-target=\"subsource-config\"]")) {
+                                if (subConfig.parentNode !== null) {
+                                    var dataSource = subConfig.parentNode.querySelector("[name=\"config_data_source_idnumber\"]");
+                                    dataSource.click(); // = true;
+                                }
+                            }
+                        });
+                    })'
+                );
+            }
+        }
+    }
+
+    /**
+     * Display the configuration form when block is being added to the page
+     *
+     * @return bool
+     */
+    public static function display_form_when_adding(): bool {
+        return false;
     }
 }
 
+/**
+ * Dash features form to configure the data source or widget.
+ */
+class block_dash_featuresform extends \moodleform {
+
+    /**
+     * Defined the form fields for the datasource selector list.
+     *
+     * @return void
+     */
+    public function definition() {
+        // @codingStandardsIgnoreStart
+        global $PAGE;
+        // Ignore the phplint due to block class not allowed to include the PAGE global variable.
+        // @codingStandardsIgnoreEnd
+
+        $mform = $this->_form;
+
+        $mform->updateAttributes(['class' => 'form-inline']);
+        $mform->updateAttributes(['id' => 'dash-configuration']);
+
+        $block = $this->_customdata['block'] ?? '';
+        // @codingStandardsIgnoreStart
+        // Ignore the phplint due to block class not allowed to include the PAGE global variable.
+        block_dash_edit_form::dash_features_list($mform, $block, $PAGE);
+        // @codingStandardsIgnoreEnd
+    }
+}

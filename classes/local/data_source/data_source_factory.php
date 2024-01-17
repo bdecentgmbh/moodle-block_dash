@@ -23,6 +23,9 @@
  */
 
 namespace block_dash\local\data_source;
+
+use block_dash\local\data_custom\abstract_custom_type;
+
 /**
  * Responsible for creating data sources on request.
  *
@@ -44,6 +47,7 @@ class data_source_factory implements data_source_factory_interface {
      */
     protected static function get_data_source_registry() {
         if (is_null(self::$datasourceregistry)) {
+
             self::$datasourceregistry = [];
             if ($pluginsfunction = get_plugins_with_function('register_data_sources')) {
                 foreach ($pluginsfunction as $plugintype => $plugins) {
@@ -72,6 +76,19 @@ class data_source_factory implements data_source_factory_interface {
                             self::$datasourceregistry[$callback['identifier']] = $callback + ['type' => 'widget'];
                         }
                     }
+                }
+            }
+
+            // Attach the custom type of feature. For now its content.
+            $crd = \core_component::get_component_classes_in_namespace(null, 'local\\block_dash');
+            foreach ($crd as $fullclassname => $classpath) {
+                if (is_subclass_of($fullclassname, abstract_custom_type::class)) {
+                    self::$datasourceregistry[$fullclassname] = [
+                        'identifier' => $fullclassname,
+                        'name' => abstract_data_source::get_name_from_class($fullclassname),
+                        'help' => abstract_data_source::get_name_from_class($fullclassname, true),
+                        'type' => 'custom'
+                    ];
                 }
             }
         }

@@ -20,7 +20,53 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
         DashInstance.prototype.FILTER_FORM_SELECTOR = '.filter-form';
 
         DashInstance.prototype.init = function() {
+
             Log.debug('Initializing dash instance', this);
+
+            // Select datasource for configuration.
+            if (this.getRoot().find('.dash-configuration-form').length > 0) {
+
+                this.getRoot().find('.dash-configuration-form').removeClass('hide');
+                this.getRoot()
+                    .find('[data-target="subsource-config"] [type=radio], [name="config_data_source_idnumber"]')
+                    .addClass('norefresh');
+
+                // Hide the preference link for others.
+                this.getRoot().find('.dash-edit-preferences').hide();
+
+                // Select the parent datasource for the sub config.
+                this.getRoot().on('change', '[data-target="subsource-config"] [type=radio]', function(e) {
+                    var subConfig;
+                    if (subConfig = e.target.closest('[data-target="subsource-config"]')) {
+                        if (subConfig.parentNode !== null) {
+                            var dataSource = subConfig.parentNode.querySelector('[name="config_data_source_idnumber"]');
+                            dataSource.click(); // = true;
+                        }
+                    }
+                }.bind(this));
+
+                this.getRoot().find('.dash-configuration-form [name="config_data_source_idnumber"]').on('change', function(e) {
+                    console.log(e);
+                    console.log("TEST");
+                    var dataSource = this.getRoot().find('.dash-configuration-form');
+                    var formData = $(dataSource).find('form').serialize();
+
+                    // Now we can continue...
+                    Ajax.call([{
+                        methodname: 'block_dash_submit_preferences_form',
+                        args: {
+                            contextid: this.blockContextid,
+                            jsonformdata: JSON.stringify(formData)
+                        },
+                        done: function() {
+                            // Hide the preference link for others.
+                            this.getRoot().find('.dash-edit-preferences').show();
+                            this.refresh();
+                        }.bind(this),
+                    }])[0].fail(Notification.exception);
+                }.bind(this));
+
+            }
 
             this.initDatePickers();
             this.initSelect2();
@@ -33,7 +79,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                         this.refresh();
                     }.bind(this));
             }
-            this.getRoot().on('change', 'select:not(.norefresh), input:not(.select2-search__field)',
+            this.getRoot().on('change', 'select:not(.norefresh), input:not(.select2-search__field, .norefresh)',
                 function(e) {
                 e.preventDefault();
 
@@ -80,15 +126,6 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 // Append the form to the body and submit it
                 form.appendTo('body').submit();
 
-                /* $.ajax({
-                    url: 'http://localhost/moodle/moodle-40/blocks/dash/download.php',
-                    type: 'POST',
-                    data: args,
-                    success: function(data) {
-                        //window.location = 'http://localhost/moodle/moodle-40/blocks/dash/download.php';
-                        console.log(data);
-                    }
-                }); */
             }.bind(this));
 
             // Adding support for tab filters.

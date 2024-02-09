@@ -613,3 +613,83 @@ $string['conditionstatichdr'] = 'Condition #0';
 $string['operatorcondition_help'] = 'Conjunctive Operator - Choose between "AND" and "OR" to define how multiple conditions are combined.
 - "AND" requires that all conditions must be true for the overall condition to be met.
 - "OR" requires that at least one of the conditions must be true for the overall condition to be met.';
+
+// ...Skill progress dash addon widget.
+$string['widget:skillprogress'] = 'Skill progress';
+$string['widget:skillprogress_help'] = 'Skill Progress displays the user\'s overall progress in all selected skills, including the current level and points earned for each skill individually.';
+$string['coursedates'] = 'Course dates';
+$string['skills'] = 'Skills';
+$string['donut'] = 'Donut';
+$string['currentlevel'] = 'Current level';
+$string['nextlevelpoints'] = 'Next level points';
+$string['totallevelpoints'] = 'Total level points';
+$string['hideindividualskills'] = 'Hide individual skills';
+
+// ...Myskill condition.
+$string['myskills'] = 'My skills';
+$string['hidecompletedskills'] = 'Hide completed skills';
+$string['currentcourseskills'] = 'Current course skills';
+$string['totalpoints'] = 'Total points';
+$string['nextlevelstr'] = '{$a->points} points to become {$a->name}';
+
+// ...Dash skill levels visual display.
+$string['widget:skilllevelvisuals'] = 'Skill level visuals';
+$string['widget:skilllevelvisuals_help'] = 'Display the levels associated with the selected skill as images.';
+$string['fieldcurrentlevel'] = 'Display current level';
+$string['fieldalllevels'] = 'Display all levels';
+$string['chooseskill'] = 'Choose skill';
+$string['tablealias_tsk'] = 'Skills';
+$string['yourcurrentlevel'] = 'Your current level';
+
+// ... My profile widget strings.
+$string['myprofiletable'] = 'Profile';
+$string['widget:myprofile'] = 'My profile';
+$string['widget:myprofile_help'] = 'Display the information about the user profile with important KPI';
+
+$string['field:profileimage'] = 'Show user profile image';
+$string['field:fullname'] = 'Show user\'s full name';
+
+$string['field:completedcourses'] = 'Completed courses';
+$string['field:enrolledprogress'] = 'Completed/total courses';
+$string['field:coursesinprogress'] = 'Courses in progress';
+$string['field:currentcoursescount'] = 'Current courses';
+$string['field:futurecoursescount'] = 'Future courses';
+$string['field:pastcoursescount'] = 'Past courses';
+$string['field:earnedskillpoints'] = 'Earned skill points';
+$string['field:earnedandtotalpoints'] = 'Earned/total skill points';
+$string['field:loginstreak'] = 'Login streak';
+$string['field:loginsthisweek'] = 'Logins this week';
+$string['field:completedcoursesinweek'] = 'Completed courses this week';
+$string['field:completedactivitiesinweek'] = 'Completed activities this week';
+$string['field:numberofdueactivities'] = 'Number of due activities';
+$string['field:numberofoverdueactivities'] = 'Number of overdue activities';
+$string['field:numberofunreadmsg'] = 'Number of unread messages';
+$string['field:numberofcontactreq'] = 'Number of contact requests';
+$string['field:sincelogindays'] = 'Number of days since last login';
+$string['field:teammemberscount'] = 'Number of team members';
+$string['field:onlineuserscount'] = 'Number of users currently online';
+$string['field:profileuserinfo'] = 'Profile user info {$a}';
+$string['field:kpi'] = 'KPI {$a}';
+$string['loginstreakdays'] = 'Login streak days';
+$string['loginstreakdaysdesc'] = 'Set the number of consecutive days required to maintain a streak.';
+
+// ...myprofile kpi labels displayed to users.
+$string['label:completedcourses'] = 'Completed courses';
+$string['label:enrolledprogress'] = 'Completed courses';
+$string['label:coursesinprogress'] = 'Courses in progress';
+$string['label:currentcoursescount'] = 'Current courses';
+$string['label:futurecoursescount'] = 'Future courses';
+$string['label:pastcoursescount'] = 'Past courses';
+$string['label:earnedskillpoints'] = 'Points collected';
+$string['label:earnedandtotalpoints'] = 'Earned/total points';
+$string['label:loginstreak'] = 'Day streak';
+$string['label:loginsthisweek'] = 'Logins this week';
+$string['label:completedcoursesinweek'] = 'Courses completed this week';
+$string['label:completedactivitiesinweek'] = 'Activities completed this week';
+$string['label:numberofdueactivities'] = 'Due activities';
+$string['label:numberofoverdueactivities'] = 'Overdue activities';
+$string['label:numberofunreadmsg'] = 'Unread messages';
+$string['label:numberofcontactreq'] = 'Contact requests';
+$string['label:sincelogindays'] = 'Days since last login';
+$string['label:teammemberscount'] = 'Team members';
+$string['label:onlineuserscount'] = 'Users currently online';

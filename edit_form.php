@@ -78,7 +78,9 @@ class block_dash_edit_form extends block_edit_form {
             0 => get_string('no'),
             1 => get_string('yes')
         ]);
-        $mform->setType('config_hide_When_empty', PARAM_BOOL);
+
+        $mform->setType('config_hide_when_empty', PARAM_INT);
+        $mform->setDefault('config_hide_when_empty', get_config('block_dash', 'hide_when_empty'));
 
         $mform->addElement('text', 'config_css_class', get_string('cssclass', 'block_dash'));
         $mform->setType('config_css_class', PARAM_TEXT);
@@ -109,6 +111,13 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addElement('editor', 'config_emptystate', get_string('content'), ['rows' => 5]);
         $mform->setType('config_emptystate', PARAM_CLEANHTML);
 
+        $widgetlist = data_source_factory::get_data_source_form_options('widget');
+        foreach ($widgetlist as $id => $source) {
+            if (method_exists($id, 'extend_config_form')) {
+                $id::extend_config_form($mform, $source, $this);
+                $showcustom = true;
+            }
+        }
     }
 
     /**
@@ -177,7 +186,6 @@ class block_dash_edit_form extends block_edit_form {
             $widgets[] = $mform->createElement('html',
                 html_writer::tag('p', get_string('widgetsdesc', 'block_dash'), ['class' => 'dash-source-desc']));
             $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-content'));
-
             foreach ($widgetlist as $id => $source) {
                 $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-item'));
                 $widgets[] = $mform->createElement('radio', 'config_data_source_idnumber', '', $source['name'], $id);

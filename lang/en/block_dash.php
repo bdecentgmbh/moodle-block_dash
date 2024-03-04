@@ -163,6 +163,7 @@ $string['headercontent'] = 'Header content';
 $string['headercontent_help'] = 'Content displayed in the block header.';
 $string['headingfield'] = 'Heading field';
 $string['hidewhenempty'] = 'Hide when empty';
+$string['hidewhenempty_desc'] = "Hide the dash block when it's empty.";
 $string['iconfield'] = 'Icon field';
 $string['imageoverlayfield'] = 'Image overlay field';
 $string['imageoverlayfield_help'] = 'Content to display over image with solid background.';
@@ -585,7 +586,7 @@ Enter the values with comma(,) for IN conditions';
 // ...Developer datasource and table.
 $string['attribute'] = 'Attribute';
 $string['maintablenotconfigured'] = 'Main table not configured for the developer data source';
-$string['persistenttablealias'] = 'Custom table';
+$string['persistenttablealias'] = 'Custom source main table';
 $string['developerfield'] = '{$a}';
 $string['developerfieldid'] = 'id';
 $string['tablejoinshdr'] = 'Join tables';
@@ -693,3 +694,6 @@ $string['label:numberofcontactreq'] = 'Contact requests';
 $string['label:sincelogindays'] = 'Days since last login';
 $string['label:teammemberscount'] = 'Team members';
 $string['label:onlineuserscount'] = 'Users currently online';
+
+$string['restrictcurrentsection'] = "Automatically restrict to current section";
+$string['restrictcurrentsection_desc'] = "If a dash block with the content addon is added to a single-section page, it shall be automatically restricted to that section.";

@@ -39,6 +39,17 @@ if ($ADMIN->fulltree) {
         ]
     ));
 
+    $settings->add(new admin_setting_configselect(
+        'block_dash/hide_when_empty',
+        get_string('hidewhenempty', 'block_dash'),
+        get_string('hidewhenempty_desc', 'block_dash'),
+        0,
+        [
+            0 => get_string('no'),
+            1 => get_string('yes')
+        ]
+        ));
+
     $settings->add(new admin_setting_configcheckbox(
         'block_dash/disableall',
         get_string('disableall', 'block_dash'),

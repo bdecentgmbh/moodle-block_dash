@@ -700,7 +700,7 @@ $string['learningpath:path'] = 'Path';
 $string['learningpath:infoarea'] = 'Info area content';
 
 $string['widget:learningpath'] = 'Learning Path';
-$string['widget:learningpath_help'] = 'Display the levels associated with the selected skill as images.';
+$string['widget:learningpath_help'] = 'List of courses available in the learning path.';
 
 $string['dot'] = "Dot";
 $string['tinyimage'] = "Tiny image";
@@ -742,8 +742,10 @@ $string['field:orderdirection'] = "Order direction";
 $string['field:orderdirection_help'] = "Order direction";
 $string['field:limit'] = "Limit";
 $string['field:limit_help'] = "Limit";
-$string['field:learningpathtype'] = "Path";
-$string['leanringpath_infocontent'] = 'You have completed {$a->completed} out of {$a->total} courses. The next course in this learning path is: <b> {$a->nextcourse}</b>';
+$string['field:learningpathdesktop'] = "Path for Desktop";
+$string['field:learningpathtablet'] = "Path for Tablet";
+$string['field:learningpathmobile'] = "Path for Mobile";
+$string['leanringpath_infocontent'] = 'You have completed <b>{$a->completed}</b> out of <b> {$a->total} </b> courses. The next course in this learning path is: <b> {$a->nextcourse}</b>';
 $string['trialpath'] = "Trial";
 $string['anothertrailpath'] = "Another trial";
 $string['circlepath'] = "Circle";
@@ -759,12 +761,12 @@ $string['completedlearningpath'] = "Learning path complete. Good job!";
 
 $string['resumecourse'] = "Resume course";
 $string['completedcourse'] = "Completed course";
+$string['startcourse'] = "Start course";
 
 $string['restrictcurrentsection'] = "Automatically restrict to current section";
 $string['restrictcurrentsection_desc'] = "If a dash block with the content addon is added to a single-section page, it shall be automatically restricted to that section.";
 
 $string['learningpathstart'] = 'Start';
 $string['learningpathfinish'] = 'Finish';
+$string['nocourselearnigpath'] = "No courses have been added to the learning path yet.";
 
-$string['restrictcurrentsection'] = "Automatically restrict to current section";
-$string['restrictcurrentsection_desc'] = "If a dash block with the content addon is added to a single-section page, it shall be automatically restricted to that section.";

@@ -35,10 +35,10 @@ class behat_block_dash extends behat_base {
 
     /**
      * Turns block editing mode on.
-     * @Given I switch block editing mode on
-     * @Given I turn block editing mode on
+     *
+     * @Give I turn dash block editing mode on
      */
-    public function i_turn_block_editing_mode_on() {
+    public function i_turn_dash_block_editing_mode_on() {
         global $CFG;
 
         if ($CFG->branch >= "400") {
@@ -70,9 +70,9 @@ class behat_block_dash extends behat_base {
 
     /**
      * I follow dashboard
-     * @Given I follow dashboard
+     * @Give I follow dashboard
      */
-    public function i_follow_dashboard() {
+    /* public function i_follow_dashboard() {
         global $CFG;
 
         if ($CFG->branch >= "400") {
@@ -80,5 +80,47 @@ class behat_block_dash extends behat_base {
         } else {
             $this->execute('behat_navigation::i_follow_in_the_user_menu', ["Dashboard"]);
         }
+    } */
+
+    /**
+     * Creates a datasource for dash block.
+     *
+     ** @Given /^I create dash "(?P<datasource>(?:[^"]|\\")*)" datasource $/
+     * @Given I create dash :arg1 datasource
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $datasource
+     * @param TableNode $data
+     */
+    public function i_create_dash_datasource($datasource) {
+        global $CFG;
+
+        $this->execute('behat_navigation::i_navigate_to_in_site_administration',
+            ['Appearance > Default Dashboard page']);
+        $this->execute('behat_block_dash::i_turn_dash_block_editing_mode_on', []);
+        $this->execute('behat_blocks::i_add_the_block', ["Dash"]);
+        $this->execute('behat_general::i_click_on_in_the', [$datasource, 'text', 'New Dash', 'block']);
+
+        // $this->execute('behat_general::i_click_on', ['Add menu item', 'button']);
+        // $this->execute('behat_forms::i_set_the_following_fields_to_these_values', [$data]);
+        // $this->execute('behat_general::i_click_on', ['Save changes', 'button']);
     }
+
+    /**
+     * Clicks on preference of the dash for specified block. Page must be in editing mode.
+     *
+     * Argument block_name may be either the name of the block or CSS class of the block.
+     *
+     * @Given /^I open the "(?P<block_name_string>(?:[^"]|\\")*)" block preference$/
+     * @param string $blockname
+     */
+    public function i_open_the_dash_block($blockname) {
+        // Note that since $blockname may be either block name or CSS class, we can not use the exact label of "Configure" link.
+        $this->execute("behat_blocks::i_open_the_blocks_action_menu", $this->escape($blockname));
+
+        $this->execute('behat_general::i_click_on_in_the',
+            array("Preference", "link", $this->escape($blockname), "block")
+        );
+    }
+
 }

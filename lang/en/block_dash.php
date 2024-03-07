@@ -765,3 +765,6 @@ $string['restrictcurrentsection_desc'] = "If a dash block with the content addon
 
 $string['learningpathstart'] = 'Start';
 $string['learningpathfinish'] = 'Finish';
+
+$string['restrictcurrentsection'] = "Automatically restrict to current section";
+$string['restrictcurrentsection_desc'] = "If a dash block with the content addon is added to a single-section page, it shall be automatically restricted to that section.";

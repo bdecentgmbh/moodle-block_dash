@@ -66,6 +66,22 @@ class block_dash extends block_base {
         } else {
             $this->title = get_string('newblock', 'block_dash');
         }
+
+        $bb = block_builder::create($this);
+        if ($bb->is_collapsible_content_addon()) {
+            $addclass = "collapsible-block dash-block-collapse-icon";
+            if (!$bb->is_section_expand_content_addon()) {
+                $addclass .= " collapsed";
+            }
+            $attr = [
+                'data-toggle' => 'collapse',
+                'class' => $addclass,
+                'href' => "#dash-{$this->instance->id}",
+                "aria-expanded" => "false",
+                "aria-controls" => "dash-{$this->instance->id}"
+            ];
+            $this->title = html_writer::tag('span', $this->title, $attr);
+        }
     }
 
     /**
@@ -206,6 +222,10 @@ class block_dash extends block_base {
 
         if (isset($this->config->preferences['layout'])) {
             $attributes['class'] .= ' ' . str_replace('\\', '-', $this->config->preferences['layout']);
+        }
+        $bb = block_builder::create($this);
+        if ($bb->is_collapsible_content_addon()) {
+            $attributes['class'] .= ' block-collapse-block';
         }
 
         return $attributes;

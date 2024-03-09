@@ -91,7 +91,7 @@ class groups_widget extends abstract_widget {
         $context = $this->get_block_instance()->context;
         $option = [
             'headermenu' => 'true',
-            'creategroup' => has_capability('block/dash:mygroups_creategroup', $context)
+            'creategroup' => has_capability('block/dash:mygroups_creategroup', $context),
         ];
         $data['blockmenu'] = $OUTPUT->render_from_template('block_dash/widget_groups', $option);
     }
@@ -216,7 +216,7 @@ class groups_widget extends abstract_widget {
     public function addmembers($context, $args) {
         $group = groups_get_group($args->group);
         $memberform = new \block_dash\local\widget\groups\add_members(null, [
-            'groupid' => $args->group, 'courseid' => $group->courseid
+            'groupid' => $args->group, 'courseid' => $group->courseid,
         ]);
         return $memberform->render();
     }

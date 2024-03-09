@@ -60,7 +60,7 @@ class date_filter extends filter {
      * @throws \coding_exception
      */
     public function __construct($name, $select, $function, $label = '', $clausetype = self::CLAUSE_TYPE_WHERE) {
-        if (!in_array($function, array(self::DATE_FUNCTION_CEIL, self::DATE_FUNCTION_FLOOR, self::DATE_FUNCTION_NONE))) {
+        if (!in_array($function, [self::DATE_FUNCTION_CEIL, self::DATE_FUNCTION_FLOOR, self::DATE_FUNCTION_NONE])) {
             throw new \coding_exception('Invalid date function');
         }
 
@@ -79,7 +79,7 @@ class date_filter extends filter {
             self::OPERATION_GREATER_THAN,
             self::OPERATION_GREATER_THAN_EQUAL,
             self::OPERATION_LESS_THAN,
-            self::OPERATION_LESS_THAN_EQUAL
+            self::OPERATION_LESS_THAN_EQUAL,
         ];
     }
 
@@ -151,7 +151,7 @@ class date_filter extends filter {
         return $OUTPUT->render_from_template('block_dash/filter_date', [
             'label' => $this->get_label(),
             'name' => $name,
-            'value' => $this->get_raw_value()
+            'value' => $this->get_raw_value(),
         ]);
     }
 }

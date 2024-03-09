@@ -42,7 +42,7 @@ class image_attribute extends abstract_field_attribute {
         if ($data) {
             return \html_writer::img($data, $this->get_option('title'), [
                 'class' => 'img-responsive',
-                'role' => 'presentation '
+                'role' => 'presentation ',
             ]);
         }
 
@@ -62,6 +62,8 @@ class image_attribute extends abstract_field_attribute {
      * Set the options before transform the data. this will usefull for dynamic field setup.
      *
      * @param string $field
+     * @param string $customvalue
+     *
      * @return void
      */
     public function set_transform_field($field, $customvalue=null) {

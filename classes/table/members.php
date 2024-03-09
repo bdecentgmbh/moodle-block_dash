@@ -114,7 +114,7 @@ class members extends \table_sql implements dynamic_table {
     public function col_fullname($row) {
         global $OUTPUT;
 
-        return $OUTPUT->user_picture($row, array('size' => 35, 'courseid' => $row->courseid, 'includefullname' => true));
+        return $OUTPUT->user_picture($row, ['size' => 35, 'courseid' => $row->courseid, 'includefullname' => true]);
     }
 
     /**

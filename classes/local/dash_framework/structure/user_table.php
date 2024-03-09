@@ -36,6 +36,7 @@ use block_dash\local\data_grid\field\attribute\rename_group_ids_attribute;
 use block_dash\local\data_grid\field\attribute\user_image_url_attribute;
 use lang_string;
 use moodle_url;
+
 /**
  * Class abstract_data_source.
  *
@@ -68,7 +69,7 @@ class user_table extends table {
 
         $fields = [
             new field('id', new lang_string('user'), $this, null, [
-                new identifier_attribute()
+                new identifier_attribute(),
             ]),
             new field('firstname', new lang_string('firstname'), $this),
             new field('lastname', new lang_string('lastname'), $this),
@@ -76,7 +77,7 @@ class user_table extends table {
             new field('fullname_linked', new lang_string('fullnamelinked', 'block_dash'),
                 $this, $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']), [
                     new moodle_url_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])]),
-                    new link_attribute(['label_field' => 'u_fullname_linked'])
+                    new link_attribute(['label_field' => 'u_fullname_linked']),
                 ],
                 ['supports_sorting' => false]
             ),
@@ -86,45 +87,45 @@ class user_table extends table {
             new field('city', new lang_string('city'), $this),
             new field('country', new lang_string('country'), $this),
             new field('lastlogin', new lang_string('lastlogin'), $this, null, [
-                new date_attribute()
+                new date_attribute(),
             ]),
             new field('department', new lang_string('department'), $this),
             new field('institution', new lang_string('institution'), $this),
             new field('address', new lang_string('address'), $this),
             new field('alternatename', new lang_string('alternatename'), $this),
             new field('firstaccess', new lang_string('firstaccess'), $this, null, [
-                new date_attribute()
+                new date_attribute(),
             ]),
             new field('description', new lang_string('description'), $this),
             new field('picture_url', new lang_string('pictureofuserurl', 'block_dash'), $this, 'u.id', [
                 new image_url_attribute(),
-                new user_image_url_attribute()
+                new user_image_url_attribute(),
             ]),
             new field('picture', new lang_string('pictureofuser'), $this, 'u.id', [
                 new user_image_url_attribute(),
-                new image_attribute(['title' => new lang_string('pictureofuser')])
+                new image_attribute(['title' => new lang_string('pictureofuser')]),
             ]),
             new field('picture_linked', new lang_string('pictureofuserlinked', 'block_dash'), $this, 'u.id', [
                 new user_image_url_attribute(),
                 new image_attribute(['title' => new lang_string('pictureofuser')]),
-                new linked_data_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])])
+                new linked_data_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])]),
             ]),
             new field('profile_url', new lang_string('userprofileurl', 'block_dash'), $this, 'u.id', [
-                new moodle_url_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])])
+                new moodle_url_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])]),
             ]),
             new field('profile_link', new lang_string('userprofilelink', 'block_dash'), $this, 'u.id', [
                 new moodle_url_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])]),
-                new link_attribute(['label' => new lang_string('viewprofile')])
+                new link_attribute(['label' => new lang_string('viewprofile')]),
             ]),
             new field('message_url', new lang_string('messageurl', 'block_dash'), $this, 'u.id', [
-                new moodle_url_attribute(['url' => new moodle_url('/message/index.php', ['id' => 'u_id'])])
+                new moodle_url_attribute(['url' => new moodle_url('/message/index.php', ['id' => 'u_id'])]),
             ]),
             new field('message_link', new lang_string('message', 'message'), $this, 'u.id', [
                 new moodle_url_attribute(['url' => new moodle_url('/message/index.php', ['id' => 'u_id'])]),
                 new linked_icon_attribute([
                     'icon' => 'i/email',
-                    'title' => get_string('sendmessage', 'message')
-                ])
+                    'title' => get_string('sendmessage', 'message'),
+                ]),
             ]),
             new field('group_names', new lang_string('group'), $this, [
                 'select' => "(SELECT group_concat(g200.id, ',') FROM {groups} g200
@@ -135,9 +136,9 @@ class user_table extends table {
                 new rename_group_ids_attribute([
                     'table' => 'groups',
                     'field' => 'name',
-                    'delimiter' => ',' // Separator between each ID in SQL select.
-                ])
-            ])
+                    'delimiter' => ',', // Separator between each ID in SQL select.
+                ]),
+            ]),
         ];
 
         require_once("$CFG->dirroot/user/profile/lib.php");

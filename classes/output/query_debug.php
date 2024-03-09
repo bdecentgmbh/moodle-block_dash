@@ -77,7 +77,7 @@ final class query_debug implements \renderable, \templatable {
         return [
             'query' => $this->query,
             'params' => json_encode($this->params, true),
-            'uniqueid' => uniqid()
+            'uniqueid' => uniqid(),
         ];
     }
 }

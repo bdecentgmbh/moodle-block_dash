@@ -35,7 +35,7 @@ if ($ADMIN->fulltree) {
         block_dash_is_totara() ? 3 : 4,
         [
             3 => 'Bootstrap 3.x',
-            4 => 'Bootstrap 4.x'
+            4 => 'Bootstrap 4.x',
         ]
     ));
 
@@ -46,7 +46,7 @@ if ($ADMIN->fulltree) {
         0,
         [
             0 => get_string('no'),
-            1 => get_string('yes')
+            1 => get_string('yes'),
         ]
         ));
 

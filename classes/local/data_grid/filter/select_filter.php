@@ -62,7 +62,7 @@ abstract class select_filter extends filter {
             self::OPERATION_EQUAL,
             self::OPERATION_IN_OR_EQUAL,
             self::OPERATION_LIKE,
-            self::OPERATION_LIKE_WILDCARD
+            self::OPERATION_LIKE_WILDCARD,
         ];
     }
 
@@ -155,7 +155,7 @@ abstract class select_filter extends filter {
 
         // If All option is present, send it to top.
         if (isset($options[self::ALL_OPTION])) {
-            $options = array(self::ALL_OPTION => $options[self::ALL_OPTION]) + $options;
+            $options = [self::ALL_OPTION => $options[self::ALL_OPTION]] + $options;
 
             if (isset($options[self::ALL_OPTION]) && $tags) {
                 $expstring = explode(" ", $options[self::ALL_OPTION]);
@@ -179,7 +179,7 @@ abstract class select_filter extends filter {
             'options' => $newoptions,
             'multiple' => true,
             'tabs' => $tags,
-            'label' => $selectlabel ?? ''
+            'label' => $selectlabel ?? '',
         ]);
     }
 }

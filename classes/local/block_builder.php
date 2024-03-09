@@ -67,12 +67,18 @@ class block_builder {
         return $this->configuration;
     }
 
+    /**
+     * Verify the datasource is collapsible addon.
+     *
+     * @param bool $checksection
+     * @return bool
+     */
     public function is_collapsible_content_addon($checksection = false) {
-        global $PAGE;
-        if ($PAGE->course->id != SITEID) {
-            $format = course_get_format($PAGE->course->id);
+
+        if ($this->blockinstance->page->course->id != SITEID) {
+            $format = course_get_format($this->blockinstance->page->course->id);
             $course = $format->get_course();
-            if (isset($this->blockinstance->config->data_source_idnumber) && $PAGE->user_is_editing() &&
+            if (isset($this->blockinstance->config->data_source_idnumber) && $this->blockinstance->page->user_is_editing() &&
                 $this->blockinstance->config->data_source_idnumber == 'dashaddon_content\local\block_dash\content_customtype') {
                 return true;
             }
@@ -80,6 +86,11 @@ class block_builder {
         return false;
     }
 
+    /**
+     * Confirm the block is configured to display only for the section.
+     *
+     * @return bool
+     */
     public function is_section_expand_content_addon() {
         if ($this->is_collapsible_content_addon()) {
             $currentsection = optional_param('section', 0, PARAM_INT);
@@ -106,7 +117,7 @@ class block_builder {
      */
     public function get_block_content() {
         // @codingStandardsIgnoreStart
-        global $OUTPUT, $CFG, $PAGE;
+        global $OUTPUT, $CFG;
         // Ignore the phplint due to block class not allowed to include the PAGE global variable.
         // @codingStandardsIgnoreEnd
 
@@ -123,7 +134,7 @@ class block_builder {
             'editing' => $editing,
             'istotara' => block_dash_is_totara(),
             'pagelayout' => $this->blockinstance->page->pagelayout,
-            'pagecontext' => $PAGE->context->id,
+            'pagecontext' => $this->blockinstance->page->context->id,
             'collapseaction' => $this->is_collapsible_content_addon(),
             'showcollapseblock' => $this->is_section_expand_content_addon(),
         ];
@@ -170,7 +181,7 @@ class block_builder {
         } else {
             // @codingStandardsIgnoreStart
             // Ignore the phplint due to block class not allowed to include the PAGE global variable.
-            if ($PAGE->user_is_editing()) {
+            if ($this->blockinstance->page->user_is_editing()) {
                 // @codingStandardsIgnoreEnd
                 require_once($CFG->dirroot.'/blocks/edit_form.php');
                 require_once($CFG->dirroot.'/blocks/dash/edit_form.php');

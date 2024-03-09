@@ -28,17 +28,17 @@ return [
     [
         'name' => 'u_id',
         'select' => 'u.id',
-        'title' => get_string('user') . ' ID'
+        'title' => get_string('user') . ' ID',
     ],
     [
         'name' => 'u_firstname',
         'select' => 'u.firstname',
-        'title' => get_string('firstname')
+        'title' => get_string('firstname'),
     ],
     [
         'name' => 'u_lastname',
         'select' => 'u.lastname',
-        'title' => get_string('lastname')
+        'title' => get_string('lastname'),
     ],
     [
         'name' => 'u_firstaccess',
@@ -46,9 +46,9 @@ return [
         'title' => get_string('firstaccess'),
         'attributes' => [
             [
-                'type' => \block_dash\local\data_grid\field\attribute\date_attribute::class
-            ]
-        ]
+                'type' => \block_dash\local\data_grid\field\attribute\date_attribute::class,
+            ],
+        ],
     ],
     [
         'name' => 'u_picture',
@@ -58,9 +58,9 @@ return [
             [
                 'type' => \block_dash\local\data_grid\field\attribute\link_attribute::class,
                 'options' => [
-                    'label' => get_string('viewprofile', 'block_dash')
-                ]
-            ]
-        ]
-    ]
+                    'label' => get_string('viewprofile', 'block_dash'),
+                ],
+            ],
+        ],
+    ],
 ];

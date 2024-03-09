@@ -769,4 +769,3 @@ $string['restrictcurrentsection_desc'] = "If a dash block with the content addon
 $string['learningpathstart'] = 'Start';
 $string['learningpathfinish'] = 'Finish';
 $string['nocourselearnigpath'] = "No courses have been added to the learning path yet.";
-

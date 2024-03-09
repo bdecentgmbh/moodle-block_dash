@@ -36,6 +36,13 @@ require_once($CFG->dirroot.'/lib/tablelib.php');
 class groups extends \table_sql implements dynamic_table {
 
     /**
+     * Contact users filter value.
+     *
+     * @var string
+     */
+    public $contactuser;
+
+    /**
      * Define table field definitions and filter data
      *
      * @param int $pagesize
@@ -48,7 +55,7 @@ class groups extends \table_sql implements dynamic_table {
         $columns = ['groupname', 'course'];
         $headers = [
             get_string('groupname', 'group'),
-            get_string('course')
+            get_string('course'),
         ];
 
         $this->define_columns($columns);

@@ -25,6 +25,7 @@
 namespace block_dash\local\data_grid\data;
 
 use context;
+
 /**
  * Container for structuring data, usually from a database.
  *

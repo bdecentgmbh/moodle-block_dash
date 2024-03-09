@@ -164,7 +164,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
                         'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
                         'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
                         'data-toggle' => 'slave', // For checkbox_toggleall.
-                        'data-action' => 'toggle' // For checkbox_toggleall.
+                        'data-action' => 'toggle', // For checkbox_toggleall.
                     ]);
                     $mform->setType($fieldname, PARAM_BOOL);
                 }
@@ -247,7 +247,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
             'bootstrap3' => get_config('block_dash', 'bootstrap_version') == 3,
             'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4,
             'noresult' => (isset($config->emptystate))
-                ? format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]) : $noresulttxt
+                ? format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]) : $noresulttxt,
         ];
 
         if (!empty($this->get_data_source()->get_all_preferences())) {
@@ -274,21 +274,21 @@ abstract class abstract_layout implements layout_interface, \templatable {
         // Get downloads butttons.
         $downloadcontent = '';
         if ($this->supports_download() && $this->get_data_source()->get_preferences('exportdata')) {
-            $downloadoptions = array();
-            $options = array();
+            $downloadoptions = [];
+            $options = [];
             $downloadlist = '';
             $options['sesskey'] = sesskey();
             $options["download"] = "csv";
             $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadcsv", 'block_dash'), 'get');
-            $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
+            $downloadoptions[] = html_writer::tag('li', $button, ['class' => 'reportoption list-inline-item']);
 
             $options["download"] = "xls";
             $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadexcel"), 'get');
-            $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
+            $downloadoptions[] = html_writer::tag('li', $button, ['class' => 'reportoption list-inline-item']);
 
-            $downloadlist .= html_writer::tag('ul', implode('', $downloadoptions), array('class' => 'list-inline inline'));
-            $downloadlist .= html_writer::tag('div', '', array('class' => 'clearfloat'));
-            $downloadcontent .= html_writer::tag('div', $downloadlist, array('class' => 'downloadreport mt-1'));
+            $downloadlist .= html_writer::tag('ul', implode('', $downloadoptions), ['class' => 'list-inline inline']);
+            $downloadlist .= html_writer::tag('div', '', ['class' => 'clearfloat']);
+            $downloadcontent .= html_writer::tag('div', $downloadlist, ['class' => 'downloadreport mt-1']);
         }
 
         if (!is_null($templatedata['data'])) {
@@ -298,7 +298,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 'supports_filtering' => $this->supports_filtering(),
                 'supports_download' => $this->supports_download(),
                 'supports_pagination' => $this->supports_pagination(),
-                'preferences' => $this->process_preferences($this->get_data_source()->get_all_preferences())
+                'preferences' => $this->process_preferences($this->get_data_source()->get_all_preferences()),
             ]);
         }
         return $templatedata;

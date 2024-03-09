@@ -116,7 +116,7 @@ interface filter_interface {
         self::OPERATION_IN_OR_EQUAL,
         self::OPERATION_LIKE,
         self::OPERATION_LIKE_WILDCARD,
-        self::OPERATION_CUSTOM
+        self::OPERATION_CUSTOM,
     ];
 
     /**

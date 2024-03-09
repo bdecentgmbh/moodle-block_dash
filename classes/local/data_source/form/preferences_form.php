@@ -56,7 +56,7 @@ class preferences_form extends \moodleform {
         self::TAB_GENERAL,
         self::TAB_FIELDS,
         self::TAB_FILTERS,
-        self::TAB_CONDITIONS
+        self::TAB_CONDITIONS,
     ];
 
     /**
@@ -86,10 +86,10 @@ class preferences_form extends \moodleform {
         $mform->addElement('html', '<hr>');
 
         // When two elements we need a group.
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = &$mform->createElement('button', 'cancelbutton', get_string('cancel'), ['data-action' => 'cancel']);
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
     }
 

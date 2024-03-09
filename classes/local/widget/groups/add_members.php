@@ -52,9 +52,9 @@ class add_members extends \moodleform {
         $groupid = isset($this->_customdata['groupid']) ? $this->_customdata['groupid'] : '';
         $courseid = isset($this->_customdata['courseid']) ? $this->_customdata['courseid'] : '';
 
-        $potentialmembersselector = new \group_non_members_selector('addselect', array(
-            'groupid' => $groupid, 'courseid' => $courseid
-        ));
+        $potentialmembersselector = new \group_non_members_selector('addselect', [
+            'groupid' => $groupid, 'courseid' => $courseid,
+        ]);
         $users = $potentialmembersselector->find_users("");
         $options = [
             'ajax' => 'block_dash/group-user-selector',

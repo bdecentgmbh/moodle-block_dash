@@ -57,7 +57,7 @@ class user_profile_field_filter extends select_filter {
     public function get_supported_operations() {
         return [
             self::OPERATION_EQUAL,
-            self::OPERATION_IN_OR_EQUAL
+            self::OPERATION_IN_OR_EQUAL,
         ];
     }
 

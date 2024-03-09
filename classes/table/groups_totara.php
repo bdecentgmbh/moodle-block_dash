@@ -49,7 +49,7 @@ class groups_totara extends \table_sql {
         $columns = ['groupname', 'course'];
         $headers = [
             get_string('groupname', 'group'),
-            get_string('course')
+            get_string('course'),
         ];
 
         $this->define_columns($columns);

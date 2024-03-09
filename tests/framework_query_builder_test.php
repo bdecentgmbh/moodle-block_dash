@@ -52,16 +52,16 @@ class framework_query_builder_test extends \advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course([
             'shortname' => 'test1',
             'fullname' => 'Testing course 1',
-            'category' => $category->id
+            'category' => $category->id,
         ]);
         $course2 = $this->getDataGenerator()->create_course([
             'shortname' => 'test2',
-            'fullname' => 'Testing course 2'
+            'fullname' => 'Testing course 2',
         ]);
         $course3 = $this->getDataGenerator()->create_course([
             'shortname' => 'test3',
             'fullname' => 'Testing course 3',
-            'category' => $category->id
+            'category' => $category->id,
         ]);
 
         // Test OPERATOR_EQUAL.
@@ -103,17 +103,17 @@ class framework_query_builder_test extends \advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course([
             'shortname' => 'test1',
             'fullname' => 'Testing course 1',
-            'startdate' => 946684800
+            'startdate' => 946684800,
         ]);
         $course2 = $this->getDataGenerator()->create_course([
             'shortname' => 'test2',
             'fullname' => 'Testing course 2',
-            'startdate' => 946684800
+            'startdate' => 946684800,
         ]);
         $course3 = $this->getDataGenerator()->create_course([
             'shortname' => 'test3',
             'fullname' => 'Testing course 3',
-            'startdate' => time()
+            'startdate' => time(),
         ]);
 
         $builder = new builder();

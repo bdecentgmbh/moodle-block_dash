@@ -169,12 +169,8 @@ class builder {
     /**
      * Join raw in query.
      *
-     * @param string $table Table name of joined table.
-     * @param string $alias Joined table alias.
-     * @param string $jointablefield Field of joined table to reference in join condition.
-     * @param string $origintablefield Field of origin table to join to.
-     * @param string $jointype SQL join type. See self::TYPE_*
-     * @param array $extraparameters Extra parameters used in join SQL.
+     * @param string $joinsql SQL join type. See self::TYPE_*
+     * @param array $parameters Extra parameters used in join SQL.
      * @return $this
      */
     public function join_raw(string $joinsql, array $parameters = []): builder {

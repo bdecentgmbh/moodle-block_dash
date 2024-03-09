@@ -33,28 +33,28 @@ $definitions = [
         'title' => get_string('user') . ' ID',
         'attributes' => [
             [
-                'type' => \block_dash\local\data_grid\field\attribute\identifier_attribute::class
-            ]
+                'type' => \block_dash\local\data_grid\field\attribute\identifier_attribute::class,
+            ],
         ],
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_firstname',
         'select' => 'u.firstname',
         'title' => get_string('firstname'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_lastname',
         'select' => 'u.lastname',
         'title' => get_string('lastname'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_fullname',
         'select' => $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']),
         'title' => get_string('fullname'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_fullname_linked',
@@ -66,46 +66,46 @@ $definitions = [
             [
                 'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
-                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
-                ]
+                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id']),
+                ],
             ],
             [
                 'type' => \block_dash\local\data_grid\field\attribute\link_attribute::class,
                 'options' => [
-                    'label_field' => 'u_fullname_linked'
-                ]
-            ]
-        ]
+                    'label_field' => 'u_fullname_linked',
+                ],
+            ],
+        ],
     ],
     [
         'name' => 'u_email',
         'select' => 'u.email',
         'title' => get_string('email'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_username',
         'select' => 'u.username',
         'title' => get_string('username'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_idnumber',
         'select' => 'u.idnumber',
         'title' => get_string('idnumber'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_city',
         'select' => 'u.city',
         'title' => get_string('city'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_country',
         'select' => 'u.country',
         'title' => get_string('country'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_lastlogin',
@@ -114,33 +114,33 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\local\data_grid\field\attribute\date_attribute::class
-            ]
-        ]
+                'type' => \block_dash\local\data_grid\field\attribute\date_attribute::class,
+            ],
+        ],
     ],
     [
         'name' => 'u_department',
         'select' => 'u.department',
         'title' => get_string('department'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_institution',
         'select' => 'u.institution',
         'title' => get_string('institution'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_address',
         'select' => 'u.address',
         'title' => get_string('address'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_alternatename',
         'select' => 'u.alternatename',
         'title' => get_string('alternatename'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_firstaccess',
@@ -149,15 +149,15 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\local\data_grid\field\attribute\date_attribute::class
-            ]
-        ]
+                'type' => \block_dash\local\data_grid\field\attribute\date_attribute::class,
+            ],
+        ],
     ],
     [
         'name' => 'u_description',
         'select' => 'u.description',
         'title' => get_string('description'),
-        'tables' => ['u']
+        'tables' => ['u'],
     ],
     [
         'name' => 'u_picture_url',
@@ -166,12 +166,12 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\local\data_grid\field\attribute\image_url_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\image_url_attribute::class,
             ],
             [
-                'type' => \block_dash\local\data_grid\field\attribute\user_image_url_attribute::class
-            ]
-        ]
+                'type' => \block_dash\local\data_grid\field\attribute\user_image_url_attribute::class,
+            ],
+        ],
     ],
     [
         'name' => 'u_picture',
@@ -180,15 +180,15 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\local\data_grid\field\attribute\user_image_url_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\user_image_url_attribute::class,
             ],
             [
                 'type' => \block_dash\local\data_grid\field\attribute\image_attribute::class,
                 'options' => [
-                    'title' => get_string('pictureofuser')
-                ]
-            ]
-        ]
+                    'title' => get_string('pictureofuser'),
+                ],
+            ],
+        ],
     ],
     [
         'name' => 'u_picture_linked',
@@ -197,21 +197,21 @@ $definitions = [
         'tables' => ['u'],
         'attributes' => [
             [
-                'type' => \block_dash\local\data_grid\field\attribute\user_image_url_attribute::class
+                'type' => \block_dash\local\data_grid\field\attribute\user_image_url_attribute::class,
             ],
             [
                 'type' => \block_dash\local\data_grid\field\attribute\image_attribute::class,
                 'options' => [
-                    'title' => get_string('pictureofuser')
-                ]
+                    'title' => get_string('pictureofuser'),
+                ],
             ],
             [
                 'type' => \block_dash\local\data_grid\field\attribute\linked_data_attribute::class,
                 'options' => [
-                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
-                ]
-            ]
-        ]
+                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id']),
+                ],
+            ],
+        ],
     ],
     [
         'name' => 'u_profile_url',
@@ -222,10 +222,10 @@ $definitions = [
             [
                 'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
-                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
-                ]
-            ]
-        ]
+                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id']),
+                ],
+            ],
+        ],
     ],
     [
         'name' => 'u_profile_link',
@@ -236,16 +236,16 @@ $definitions = [
             [
                 'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
-                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])
-                ]
+                    'url' => new moodle_url('/user/profile.php', ['id' => 'u_id']),
+                ],
             ],
             [
                 'type' => \block_dash\local\data_grid\field\attribute\link_attribute::class,
                 'options' => [
-                    'label' => get_string('viewprofile')
-                ]
-            ]
-        ]
+                    'label' => get_string('viewprofile'),
+                ],
+            ],
+        ],
     ],
     [
         'name' => 'u_message_url',
@@ -256,10 +256,10 @@ $definitions = [
             [
                 'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
-                    'url' => new moodle_url('/message/index.php', ['id' => 'u_id'])
-                ]
-            ]
-        ]
+                    'url' => new moodle_url('/message/index.php', ['id' => 'u_id']),
+                ],
+            ],
+        ],
     ],
     [
         'name' => 'u_message_link',
@@ -270,17 +270,17 @@ $definitions = [
             [
                 'type' => \block_dash\local\data_grid\field\attribute\moodle_url_attribute::class,
                 'options' => [
-                    'url' => new moodle_url('/message/index.php', ['id' => 'u_id'])
-                ]
+                    'url' => new moodle_url('/message/index.php', ['id' => 'u_id']),
+                ],
             ],
             [
                 'type' => \block_dash\local\data_grid\field\attribute\linked_icon_attribute::class,
                 'options' => [
                     'icon' => 'i/email',
-                    'title' => get_string('sendmessage', 'message')
-                ]
-            ]
-        ]
+                    'title' => get_string('sendmessage', 'message'),
+                ],
+            ],
+        ],
     ],
     [
         'name' => 'u_group_names',
@@ -296,11 +296,11 @@ $definitions = [
                 'options' => [
                     'table' => 'groups',
                     'field' => 'name',
-                    'delimiter' => ',' // Separator between each ID in SQL select.
-                ]
-            ]
-        ]
-    ]
+                    'delimiter' => ',', // Separator between each ID in SQL select.
+                ],
+            ],
+        ],
+    ],
 ];
 
 require_once("$CFG->dirroot/user/profile/lib.php");
@@ -312,7 +312,7 @@ foreach (profile_get_custom_fields() as $customfield) {
         'select' => "(SELECT profile$i.data FROM {user_info_data} profile$i
                       WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)",
         'title' => format_string($customfield->name),
-        'tables' => ['u']
+        'tables' => ['u'],
     ];
 
     $i++;
@@ -326,16 +326,16 @@ $definitions = array_merge($definitions, [
         'tables' => ['g'],
         'attributes' => [
             [
-                'type' => \block_dash\local\data_grid\field\attribute\identifier_attribute::class
-            ]
-        ]
+                'type' => \block_dash\local\data_grid\field\attribute\identifier_attribute::class,
+            ],
+        ],
     ],
     [
         'name' => 'g_name',
         'select' => 'g.name',
         'title' => get_string('groupname', 'group'),
-        'tables' => ['g']
-    ]
+        'tables' => ['g'],
+    ],
 ]);
 
 return $definitions;

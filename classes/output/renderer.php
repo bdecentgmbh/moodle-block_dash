@@ -81,21 +81,21 @@ class renderer extends \plugin_renderer_base {
             // We only expose the variables that are exposed to JS templates.
             $safeconfig = $this->page->requires->get_config_for_javascript($this->page, $this);
 
-            $helpers = array('config' => $safeconfig,
-                'str' => array($stringhelper, 'str'),
-                'quote' => array($quotehelper, 'quote'),
-                'js' => array($jshelper, 'help'),
-                'pix' => array($pixhelper, 'pix'),
-                'shortentext' => array($shortentexthelper, 'shorten'),
-                'userdate' => array($userdatehelper, 'transform'),
-            );
+            $helpers = ['config' => $safeconfig,
+                'str' => [$stringhelper, 'str'],
+                'quote' => [$quotehelper, 'quote'],
+                'js' => [$jshelper, 'help'],
+                'pix' => [$pixhelper, 'pix'],
+                'shortentext' => [$shortentexthelper, 'shorten'],
+                'userdate' => [$userdatehelper, 'transform'],
+            ];
 
             if (block_dash_is_totara()) {
                 $flexhelper = new \core\output\mustache_flex_icon_helper($this);
-                $helpers['flex_icon'] = array($flexhelper, 'flex_icon');
+                $helpers['flex_icon'] = [$flexhelper, 'flex_icon'];
             }
 
-            $this->mustache = new Mustache_Engine(array(
+            $this->mustache = new Mustache_Engine([
                 'cache' => $cachedir,
                 'escape' => 's',
                 'loader' => $loader,
@@ -104,7 +104,7 @@ class renderer extends \plugin_renderer_base {
                 // Don't allow the JavaScript helper to be executed from within another
                 // helper. If it's allowed it can be used by users to inject malicious
                 // JS into the page.
-                'blacklistednestedhelpers' => ['js']));
+                'blacklistednestedhelpers' => ['js']]);
 
         }
 

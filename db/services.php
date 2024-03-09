@@ -44,35 +44,35 @@ $functions = [
         'capabilities'  => 'block/dash:addinstance',
     ],
 
-    'block_dash_groups_get_non_members' => array(
+    'block_dash_groups_get_non_members' => [
         'classname' => 'block_dash\local\widget\groups\external',
         'methodname' => 'get_non_members',
         'description' => 'Generate a course backup file and return a link.',
         'type' => 'read',
         'ajax' => true,
-    ),
+    ],
 
-    'block_dash_groups_add_members' => array(
+    'block_dash_groups_add_members' => [
        'classname' => 'block_dash\local\widget\groups\external',
        'methodname' => 'add_members',
        'description' => 'Generate a course backup file and return a link.',
        'type' => 'read',
        'ajax'        => true,
-    ),
+    ],
 
-    'block_dash_groups_leave_group' => array(
+    'block_dash_groups_leave_group' => [
        'classname' => 'block_dash\local\widget\groups\external',
        'methodname' => 'leave_group',
        'description' => 'Generate a course backup file and return a link.',
        'type' => 'read',
        'ajax'        => true,
-    ),
+    ],
 
-    'block_dash_groups_create_group' => array(
+    'block_dash_groups_create_group' => [
        'classname' => 'block_dash\local\widget\groups\external',
        'methodname' => 'create_group',
        'description' => 'Generate a course backup file and return a link.',
        'type' => 'read',
        'ajax'        => true,
-    ),
+    ],
 ];

@@ -38,7 +38,8 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 // Select the parent datasource for the sub config.
                 this.getRoot().on('change', '[data-target="subsource-config"] [type=radio]', function(e) {
                     var subConfig;
-                    if (subConfig = e.target.closest('[data-target="subsource-config"]')) {
+                    if (e.target.closest('[data-target="subsource-config"]')) {
+                        subConfig = e.target.closest('[data-target="subsource-config"]');
                         if (subConfig.parentNode !== null) {
                             var dataSource = subConfig.parentNode.querySelector('[name="config_data_source_idnumber"]');
                             dataSource.click(); // = true;
@@ -46,9 +47,8 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     }
                 }.bind(this));
 
-                this.getRoot().find('.dash-configuration-form [name="config_data_source_idnumber"]').on('change', function(e) {
-                    console.log(e);
-                    console.log("TEST");
+                this.getRoot().find('.dash-configuration-form [name="config_data_source_idnumber"]').on('change', function() {
+
                     var dataSource = this.getRoot().find('.dash-configuration-form');
                     var formData = $(dataSource).find('form').serialize();
 
@@ -165,7 +165,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
 
             this.getBlockContentArea().on('click', '.page-link', function(e) {
                 e.preventDefault();
-				this.currentPage = $(e.target).data('page');
+                this.currentPage = $(e.target).data('page');
                 this.refresh();
             }.bind(this));
 

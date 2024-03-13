@@ -777,4 +777,5 @@ $string['fullnamelinked'] = 'Fullname linked';
 $string['contextlinked'] = 'Context linked';
 $string['description'] = 'Description';
 $string['programs:view'] = 'View programs';
-$string['selfallocationwithkey'] = 'Sign up (Key required)';
+$string['selfallocationwithkey'] = 'Sigup (Key required)';
+$string['viewprogram'] = 'View program';

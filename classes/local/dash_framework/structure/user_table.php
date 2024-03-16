@@ -66,7 +66,7 @@ class user_table extends table {
      */
     public function get_fields(): array {
         global $DB, $CFG;
-
+        $groupconcat = $DB->sql_group_concat('g200.id', ',');
         $fields = [
             new field('id', new lang_string('user'), $this, null, [
                 new identifier_attribute(),
@@ -128,17 +128,15 @@ class user_table extends table {
                 ]),
             ]),
             new field('group_names', new lang_string('group'), $this, [
-                'select' => "(SELECT group_concat(g200.id, ',') FROM {groups} g200
+                'select' => "(SELECT $groupconcat FROM {groups} g200
                             JOIN {groups_members} gm200 ON gm200.groupid = g200.id WHERE gm200.userid = u.id)",
-                'select_pgsql' => "(SELECT string_agg(g200.id::text, ',') FROM {groups} g200
-                                    JOIN {groups_members} gm200 ON gm200.groupid = g200.id AND gm200.userid = u.id)",
             ], [
                 new rename_group_ids_attribute([
                     'table' => 'groups',
                     'field' => 'name',
                     'delimiter' => ',', // Separator between each ID in SQL select.
                 ]),
-            ]),
+            ], [], field_interface::VISIBILITY_VISIBLE, ''),
         ];
 
         require_once("$CFG->dirroot/user/profile/lib.php");
@@ -148,7 +146,8 @@ class user_table extends table {
             $fields[] = new field('pf_' . strtolower($customfield->shortname),
                 new lang_string('customfield', 'block_dash', ['name' => format_string($customfield->name)]),
                 $this, "(SELECT profile$i.data FROM {user_info_data} profile$i
-                      WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)"
+                      WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)",
+                [], [],field_interface::VISIBILITY_VISIBLE , '',
             );
 
             $i++;

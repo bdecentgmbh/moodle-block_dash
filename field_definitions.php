@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 global $DB;
 
+$groupconcat = $DB->sql_group_concat('g200.id', ',');
+
 $definitions = [
     [
         'name' => 'u_id',
@@ -284,10 +286,8 @@ $definitions = [
     ],
     [
         'name' => 'u_group_names',
-        'select' => "(SELECT group_concat(g200.id, ',') FROM {groups} g200
+        'select' => "(SELECT $groupconcat FROM {groups} g200
             JOIN {groups_members} gm200 ON gm200.groupid = g200.id WHERE gm200.userid = u.id)",
-        'select_pgsql' => "(SELECT string_agg(g200.id::text, ',') FROM {groups} g200
-            JOIN {groups_members} gm200 ON gm200.groupid = g200.id AND gm200.userid = u.id)",
         'title' => get_string('group'),
         'tables' => ['u'],
         'attributes' => [

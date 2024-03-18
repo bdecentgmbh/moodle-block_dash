@@ -68,6 +68,47 @@ class block_builder {
     }
 
     /**
+     * Verify the datasource is collapsible addon.
+     *
+     * @param bool $checksection
+     * @return bool
+     */
+    public function is_collapsible_content_addon($checksection = false) {
+
+        if ($this->blockinstance->page->course->id != SITEID) {
+            $format = course_get_format($this->blockinstance->page->course->id);
+            $course = $format->get_course();
+            if (isset($this->blockinstance->config->data_source_idnumber) && $this->blockinstance->page->user_is_editing() &&
+                $this->blockinstance->config->data_source_idnumber == 'dashaddon_content\local\block_dash\content_customtype') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Confirm the block is configured to display only for the section.
+     *
+     * @return bool
+     */
+    public function is_section_expand_content_addon() {
+        if ($this->is_collapsible_content_addon()) {
+            $currentsection = optional_param('section', 0, PARAM_INT);
+            if (isset($this->blockinstance->config->preferences)) {
+                $preferneces = $this->blockinstance->config->preferences;
+                if (isset($preferneces['filters'])) {
+                    $restrictedsections = isset($preferneces['filters']['sectiondisplay']['sections']) ?
+                        $preferneces['filters']['sectiondisplay']['sections'] : [];
+                    if (in_array((int)$currentsection, $restrictedsections)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get content object for block instance.
      *
      * @return \stdClass
@@ -76,7 +117,7 @@ class block_builder {
      */
     public function get_block_content() {
         // @codingStandardsIgnoreStart
-        global $OUTPUT, $CFG, $PAGE;
+        global $OUTPUT, $CFG;
         // Ignore the phplint due to block class not allowed to include the PAGE global variable.
         // @codingStandardsIgnoreEnd
 
@@ -86,12 +127,16 @@ class block_builder {
         $text = '';
         $editing = ($this->blockinstance->page->user_is_editing() &&
             has_capability('block/dash:addinstance', $this->blockinstance->context));
+
         $data = [
             'block_instance_id' => $this->blockinstance->instance->id,
             'block_context_id' => $this->blockinstance->context->id,
             'editing' => $editing,
             'istotara' => block_dash_is_totara(),
             'pagelayout' => $this->blockinstance->page->pagelayout,
+            'pagecontext' => $this->blockinstance->page->context->id,
+            'collapseaction' => $this->is_collapsible_content_addon(),
+            'showcollapseblock' => $this->is_section_expand_content_addon(),
         ];
 
         if ($this->configuration->is_fully_configured()) {
@@ -136,7 +181,7 @@ class block_builder {
         } else {
             // @codingStandardsIgnoreStart
             // Ignore the phplint due to block class not allowed to include the PAGE global variable.
-            if ($PAGE->user_is_editing()) {
+            if ($this->blockinstance->page->user_is_editing()) {
                 // @codingStandardsIgnoreEnd
                 require_once($CFG->dirroot.'/blocks/edit_form.php');
                 require_once($CFG->dirroot.'/blocks/dash/edit_form.php');

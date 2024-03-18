@@ -216,7 +216,7 @@ class contacts_widget extends abstract_widget {
         FROM {cohort} c
         JOIN {cohort_members} cm ON c.id = cm.cohortid
         WHERE cm.userid = ? AND c.visible = 1';
-        $usercohorts = $DB->get_records_sql($sql, array($userid));
+        $usercohorts = $DB->get_records_sql($sql, [$userid]);
         $cohorts = array_column($usercohorts, 'id');
         $cohortstatus = get_config('block_dash', 'suggestcohort');
         if (!empty($cohorts) && $cohortstatus) {
@@ -314,7 +314,7 @@ class contacts_widget extends abstract_widget {
             return;
         }
 
-        $PAGE->requires->js_call_amd('core_message/toggle_contact_button', 'enhance', array('.toggle-contact-button'));
+        $PAGE->requires->js_call_amd('core_message/toggle_contact_button', 'enhance', ['.toggle-contact-button']);
         $done = true;
     }
 

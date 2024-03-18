@@ -37,7 +37,7 @@ class bool_filter extends select_filter {
      */
     public function get_supported_operations() {
         return [
-            self::OPERATION_EQUAL
+            self::OPERATION_EQUAL,
         ];
     }
 
@@ -48,7 +48,7 @@ class bool_filter extends select_filter {
     public function init() {
         $this->add_options([
             1 => get_string('yes'),
-            0 => get_string('no')
+            0 => get_string('no'),
         ]);
 
         parent::init();

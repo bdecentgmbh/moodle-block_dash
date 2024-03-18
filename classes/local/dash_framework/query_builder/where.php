@@ -98,10 +98,15 @@ class where {
      */
     const OPERATOR_NOT_IN_QUERY = 'not_in_query';
 
+    /**
+     * SQL conjection of OR.
+     */
     const CONJUNCTIVE_OPERATOR_OR = 'OR';
 
+    /**
+     * SQL conjection of AND.
+     */
     const CONJUNCTIVE_OPERATOR_AND = 'AND';
-
 
     /**
      * @var string Field or subquery.
@@ -141,6 +146,7 @@ class where {
      * @param string $selector
      * @param array $values
      * @param string $operator
+     * @param string $conjunctive
      */
     public function __construct(string $selector, array $values, string $operator = self::OPERATOR_EQUAL,
         string $conjunctive = self::CONJUNCTIVE_OPERATOR_AND) {
@@ -195,7 +201,6 @@ class where {
                 }
                 break;
         }
-
 
         // Build SQL and params.
         switch ($this->operator) {

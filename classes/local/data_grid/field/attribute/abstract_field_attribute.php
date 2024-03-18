@@ -162,6 +162,12 @@ abstract class abstract_field_attribute implements field_attribute_interface {
     public function set_transform_field($field) {
     }
 
+    /**
+     * Set the placeholders, this will help to use the values of table field in developer addon.
+     *
+     * @param array $placeholders
+     * @return void
+     */
     public function set_placeholders(array $placeholders) {
         $this->placeholders = $placeholders;
     }
@@ -187,7 +193,6 @@ abstract class abstract_field_attribute implements field_attribute_interface {
                 $valuestr = str_ireplace($replacement, $val, $valuestr);
             }
         }
-        // echo $valuestr;exit;
         return $valuestr ?? '';
     }
     // Endregion.

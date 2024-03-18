@@ -180,7 +180,7 @@ class paginator {
                 'index' => $i,
                 'page' => $i,
                 'label' => $i + 1,
-                'active' => $this->get_current_page() == $i
+                'active' => $this->get_current_page() == $i,
             ];
         }
 
@@ -204,7 +204,7 @@ class paginator {
         if ($frontdivider) {
             $items[1] = [
                 'label' => '...',
-                'disabled' => true
+                'disabled' => true,
             ];
             ksort($items);
         }
@@ -213,7 +213,7 @@ class paginator {
             end($items);
             $items[key($items) - 1] = [
                 'label' => '...',
-                'disabled' => true
+                'disabled' => true,
             ];
             ksort($items);
         }
@@ -222,14 +222,14 @@ class paginator {
         array_unshift($items, [
             'label' => get_string('previous'),
             'page' => $this->get_current_page() - 1,
-            'disabled' => $this->get_current_page() == 0
+            'disabled' => $this->get_current_page() == 0,
         ]);
 
         // Next button.
         $items[] = [
             'label' => get_string('next'),
             'page' => $this->get_current_page() + 1,
-            'disabled' => $this->get_current_page() == $count - 1 || empty($count)
+            'disabled' => $this->get_current_page() == $count - 1 || empty($count),
         ];
 
         $recordcount = $this->get_record_count();
@@ -252,7 +252,7 @@ class paginator {
         return [
             'pages' => $items,
             'show_page_summary' => $this->showpagesummary,
-            'summary' => $summary
+            'summary' => $summary,
         ];
     }
 }

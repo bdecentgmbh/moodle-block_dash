@@ -102,6 +102,16 @@ class builder {
     private $rawconditionparameters = [];
 
     /**
+     * @var array
+     */
+    private $rawjoins = [];
+
+    /**
+     * @var array
+     */
+    private $rawjoinsparameters = [];
+
+    /**
      * Fields to retried from sql query. Sql select field.
      * @param string $field
      * @param string $alias
@@ -153,6 +163,18 @@ class builder {
     public function join(string $table, string $alias, string $jointablefield, string $origintablefield,
                          $jointype = join::TYPE_INNER_JOIN, array $extraparameters = []): builder {
         $this->joins[] = new join($table, $alias, $jointablefield, $origintablefield, $jointype, $extraparameters);
+        return $this;
+    }
+
+    /**
+     * Join raw in query.
+     *
+     * @param string $joinsql SQL join type. See self::TYPE_*
+     * @param array $parameters Extra parameters used in join SQL.
+     * @return $this
+     */
+    public function join_raw(string $joinsql, array $parameters = []): builder {
+        $this->rawjoins[] = [$joinsql, $parameters];
         return $this;
     }
 
@@ -380,6 +402,12 @@ class builder {
 
         foreach ($this->joins as $join) {
             [$jsql, $jparams] = $join->get_sql_and_params();
+            $sql .= ' ' . $jsql . ' ';
+            $params = array_merge($params, $jparams);
+        }
+
+        foreach ($this->rawjoins as $join) {
+            [$jsql, $jparams] = $join;
             $sql .= ' ' . $jsql . ' ';
             $params = array_merge($params, $jparams);
         }

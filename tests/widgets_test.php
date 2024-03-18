@@ -43,7 +43,7 @@ class widgets_test extends \advanced_testcase {
         $this->setAdminUser();
         global $USER;
         $this->user = $USER;
-        $this->course1 = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $this->course1 = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
         $this->course2 = $this->getDataGenerator()->create_course();
         $this->course3 = $this->getDataGenerator()->create_course();
         foreach (range(1, 5) as $user) {
@@ -78,7 +78,7 @@ class widgets_test extends \advanced_testcase {
 
         $configdata = (object) [
             'title' => $title,
-            'data_source_idnumber' => $widget
+            'data_source_idnumber' => $widget,
         ];
 
         $this->create_block($this->construct_user_page($USER));
@@ -125,14 +125,14 @@ class widgets_test extends \advanced_testcase {
         self::getDataGenerator()->enrol_user($user->id, $this->course3->id);
         $this->setUser($user);
 
-        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $this->course1->id),
-            array('completion' => 1));
-        $data = $this->getDataGenerator()->create_module('data', array('course' => $this->course1->id),
-            array('completion' => 1));
-        $this->getDataGenerator()->create_module('page', array('course' => $this->course1->id),
-            array('completion' => 1));
-        $this->getDataGenerator()->create_module('page', array('course' => $this->course1->id),
-            array('completion' => 1));
+        $assign = $this->getDataGenerator()->create_module('assign', ['course' => $this->course1->id],
+            ['completion' => 1]);
+        $data = $this->getDataGenerator()->create_module('data', ['course' => $this->course1->id],
+            ['completion' => 1]);
+        $this->getDataGenerator()->create_module('page', ['course' => $this->course1->id],
+            ['completion' => 1]);
+        $this->getDataGenerator()->create_module('page', ['course' => $this->course1->id],
+            ['completion' => 1]);
 
         // Mark two of them as completed for a user.
         $cmassign = get_coursemodule_from_id('assign', $assign->cmid);
@@ -221,11 +221,11 @@ class widgets_test extends \advanced_testcase {
         $user = self::getDataGenerator()->enrol_user($this->users[3]->id, $this->course1->id, 'student');
         $user = self::getDataGenerator()->enrol_user($this->users[2]->id, $this->course1->id, 'student');
 
-        $group1 = self::getDataGenerator()->create_group(array('courseid' => $this->course1->id));
-        $group2 = self::getDataGenerator()->create_group(array('courseid' => $this->course1->id));
+        $group1 = self::getDataGenerator()->create_group(['courseid' => $this->course1->id]);
+        $group2 = self::getDataGenerator()->create_group(['courseid' => $this->course1->id]);
 
-        $group3 = self::getDataGenerator()->create_group(array('courseid' => $this->course2->id));
-        $group4 = self::getDataGenerator()->create_group(array('courseid' => $this->course3->id));
+        $group3 = self::getDataGenerator()->create_group(['courseid' => $this->course2->id]);
+        $group4 = self::getDataGenerator()->create_group(['courseid' => $this->course3->id]);
 
         groups_add_member($group1, $this->users[1]);
         groups_add_member($group2, $this->users[1]);

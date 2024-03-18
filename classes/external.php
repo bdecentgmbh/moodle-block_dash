@@ -31,6 +31,8 @@ require_once("$CFG->libdir/externallib.php");
 use block_dash\local\block_builder;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\output\renderer;
+use block_dash\local\configuration\configuration;
+use block_dash\local\data_source\data_source_factory;
 use external_api;
 
 /**
@@ -56,6 +58,7 @@ class external extends external_api {
             'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
             'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
             'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_OPTIONAL),
+            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_OPTIONAL),
         ]);
     }
 
@@ -68,6 +71,8 @@ class external extends external_api {
      * @param string $sortfield
      * @param string $sortdirection
      * @param string $pagelayout
+     * @param int $pagecontext
+     *
      * @return array
      * @throws \coding_exception
      * @throws \invalid_parameter_exception
@@ -75,7 +80,7 @@ class external extends external_api {
      * @throws \restricted_context_exception
      */
     public static function get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
-        $pagelayout = '') {
+        $pagelayout = '', $pagecontext = 0) {
         global $PAGE, $DB, $OUTPUT, $SITE;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
@@ -84,8 +89,14 @@ class external extends external_api {
             'filter_form_data' => $filterformdata,
             'sort_field' => $sortfield,
             'sort_direction' => $sortdirection,
-            'pagelayout' => $pagelayout
+            'pagelayout' => $pagelayout,
+            'pagecontext' => $pagecontext,
         ]);
+
+        if ($pagecontext) {
+            $context = \context::instance_by_id($pagecontext);
+            $PAGE->set_context($context);
+        }
         if ($pagelayout) {
             $PAGE->set_pagelayout($pagelayout);
         }
@@ -165,7 +176,7 @@ class external extends external_api {
     public static function get_block_content_returns() {
         return new \external_single_structure([
             'html' => new \external_value(PARAM_RAW),
-            'scripts' => new \external_value(PARAM_RAW)
+            'scripts' => new \external_value(PARAM_RAW),
         ]);
     }
 
@@ -180,7 +191,7 @@ class external extends external_api {
     public static function submit_preferences_form_parameters() {
         return new \external_function_parameters([
             'contextid' => new \external_value(PARAM_INT, 'The context id for the block'),
-            'jsonformdata' => new \external_value(PARAM_RAW, 'The form data encoded as a json array')
+            'jsonformdata' => new \external_value(PARAM_RAW, 'The form data encoded as a json array'),
         ]);
     }
 
@@ -200,7 +211,7 @@ class external extends external_api {
 
         $params = self::validate_parameters(self::submit_preferences_form_parameters(), [
             'contextid' => $contextid,
-            'jsonformdata' => $jsonformdata
+            'jsonformdata' => $jsonformdata,
         ]);
 
         $context = \context::instance_by_id($params['contextid'], MUST_EXIST);
@@ -209,7 +220,7 @@ class external extends external_api {
         require_capability('block/dash:addinstance', $context);
 
         $serialiseddata = json_decode($params['jsonformdata']);
-        $data = array();
+        $data = [];
         parse_str($serialiseddata, $data);
         $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
@@ -223,17 +234,27 @@ class external extends external_api {
             $config->preferences = [];
         }
 
-        $configpreferences = isset($data['config_preferences']) ? $data['config_preferences'] : [];
-        $config->preferences = self::recursive_config_merge($config->preferences, $configpreferences, '');
+        if (!isset($data['config_preferences']) || is_null($data['config_preferences'])) {
+            $data['config_preferences'] = [];
+        }
 
         if (isset($data['config_data_source_idnumber'])) {
             $config->data_source_idnumber = $data['config_data_source_idnumber'];
+            $datasource = data_source_factory::build_data_source($config->data_source_idnumber,
+                $context);
+            if ($datasource) {
+                if (method_exists($datasource, 'set_default_preferences')) {
+                    $datasource->set_default_preferences($data);
+                }
+            }
         }
 
+        $configpreferences = $data['config_preferences'];
+        $config->preferences = self::recursive_config_merge($config->preferences, $configpreferences, '');
         $block->instance_config_save($config);
 
         return [
-            'validationerrors' => false
+            'validationerrors' => false,
         ];
     }
 

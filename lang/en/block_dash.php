@@ -163,6 +163,7 @@ $string['headercontent'] = 'Header content';
 $string['headercontent_help'] = 'Content displayed in the block header.';
 $string['headingfield'] = 'Heading field';
 $string['hidewhenempty'] = 'Hide when empty';
+$string['hidewhenempty_desc'] = "Hide the dash block when it's empty.";
 $string['iconfield'] = 'Icon field';
 $string['imageoverlayfield'] = 'Image overlay field';
 $string['imageoverlayfield_help'] = 'Content to display over image with solid background.';
@@ -585,7 +586,7 @@ Enter the values with comma(,) for IN conditions';
 // ...Developer datasource and table.
 $string['attribute'] = 'Attribute';
 $string['maintablenotconfigured'] = 'Main table not configured for the developer data source';
-$string['persistenttablealias'] = 'Custom table';
+$string['persistenttablealias'] = 'Custom source main table';
 $string['developerfield'] = '{$a}';
 $string['developerfieldid'] = 'id';
 $string['tablejoinshdr'] = 'Join tables';
@@ -613,3 +614,168 @@ $string['conditionstatichdr'] = 'Condition #0';
 $string['operatorcondition_help'] = 'Conjunctive Operator - Choose between "AND" and "OR" to define how multiple conditions are combined.
 - "AND" requires that all conditions must be true for the overall condition to be met.
 - "OR" requires that at least one of the conditions must be true for the overall condition to be met.';
+
+// ...Skill progress dash addon widget.
+$string['widget:skillprogress'] = 'Skill progress';
+$string['widget:skillprogress_help'] = 'Skill Progress displays the user\'s overall progress in all selected skills, including the current level and points earned for each skill individually.';
+$string['coursedates'] = 'Course dates';
+$string['skills'] = 'Skills';
+$string['donut'] = 'Donut';
+$string['currentlevel'] = 'Current level';
+$string['nextlevelpoints'] = 'Next level points';
+$string['totallevelpoints'] = 'Total level points';
+$string['hideindividualskills'] = 'Hide individual skills';
+
+// ...Myskill condition.
+$string['myskills'] = 'My skills';
+$string['hidecompletedskills'] = 'Hide completed skills';
+$string['currentcourseskills'] = 'Current course skills';
+$string['totalpoints'] = 'Total points';
+$string['nextlevelstr'] = '{$a->points} points to become {$a->name}';
+
+// ...Dash skill levels visual display.
+$string['widget:skilllevelvisuals'] = 'Skill level visuals';
+$string['widget:skilllevelvisuals_help'] = 'Display the levels associated with the selected skill as images.';
+$string['fieldcurrentlevel'] = 'Display current level';
+$string['fieldalllevels'] = 'Display all levels';
+$string['chooseskill'] = 'Choose skill';
+$string['tablealias_tsk'] = 'Skills';
+$string['yourcurrentlevel'] = 'Your current level';
+
+// ... My profile widget strings.
+$string['myprofiletable'] = 'Profile';
+$string['widget:myprofile'] = 'My profile';
+$string['widget:myprofile_help'] = 'Display the information about the user profile with important KPI';
+
+$string['field:profileimage'] = 'Show user profile image';
+$string['field:fullname'] = 'Show user\'s full name';
+
+$string['field:completedcourses'] = 'Completed courses';
+$string['field:enrolledprogress'] = 'Completed/total courses';
+$string['field:coursesinprogress'] = 'Courses in progress';
+$string['field:currentcoursescount'] = 'Current courses';
+$string['field:futurecoursescount'] = 'Future courses';
+$string['field:pastcoursescount'] = 'Past courses';
+$string['field:earnedskillpoints'] = 'Earned skill points';
+$string['field:earnedandtotalpoints'] = 'Earned/total skill points';
+$string['field:loginstreak'] = 'Login streak';
+$string['field:loginsthisweek'] = 'Logins this week';
+$string['field:completedcoursesinweek'] = 'Completed courses this week';
+$string['field:completedactivitiesinweek'] = 'Completed activities this week';
+$string['field:numberofdueactivities'] = 'Number of due activities';
+$string['field:numberofoverdueactivities'] = 'Number of overdue activities';
+$string['field:numberofunreadmsg'] = 'Number of unread messages';
+$string['field:numberofcontactreq'] = 'Number of contact requests';
+$string['field:sincelogindays'] = 'Number of days since last login';
+$string['field:teammemberscount'] = 'Number of team members';
+$string['field:onlineuserscount'] = 'Number of users currently online';
+$string['field:profileuserinfo'] = 'Profile user info {$a}';
+$string['field:kpi'] = 'KPI {$a}';
+$string['loginstreakdays'] = 'Login streak days';
+$string['loginstreakdaysdesc'] = 'Set the number of consecutive days required to maintain a streak.';
+
+// ...myprofile kpi labels displayed to users.
+$string['label:completedcourses'] = 'Completed courses';
+$string['label:enrolledprogress'] = 'Completed courses';
+$string['label:coursesinprogress'] = 'Courses in progress';
+$string['label:currentcoursescount'] = 'Current courses';
+$string['label:futurecoursescount'] = 'Future courses';
+$string['label:pastcoursescount'] = 'Past courses';
+$string['label:earnedskillpoints'] = 'Points collected';
+$string['label:earnedandtotalpoints'] = 'Earned/total points';
+$string['label:loginstreak'] = 'Day streak';
+$string['label:loginsthisweek'] = 'Logins this week';
+$string['label:completedcoursesinweek'] = 'Courses completed this week';
+$string['label:completedactivitiesinweek'] = 'Activities completed this week';
+$string['label:numberofdueactivities'] = 'Due activities';
+$string['label:numberofoverdueactivities'] = 'Overdue activities';
+$string['label:numberofunreadmsg'] = 'Unread messages';
+$string['label:numberofcontactreq'] = 'Contact requests';
+$string['label:sincelogindays'] = 'Days since last login';
+$string['label:teammemberscount'] = 'Team members';
+$string['label:onlineuserscount'] = 'Users currently online';
+
+// ...Block dash.
+$string['learningpath:path'] = 'Path';
+$string['learningpath:infoarea'] = 'Info area content';
+
+$string['widget:learningpath'] = 'Learning Path';
+$string['widget:learningpath_help'] = 'List of courses available in the learning path.';
+
+$string['dot'] = "Dot";
+$string['tinyimage'] = "Tiny image";
+$string['smallimage'] = "Small image";
+$string['mediumimage'] = "Medium image";
+$string['largeimage'] = "Large image";
+$string['extralargeimage'] = "Extra large image";
+
+$string['menu'] = "Menu order";
+$string['courseshortname'] = "Course short name";
+$string['coursefullname'] = "Course full name";
+$string['courseidnumber'] = "Course idnumber";
+$string['coursestartdate'] = "Course start date";
+
+$string['asc'] = "ASC";
+$string['desc'] = "DESC";
+
+
+$string['field:infoarea'] = "Info area";
+$string['field:infoarea_help'] = "if true, show the info area";
+$string['field:courseimgsize'] = "Course image size";
+$string['field:courseimgsize_help'] = "
+Dot — 20x20 px dot, without the course image. <br>
+Tiny image — 35x35px.<br>
+Small image — 50x50px.<br>
+Medium image — 75x75px.<br>
+Large image — 100x100px.<br>
+Extra large image — 150x150px.
+";
+$string['field:startelement'] = "Start element";
+$string['field:startelement_help'] = " if true, adds the start element at the beginning of the path";
+$string['field:finishelement'] = "Finish element";
+$string['field:finishelement_help'] = "if true, adds the finish element at the End of the path";
+$string['field:detailsarea'] = "Details area";
+$string['field:detailsarea_help'] = "if true, displays a details area as modal upon clicking the course";
+$string['field:orderby'] = "Order by";
+$string['field:orderby_help'] = "Order by";
+$string['field:orderdirection'] = "Order direction";
+$string['field:orderdirection_help'] = "Order direction";
+$string['field:limit'] = "Limit";
+$string['field:limit_help'] = "Limit";
+$string['field:learningpathdesktop'] = "Path for Desktop";
+$string['field:learningpathtablet'] = "Path for Tablet";
+$string['field:learningpathmobile'] = "Path for Mobile";
+$string['leanringpath_infocontent'] = 'You have completed <b>{$a->completed}</b> out of <b> {$a->total} </b> courses. The next course in this learning path is: <b> {$a->nextcourse}</b>';
+$string['trialpath'] = "Trial";
+$string['anothertrailpath'] = "Another trial";
+$string['circlepath'] = "Circle";
+$string['desktop_learningpath'] = "Learning Path for Desktop";
+$string['desktop_learningpath_desc'] = "";
+$string['tablet_learningpath'] = "Learning Path for Tablet";
+$string['tablet_learningpath_desc'] = "";
+$string['mobile_learningpath'] = "Learning Path for Mobile";
+$string['mobile_learningpath_desc'] = "";
+
+$string['resumelearningpath'] = "Resume learning path";
+$string['completedlearningpath'] = "Learning path complete. Good job!";
+
+$string['resumecourse'] = "Resume course";
+$string['completedcourse'] = "Completed course";
+$string['startcourse'] = "Start course";
+
+$string['restrictcurrentsection'] = "Automatically restrict to current section";
+$string['restrictcurrentsection_desc'] = "If a dash block with the content addon is added to a single-section page, it shall be automatically restricted to that section.";
+
+$string['learningpathstart'] = 'Start';
+$string['learningpathfinish'] = 'Finish';
+$string['nocourselearnigpath'] = "No courses have been added to the learning path yet.";
+
+// ... enrol program string.
+$string['programimagelink'] = 'Program image linked';
+$string['smart_coursebutton'] = 'Smart course button';
+$string['fullnamelinked'] = 'Fullname linked';
+$string['contextlinked'] = 'Context linked';
+$string['description'] = 'Description';
+$string['programs:view'] = 'View programs';
+$string['selfallocationwithkey'] = 'Sigup (Key required)';
+$string['viewprogram'] = 'View program';

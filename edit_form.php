@@ -69,16 +69,18 @@ class block_dash_edit_form extends block_edit_form {
             66 => '2/3',
             25 => '1/4',
             20 => '1/5',
-            16 => '1/6'
+            16 => '1/6',
         ]);
         $mform->setType('config_width', PARAM_INT);
         $mform->setDefault('config_width', 100);
 
         $mform->addElement('select', 'config_hide_when_empty', get_string('hidewhenempty', 'block_dash'), [
             0 => get_string('no'),
-            1 => get_string('yes')
+            1 => get_string('yes'),
         ]);
-        $mform->setType('config_hide_When_empty', PARAM_BOOL);
+
+        $mform->setType('config_hide_when_empty', PARAM_INT);
+        $mform->setDefault('config_hide_when_empty', get_config('block_dash', 'hide_when_empty'));
 
         $mform->addElement('text', 'config_css_class', get_string('cssclass', 'block_dash'));
         $mform->setType('config_css_class', PARAM_TEXT);
@@ -109,6 +111,13 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addElement('editor', 'config_emptystate', get_string('content'), ['rows' => 5]);
         $mform->setType('config_emptystate', PARAM_CLEANHTML);
 
+        $widgetlist = data_source_factory::get_data_source_form_options('widget');
+        foreach ($widgetlist as $id => $source) {
+            if (method_exists($id, 'extend_config_form')) {
+                $id::extend_config_form($mform, $source, $this);
+                $showcustom = true;
+            }
+        }
     }
 
     /**
@@ -124,7 +133,7 @@ class block_dash_edit_form extends block_edit_form {
         $label[] = $mform->createElement('html', html_writer::start_div('datasource-content heading'));
         $label[] = $mform->createElement('html', html_writer::end_div());
 
-        $mform->addGroup($label, 'datasources_label', get_string('choosefeature', 'block_dash'), array(' '), false);
+        $mform->addGroup($label, 'datasources_label', get_string('choosefeature', 'block_dash'), [' '], false);
         $mform->setType('datasources_label', PARAM_TEXT);
 
         if (!isset($config->data_source_idnumber)) {
@@ -145,6 +154,14 @@ class block_dash_edit_form extends block_edit_form {
         }
     }
 
+    /**
+     * Data features list.
+     *
+     * @param \moodleform $mform
+     * @param \context $context
+     * @param \moodle_page $page
+     * @return void
+     */
     public static function dash_features_list(&$mform, $context, $page) {
         global $OUTPUT;
         // Group of datasources.
@@ -166,7 +183,7 @@ class block_dash_edit_form extends block_edit_form {
                 $group[] = $mform->createElement('html', html_writer::end_div());
             }
             $group[] = $mform->createElement('html', html_writer::end_div());
-            $mform->addGroup($group, 'datasources', get_string('buildown', 'block_dash'), array(' '), false);
+            $mform->addGroup($group, 'datasources', get_string('buildown', 'block_dash'), [' '], false);
             $mform->setType('datasources', PARAM_TEXT);
             $mform->addHelpButton('datasources', 'buildown', 'block_dash');
         }
@@ -177,7 +194,6 @@ class block_dash_edit_form extends block_edit_form {
             $widgets[] = $mform->createElement('html',
                 html_writer::tag('p', get_string('widgetsdesc', 'block_dash'), ['class' => 'dash-source-desc']));
             $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-content'));
-
             foreach ($widgetlist as $id => $source) {
                 $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-item'));
                 $widgets[] = $mform->createElement('radio', 'config_data_source_idnumber', '', $source['name'], $id);
@@ -187,7 +203,7 @@ class block_dash_edit_form extends block_edit_form {
                 $widgets[] = $mform->createElement('html', html_writer::end_div());
             }
             $widgets[] = $mform->createElement('html', html_writer::end_div());
-            $mform->addGroup($widgets, 'widgets', get_string('readymatewidgets', 'block_dash'), array(' '), false);
+            $mform->addGroup($widgets, 'widgets', get_string('readymatewidgets', 'block_dash'), [' '], false);
             $mform->setType('widgets', PARAM_TEXT);
             $mform->addHelpButton('widgets', 'readymatewidgets', 'block_dash');
         }

@@ -64,7 +64,7 @@ class data_source_factory implements data_source_factory_interface {
                     self::$datasourceregistry[$fullclassname] = [
                         'identifier' => $fullclassname,
                         'name' => abstract_data_source::get_name_from_class($fullclassname),
-                        'help' => abstract_data_source::get_name_from_class($fullclassname, true)
+                        'help' => abstract_data_source::get_name_from_class($fullclassname, true),
                     ];
                 }
             }
@@ -87,7 +87,7 @@ class data_source_factory implements data_source_factory_interface {
                         'identifier' => $fullclassname,
                         'name' => abstract_data_source::get_name_from_class($fullclassname),
                         'help' => abstract_data_source::get_name_from_class($fullclassname, true),
-                        'type' => 'custom'
+                        'type' => 'custom',
                     ];
                 }
             }
@@ -159,14 +159,14 @@ class data_source_factory implements data_source_factory_interface {
                 if (isset($datasourceinfo['type']) && $datasourceinfo['type'] == $type) {
                     $options[$identifier] = [
                         'name' => $datasourceinfo['name'],
-                        'help' => isset($datasourceinfo['help']) ? $datasourceinfo['help'] : ''
+                        'help' => isset($datasourceinfo['help']) ? $datasourceinfo['help'] : '',
                     ];
                 }
             } else {
                 if (!isset($datasourceinfo['type'])) {
                     $options[$identifier] = [
                         'name' => $datasourceinfo['name'],
-                        'help' => isset($datasourceinfo['help']) ? $datasourceinfo['help'] : ''
+                        'help' => isset($datasourceinfo['help']) ? $datasourceinfo['help'] : '',
                     ];
                 }
             }

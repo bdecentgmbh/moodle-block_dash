@@ -61,9 +61,32 @@ class block_dash extends block_base {
      * @throws coding_exception
      */
     public function specialization() {
+        global $OUTPUT;
+
         if (isset($this->config->title)) {
             $this->title = $this->title = format_string($this->config->title, true, ['context' => $this->context]);
         } else {
+            $this->title = get_string('newblock', 'block_dash');
+        }
+
+        try {
+            $bb = block_builder::create($this);
+            if ($bb->is_collapsible_content_addon()) {
+                $addclass = "collapsible-block dash-block-collapse-icon";
+                if (!$bb->is_section_expand_content_addon()) {
+                    $addclass .= " collapsed";
+                }
+                $attr = [
+                    'data-toggle' => 'collapse',
+                    'class' => $addclass,
+                    'href' => "#dash-{$this->instance->id}",
+                    "aria-expanded" => "false",
+                    "aria-controls" => "dash-{$this->instance->id}",
+                ];
+                $this->title = html_writer::tag('span', $this->title, $attr);
+            }
+        } catch (\Exception $e) {
+            // Configured datasource is missing.
             $this->title = get_string('newblock', 'block_dash');
         }
     }
@@ -96,7 +119,7 @@ class block_dash extends block_base {
     /**
      * Copy any block-specific data when copying to a new block instance.
      *
-     * @param int $fromid the id number of the block instance to copy from
+     * @param int $frominstanceid the id number of the block instance to copy from
      * @return boolean
      */
     public function instance_copy($frominstanceid) {
@@ -167,7 +190,7 @@ class block_dash extends block_base {
 
             $datasource = $bb->get_configuration()->get_data_source();
             // Conditionally hide the block when empty.
-            if (isset($this->config->hide_when_empty) && $this->config->hide_when_empty
+            if ($datasource && isset($this->config->hide_when_empty) && $this->config->hide_when_empty
                 && (($datasource->is_widget() && $datasource->is_empty())
                 || (!$datasource->is_widget() && $datasource->get_data()->is_empty()))
                 && !$this->page->user_is_editing()) {
@@ -208,6 +231,15 @@ class block_dash extends block_base {
             $attributes['class'] .= ' ' . str_replace('\\', '-', $this->config->preferences['layout']);
         }
 
+        try {
+            $bb = block_builder::create($this);
+            if ($bb->is_collapsible_content_addon()) {
+                $attributes['class'] .= ' block-collapse-block';
+            }
+        } catch (\Exception $e) {
+            $attributes['class'] .= ' missing-datasource';
+        }
+
         return $attributes;
     }
 
@@ -222,7 +254,7 @@ class block_dash extends block_base {
         $blockcss = [];
         $data = [
             'block' => $this,
-            'headerfootercolor' => isset($this->config->headerfootercolor) ? $this->config->headerfootercolor : null
+            'headerfootercolor' => isset($this->config->headerfootercolor) ? $this->config->headerfootercolor : null,
         ];
 
         $backgroundgradient = isset($this->config->backgroundgradient)
@@ -328,8 +360,6 @@ class block_dash extends block_base {
         $cache->set($key, [$fieldname => $sorting[$fieldname]]);
     }
 
-
-
     /**
      * Include the preference option to the blocks controls before genreate the output.
      *
@@ -367,19 +397,17 @@ class block_dash extends block_base {
         }
         // Move icon.
         $str = new lang_string('preferences', 'core');
-        $icon = $output->render(new pix_icon('i/dashboard', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')));
+        $icon = $output->render(new pix_icon('i/dashboard', $str, 'moodle', ['class' => 'iconsmall', 'title' => '']));
 
         $newcontrols = [];
         foreach ($bc->controls as $controls) {
             $newcontrols[] = $controls;
             if ($controls->text instanceof lang_string && $controls->text->get_identifier() == 'configureblock') {
-                $newcontrols[] = html_writer::link('javascript:void(0);', $icon . $str, array('class' => 'dash-edit-preferences'));
+                $newcontrols[] = html_writer::link('javascript:void(0);', $icon . $str, ['class' => 'dash-edit-preferences']);
             }
         }
         $bc->controls = $newcontrols;
         return $bc;
     }
-
-
 
 }

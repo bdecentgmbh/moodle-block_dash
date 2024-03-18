@@ -31,6 +31,7 @@ use block_dash\local\data_source\users_data_source;
 use block_dash\local\widget\mylearning\mylearning_widget;
 use block_dash\local\widget\groups\groups_widget;
 use block_dash\local\widget\contacts\contacts_widget;
+use block_dash\local\widget\skillprogress\skillprogress_widget;
 
 define("BLOCK_DASH_FILTER_TABS_COUNT", 4);
 
@@ -60,7 +61,7 @@ function block_dash_register_data_sources() {
         [
             'name' => get_string('users'),
             'help' => ['name' => 'users', 'component' => 'block_dash'],
-            'identifier' => users_data_source::class
+            'identifier' => users_data_source::class,
         ],
     ];
 }
@@ -75,8 +76,8 @@ function block_dash_register_layouts() {
     return [
         [
             'name' => get_string('layoutgrid', 'block_dash'),
-            'identifier' => grid_layout::class
-        ]
+            'identifier' => grid_layout::class,
+        ],
     ];
 }
 
@@ -103,7 +104,8 @@ function block_dash_register_widget() {
             'name' => get_string('widget:mygroups', 'block_dash'),
             'identifier' => groups_widget::class,
             'help' => 'widget:mygroups',
-        ]
+        ],
+
     ];
 }
 
@@ -128,7 +130,7 @@ function block_dash_output_fragment_block_preferences_form($args) {
 
     $form = new preferences_form(null, ['block' => $block, 'tab' => $args->tab], 'post', '', [
         'class' => 'dash-preferences-form',
-        'data-double-submit-protection' => 'off'
+        'data-double-submit-protection' => 'off',
     ]);
 
     require_capability('block/dash:addinstance', $context);
@@ -148,14 +150,14 @@ function block_dash_output_fragment_block_preferences_form($args) {
         $tabs[] = [
             'label' => get_string($tab, 'block_dash'),
             'active' => $tab == $args->tab,
-            'tabid' => $tab
+            'tabid' => $tab,
         ];
     }
 
     return $OUTPUT->render_from_template('block_dash/preferences_form', [
         'formhtml' => $formhtml,
         'tabs' => $tabs,
-        'istotara' => block_dash_is_totara()
+        'istotara' => block_dash_is_totara(),
     ]);
 }
 
@@ -171,7 +173,7 @@ function block_dash_output_fragment_block_preferences_form($args) {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file was not found, just send the file otherwise and do not return anything
  */
-function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
 
     if ($context->contextlevel != CONTEXT_BLOCK) {
         return false;
@@ -319,13 +321,19 @@ function block_dash_get_suggest_users() {
 
     $users = $DB->get_records_sql("SELECT *
                                    FROM {user}
-                                  WHERE confirmed = 1 AND deleted = 0 AND id <> ?", array($CFG->siteguest));
+                                  WHERE confirmed = 1 AND deleted = 0 AND id <> ?", [$CFG->siteguest]);
     foreach ($users as $user) {
         $list[$user->id] = fullname($user);
     }
     return isset($list) ? $list : [];
 }
 
+/**
+ * Get the current php version related data collection. Data collection implements PHP arrayAccess class.
+ * PHP arrayaccess parameters are changed from 8.1.
+ *
+ * @return mixed
+ */
 function block_dash_get_data_collection() {
     return version_compare(phpversion(), '8.1', '<')
         ? new block_dash\local\data_grid\data\data_collection() : new \block_dash\local\data_grid\data\data_collection_new();

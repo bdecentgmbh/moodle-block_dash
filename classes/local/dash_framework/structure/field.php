@@ -106,13 +106,15 @@ class field implements field_interface {
                                 $select = null,
                                 array $attributes = [],
                                 $options = [],
-                                $visibility = self::VISIBILITY_VISIBLE) {
+                                $visibility = self::VISIBILITY_VISIBLE,
+                                $sortselect = null) {
         $this->name = $name;
         $this->title = $title;
         $this->table = $table;
         $this->select = $select;
         $this->visibility = $visibility;
         $this->options = $options;
+        $this->sortselect = $sortselect;
 
         foreach ($attributes as $attribute) {
             $this->add_attribute($attribute);
@@ -394,11 +396,10 @@ class field implements field_interface {
      */
     public function get_sort_select() {
         $sort = $this->sortselect;
-        if (!is_null($sort)) {
-            return $sort;
+        if (is_null($sort)) {
+            return $this->get_select();
         }
-
-        return $this->get_alias();
+        return empty($sort) ? $this->get_alias() : '';
     }
 
     // Endregion.

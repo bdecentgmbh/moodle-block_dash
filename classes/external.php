@@ -57,8 +57,8 @@ class external extends external_api {
             'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
             'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
             'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
-            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_OPTIONAL),
-            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_OPTIONAL),
+            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
+            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
         ]);
     }
 

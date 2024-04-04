@@ -788,4 +788,6 @@ $string['modulename'] = 'Module Name';
 $string['programbg'] = "Enrol Program image";
 $string['programbg_desc'] = "";
 
-
+// Course certificate datasource strings.
+$string['downloadcertificate'] = 'Download certificate';
+$string['certificatecodelinked'] = 'Code linked';

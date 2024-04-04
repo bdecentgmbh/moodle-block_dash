@@ -43,10 +43,15 @@ class widget_attribute extends abstract_field_attribute {
         global $PAGE, $DB;
         $widget = $this->get_option('widget');
         $method = $this->get_option('method');
+        $callback = $this->get_option('callback');
         if ($widget && $method) {
             if (method_exists($widget, $method)) {
                 $data = $widget->$method($record);
             }
+        }
+
+        if ($callback) {
+            $data = $callback($record, $data);
         }
 
         return $data;

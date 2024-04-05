@@ -791,3 +791,19 @@ $string['programbg_desc'] = "";
 // Course certificate datasource strings.
 $string['downloadcertificate'] = 'Download certificate';
 $string['certificatecodelinked'] = 'Code linked';
+
+// Category datasource.
+$string['categories'] = 'Categories';
+$string['categories_help'] = 'Categories datasource list the available categories.';
+$string['recentcoursename'] = 'Recent course';
+$string['categoryimagelink'] = 'Category link';
+$string['categoryimage'] = 'Category image';
+$string['categorycoursecount'] = 'Courses count';
+// ...Category image settings.
+$string['categoryimgheading'] = 'Category image';
+$string['categoryimgheadingsub'] = 'Categories images';
+$string['categoryimgdesc'] = 'Add images for the categories';
+$string['categoryimgcategory'] = 'Image for category {$a->category}';
+$string['categoryimgfallback'] = 'Category fallback image';
+$string['categoryimgfallbackdesc'] = 'Upload the image for the default fallback of categories. If new categories are created, the fallback image will be displayed until a new image is added for the category';
+$string['categoryimageurl'] = 'Category image url';

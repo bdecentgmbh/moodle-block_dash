@@ -780,8 +780,8 @@ $string['programs:view'] = 'View programs';
 $string['selfallocationwithkey'] = 'Sigup (Key required)';
 $string['viewprogram'] = 'View program';
 
-$string['createdate'] = 'Created date';
-$string['modifiedate'] = 'Last modified date';
+$string['createddate'] = 'Created date';
+$string['modifieddate'] = 'Last modified date';
 $string['duedate'] = 'Due date';
 $string['categoryurl'] = 'Category URL';
 $string['modulename'] = 'Module Name';

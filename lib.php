@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_dash\local\data_source\categories_data_source;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
 use block_dash\local\layout\accordion_layout;
@@ -62,6 +63,11 @@ function block_dash_register_data_sources() {
             'name' => get_string('users'),
             'help' => ['name' => 'users', 'component' => 'block_dash'],
             'identifier' => users_data_source::class,
+        ],
+        [
+            'name' => get_string('categories'),
+            'help' => ['name' => 'categories', 'component' => 'block_dash'],
+            'identifier' => categories_data_source::class,
         ],
     ];
 }
@@ -175,13 +181,13 @@ function block_dash_output_fragment_block_preferences_form($args) {
  */
 function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
 
-    if ($context->contextlevel != CONTEXT_BLOCK) {
+    if ($context->contextlevel != CONTEXT_BLOCK && $context->contextlevel != CONTEXT_SYSTEM) {
         return false;
     }
 
     require_login();
 
-    if ($filearea == 'images') {
+    if ($filearea == 'images' || $filearea == 'categoryimg') {
 
         $relativepath = implode('/', $args);
 

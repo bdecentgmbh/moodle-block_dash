@@ -89,9 +89,41 @@ if ($ADMIN->fulltree) {
         get_string('suggestusers_desc', 'block_dash'), [], $users)
     );
 
+    if ($ADMIN->fulltree) {// Category images.
+
+        $settings->add(new admin_setting_heading('block_dash_categoryimg', get_string('categoryimgheadingsub', 'block_dash'),
+        format_text(get_string('categoryimgdesc', 'block_dash'), FORMAT_MARKDOWN)));
+
+        $name = 'block_dash/categoryimgfallback';
+        $title = get_string('categoryimgfallback', 'block_dash');
+        $description = get_string('categoryimgfallbackdesc', 'block_dash');
+        $default = 'categoryimg';
+        $setting = new admin_setting_configstoredfile($name, $title, $description, $default, 0);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $settings->add($setting);
+
+        // require_once($CFG->libdir . '/coursecatlib.php');
+        $coursecats = core_course_category::make_categories_list();
+
+        // Go through all categories and create the necessary settings.
+        foreach ($coursecats as $key => $value) {
+            // Category Icons for each category.
+            $name = 'block_dash/categoryimg';
+            $title = $value;
+            $description = get_string('categoryimgcategory', 'block_dash', array('category' => $value));
+            $filearea = 'categoryimg';
+            $setting = new admin_setting_configstoredfile($name . $key, $title, $description, $default, $key);
+            $setting->set_updatedcallback('theme_reset_all_caches');
+            $settings->add($setting);
+        }
+        unset($coursecats);
+    }
+
     $PAGE->requires->js_amd_inline("
         require(['core/form-autocomplete'], function(module) {
             module.enhance('#id_s_block_dash_suggestusers');
         });
     ");
+
+
 }

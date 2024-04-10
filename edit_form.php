@@ -62,6 +62,14 @@ class block_dash_edit_form extends block_edit_form {
 
         $mform->addElement('header', 'apperance', get_string('appearance'));
 
+        $mform->addElement('select', 'config_showheader', get_string('showheader', 'block_dash'), [
+            0 => get_string('hidden', 'block_dash'),
+            1 => get_string('visible'),
+        ]);
+        $mform->setType('config_showheader', PARAM_INT);
+        $mform->setDefault('config_showheader', get_config('block_dash', 'showheader'));
+        $mform->addHelpButton('config_showheader', 'showheader', 'block_dash');
+
         $mform->addElement('select', 'config_width', get_string('blockwidth', 'block_dash'), [
             100 => '100',
             50 => '1/2',

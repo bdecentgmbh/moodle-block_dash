@@ -40,6 +40,17 @@ if ($ADMIN->fulltree) {
     ));
 
     $settings->add(new admin_setting_configselect(
+        'block_dash/showheader',
+        get_string('showheader', 'block_dash'),
+        get_string('showheader_help', 'block_dash'),
+        1,
+        [
+            0 => get_string('hidden', 'block_dash'),
+            1 => get_string('visible'),
+        ]
+        ));
+
+    $settings->add(new admin_setting_configselect(
         'block_dash/hide_when_empty',
         get_string('hidewhenempty', 'block_dash'),
         get_string('hidewhenempty_desc', 'block_dash'),

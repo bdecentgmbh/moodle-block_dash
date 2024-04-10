@@ -68,7 +68,7 @@ class block_dash extends block_base {
         } else {
             $this->title = get_string('newblock', 'block_dash');
         }
-
+       
         try {
             $bb = block_builder::create($this);
             if ($bb->is_collapsible_content_addon()) {
@@ -88,6 +88,15 @@ class block_dash extends block_base {
         } catch (\Exception $e) {
             // Configured datasource is missing.
             $this->title = get_string('newblock', 'block_dash');
+        }
+
+        $showheader = get_config('block_dash', 'showheader');
+        if (isset($this->config->showheader)) {
+            $showheader = $this->config->showheader;
+        }
+
+        if (!$showheader && !$this->page->user_is_editing()) {
+            $this->title = "";
         }
     }
 

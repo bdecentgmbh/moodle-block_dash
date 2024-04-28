@@ -68,7 +68,7 @@ class block_dash extends block_base {
         } else {
             $this->title = get_string('newblock', 'block_dash');
         }
-       
+
         try {
             $bb = block_builder::create($this);
             if ($bb->is_collapsible_content_addon()) {
@@ -120,6 +120,18 @@ class block_dash extends block_base {
         if (isset($data->backgroundimage)) {
             file_save_draft_area_files($data->backgroundimage, $this->context->id, 'block_dash', 'images',
                 0, ['subdirs' => 0, 'maxfiles' => 1]);
+        }
+        if (isset($data->dash_configure_options) && isset($data->data_source_idnumber)) {
+            $datasource = data_source_factory::build_data_source($data->data_source_idnumber,
+                $this->context);
+            if ($datasource) {
+                if (method_exists($datasource, 'set_default_preferences')) {
+                    $configpreferences = ['config_preferences' => []];
+                    $datasource->set_default_preferences($configpreferences);
+                    $data->preferences = $configpreferences['config_preferences'];
+                }
+            }
+            unset($data->dash_configure_options);
         }
 
         parent::instance_config_save($data, $nolongerused);
@@ -194,6 +206,7 @@ class block_dash extends block_base {
             $this->content->text = is_siteadmin() ? get_string('disableallmessage', 'block_dash') : '';
             return $this->content;
         }
+
         try {
             $bb = block_builder::create($this);
 
@@ -228,7 +241,10 @@ class block_dash extends block_base {
     public function html_attributes() {
         $attributes = parent::html_attributes();
         if (isset($this->config->css_class)) {
-            $attributes['class'] .= ' ' . $this->config->css_class;
+            $cssclasses = explode(",", $this->config->css_class);
+            foreach ($cssclasses as $class) {
+                $attributes['class'] .= ' ' . trim($class);
+            }
         }
         if (isset($this->config->width)) {
             $attributes['class'] .= ' dash-block-width-' . $this->config->width;
@@ -278,13 +294,33 @@ class block_dash extends block_base {
                 $blockcss[] = sprintf('background-image: url(%s);', $this->get_background_image_url());
             }
         } else if ($backgroundgradient) {
-            $blockcss[] = sprintf('background: %s', $this->config->backgroundgradient);
+            $blockcss[] = sprintf('background-image: %s;', $this->config->backgroundgradient);
+        }
+
+        // Background postition.
+        if (isset($this->config->backgroundimage_position)) {
+            $bgpostion = $this->config->backgroundimage_position;
+            $bgpostionvalue = ($bgpostion == 'custom') ? $this->config->backgroundimage_customposition : $bgpostion;
+            $blockcss[] = sprintf('background-position: %s;', $bgpostionvalue);
+        }
+
+        // Background size.
+        if (isset($this->config->backgroundimage_size)) {
+            $bgsize = $this->config->backgroundimage_size;
+            $bgsizevalue = ($bgsize == 'custom') ? $this->config->backgroundimage_customsize : $bgsize;
+            $blockcss[] = sprintf('background-size: %s;', $bgsizevalue);
         }
 
         if (isset($this->config->css) && is_array($this->config->css)) {
             foreach ($this->config->css as $property => $value) {
                 if (!empty($value)) {
-                    $blockcss[] = sprintf('%s: %s;', $property, $value);
+                    if ($property == 'border') {
+                        if ($this->config->border_option) {
+                            $blockcss[] = sprintf('%s: %s;', $property, $value);
+                        }
+                    } else {
+                        $blockcss[] = sprintf('%s: %s;', $property, $value);
+                    }
                 }
             }
         }

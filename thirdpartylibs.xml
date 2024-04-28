@@ -28,4 +28,11 @@
         <license>Apache</license>
         <licenseversion>2.0</licenseversion>
     </library>
+     <library>
+        <location>amd/src/lc_color_picker.js</location>
+        <name>Color picker</name>
+        <version>2.0</version>
+        <license>Apache</license>
+        <licenseversion>2.0</licenseversion>
+    </library>
 </libraries>

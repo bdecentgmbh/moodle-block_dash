@@ -39,6 +39,15 @@ if ($ADMIN->fulltree) {
         ]
     ));
 
+    // Css classes.
+    $settings->add(new admin_setting_configtext(
+        'block_dash/cssclass',
+        get_string('cssclass', 'block_dash'),
+        get_string('cssclass_help', 'block_dash'),
+        '',
+        PARAM_TEXT
+        ));
+
     $settings->add(new admin_setting_configselect(
         'block_dash/showheader',
         get_string('showheader', 'block_dash'),
@@ -113,7 +122,6 @@ if ($ADMIN->fulltree) {
         $setting->set_updatedcallback('theme_reset_all_caches');
         $settings->add($setting);
 
-        // require_once($CFG->libdir . '/coursecatlib.php');
         $coursecats = core_course_category::make_categories_list();
 
         // Go through all categories and create the necessary settings.
@@ -135,6 +143,5 @@ if ($ADMIN->fulltree) {
             module.enhance('#id_s_block_dash_suggestusers');
         });
     ");
-
 
 }

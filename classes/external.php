@@ -103,10 +103,10 @@ class external extends external_api {
         $public = false;
         $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
-        if (strpos($block->instance->pagetypepattern, 'local-dash-dashboard') !== false) {
-            if ($dashboard = \local_dash\model\dashboard::get_record(
+        if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
+            if ($dashboard =  \dashaddon_dashboard\model\dashboard::get_record(
                     ['shortname' => $block->instance->defaultregion])) {
-                if ($dashboard->get('permission') == \local_dash\model\dashboard::PERMISSION_PUBLIC) {
+                if ($dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC) {
                     $public = true;
                 }
             }

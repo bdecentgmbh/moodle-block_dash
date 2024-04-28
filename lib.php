@@ -64,11 +64,6 @@ function block_dash_register_data_sources() {
             'help' => ['name' => 'users', 'component' => 'block_dash'],
             'identifier' => users_data_source::class,
         ],
-        [
-            'name' => get_string('categories'),
-            'help' => ['name' => 'categories', 'component' => 'block_dash'],
-            'identifier' => categories_data_source::class,
-        ],
     ];
 }
 
@@ -343,4 +338,30 @@ function block_dash_get_suggest_users() {
 function block_dash_get_data_collection() {
     return version_compare(phpversion(), '8.1', '<')
         ? new block_dash\local\data_grid\data\data_collection() : new \block_dash\local\data_grid\data\data_collection_new();
+}
+
+
+function block_dash_visible_addons($id) {
+    global $CFG;
+    preg_match('/(dashaddon_[a-zA-Z_]+)/', $id, $matches);
+    if ($matches) {
+        $value = $matches[1];
+        $parts = explode('\\', $value);
+        if ($parts) {
+            $addon = $parts[0];
+            $addondependencies = $addon . "_extend_added_dependencies";
+            if (get_config($addon, 'enabled')) {
+                $addonplugin = explode("dashaddon_", $addon)[1];
+                if (file_exists($CFG->dirroot. "/local/dash/addon/$addonplugin/lib.php")) {
+                    require_once($CFG->dirroot. "/local/dash/addon/$addonplugin/lib.php");
+                    if (function_exists($addondependencies) && !empty($addondependencies())) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
 }

@@ -860,3 +860,14 @@ $string['bordervalue'] = "Border Value";
 $string['managedashaddonplugins'] = "Manage Dash addon plugins";
 $string['dashaddonpluginname'] = 'Dash addon name';
 $string['hideshow'] = 'Hide/Show';
+// ...Dashaddon skill graph strings.
+$string['managecapabilitymissing'] = 'Require capability "moodle/competency:competencymanage" to access the page is missing';
+$string['managecompentency'] = 'Manage competencies appearance';
+$string['totalprogress'] = 'Total progress';
+$string['setup'] = 'Setup';
+$string['compentenciesnotfound'] = 'Competency not found.';
+$string['competencyappearance'] = 'Competency appearances';
+$string['competencyheading'] = 'Setup competency appearance';
+$string['competencycolor'] = 'Competency color';
+$string['competencyimage'] = 'Competency image';
+$string['datasource:competency_progress_widget'] = 'Competency breakdown progress widget';

@@ -91,9 +91,14 @@ class block_dash_edit_form extends block_edit_form {
         $mform->setType('config_hide_when_empty', PARAM_INT);
         $mform->setDefault('config_hide_when_empty', get_config('block_dash', 'hide_when_empty'));
 
-        $mform->addElement('text', 'config_css_class', get_string('cssclass', 'block_dash'));
+        $attributes['tags'] = true;
+        $attributes['multiple'] = 'multiple';
+        $attributes['placeholder'] = get_string('enterclasses', 'block_dash');
+
+        $cssclassses = explode(',', get_config('block_dash', 'cssclass'));
+        $cssclassses = array_combine($cssclassses, $cssclassses);
+        $mform->addElement('autocomplete', 'config_css_class', get_string('cssclass', 'block_dash'), $cssclassses, $attributes);
         $mform->setType('config_css_class', PARAM_TEXT);
-        $mform->setDefault('config_css_class', get_config('block_dash', 'cssclass'));
         $mform->addHelpButton('config_css_class', 'cssclass', 'block_dash');
 
         $mform->addElement('filemanager', 'config_backgroundimage', get_string('backgroundimage', 'block_dash'), null,
@@ -162,16 +167,17 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addHelpButton('config_headerfootercolor', 'fontcolor', 'block_dash');
 
         $mform->addElement('select', 'config_border_option', get_string('border_option', 'block_dash'), [
-            0 => get_string('disable'),
-            1 => get_string('enable'),
+            0 => get_string('hidden', 'block_dash'),
+            1 => get_string('visible'),
         ]);
         $mform->setType('config_border_option', PARAM_INT);
+        $mform->setDefault('config_border_option', 1);
         $mform->addHelpButton('config_border_option', 'border_option', 'block_dash');
 
-        $mform->addElement('text', 'config_css[border]', get_string('bordervalue', 'block_dash'));
-        $mform->setType('config_css[border]', PARAM_TEXT);
-        $mform->addHelpButton('config_css[border]', 'border', 'block_dash');
-        $mform->hideIf('config_css[border]', 'config_border_option', 'eq', 0);
+        $mform->addElement('text', 'config_border', get_string('bordervalue', 'block_dash'));
+        $mform->setType('config_border', PARAM_TEXT);
+        $mform->addHelpButton('config_border', 'border', 'block_dash');
+        $mform->hideIf('config_border', 'config_border_option', 'eq', 0);
 
         $mform->addElement('text', 'config_css[min-height]', get_string('minheight', 'block_dash'));
         $mform->setType('config_css[min-height]', PARAM_TEXT);

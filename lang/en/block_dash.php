@@ -849,17 +849,23 @@ $string['dashthumbnailimgurl'] = 'Thumbnail image URL';
 $string['dashthumbnailimg_help'] = "This thumbnail image shows only in dashboards data source";
 $string['dashbgimg'] = 'Background image';
 $string['dashbgimg_help'] = 'This background image used as background for the dashboard.';
-$string['coredashboard'] = "Core dashboard";
+$string['coredashboard'] = "Main dashboard";
 $string['backgroundimageurl'] = 'Background image URL';
 
-$string['border_option'] = "Border";
+$string['border_option'] = "Show border";
 $string['border_option_help'] = "You can add the border of dash block.";
 $string['bordervalue'] = "Border Value";
 
 
-$string['managedashaddonplugins'] = "Manage Dash addon plugins";
+$string['managedashaddonplugins'] = "Manage addons";
 $string['dashaddonpluginname'] = 'Dash addon name';
 $string['hideshow'] = 'Hide/Show';
+
+$string['maindashboard'] = "Main dashboard";
+$string['enterclasses'] = "Enter classes";
+// Permissions role context.
+$string['permissionsrolecontext'] = 'Role Context';
+$string['permissionsrolecontext_help'] = 'Select the context for which the user\'s role should be checked (Any context or system context only)';
 // ...Dashaddon skill graph strings.
 $string['managecapabilitymissing'] = 'Require capability "moodle/competency:competencymanage" to access the page is missing';
 $string['managecompentency'] = 'Manage competencies appearance';
@@ -870,4 +876,3 @@ $string['competencyappearance'] = 'Competency appearances';
 $string['competencyheading'] = 'Setup competency appearance';
 $string['competencycolor'] = 'Competency color';
 $string['competencyimage'] = 'Competency image';
-$string['datasource:competency_progress_widget'] = 'Competency breakdown progress widget';

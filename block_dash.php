@@ -241,10 +241,14 @@ class block_dash extends block_base {
     public function html_attributes() {
         $attributes = parent::html_attributes();
         if (isset($this->config->css_class)) {
-            $cssclasses = explode(",", $this->config->css_class);
+            $cssclasses = $this->config->css_class;
+            if (!is_array($cssclasses)) {
+                $cssclasses = explode(',', $cssclasses);
+            }
             foreach ($cssclasses as $class) {
                 $attributes['class'] .= ' ' . trim($class);
             }
+
         }
         if (isset($this->config->width)) {
             $attributes['class'] .= ' dash-block-width-' . $this->config->width;
@@ -314,14 +318,18 @@ class block_dash extends block_base {
         if (isset($this->config->css) && is_array($this->config->css)) {
             foreach ($this->config->css as $property => $value) {
                 if (!empty($value)) {
-                    if ($property == 'border') {
-                        if ($this->config->border_option) {
-                            $blockcss[] = sprintf('%s: %s;', $property, $value);
-                        }
-                    } else {
-                        $blockcss[] = sprintf('%s: %s;', $property, $value);
-                    }
+                    $blockcss[] = sprintf('%s: %s;', $property, $value);
                 }
+            }
+        }
+
+        if (isset($this->config->border_option)) {
+            if ($this->config->border_option) {
+                $bordervalue = isset($this->config->border) && ($this->config->border) ? $this->config->border
+                    : "1px solid rgba(0,0,0,.125)";
+                $blockcss[] = sprintf('%s: %s;', 'border', $bordervalue);
+            } else {
+                $blockcss[] = sprintf('%s: %s;', 'border', "none");
             }
         }
 

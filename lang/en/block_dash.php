@@ -876,3 +876,5 @@ $string['competencyappearance'] = 'Competency appearances';
 $string['competencyheading'] = 'Setup competency appearance';
 $string['competencycolor'] = 'Competency color';
 $string['competencyimage'] = 'Competency image';
+$string['missingdatasource'] = "The datasources are missing. Please check them.";
+

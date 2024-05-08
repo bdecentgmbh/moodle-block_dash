@@ -226,8 +226,8 @@ class block_dash_edit_form extends block_edit_form {
             } else {
                 $label = get_string('datasourcemissing', 'block_dash');
             }
-            $datalabel = ($ds->is_widget()
-            ? get_string('widget', 'block_dash') : get_string('datasource', 'block_dash'));
+            $datalabel = ($ds && $ds->is_widget())
+            ? get_string('widget', 'block_dash') : get_string('datasource', 'block_dash');
 
             $mform->addElement('static', 'data_source_label', $datalabel.' : ', $label);
         }
@@ -279,7 +279,8 @@ class block_dash_edit_form extends block_edit_form {
                     $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-item'));
                     $widgets[] = $mform->createElement('radio', 'config_data_source_idnumber', '', $source['name'], $id);
                     if ($source['help']) {
-                        $widgets[] = $mform->createElement('html', $OUTPUT->help_icon($source['help'], 'block_dash', $source['help']));
+                        $widgets[] = $mform->createElement('html', $OUTPUT->help_icon($source['help'], 'block_dash',
+                            $source['help']));
                     }
                     $widgets[] = $mform->createElement('html', html_writer::end_div());
                 }

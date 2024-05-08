@@ -210,6 +210,10 @@ class block_dash extends block_base {
         try {
             $bb = block_builder::create($this);
 
+            if (!$bb->get_configuration()){
+                return $this->content->text = get_string('missingdatasource', 'block_dash');
+            }
+
             $datasource = $bb->get_configuration()->get_data_source();
             // Conditionally hide the block when empty.
             if ($datasource && isset($this->config->hide_when_empty) && $this->config->hide_when_empty

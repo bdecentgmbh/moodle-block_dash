@@ -84,7 +84,7 @@ class category_image_url_attribute extends abstract_field_attribute {
      *
      * @return array|null
      */
-    function get_category_files() {
+    public function get_category_files() {
 
         static $list = null;
 

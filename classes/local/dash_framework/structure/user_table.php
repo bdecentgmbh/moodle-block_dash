@@ -147,7 +147,7 @@ class user_table extends table {
                 new lang_string('customfield', 'block_dash', ['name' => format_string($customfield->name)]),
                 $this, "(SELECT profile$i.data FROM {user_info_data} profile$i
                       WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)",
-                [], [],field_interface::VISIBILITY_VISIBLE , '',
+                [], [], field_interface::VISIBILITY_VISIBLE , '',
             );
 
             $i++;

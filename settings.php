@@ -129,7 +129,7 @@ if ($ADMIN->fulltree) {
             // Category Icons for each category.
             $name = 'block_dash/categoryimg';
             $title = $value;
-            $description = get_string('categoryimgcategory', 'block_dash', array('category' => $value));
+            $description = get_string('categoryimgcategory', 'block_dash', ['category' => $value]);
             $filearea = 'categoryimg';
             $setting = new admin_setting_configstoredfile($name . $key, $title, $description, $default, $key);
             $setting->set_updatedcallback('theme_reset_all_caches');

@@ -1,4 +1,4 @@
-@block @block_dash @dash_feature @javascript
+@block @block_dash @dash_feature @javascript @_file_upload
 Feature: Add a dash to an admin pages
   In order to check the dash featuers
   I can add the dash block to the dashboard
@@ -29,7 +29,7 @@ Feature: Add a dash to an admin pages
       | student1 | C2     | student |
       | teacher1 | C1     | teacher |
       | teacher1 | C2     | teacher |
-    
+
   Scenario: Global Settings : Show header feature
     And I log in as "admin"
     And I navigate to "Plugins > Blocks > Dash" in site administration
@@ -43,26 +43,16 @@ Feature: Add a dash to an admin pages
     And I set the following fields to these values:
       | Region | content |
     And I press "Save changes"
-    And I create dash "Courses" datasource
-    Then I configure the "New Dash" block
-    And I set the field "Block title" to "Datasource: Courses"
-    And I set the following fields to these values:
-      | Region | content |
-    And I press "Save changes"
     Then I should see "Datasource: Users"
-    Then I should see "Datasource: Courses"
     Then I turn editing mode off
     Then I should not see "Datasource: Users"
-    Then I should not see "Datasource: Courses"
     And I click on "Reset Dashboard for all users" "button"
     Then I log in as "student1"
     Then I follow "Dashboard"
     Then I turn editing mode on
     Then I should see "Datasource: Users"
-    Then I should see "Datasource: Courses"
     Then I turn editing mode off
     Then I should not see "Datasource: Users"
-    Then I should not see "Datasource: Courses"
     Then I log in as "admin"
     And I navigate to "Plugins > Blocks > Dash" in site administration
     Then I set the field "Show header" to "Visible"
@@ -100,24 +90,95 @@ Feature: Add a dash to an admin pages
       | Region | content |
       | Show header | Hidden |
     And I press "Save changes"
-    And I create dash "Courses" datasource
-    Then I configure the "New Dash" block
-    And I set the field "Block title" to "Datasource: Courses"
-    And I set the following fields to these values:
-      | Region | content |
-      | Show header | Visible | 
-    And I press "Save changes"
     Then I should see "Datasource: Users"
-    Then I should see "Datasource: Courses"
     Then I turn editing mode off
     Then I should not see "Datasource: Users"
-    Then I should see "Datasource: Courses"
     And I click on "Reset Dashboard for all users" "button"
     Then I log in as "student1"
     Then I follow "Dashboard"
     Then I turn editing mode on
     Then I should see "Datasource: Users"
-    Then I should see "Datasource: Courses"
     Then I turn editing mode off
     Then I should not see "Datasource: Users"
-    Then I should see "Datasource: Courses"
+
+  Scenario: Block Settings: Dash settings improvements
+    And I log in as "admin"
+    #General setting css classes
+    And I navigate to "Plugins > Blocks > Dash" in site administration
+    And I set the following fields to these values:
+      | CSS classes | dash-card-block |
+    And I press "Save changes"
+
+    # Dash block setting css classes
+    And I follow dashboard
+    And I navigate to "Appearance > Default Dashboard page" in site administration
+    And I turn dash block editing mode on
+    And I add the "Dash" block
+    And I configure the "New Dash" block
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | CSS classes | dash-element, dash-card |
+    And I press "Save changes"
+    And I click on "Reset Dashboard for all users" "button"
+    And I follow dashboard
+    And ".dash-element.dash-card" "css_element" should exist in the ".block-region .block_dash" "css_element"
+
+    # Gradient color
+    And I navigate to "Appearance > Default Dashboard page" in site administration
+    And I turn dash block editing mode on
+    And I add the "Dash" block
+    And I configure the "New Dash" block
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Background gradient | linear-gradient(90deg, rgba(255, 210, 0, .2) 0%, rgba(70, 210, 251, .2) 100%) |
+    And I press "Save changes"
+    And I click on "Reset Dashboard for all users" "button"
+    And I follow dashboard
+    And I check dash css "linear-gradient(90deg, rgba(255, 210, 0, 0.2) 0%, rgba(70, 210, 251, 0.2) 100%)" "section.block_dash:nth-of-type(2)" "background-image"
+
+    # Font color picker
+    And I navigate to "Appearance > Default Dashboard page" in site administration
+    And I turn dash block editing mode on
+    And I add the "Dash" block
+    And I click on "Users" "radio"
+    And I configure the "New Dash" block
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Block title | Users 01|
+      | Font color | #c60061 |
+    And I press "Save changes"
+    And I click on "Reset Dashboard for all users" "button"
+    And I follow dashboard
+    And I check dash css "rgb(198, 0, 97)" "section.block_dash:nth-of-type(3) .card-title" "color"
+
+    # Border color
+    And I navigate to "Appearance > Default Dashboard page" in site administration
+    And I turn dash block editing mode on
+    And I add the "Dash" block
+    And I configure the "New Dash" block
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Block title | Border settings |
+      | Border | Visible |
+    And I press "Save changes"
+    And I click on "Reset Dashboard for all users" "button"
+    And I follow dashboard
+    And I check dash css "1px solid rgba(0, 0, 0, 0.125)" "section.block_dash:nth-of-type(4)" "border"
+
+  Scenario: Default fields after selecting the data source
+    And I log in as "admin"
+    # Users data source
+    And I navigate to "Appearance > Default Dashboard page" in site administration
+    And I turn dash block editing mode on
+    And I add the "Dash" block
+    And I click on "Users" "radio"
+    And I configure the "New Dash" block
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Block title | Users |
+    And I press "Save changes"
+    And I click on "Reset Dashboard for all users" "button"
+    And I follow dashboard
+    And I should see "Student"
+    And I should see "First"
+    And I should see "student1@example.com"

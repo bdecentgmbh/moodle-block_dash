@@ -32,8 +32,45 @@ use core_message\tests\helper as testhelper;
  * @group block_dash
  * @group bdecent
  * @group widgets_test
+ * @runInSeparateProcess
+ * @runTestsInSeparateProcesses
  */
 class widgets_test extends \advanced_testcase {
+
+    /**
+     * Demo of test user.
+     *
+     * @var array
+     */
+    protected $user;
+
+    /**
+     * Demo Course 1
+     *
+     * @var array
+     */
+    protected $course1;
+
+    /**
+     * Demo Course 2
+     *
+     * @var array
+     */
+    protected $course2;
+
+    /**
+     * Demo Course 3
+     *
+     * @var array
+     */
+    protected $course3;
+
+    /**
+     * List of test users.
+     *
+     * @var array
+     */
+    protected $users;
 
     /**
      * This method is called before each test.
@@ -117,6 +154,9 @@ class widgets_test extends \advanced_testcase {
      *
      * @covers ::contacts_widget
      * @return void
+     *
+     * @runInSeparateProcess
+     * @runTestsInSeparateProcesses
      */
     public function test_mylearning() {
         $user = self::getDataGenerator()->create_and_enrol($this->course1, 'student');

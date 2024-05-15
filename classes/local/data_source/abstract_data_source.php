@@ -360,12 +360,12 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             if (!$strategy = $this->get_layout()->get_data_strategy()) {
                 throw new coding_exception('Not fully configured.');
             }
+
             if ($this->is_widget()) {
                 $this->data = $this->get_widget_data();
             } else {
                 $records = $this->get_query()->query();
                 $this->data = $strategy->convert_records_to_data_collection($records, $this->get_sorted_fields());
-
                 if ($modifieddata = $this->after_data($this->data)) {
                     $this->data = $modifieddata;
                 }

@@ -1,7 +1,7 @@
-define(['jquery', 'core/str'], function (jQuery) {
+define([], function () {
     return {
         init: function() {
             alert('demo');
         }
-    }
+    };
 });

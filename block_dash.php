@@ -210,7 +210,7 @@ class block_dash extends block_base {
         try {
             $bb = block_builder::create($this);
 
-            if (!$bb->get_configuration()){
+            if (!$bb->get_configuration()) {
                 return $this->content->text = get_string('missingdatasource', 'block_dash');
             }
 

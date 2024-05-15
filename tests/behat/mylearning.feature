@@ -38,9 +38,10 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
     And I navigate to "Appearance > Default Dashboard page" in site administration
     And I turn dash block editing mode on
     And I add the "Dash" block
+    And I click on "My learning" "radio"
     And I configure the "New Dash" block
-    And I click on "#id_config_data_source_idnumber_block_dashlocalwidgetmylearningmylearning_widget" "css_element"
     And I set the following fields to these values:
+      | Block title  | My Learning                 |
       | Region  | content                          |
       | Content | My learaning empty state content |
     And I press "Save changes"
@@ -50,10 +51,10 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
   @javascript
   Scenario: Add the dash mylearning widget block on the dashboard
     Given I log in as "student1"
-    Then I should see "Course 1" in the "New Dash" "block"
-    And I should see "Course 2" in the "New Dash" "block"
-    And I should see "Course 3" in the "New Dash" "block"
-    And I should not see "Course 4" in the "New Dash" "block"
+    Then I should see "Course 1" in the "My Learning" "block"
+    And I should see "Course 2" in the "My Learning" "block"
+    And I should see "Course 3" in the "My Learning" "block"
+    And I should not see "Course 4" in the "My Learning" "block"
 
   @javascript
   Scenario: Course completion status in mylearning widget
@@ -67,9 +68,9 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
     And I press "Save changes"
     And I log out
     When I log in as "student1"
-    Then I should see "Course 1" in the "New Dash" "block"
+    Then I should see "Course 1" in the "My Learning" "block"
     And I should see "0" in the ".card-header:nth-child(1)" "css_element"
-    And I click on "General" "button" in the "New Dash" "block"
+    And I click on "General" "button" in the "My Learning" "block"
     Then I click on "Test page name" "link"
     And I follow dashboard
     Then the "class" attribute of ".block_dash-info-element .card:nth-child(1)" "css_element" should contain "completed-bg"
@@ -96,13 +97,13 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
     And I press "Award badge"
     And I log out
     When I log in as "student1"
-    Then ".collected .activatebadge[alt=\"Badge 1\"]" "css_element" should exist in the "New Dash" "block"
+    Then ".collected .activatebadge[alt=\"Badge 1\"]" "css_element" should exist in the "My Learning" "block"
 
   @javascript
   Scenario: Check the empty state option.
     Given I log in as "student2"
-    Then I should see "My learaning empty state content" in the "New Dash" "block"
+    Then I should see "My learaning empty state content" in the "My Learning" "block"
     And I log out
     When I log in as "student1"
-    Then I should not see "My learaning empty state content" in the "New Dash" "block"
+    Then I should not see "My learaning empty state content" in the "My Learning" "block"
     And I log out

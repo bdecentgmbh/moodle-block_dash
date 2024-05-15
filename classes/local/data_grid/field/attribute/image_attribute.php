@@ -55,8 +55,6 @@ class image_attribute extends abstract_field_attribute {
             ]);
         }
 
-
-
         return $data;
     }
 

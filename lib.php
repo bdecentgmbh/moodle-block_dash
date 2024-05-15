@@ -340,7 +340,12 @@ function block_dash_get_data_collection() {
         ? new block_dash\local\data_grid\data\data_collection() : new \block_dash\local\data_grid\data\data_collection_new();
 }
 
-
+/**
+ * Return the dash addon visible staus.
+ *
+ * @param int $id ID
+ * @return bool
+ */
 function block_dash_visible_addons($id) {
     global $CFG;
     preg_match('/(dashaddon_[a-zA-Z_]+)/', $id, $matches);

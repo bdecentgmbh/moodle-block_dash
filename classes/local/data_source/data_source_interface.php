@@ -70,6 +70,7 @@ interface data_source_interface {
      */
     public function after_data(data_collection_interface $datacollection);
 
+
     /**
      * Explicitly set layout.
      *

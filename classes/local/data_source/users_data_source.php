@@ -41,6 +41,7 @@ use block_dash\local\data_grid\filter\participants_condition;
 use block_dash\local\data_grid\filter\user_field_filter;
 use block_dash\local\data_grid\filter\user_profile_field_filter;
 use block_dash\local\data_grid\filter\current_course_condition;
+use block_dash\local\data_grid\filter\bool_filter;
 use coding_exception;
 use context;
 /**
@@ -157,9 +158,23 @@ class users_data_source extends abstract_data_source {
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
-            $filter = new user_profile_field_filter($alias, $alias . '.data', $field->id, $field->name);
-            $filter->set_label(format_string($field->name));
-            $filtercollection->add_filter($filter);
+            $select = $alias . '.data';
+            switch ($field->datatype) {
+                case 'checkbox':
+                    $definitions[] = new bool_filter($alias, $select, $field->name);
+                    break;
+                case 'datetime':
+                    $filtercollection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
+                            $field->name));
+                    break;
+                case 'textarea':
+                    break;
+                default:
+                    $filter = new user_profile_field_filter($alias, $alias . '.data', $field->id, $field->name);
+                    $filter->set_label(format_string($field->name));
+                    $filtercollection->add_filter($filter);
+                    break;
+            }
         }
 
         return $filtercollection;

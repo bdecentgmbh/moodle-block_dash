@@ -59,7 +59,7 @@ class participants_condition extends condition {
                     $coursecontext = \context_course::instance($course->id);
                     if (has_capability('moodle/grade:viewall', $coursecontext)) {
                         if (has_capability('moodle/site:accessallgroups', $coursecontext)) {
-                            $users = array_merge($users, get_enrolled_users($coursecontext));
+                            $users = array_merge($users, get_users_by_capability($coursecontext, 'mod/assign:submit'));
                         } else {
                             $groups = groups_get_all_groups($course->id, $USER->id);
                             if ($groupids = array_keys($groups)) {
@@ -70,7 +70,7 @@ class participants_condition extends condition {
                 }
 
                 foreach ($users as $user) {
-                    if ($user->id != $USER->id) {
+                    if (($user->id != $USER->id) && (!is_siteadmin($user->id))) {
                         $this->values[] = $user->id;
                     }
                 }

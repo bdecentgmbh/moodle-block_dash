@@ -216,8 +216,12 @@ class block_dash extends block_base {
 
             $datasource = $bb->get_configuration()->get_data_source();
             // Conditionally hide the block when empty.
-            if ($datasource && isset($this->config->hide_when_empty) && $this->config->hide_when_empty
-                && (($datasource->is_widget() && $datasource->is_empty())
+            $hidewhenempty = get_config('block_dash', 'hide_when_empty');
+            if (isset($this->config->hide_when_empty)) {
+                $hidewhenempty = $this->config->hide_when_empty;
+            }
+
+            if ($datasource && $hidewhenempty && (($datasource->is_widget() && $datasource->is_empty())
                 || (!$datasource->is_widget() && $datasource->get_data()->is_empty()))
                 && !$this->page->user_is_editing()) {
                 return $this->content;

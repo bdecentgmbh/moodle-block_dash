@@ -966,7 +966,6 @@ h5:before,
 .block_dash .card-body .form-inline .col-md-3.col-form-label p {
     font-weight: bold;
 }
-.block_dash .card-body .form-inline .col-md-9.form-inline .custom-addon,
 .block_dash .card-body .form-inline .col-md-9.form-inline .datasource-content {
     width: 100%;
     display: flex;

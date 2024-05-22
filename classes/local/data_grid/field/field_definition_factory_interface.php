@@ -23,6 +23,7 @@
  */
 
 namespace block_dash\local\data_grid\field;
+
 /**
  * Responsible for creating field definitions on request.
  *

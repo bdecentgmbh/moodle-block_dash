@@ -47,7 +47,7 @@ class configuration extends abstract_configuration {
         if (isset($blockinstance->config->data_source_idnumber)) {
             if (!$datasource = data_source_factory::build_data_source($blockinstance->config->data_source_idnumber,
                 $parentcontext)) {
-                throw new \coding_exception('Missing data source.');
+                return false;
             }
 
             if (isset($blockinstance->config->preferences)

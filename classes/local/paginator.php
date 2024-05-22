@@ -247,7 +247,8 @@ class paginator {
             'total' => $this->get_record_count(),
             'per_page' => $this->get_per_page(),
             'limit_from' => $this->get_limit_from() + 1,
-            'limit_to' => $limitto]);
+            'limit_to' => $limitto,
+        ]);
 
         return [
             'pages' => $items,

@@ -113,8 +113,27 @@ class behat_block_dash extends behat_base {
         $this->execute("behat_blocks::i_open_the_blocks_action_menu", $this->escape($blockname));
 
         $this->execute('behat_general::i_click_on_in_the',
-            array("Preference", "link", $this->escape($blockname), "block")
+            ["Preference", "link", $this->escape($blockname), "block"]
         );
     }
 
+    /**
+     * Check that the focus mode enable.
+     *
+     * @Given /^I check dash css "(?P<value>(?:[^"]|\\")*)" "(?P<selector>(?:[^"]|\\")*)" "(?P<type>(?:[^"]|\\")*)"$/
+     * @param string $value
+     * @param string $selector
+     * @param string $type
+     * @throws ExpectationException
+     */
+    public function i_check_dash_css($value, $selector, $type): void {
+        $stylejs = "
+            return (
+                Y.one('{$selector}').getComputedStyle('{$type}')
+            )
+        ";
+        if (strpos($this->evaluate_script($stylejs), $value) === false) {
+            throw new ExpectationException("Doesn't working correct style", $this->getSession());
+        }
+    }
 }

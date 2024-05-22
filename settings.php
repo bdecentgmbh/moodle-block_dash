@@ -39,6 +39,26 @@ if ($ADMIN->fulltree) {
         ]
     ));
 
+    // Css classes.
+    $settings->add(new admin_setting_configtext(
+        'block_dash/cssclass',
+        get_string('cssclass', 'block_dash'),
+        get_string('cssclass_help', 'block_dash'),
+        '',
+        PARAM_TEXT
+        ));
+
+    $settings->add(new admin_setting_configselect(
+        'block_dash/showheader',
+        get_string('showheader', 'block_dash'),
+        get_string('showheader_help', 'block_dash'),
+        1,
+        [
+            0 => get_string('hidden', 'block_dash'),
+            1 => get_string('visible'),
+        ]
+        ));
+
     $settings->add(new admin_setting_configselect(
         'block_dash/hide_when_empty',
         get_string('hidewhenempty', 'block_dash'),
@@ -89,9 +109,39 @@ if ($ADMIN->fulltree) {
         get_string('suggestusers_desc', 'block_dash'), [], $users)
     );
 
+    if ($ADMIN->fulltree) {// Category images.
+
+        $settings->add(new admin_setting_heading('block_dash_categoryimg', get_string('categoryimgheadingsub', 'block_dash'),
+        format_text(get_string('categoryimgdesc', 'block_dash'), FORMAT_MARKDOWN)));
+
+        $name = 'block_dash/categoryimgfallback';
+        $title = get_string('categoryimgfallback', 'block_dash');
+        $description = get_string('categoryimgfallbackdesc', 'block_dash');
+        $default = 'categoryimg';
+        $setting = new admin_setting_configstoredfile($name, $title, $description, $default, 0);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $settings->add($setting);
+
+        $coursecats = core_course_category::make_categories_list();
+
+        // Go through all categories and create the necessary settings.
+        foreach ($coursecats as $key => $value) {
+            // Category Icons for each category.
+            $name = 'block_dash/categoryimg';
+            $title = $value;
+            $description = get_string('categoryimgcategory', 'block_dash', ['category' => $value]);
+            $filearea = 'categoryimg';
+            $setting = new admin_setting_configstoredfile($name . $key, $title, $description, $default, $key);
+            $setting->set_updatedcallback('theme_reset_all_caches');
+            $settings->add($setting);
+        }
+        unset($coursecats);
+    }
+
     $PAGE->requires->js_amd_inline("
         require(['core/form-autocomplete'], function(module) {
             module.enhance('#id_s_block_dash_suggestusers');
         });
     ");
+
 }

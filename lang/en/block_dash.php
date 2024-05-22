@@ -44,11 +44,14 @@ $string['badgecolorfield_help'] = 'Choose a field that returns colors to be used
 $string['blocktitle'] = 'Block title';
 $string['blocktitle_help'] = 'Title displayed in block heading. Enter a short and descriptive title for what this block displays to the user.';
 $string['blockwidth'] = 'Block width';
+$string['showheader'] = "Show header";
+$string['showheader_help'] = "Hide the block title if editing is turned off.";
+$string['hidden'] = "Hidden";
 $string['bodyfield'] = 'Body field';
 $string['bootstrapversion'] = 'Theme bootstrap version';
 $string['bootstrapversion_desc'] = 'Choose the version of Bootstrap your theme supports. Moodle is typically 4, and Totara is 3.';
 $string['border'] = 'Border';
-$string['border_help'] = 'CSS border property value. Set to <b>none</b> for no borders.';
+$string['border_help'] = 'CSS border property value.';
 $string['choosedatasource'] = 'Choose data source';
 $string['columns'] = 'Columns';
 $string['columns_help'] = 'The number of columns to display per row in the grid.';
@@ -214,6 +217,7 @@ $string['parentrole_help'] = 'Only includes users that the current user has a ro
 $string['parseerror'] = 'Parse error. The content cannot be displayed.';
 $string['permissions'] = 'Restrict access to';
 $string['permissionscohort'] = 'Cohort';
+$string['permissionsrole'] = 'Role';
 $string['permissionsloggedin'] = 'Must be logged in';
 $string['permissionspublic'] = 'Public';
 $string['perpage'] = 'Per page';
@@ -779,3 +783,98 @@ $string['description'] = 'Description';
 $string['programs:view'] = 'View programs';
 $string['selfallocationwithkey'] = 'Sigup (Key required)';
 $string['viewprogram'] = 'View program';
+
+$string['createddate'] = 'Created date';
+$string['modifieddate'] = 'Last modified date';
+$string['duedate'] = 'Due date';
+$string['categoryurl'] = 'Category URL';
+$string['modulename'] = 'Module Name';
+$string['programbg'] = "Enrol Program image";
+$string['programbg_desc'] = "";
+
+// Course certificate datasource strings.
+$string['downloadcertificate'] = 'Download certificate';
+$string['certificatecodelinked'] = 'Code linked';
+
+// Category datasource.
+$string['categories'] = 'Categories';
+$string['categories_help'] = 'Categories datasource list the available categories.';
+$string['recentcoursename'] = 'Recent course';
+$string['categoryimagelink'] = 'Category link';
+$string['categoryimage'] = 'Category image';
+$string['categorycoursecount'] = 'Courses count';
+// ...Category image settings.
+$string['categoryimgheading'] = 'Category image';
+$string['categoryimgheadingsub'] = 'Categories images';
+$string['categoryimgdesc'] = 'Add images for the categories';
+$string['categoryimgcategory'] = 'Image for category {$a->category}';
+$string['categoryimgfallback'] = 'Category fallback image';
+$string['categoryimgfallbackdesc'] = 'Upload the image for the default fallback of categories. If new categories are created, the fallback image will be displayed until a new image is added for the category';
+$string['categoryimageurl'] = 'Category image url';
+
+$string['cssclass'] = "CSS classes";
+$string['cssclass_help'] = "Use a custom CSS class to apply multiple classes.";
+$string['backgroundposition'] = 'Background Position';
+$string['backgroundposition_help'] = 'Background image will focused on the given position';
+$string['designercustombgposition'] = "Custom Background Position";
+$string['backgroundsize'] = 'Background Size';
+$string['backgroundsize_help'] = 'Background image will displayed in the size';
+$string['designercustombgsize'] = "Custom Background Size";
+$string['backgroundsize_help'] = 'Background image will displayed in the size';
+
+$string['initial'] = "Initial";
+$string['lefttop'] = "Left Top";
+$string['leftcenter'] = "Left Center";
+$string['leftbottom'] = "Left Bottom";
+$string['righttop'] = "Right Top";
+$string['rightcenter'] = "Right Center";
+$string['rightbottom'] = "Right Bottom";
+$string['centertop'] = "Center Top";
+$string['centercenter'] = "Center Center";
+$string['centerbottom'] = "Center Bottom";
+
+$string['auto'] = "Auto";
+$string['cover'] = "Cover";
+$string['contain'] = "Contain";
+
+$string['strcustom'] = "Custom";
+$string['cohorts'] = "Cohorts";
+$string['users_mycohort'] = "Users in one of my cohorts";
+
+$string['currentcategory'] = 'Current Category';
+$string['dashicon'] = 'Icon';
+$string['dashicon_help'] = 'This icon shows onlu in the dashboards data source.';
+$string['dashthumbnailimg'] = 'Thumbnail image';
+$string['dashthumbnailimgurl'] = 'Thumbnail image URL';
+$string['dashthumbnailimg_help'] = "This thumbnail image shows only in dashboards data source";
+$string['dashbgimg'] = 'Background image';
+$string['dashbgimg_help'] = 'This background image used as background for the dashboard.';
+$string['coredashboard'] = "Main dashboard";
+$string['backgroundimageurl'] = 'Background image URL';
+
+$string['border_option'] = "Show border";
+$string['border_option_help'] = "You can add the border of dash block.";
+$string['bordervalue'] = "Border Value";
+
+
+$string['managedashaddonplugins'] = "Manage addons";
+$string['dashaddonpluginname'] = 'Dash addon name';
+$string['hideshow'] = 'Hide/Show';
+
+$string['maindashboard'] = "Main dashboard";
+$string['enterclasses'] = "Enter classes";
+// Permissions role context.
+$string['permissionsrolecontext'] = 'Role Context';
+$string['permissionsrolecontext_help'] = 'Select the context for which the user\'s role should be checked (Any context or system context only)';
+// ...Dashaddon skill graph strings.
+$string['managecapabilitymissing'] = 'Require capability "moodle/competency:competencymanage" to access the page is missing';
+$string['managecompentency'] = 'Manage competencies appearance';
+$string['totalprogress'] = 'Total progress';
+$string['setup'] = 'Setup';
+$string['compentenciesnotfound'] = 'Competency not found.';
+$string['competencyappearance'] = 'Competency appearances';
+$string['competencyheading'] = 'Setup competency appearance';
+$string['competencycolor'] = 'Competency color';
+$string['competencyimage'] = 'Competency image';
+$string['missingdatasource'] = "The datasources are missing. Please check them.";
+

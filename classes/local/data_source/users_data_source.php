@@ -41,6 +41,7 @@ use block_dash\local\data_grid\filter\participants_condition;
 use block_dash\local\data_grid\filter\user_field_filter;
 use block_dash\local\data_grid\filter\user_profile_field_filter;
 use block_dash\local\data_grid\filter\current_course_condition;
+use block_dash\local\data_grid\filter\bool_filter;
 use coding_exception;
 use context;
 /**
@@ -78,7 +79,7 @@ class users_data_source extends abstract_data_source {
      * @throws coding_exception
      */
     public function get_query_template(): builder {
-        global $CFG;
+        global $CFG, $DB;
 
         require_once("$CFG->dirroot/user/profile/lib.php");
 
@@ -151,15 +152,46 @@ class users_data_source extends abstract_data_source {
 
         if (block_dash_has_pro()) {
             $filtercollection->add_filter(new \local_dash\data_grid\filter\parent_role_condition('parentrole', 'u.id'));
+            $filtercollection->add_filter(new \local_dash\data_grid\filter\cohort_condition('cohort', 'u.id'));
+            $filtercollection->add_filter(new \local_dash\data_grid\filter\users_mycohort_condition('users_mycohort', 'u.id'));
         }
 
         foreach (profile_get_custom_fields() as $field) {
             $alias = 'u_pf_' . strtolower($field->shortname);
-            $filter = new user_profile_field_filter($alias, $alias . '.data', $field->id, $field->name);
-            $filter->set_label(format_string($field->name));
-            $filtercollection->add_filter($filter);
+            $select = $alias . '.data';
+            switch ($field->datatype) {
+                case 'checkbox':
+                    $definitions[] = new bool_filter($alias, $select, $field->name);
+                    break;
+                case 'datetime':
+                    $filtercollection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
+                            $field->name));
+                    break;
+                case 'textarea':
+                    break;
+                default:
+                    $filter = new user_profile_field_filter($alias, $alias . '.data', $field->id, $field->name);
+                    $filter->set_label(format_string($field->name));
+                    $filtercollection->add_filter($filter);
+                    break;
+            }
         }
 
         return $filtercollection;
+    }
+
+    /**
+     * Set the default preferences of the User datasource, force the set the default settings.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function set_default_preferences(&$data) {
+        $configpreferences = $data['config_preferences'];
+        $configpreferences['available_fields']['u_firstname']['visible'] = true;
+        $configpreferences['available_fields']['u_lastname']['visible'] = true;
+        $configpreferences['available_fields']['u_email']['visible'] = true;
+        $configpreferences['available_fields']['u_lastlogin']['visible'] = true;
+        $data['config_preferences'] = $configpreferences;
     }
 }

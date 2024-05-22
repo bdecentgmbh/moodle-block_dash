@@ -99,6 +99,7 @@ class field implements field_interface {
      * @param array $attributes Field attributes to be added immediately.
      * @param array $options Arbitrary options belonging to this field.
      * @param int $visibility Visibility of the field (if it should be displayed to the user).
+     * @param string $sortselect
      */
     public function __construct(string $name,
                                 lang_string $title,

@@ -100,8 +100,13 @@ class contacts_widget extends abstract_widget {
                                 AND mua.id is NULL
                             GROUP BY m.useridfrom';
             $unreadcounts = $DB->get_records_sql($unreadcountssql,
-                [$userid, \core_message\api::MESSAGE_ACTION_READ, \core_message\api::MESSAGE_ACTION_DELETED,
-                $userid, $userid]
+                [
+                    $userid,
+                    \core_message\api::MESSAGE_ACTION_READ,
+                    \core_message\api::MESSAGE_ACTION_DELETED,
+                    $userid,
+                    $userid,
+                ]
             );
         } else {
             $unreadcountssql = 'SELECT useridfrom, count(*) as count

@@ -37,6 +37,13 @@ require_once($CFG->dirroot.'/lib/tablelib.php');
 class members extends \table_sql implements dynamic_table {
 
     /**
+     * Group filter value.
+     *
+     * @var string
+     */
+    protected $group;
+
+    /**
      * Define table field definitions and filter data
      *
      * @param int $pagesize

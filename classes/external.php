@@ -57,8 +57,8 @@ class external extends external_api {
             'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
             'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
             'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
-            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_OPTIONAL),
-            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_OPTIONAL),
+            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
+            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -103,10 +103,10 @@ class external extends external_api {
         $public = false;
         $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
-        if (strpos($block->instance->pagetypepattern, 'local-dash-dashboard') !== false) {
-            if ($dashboard = \local_dash\model\dashboard::get_record(
+        if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
+            if ($dashboard = \dashaddon_dashboard\model\dashboard::get_record(
                     ['shortname' => $block->instance->defaultregion])) {
-                if ($dashboard->get('permission') == \local_dash\model\dashboard::PERMISSION_PUBLIC) {
+                if ($dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC) {
                     $public = true;
                 }
             }

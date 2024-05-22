@@ -41,7 +41,8 @@ class date_attribute extends abstract_field_attribute {
      */
     public function transform_data($data, \stdClass $record) {
         if (is_numeric($data) && $data > 0) {
-            return userdate($data, get_string('strftimedatefullshort'));
+            $format = $this->get_option('format') ?: get_string('strftimedatefullshort');
+            return userdate($data, $format);
         }
 
         return null;

@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_dash\local\data_source\categories_data_source;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
 use block_dash\local\layout\accordion_layout;
@@ -175,13 +176,13 @@ function block_dash_output_fragment_block_preferences_form($args) {
  */
 function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=[]) {
 
-    if ($context->contextlevel != CONTEXT_BLOCK) {
+    if ($context->contextlevel != CONTEXT_BLOCK && $context->contextlevel != CONTEXT_SYSTEM) {
         return false;
     }
 
     require_login();
 
-    if ($filearea == 'images') {
+    if ($filearea == 'images' || $filearea == 'categoryimg') {
 
         $relativepath = implode('/', $args);
 
@@ -337,4 +338,35 @@ function block_dash_get_suggest_users() {
 function block_dash_get_data_collection() {
     return version_compare(phpversion(), '8.1', '<')
         ? new block_dash\local\data_grid\data\data_collection() : new \block_dash\local\data_grid\data\data_collection_new();
+}
+
+/**
+ * Return the dash addon visible staus.
+ *
+ * @param int $id ID
+ * @return bool
+ */
+function block_dash_visible_addons($id) {
+    global $CFG;
+    preg_match('/(dashaddon_[a-zA-Z_]+)/', $id, $matches);
+    if ($matches) {
+        $value = $matches[1];
+        $parts = explode('\\', $value);
+        if ($parts) {
+            $addon = $parts[0];
+            $addondependencies = $addon . "_extend_added_dependencies";
+            if (get_config($addon, 'enabled')) {
+                $addonplugin = explode("dashaddon_", $addon)[1];
+                if (file_exists($CFG->dirroot. "/local/dash/addon/$addonplugin/lib.php")) {
+                    require_once($CFG->dirroot. "/local/dash/addon/$addonplugin/lib.php");
+                    if (function_exists($addondependencies) && !empty($addondependencies())) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+    return true;
 }

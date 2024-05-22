@@ -34,6 +34,7 @@ use block_dash\local\data_grid\field\attribute\linked_icon_attribute;
 use block_dash\local\data_grid\field\attribute\moodle_url_attribute;
 use block_dash\local\data_grid\field\attribute\rename_group_ids_attribute;
 use block_dash\local\data_grid\field\attribute\user_image_url_attribute;
+use block_dash\local\data_grid\field\attribute\bool_attribute;
 use lang_string;
 use moodle_url;
 
@@ -143,11 +144,27 @@ class user_table extends table {
 
         $i = 0;
         foreach (profile_get_custom_fields() as $customfield) {
-            $fields[] = new field('pf_' . strtolower($customfield->shortname),
+            $name = 'pf_' . strtolower($customfield->shortname);
+            $profileattributes = [];
+
+            switch ($customfield->datatype) {
+                case 'checkbox':
+                    $profileattributes[] = new bool_attribute();
+                    break;
+                case 'datetime':
+                    $profileattributes[] = new date_attribute();
+                    break;
+                case 'textarea':
+                    break;
+            }
+
+            $fields[] = new field(
+                $name,
                 new lang_string('customfield', 'block_dash', ['name' => format_string($customfield->name)]),
-                $this, "(SELECT profile$i.data FROM {user_info_data} profile$i
+                $this,
+                "(SELECT profile$i.data FROM {user_info_data} profile$i
                       WHERE profile$i.userid = u.id AND profile$i.fieldid = $customfield->id)",
-                [], [],field_interface::VISIBILITY_VISIBLE , '',
+                $profileattributes, [], field_interface::VISIBILITY_VISIBLE , '',
             );
 
             $i++;

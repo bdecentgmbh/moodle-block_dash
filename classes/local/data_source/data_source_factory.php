@@ -153,7 +153,6 @@ class data_source_factory implements data_source_factory_interface {
      */
     public static function get_data_source_form_options($type='') {
         $options = [];
-
         foreach (self::get_data_source_registry() as $identifier => $datasourceinfo) {
             if ($type) {
                 if (isset($datasourceinfo['type']) && $datasourceinfo['type'] == $type) {

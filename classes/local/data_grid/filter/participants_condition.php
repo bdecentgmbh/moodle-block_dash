@@ -51,28 +51,26 @@ class participants_condition extends condition {
 
             $this->values = [];
 
-            if (!is_siteadmin()) {
-                $courses = enrol_get_my_courses();
+            $courses = enrol_get_my_courses();
 
-                $users = [];
-                foreach ($courses as $course) {
-                    $coursecontext = \context_course::instance($course->id);
-                    if (has_capability('moodle/grade:viewall', $coursecontext)) {
-                        if (has_capability('moodle/site:accessallgroups', $coursecontext)) {
-                            $users = array_merge($users, get_users_by_capability($coursecontext, 'mod/assign:submit'));
-                        } else {
-                            $groups = groups_get_all_groups($course->id, $USER->id);
-                            if ($groupids = array_keys($groups)) {
-                                $users = array_merge($users, groups_get_groups_members($groupids));
-                            }
+            $users = [];
+            foreach ($courses as $course) {
+                $coursecontext = \context_course::instance($course->id);
+                if (has_capability('moodle/grade:viewall', $coursecontext)) {
+                    if (has_capability('moodle/site:accessallgroups', $coursecontext)) {
+                        $users = array_merge($users, get_users_by_capability($coursecontext, 'mod/assign:submit'));
+                    } else {
+                        $groups = groups_get_all_groups($course->id, $USER->id);
+                        if ($groupids = array_keys($groups)) {
+                            $users = array_merge($users, groups_get_groups_members($groupids));
                         }
                     }
                 }
+            }
 
-                foreach ($users as $user) {
-                    if (($user->id != $USER->id) && (!is_siteadmin($user->id))) {
-                        $this->values[] = $user->id;
-                    }
+            foreach ($users as $user) {
+                if (($user->id != $USER->id) && (!is_siteadmin($user->id))) {
+                    $this->values[] = $user->id;
                 }
             }
 

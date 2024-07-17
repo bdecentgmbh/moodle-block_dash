@@ -229,7 +229,6 @@ class external extends external_api {
             'formdata' => $formdata,
         ]);
 
-        // TODO: TEST Require capability.
         if ($formdata) {
             parse_str($formdata, $data);
             $data = (object) $data;

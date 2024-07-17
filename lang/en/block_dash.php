@@ -291,6 +291,7 @@ $string['backgroundimagefield'] = 'Background image';
 $string['status:completed'] = 'Completed';
 $string['status:inprogress'] = 'In Progress';
 $string['status:notyetstarted'] = 'Not yet started';
+$string['status:notcompleted'] = 'Not completed';
 $string['status:all'] = 'All';
 $string['status:enrolled'] = 'Enrolled';
 $string['widget:mycontacts'] = 'My Contacts';
@@ -877,4 +878,6 @@ $string['competencyheading'] = 'Setup competency appearance';
 $string['competencycolor'] = 'Competency color';
 $string['competencyimage'] = 'Competency image';
 $string['missingdatasource'] = "The datasources are missing. Please check them.";
-
+$string['viewactivity'] = "View activity";
+$string['activitybutton'] = "Activity button";
+$string['modulename'] = 'Module name';

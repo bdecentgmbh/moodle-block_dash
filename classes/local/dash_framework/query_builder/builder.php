@@ -446,8 +446,22 @@ class builder {
         global $DB;
 
         [$sql, $params] = $this->get_sql_and_params();
-
         return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
+    }
+
+
+    /**
+     * Return the all records from this query
+     *
+     * @return array
+     * @throws dml_exception
+     * @throws exception\invalid_operator_exception
+     */
+    public function get_all_records_query() {
+        global $DB;
+
+        [$sql, $params] = $this->get_sql_and_params();
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**

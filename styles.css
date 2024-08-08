@@ -957,7 +957,7 @@ h5:before,
     flex-direction: column;
 }
 .block_dash .card-body .form-inline .col-md-3.col-form-label,
-.block_dash .card-body .form-inline .col-md-9.form-inline {
+.block_dash .card-body .form-inline .col-md-9.felement {
     max-width: none;
     width: 100%;
     margin-bottom: 1rem;
@@ -966,18 +966,18 @@ h5:before,
 .block_dash .card-body .form-inline .col-md-3.col-form-label p {
     font-weight: bold;
 }
-.block_dash .card-body .form-inline .col-md-9.form-inline .datasource-content {
+.block_dash .card-body .form-inline .col-md-9.felement .datasource-content {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
 }
-.block_dash .card-body .form-inline .col-md-9.form-inline .custom-addon .custom-addon-item {
+.block_dash .card-body .form-inline .col-md-9.felement .custom-addon .custom-addon-item {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
 }
-.block_dash .card-body .form-inline .col-md-9.form-inline .datasource-content .datasource-item,
-.block_dash .card-body .form-inline .col-md-9.form-inline .custom-addon .content-layout-item {
+.block_dash .card-body .form-inline .col-md-9.felement .datasource-content .datasource-item,
+.block_dash .card-body .form-inline .col-md-9.felement .custom-addon .content-layout-item {
     border: 1px solid #eee;
     background-color: #f9f9f9;
     padding: 5px;
@@ -987,33 +987,33 @@ h5:before,
     align-items: center;
     flex-basis: 31%;
 }
-.block_dash .card-body .form-inline .col-md-9.form-inline .datasource-content .datasource-item .form-check-label,
-.block_dash .card-body .form-inline .col-md-9.form-inline .custom-addon .content-layout-item .form-check-label {
+.block_dash .card-body .form-inline .col-md-9.felement .datasource-content .datasource-item .form-check-label,
+.block_dash .card-body .form-inline .col-md-9.felement .custom-addon .content-layout-item .form-check-label {
     font-weight: bold;
     margin-left: 5px;
 }
-.block_dash .card-body .form-inline .col-md-9.form-inline .datasource-content .datasource-item .form-check-label .form-check-input,
-.block_dash .card-body .form-inline .col-md-9.form-inline .custom-addon .content-layout-item .form-check-label .form-check-input {
+.block_dash .card-body .form-inline .col-md-9.felement .datasource-content .datasource-item .form-check-label .form-check-input,
+.block_dash .card-body .form-inline .col-md-9.felement .custom-addon .content-layout-item .form-check-label .form-check-input {
     margin-right: 10px;
 }
 
 @media (max-width: 610px) {
-    .block_dash .card-body .form-inline .col-md-9.form-inline .datasource-content .datasource-item,
-    .block_dash .card-body .form-inline .col-md-9.form-inline .custom-addon .content-layout-item {
+    .block_dash .card-body .form-inline .col-md-9.felement .datasource-content .datasource-item,
+    .block_dash .card-body .form-inline .col-md-9.felement .custom-addon .content-layout-item {
         flex-basis: 29%;
     }
 }
 
 @media (max-width: 575px) {
-    .block_dash .card-body .form-inline .col-md-9.form-inline .datasource-content .datasource-item,
-    .block_dash .card-body .form-inline .col-md-9.form-inline .custom-addon .content-layout-item {
+    .block_dash .card-body .form-inline .col-md-9.felement .datasource-content .datasource-item,
+    .block_dash .card-body .form-inline .col-md-9.felement .custom-addon .content-layout-item {
         flex-basis: 45%;
     }
 }
 
 @media (max-width: 420px) {
-    .block_dash .card-body .form-inline .col-md-9.form-inline .datasource-content .datasource-item,
-    .block_dash .card-body .form-inline .col-md-9.form-inline .custom-addon .content-layout-item {
+    .block_dash .card-body .form-inline .col-md-9.felement .datasource-content .datasource-item,
+    .block_dash .card-body .form-inline .col-md-9.felement .custom-addon .content-layout-item {
         flex-basis: 100%;
         margin-right: 0;
     }

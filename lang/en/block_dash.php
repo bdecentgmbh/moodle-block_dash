@@ -395,6 +395,7 @@ $string['proficient'] = 'Proficient';
 $string['achieved'] = 'Achieved';
 $string['notachieved'] = 'Not achieved';
 $string['datasource:competency_widget'] = 'Skill graph widget';
+$string['datasource:competency_progress_widget'] = 'Skill competency widget';
 $string['competencyframework'] = 'Competency framework';
 $string['enrollment_options'] = 'Enrollment options';
 $string['enrollmentoptions:seeoptions'] = 'See options';

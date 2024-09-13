@@ -86,7 +86,7 @@ Feature: Add user contacts widget in dash block
     And I hover ".block_dash-community-block .contact-element .row div.col-xl-3:nth-child(2)" "css_element"
     And I click on ".contact-widget-viewgroup" "css_element" in the ".block_dash-community-block .contact-element .row div.col-xl-3:nth-child(2)" "css_element"
     And I should see "Groups" in the ".modal-title" "css_element"
-    Then I should see "Nothing to display" in the ".modal-body h2" "css_element"
+    Then I should see "Nothing to display" in the ".modal-body" "css_element"
 
   @javascript
   Scenario: Check the suggest user display options

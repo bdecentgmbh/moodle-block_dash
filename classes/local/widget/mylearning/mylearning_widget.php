@@ -349,7 +349,6 @@ class mylearning_widget extends abstract_widget {
 
         // Now security checks.
         $context = context_course::instance($course->id);
-        // TODO: course content view capability check.
         $canupdatecourse = true;
 
         // Create return value.

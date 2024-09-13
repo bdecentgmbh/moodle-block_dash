@@ -47,6 +47,11 @@ class join {
     const TYPE_LEFT_JOIN = 'LEFT JOIN';
 
     /**
+     * SQL right Join.
+     */
+    const TYPE_RIGHT_JOIN = 'RIGHT JOIN';
+
+    /**
      * @var string Table name of joined table.
      */
     private $table;

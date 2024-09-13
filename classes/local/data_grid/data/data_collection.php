@@ -199,7 +199,7 @@ class data_collection implements data_collection_interface, \ArrayAccess {
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset) : bool {
+    public function offsetExists($offset): bool {
         if ($offset == 'data') {
             return true;
         }

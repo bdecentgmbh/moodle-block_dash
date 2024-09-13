@@ -446,20 +446,29 @@ class builder {
         global $DB;
 
         [$sql, $params] = $this->get_sql_and_params();
-
         return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
     }
 
     /**
      * Get number of records this query will return.
      *
+     * @param int $isunique Counted by unique id.
      * @return int
      * @throws dml_exception
      * @throws exception\invalid_operator_exception
      */
-    public function count(): int {
+    public function count($isunique): int {
         $builder = clone $this;
-        $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
+
+        if ($isunique) {
+            $builder->set_selects([
+                'uni' => 'CONCAT_WS("-", cm.id, u.id, c.id, cc.id)',
+                'count' => 'COUNT(*)']
+            );
+        } else {
+            $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
+        }
+
         $builder->limitfrom(0)->limitnum(0)->remove_orderby();
         if (!$records = $builder->query()) {
             return 0;

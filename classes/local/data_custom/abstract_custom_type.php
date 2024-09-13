@@ -60,7 +60,7 @@ abstract class abstract_custom_type extends abstract_widget implements \templata
      *
      * @return string
      */
-    abstract public function get_mustache_template_name() : string;
+    abstract public function get_mustache_template_name(): string;
 
     /**
      * Verify the user has capability ti config the widget.
@@ -68,7 +68,7 @@ abstract class abstract_custom_type extends abstract_widget implements \templata
      * @param context $context
      * @return bool
      */
-    abstract public static function has_capbility($context) : bool;
+    abstract public static function has_capbility($context): bool;
 
     /**
      * Layout class that the widget will used.

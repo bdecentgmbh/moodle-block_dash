@@ -182,7 +182,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
         if ($this->paginator == null) {
             $this->paginator = new paginator(function () {
-                $count = $this->get_query()->count();
+                $count = $this->get_query()->count($this->count_by_uniqueid());
                 if ($maxlimit = $this->get_max_limit()) {
                     return $maxlimit < $count ? $maxlimit : $count;
                 }
@@ -716,6 +716,15 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @return boolean
      */
     public function is_widget() {
+        return false;
+    }
+
+    /**
+     * Count a data record by uniqueid.
+     *
+     * @return boolean
+     */
+    public function count_by_uniqueid() {
         return false;
     }
 

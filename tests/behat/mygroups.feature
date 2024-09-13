@@ -81,7 +81,7 @@ Feature: Add My Groups widget in dash block
     And I click on ".close" "css_element" in the ".modal-header" "css_element"
     And I click on ".dropdown-toggle" "css_element" in the ".block_dash-community-block .list-block:nth-child(3)" "css_element"
     And I click on ".group-widget-viewmembers" "css_element" in the ".block_dash-community-block .list-block:nth-child(3)" "css_element"
-    Then I should see "Nothing to display" in the ".modal-body h2" "css_element"
+    Then I should see "Nothing to display" in the ".modal-body" "css_element"
 
   @javascript
   Scenario: Leave group using dash block

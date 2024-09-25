@@ -46,12 +46,14 @@ class my_groups_condition extends condition {
      * @throws \coding_exception
      */
     public function get_values() {
+
         if (is_null($this->values)) {
-            global $USER;
+
+            $userid = $this->get_userid();
 
             $this->values = [];
 
-            foreach (group_filter::get_user_groups($USER->id, $this->get_context()) as $group) {
+            foreach (group_filter::get_user_groups($userid, $this->get_context()) as $group) {
                 $this->values[] = $group->id;
             }
         }

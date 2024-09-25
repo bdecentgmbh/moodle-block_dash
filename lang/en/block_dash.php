@@ -882,3 +882,58 @@ $string['missingdatasource'] = "The datasources are missing. Please check them."
 $string['viewactivity'] = "View activity";
 $string['activitybutton'] = "Activity button";
 $string['modulename'] = 'Module name';
+
+// ...Dashaddon calendar events.
+$string['calendareventsfallback'] = 'Calendar events fallback image';
+$string['calendareventsfallback_desc'] = 'Upload a image to display as fallback for site and other type of events';
+// ... Event table fields labels.
+$string['event'] = 'Event';
+$string['event:title'] = 'Event title';
+$string['event:type'] = 'Event type';
+$string['event:typefilter'] = 'Event type filter';
+// Event types.
+$string['event:typesite'] = 'Site';
+$string['event:typecourse'] = 'Course';
+$string['event:typegroup'] = 'Group';
+$string['event:typeuser'] = 'User';
+$string['event:typecategory'] = 'Course category';
+$string['event:typeother'] = 'Other';
+$string['filter:today'] = 'Today';
+$string['filter:upcoming'] = 'Upcoming';
+$string['filter:thisweek'] = 'This week';
+$string['filter:thismonth'] = 'This month';
+$string['event:filterdate'] = 'Date';
+// ...Filter day
+$string['event:filterday'] = 'Day of week';
+$string['filter:monday'] = 'Monday';
+$string['filter:tuesday'] = 'Tuesday';
+$string['filter:wednesday'] = 'Wednesday';
+$string['filter:thursday'] = 'Thursday';
+$string['filter:friday'] = 'Friday';
+$string['filter:saturday'] = 'Saturday';
+$string['filter:sunday'] = 'Sunday';
+// ...Conditions.
+$string['eventstatus'] = 'Event status';
+$string['eventcontext'] = 'Context of event';
+$string['eventactivitycompletion'] = 'Associated to an activity';
+$string['eventactivity:incomplete'] = 'Incomplete activities only';
+$string['eventactivity:both'] = 'Incomplete and complete activities';
+$string['event:contextevent'] = 'Context of event';
+$string['event:contextlinked'] = 'Context of event (linked) ';
+$string['event:description'] = 'Description';
+$string['event:gotoactivity'] = 'Go to activity';
+$string['event:location'] = 'Location';
+$string['event:startdate'] = 'Start date';
+$string['event:starttime'] = 'Start time';
+$string['event:enddate'] = 'End date';
+$string['event:endtime'] = 'End time';
+$string['event:duration'] = 'Event duration';
+$string['event:durationinminutes'] = 'Event duration in minutes ';
+$string['event:repeated'] = 'Repeated event';
+$string['event:status'] = 'Status';
+$string['event:color'] = 'Event color';
+$string['even:icon'] = 'Even icon';
+$string['event:image'] = 'Event image';
+$string['event:imagelinked'] = 'Event image (linked)';
+$string['event:imageurl'] = 'Event Image URL';
+// ...End of Dashaddon calendar.

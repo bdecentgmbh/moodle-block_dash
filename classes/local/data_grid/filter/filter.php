@@ -86,6 +86,13 @@ class filter implements filter_interface {
     private $preferences;
 
     /**
+     * Is the filter supports the current user. this will be updated by the datasource.
+     *
+     * @var bool
+     */
+    protected $supportcurrentuser = false;
+
+    /**
      * Filter constructor.
      *
      * @param string $name
@@ -488,5 +495,33 @@ class filter implements filter_interface {
             [$identifier, $component] = $this->get_help();
             $mform->addHelpButton($fieldname . '[enabled]', $identifier, $component);
         }
+    }
+
+    /**
+     * Set this datasource is support the profile page user.
+     *
+     * @return void
+     */
+    public function set_support_currentuser() {
+        $this->supportcurrentuser = true;
+    }
+
+    /**
+     * Get the current userid.
+     *
+     * The current page is user profile page, then use the profile user id. Otherwise returns the current loggedin userid.
+     *
+     * @return int
+     */
+    public function get_userid() {
+        global $PAGE, $USER;
+
+        if ($this->supportcurrentuser) {
+            // Confirm the dash is addon on user profile page, then use the profile page user as report user.
+            $isprofilepage = $PAGE->pagelayout == 'mypublic' && $PAGE->pagetype == 'user-profile';
+            $userid = $isprofilepage ? $PAGE->context->instanceid : $USER->id;
+        }
+
+        return $userid ?? $USER->id;
     }
 }

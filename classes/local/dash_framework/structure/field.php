@@ -255,7 +255,7 @@ class field implements field_interface {
      */
     public function remove_attribute(field_attribute_interface $attribute) {
         foreach ($this->attributes as $key => $fsearchattribute) {
-            if ($fsearchattribute === $attribute) {
+            if (get_class($fsearchattribute) === get_class($attribute)) {
                 unset($this->attributes[$key]);
             }
         }

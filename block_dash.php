@@ -63,6 +63,13 @@ class block_dash extends block_base {
     public function specialization() {
         global $OUTPUT;
 
+        // Verify the dash output is disabled, then use the default title for the block. stop execution here.
+        if (block_dash_is_disabled()) {
+            // Use default block title.
+            $this->title = get_string('newblock', 'block_dash');
+            return false;
+        }
+
         if (isset($this->config->title)) {
             $this->title = $this->title = format_string($this->config->title, true, ['context' => $this->context]);
         } else {
@@ -73,9 +80,12 @@ class block_dash extends block_base {
             $bb = block_builder::create($this);
             if ($bb->is_collapsible_content_addon()) {
                 $addclass = "collapsible-block dash-block-collapse-icon";
-                if (!$bb->is_section_expand_content_addon()) {
+
+                $data = ['collapseaction' => true];
+                if (!$bb->get_configuration()->get_data_source()->is_section_expand_content_addon($data)) {
                     $addclass .= " collapsed";
                 }
+
                 $attr = [
                     'data-toggle' => 'collapse',
                     'class' => $addclass,

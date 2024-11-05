@@ -28,5 +28,5 @@ $plugin->version   = 2024050804;        // The current plugin version (Date: YYY
 $plugin->requires  = 2021051700;        // Requires this Moodle version.
 $plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release = '2.0';
-$plugin->supported = [401, 403];
+$plugin->release = '2.2';
+$plugin->supported = [401, 404];

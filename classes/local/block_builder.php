@@ -29,6 +29,7 @@ use block_dash\local\configuration\configuration;
 use block_dash\output\query_debug;
 use block_dash\output\renderer;
 use html_writer;
+use moodle_exception;
 
 /**
  * Helper class for creating block instance content.
@@ -86,27 +87,7 @@ class block_builder {
         return false;
     }
 
-    /**
-     * Confirm the block is configured to display only for the section.
-     *
-     * @return bool
-     */
-    public function is_section_expand_content_addon() {
-        if ($this->is_collapsible_content_addon()) {
-            $currentsection = optional_param('section', 0, PARAM_INT);
-            if (isset($this->blockinstance->config->preferences)) {
-                $preferneces = $this->blockinstance->config->preferences;
-                if (isset($preferneces['filters'])) {
-                    $restrictedsections = isset($preferneces['filters']['sectiondisplay']['sections']) ?
-                        $preferneces['filters']['sectiondisplay']['sections'] : [];
-                    if (in_array((int)$currentsection, $restrictedsections)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+
 
     /**
      * Get content object for block instance.
@@ -134,7 +115,6 @@ class block_builder {
             'pagelayout' => $this->blockinstance->page->pagelayout,
             'pagecontext' => $this->blockinstance->page->context->id,
             'collapseaction' => $this->is_collapsible_content_addon(),
-            'showcollapseblock' => $this->is_section_expand_content_addon(),
         ];
 
         if ($this->configuration->is_fully_configured()) {

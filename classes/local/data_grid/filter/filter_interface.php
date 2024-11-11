@@ -306,9 +306,9 @@ interface filter_interface {
     /**
      * Set preferences on this filter.
      *
-     * @param array $preferences
+     * @param ?array $preferences
      */
-    public function set_preferences(array $preferences = null): void;
+    public function set_preferences(?array $preferences = null): void;
 
     /**
      * Get preferences related to this filter.

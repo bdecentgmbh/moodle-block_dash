@@ -40,7 +40,7 @@ $sortfield = optional_param('sort_field', '', PARAM_TEXT);
 $sortdir = optional_param('sort_direction', '', PARAM_TEXT);
 
 $PAGE->set_context(context_system::instance());
-$PAGE->set_url('/blocks/dash/download.php', array('block_instance_id' => $instanceid));
+$PAGE->set_url('/blocks/dash/download.php', ['block_instance_id' => $instanceid]);
 
 $renderer = $PAGE->get_renderer('block_dash');
 $binstance = $DB->get_record('block_instances', ['id' => $instanceid]);

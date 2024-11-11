@@ -22,6 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// phpcs:disable moodle.Files.LangFilesOrdering.UnexpectedComment
+// phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+
 $string['accordionfield1'] = 'Top left field';
 $string['accordionfield1icon'] = 'Top left field icon';
 $string['accordionfield2'] = 'Top right field';
@@ -64,12 +67,11 @@ $string['coursecategories'] = 'Course categories';
 $string['courseoverviewfilesurl'] = 'Course image URL';
 $string['coursesummary'] = 'Course summary';
 $string['courseurl'] = 'Course URL';
-$string['courseurl'] = 'Course URL';
 $string['createcustomdatasource'] = 'Create custom data source';
 $string['createcustomlayout'] = 'Create custom layout';
 $string['createdashboard'] = 'Create dashboard';
 $string['createlayout'] = 'Create custom layout';
-$string['cssclass'] = 'CSS Class';
+$string['cssclass'] = 'CSS classes';
 $string['currentcourse'] = 'Current course';
 $string['currentcoursecontext'] = 'Current course context';
 $string['currentcoursegroups'] = 'Current course groups';
@@ -409,7 +411,6 @@ $string['coursedata:past'] = 'Past';
 $string['coursedate:present'] = 'Present';
 $string['coursedate:future'] = 'Future';
 
-$string['viewcourse'] = 'View course';
 $string['enrolnow'] = 'Enrol now';
 $string['buynow'] = 'Buy now';
 $string['notavailable'] = 'Not available';
@@ -570,7 +571,6 @@ $string['operator'] = 'Operator';
 // ...Form section headers.
 $string['fieldssection'] = 'Fields setup';
 $string['conditionsection'] = 'Condition setup';
-$string['fields'] = 'Fields';
 $string['field'] = 'Field';
 $string['fieldtransformdata'] = 'Transform the format';
 $string['fieldtransformdata_help'] = 'Transform the format of the value when displayed in the table';
@@ -779,7 +779,6 @@ $string['nocourselearnigpath'] = "No courses have been added to the learning pat
 // ... enrol program string.
 $string['programimagelink'] = 'Program image linked';
 $string['smart_coursebutton'] = 'Smart course button';
-$string['fullnamelinked'] = 'Fullname linked';
 $string['contextlinked'] = 'Context linked';
 $string['description'] = 'Description';
 $string['programs:view'] = 'View programs';
@@ -814,7 +813,6 @@ $string['categoryimgfallback'] = 'Category fallback image';
 $string['categoryimgfallbackdesc'] = 'Upload the image for the default fallback of categories. If new categories are created, the fallback image will be displayed until a new image is added for the category';
 $string['categoryimageurl'] = 'Category image url';
 
-$string['cssclass'] = "CSS classes";
 $string['cssclass_help'] = "Use a custom CSS class to apply multiple classes.";
 $string['backgroundposition'] = 'Background Position';
 $string['backgroundposition_help'] = 'Background image will focused on the given position';

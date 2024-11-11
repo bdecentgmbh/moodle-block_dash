@@ -133,4 +133,17 @@ class members extends \table_sql implements dynamic_table {
     public function col_roles($row) {
         return get_user_roles_in_course($row->userid, $row->courseid);
     }
+
+    /**
+     * Check capability for users accessing the members table.
+     *
+     * @return bool
+     */
+    public function has_capability(): bool {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        $context = $this->course->id == SITEID ? \context_system::instance() : $this->get_context();
+        return has_capability('block/dash:mygroups_viewmembers', $context);
+    }
 }

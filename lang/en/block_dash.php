@@ -259,6 +259,9 @@ $string['tablealias_g'] = 'Group';
 $string['tablealias_sl'] = 'Site logs';
 $string['tablealias_u'] = 'User';
 $string['tablealias_ue'] = 'User enrollment';
+$string['tablealias_ra'] = 'Role assignment';
+$string['tablealias_r'] = "Role";
+$string['tablealias_ctx'] = 'Context';
 $string['tags'] = 'Tags';
 $string['timesinceevent'] = 'Time since event';
 $string['titleoverride'] = 'Title override';
@@ -335,6 +338,7 @@ $string['datasource:completions_data_source_help'] = 'Users compelted courses li
 $string['datasource:courses_data_source_help'] = 'List of available courses for the current user.';
 $string['datasource:dashboard_data_source_help'] = 'List of Dashboard';
 $string['datasource:logstore_data_source_help'] = 'Datasource of site logs';
+$string['datasource:roleassignments_data_source'] = "Role assignments";
 $string['confirmleavegroup'] = 'Do you really want to leave the group {$a}';
 $string['fieldalert'] = 'The chosen layout can not be customised';
 
@@ -937,3 +941,69 @@ $string['event:image'] = 'Event image';
 $string['event:imagelinked'] = 'Event image (linked)';
 $string['event:imageurl'] = 'Event Image URL';
 // ...End of Dashaddon calendar.
+
+//On page navigation.
+$string['onpagenavigation'] = 'On page navigation';
+$string['includedblocks'] = 'Included blocks';
+$string['displaydashboardtitle'] = 'Display dashboard title';
+$string['displaycta'] = 'Display call to action';
+$string['ctalink'] = 'Call to action link';
+$string['customurl'] = 'Custom URL';
+$string['selectcampaign'] = 'Select campaign';
+$string['disabled'] = 'Disabled';
+$string['always'] = 'Always';
+$string['onlywhensticky'] = 'Only when sticky';
+$string['enrolmentoptions'] = 'Enrolment options';
+$string['campaign'] = 'Campaign';
+$string['shopurl'] = 'Shop URL';
+
+$string['restrictaccess'] = "Restrict access";
+$string['duplicatedashboard'] = "Duplicate dashboard";
+$string['copy'] = "Copy";
+$string['dashboardduplicated'] = "Duplicated dashboard successfully";
+
+$string['contextsettings'] = 'Context settings';
+$string['contexttype'] = 'Context type';
+$string['contextsystem'] = 'System';
+$string['contextcategory'] = 'Category';
+$string['contextcourse'] = 'Course';
+$string['selectcategory'] = 'Select category';
+$string['selectcourse'] = 'Select course';
+$string['nocategoryselected'] = 'No category selected';
+$string['nocourseselected'] = 'No course selected';
+$string['blocksnotfound'] = "The current dashboard does not contain any blocks.";
+$string['oneormoreblocks'] = "The current dashboard contains one or more blocks.";
+$string['magicnotavailable'] = "The Magic authentication is not available for this site.";
+$string['customurltext'] = "Custom URL Text";
+
+$string['strctaenrolment'] = "View enrolment page";
+$string['strctacampaign'] = 'Registration';
+$string['strshopurl'] = 'View shop';
+$string['strcustomurl'] = "View URL";
+$string['nocampaignsareavailable'] = "No campaigns are available";
+$string['status:notenrolled'] = "Not enrolled";
+
+$string['widget:course_sections'] = 'Course sections';
+$string['widget:course_sections_help'] = 'Use this widget to interact with your course sections effortlessly.';
+$string['datasource:sections_widget'] = 'Course sections widget';
+$string['rolename'] = "Role name";
+$string['role_assignments'] = "Role assignments";
+$string['timemodified'] = "Time modified";
+
+$string['contextname'] = "Context name";
+$string['contexturl'] = "Context URL";
+$string['contextlevel'] = "Context level";
+$string['parent'] = "Parent";
+
+
+$string['systemcontext'] = "System";
+$string['usercontext'] = "User";
+$string['coursecatcontext'] = "Course Category";
+$string['coursecontext'] = "Course";
+$string['modulecontext'] = "Module";
+$string['blockcontext'] = "Block";
+
+$string['courseinformation'] = 'Course information button';
+$string['originalrolename'] = "Original name";
+$string['strrole'] = "Role";
+

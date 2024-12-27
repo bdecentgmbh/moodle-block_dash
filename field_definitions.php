@@ -336,6 +336,19 @@ $definitions = array_merge($definitions, [
         'title' => get_string('groupname', 'group'),
         'tables' => ['g'],
     ],
+
+    // Course information.
+    [
+        'name' => 'cc_information',
+        'select' => 'c.id',
+        'title' => get_string('courseinformation', 'block_dash'),
+        'tables' => ['c'],
+        'attributes' => [
+            [
+                'type' => \block_dash\local\data_grid\field\attribute\course_information_url_attribute::class,
+            ],
+        ],
+    ],
 ]);
 
 return $definitions;

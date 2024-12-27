@@ -46,6 +46,7 @@ body#page-blocks-dash-data-source .ui-sortable-helper {
 
 /** Add room between select filters. **/
 .block_dash .select2.select2-container {
+    max-width: 300px;
     margin-right: 10px;
 }
 
@@ -950,6 +951,10 @@ h5:before,
 
 .block_dash .card-body .form-inline {
     flex-direction: column;
+}
+.block_dash .card-body .form-inline > div,
+.block_dash .card-body .form-inline .custom-addon {
+    width: 100%;
 }
 .block_dash .card-body .form-inline .form-group.fitem {
     width: 100%;

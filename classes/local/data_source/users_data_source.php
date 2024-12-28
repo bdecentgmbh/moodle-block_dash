@@ -151,7 +151,7 @@ class users_data_source extends abstract_data_source {
         $filtercollection->add_filter(new current_course_condition('current_course', 'c.id'));
 
         if (block_dash_has_pro()) {
-            $filtercollection->add_filter(new \local_dash\data_grid\filter\parent_role_condition('parentrole', 'u.id'));
+            $filtercollection->add_filter(new \local_dash\data_grid\filter\relations_role_condition('parentrole', 'u.id'));
             $filtercollection->add_filter(new \local_dash\data_grid\filter\cohort_condition('cohort', 'u.id'));
             $filtercollection->add_filter(new \local_dash\data_grid\filter\users_mycohort_condition('users_mycohort', 'u.id'));
         }

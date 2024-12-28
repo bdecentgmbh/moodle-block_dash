@@ -1003,7 +1003,7 @@ $string['coursecontext'] = "Course";
 $string['modulecontext'] = "Module";
 $string['blockcontext'] = "Block";
 
-$string['courseinformation'] = 'Course information button';
+$string['courseinformation'] = 'Course information';
 $string['originalrolename'] = "Original name";
 $string['strrole'] = "Role";
 

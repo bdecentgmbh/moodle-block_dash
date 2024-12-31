@@ -995,7 +995,6 @@ $string['contexturl'] = "Context URL";
 $string['contextlevel'] = "Context level";
 $string['parent'] = "Parent";
 
-
 $string['systemcontext'] = "System";
 $string['usercontext'] = "User";
 $string['coursecatcontext'] = "Course Category";
@@ -1006,4 +1005,4 @@ $string['blockcontext'] = "Block";
 $string['courseinformation'] = 'Course information';
 $string['originalrolename'] = "Original name";
 $string['strrole'] = "Role";
-
+$string['redirecttodashboard'] = "Redirect to dashboard";

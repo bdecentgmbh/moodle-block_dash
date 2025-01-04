@@ -133,4 +133,10 @@ class members extends \table_sql implements dynamic_table {
     public function col_roles($row) {
         return get_user_roles_in_course($row->userid, $row->courseid);
     }
+
+
+    #[\Override]
+    public function has_capability(): bool {
+        return true;
+    }
 }

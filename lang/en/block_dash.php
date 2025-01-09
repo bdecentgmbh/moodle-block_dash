@@ -849,7 +849,7 @@ $string['users_mycohort'] = "Users in one of my cohorts";
 
 $string['currentcategory'] = 'Current Category';
 $string['dashicon'] = 'Icon';
-$string['dashicon_help'] = 'This icon shows onlu in the dashboards data source.';
+$string['dashicon_help'] = 'This icon shows only in the dashboards data source.';
 $string['dashthumbnailimg'] = 'Thumbnail image';
 $string['dashthumbnailimgurl'] = 'Thumbnail image URL';
 $string['dashthumbnailimg_help'] = "This thumbnail image shows only in dashboards data source";
@@ -936,7 +936,7 @@ $string['event:durationinminutes'] = 'Event duration in minutes ';
 $string['event:repeated'] = 'Repeated event';
 $string['event:status'] = 'Status';
 $string['event:color'] = 'Event color';
-$string['even:icon'] = 'Even icon';
+$string['even:icon'] = 'Event icon';
 $string['event:image'] = 'Event image';
 $string['event:imagelinked'] = 'Event image (linked)';
 $string['event:imageurl'] = 'Event Image URL';

@@ -80,7 +80,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
             this.modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this, true));
 
             this.modal.getRoot().on(ModalEvents.bodyRendered, function() {
-                $("#fgroup_id_available_fields .form-inline > fieldset > div").sortable({
+                $("#fgroup_id_available_fields .felement > fieldset > div").sortable({
                     items: ".form-check-inline.fitem",
                     handle: ".drag-handle",
                     axis: "y"

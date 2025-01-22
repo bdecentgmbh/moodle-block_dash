@@ -55,7 +55,7 @@ class course_information_url_attribute extends abstract_field_attribute {
         if ($dashboard = $DB->get_record('dashaddon_dashboard_dash', ['contextid' => $context->id], '*', IGNORE_MULTIPLE)) {
             $url = new moodle_url('/local/dash/addon/dashboard/dashboard.php', ['id' => $dashboard->id]);
         } else {
-            $url = new moodle_url('/user/index.php', ['id' => $data]);
+            $url = new moodle_url('/enrol/index.php', ['id' => $data]);
         }
         return $url;
     }

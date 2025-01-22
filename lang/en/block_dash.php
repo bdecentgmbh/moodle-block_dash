@@ -1006,3 +1006,6 @@ $string['courseinformation'] = 'Course information';
 $string['originalrolename'] = "Original name";
 $string['strrole'] = "Role";
 $string['redirecttodashboard'] = "Redirect to dashboard";
+
+$string['managecoursecatedashboards'] = 'Manage course categorydata sources';
+$string['dash:managecoursecatedashboards'] = 'Manage course categorydata sources';

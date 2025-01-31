@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use block_dash\local\data_source\data_source_factory;
 
+require_once($CFG->dirroot.'/cohort/lib.php');
+
 /**
  * Form for editing Dash block instances.
  *
@@ -187,6 +189,112 @@ class block_dash_edit_form extends block_edit_form {
 
         $mform->addElement('editor', 'config_emptystate', get_string('content'), ['rows' => 5]);
         $mform->setType('config_emptystate', PARAM_CLEANHTML);
+
+        // Restrict access.
+        $mform->addElement('header', 'restrictaccessheading', get_string('restrictaccessheading', 'block_dash'));
+
+        // Operator for restrict access.
+        $strrequired = get_string('required');
+        $mform->addElement('select', 'config_restrict_operator', get_string('restrict_operator', 'block_dash'), [
+            1 => get_string('any'),
+            2 => get_string('all'),
+        ]);
+        $mform->addRule('config_restrict_operator', $strrequired, 'required', null, 'client');
+
+        // Add by cohorts as autocomplete element.
+        $cohortslist = \cohort_get_all_cohorts(0, 0);
+        $cohortoptions = $cohortslist['cohorts'];
+        if ($cohortoptions) {
+            array_walk($cohortoptions, function(&$value) {
+                $value = $value->name;
+            });
+        }
+        $bycohortswidget = $mform->addElement('autocomplete', 'config_restrict_cohorts',
+            get_string('restrictbycohort', 'block_dash'), $cohortoptions);
+        $bycohortswidget->setMultiple(true);
+        $mform->addHelpButton('config_restrict_cohorts', 'restrictbycohort', 'block_dash');
+
+        // Add by roles as autocomplete element.
+        $rolelist = role_get_names(\context_system::instance());
+        $roleoptions = [];
+        foreach ($rolelist as $role) {
+            if ($role->archetype !== 'frontpage') {
+                $roleoptions[$role->id] = $role->localname;
+            }
+        }
+        $byroleswidget = $mform->addElement('autocomplete', 'config_restrict_roles', get_string('restrictbyrole', 'block_dash'),
+                $roleoptions);
+        $byroleswidget->setMultiple(true);
+        $mform->addHelpButton('config_restrict_roles', 'restrictbyrole', 'block_dash');
+
+        // Add context as select element.
+        $rolecontext = [
+            1 => get_string('any'),
+            2 => get_string('coresystem'),
+        ];
+        $mform->addElement('select', 'config_restrict_rolecontext', get_string('restrictrolecontext', 'block_dash'), $rolecontext);
+        $mform->setDefault('config_restrict_rolecontext', 1);
+        $mform->setType('config_restrict_rolecontext', PARAM_INT);
+        $mform->addHelpButton('config_restrict_rolecontext', 'restrictrolecontext', 'block_dash');
+
+        // Course restrictions.
+        $context = $this->page->context->contextlevel;
+        if ($context == CONTEXT_COURSE || $context == CONTEXT_MODULE) {
+            // Course groups.
+            $groupslist = groups_get_all_groups($this->page->course->id);
+            $groupoptions = [];
+            foreach ($groupslist as $group) {
+                    $groupoptions[$group->id] = $group->name;
+            }
+            $bygroupswidget = $mform->addElement('autocomplete', 'config_restrict_groups',
+                get_string('restrictbygroup', 'block_dash'), $groupoptions);
+            $bygroupswidget->setMultiple(true);
+            $mform->addHelpButton('config_restrict_groups', 'restrictbygroup', 'block_dash');
+
+            // Course completion status.
+            $completionoptions = [
+                'notenrolled' => get_string('status:notenrolled', 'block_dash'),
+                'enrolled' => get_string('status:enrolled', 'block_dash'),
+                'inprogress' => get_string('inprogress'),
+                'completed' => get_string('completed'),
+            ];
+            $bycompletionwidget = $mform->addElement('autocomplete', 'config_restrict_coursecompletion',
+                get_string('restrictbycoursecompletion', 'block_dash'), $completionoptions);
+            $bycompletionwidget->setMultiple(true);
+            $mform->addHelpButton('config_restrict_coursecompletion', 'restrictbycoursecompletion', 'block_dash');
+
+            // Course grade.
+            $mform->addElement('text', 'config_restrict_grade', get_string('restrictbygrade', 'block_dash'));
+            $mform->addRule('config_restrict_grade', null, 'numeric', null, 'client');
+            $mform->setType('config_restrict_grade', PARAM_INT);
+            $mform->addHelpButton('config_restrict_grade', 'restrictbygrade', 'block_dash');
+
+            // Activity completion status.
+            $completionoptions = [
+                'none' => get_string('none'),
+                'incomplete' => get_string('incomplete', 'block_dash'),
+                'complete' => get_string('complete'),
+                'passed' => get_string('passed', 'block_dash'),
+                'failed' => get_string('failed', 'block_dash'),
+            ];
+            $mform->addElement('select', 'config_restrict_activitycompletion',
+                get_string('restrictbyactivitycompletion', 'block_dash'), $completionoptions);
+            $mform->addHelpButton('config_restrict_activitycompletion', 'restrictbyactivitycompletion', 'block_dash');
+
+            if ($context != CONTEXT_MODULE) {
+                // Include the activities for the restrict access.
+                $completion = new \completion_info(get_course($this->page->course->id));
+                $activities = $completion->get_activities();
+                array_walk($activities, function(&$value) {
+                    $value = format_string($value->name);
+                });
+
+                $byactivitycompletion = $mform->addElement('autocomplete', 'config_restrict_modules',
+                                    get_string('selectactivity', 'block_dash'), $activities);
+                $byactivitycompletion->setMultiple(true);
+                $mform->addHelpButton('config_restrict_modules', 'selectactivity', 'block_dash');
+            }
+        }
 
         $widgetlist = data_source_factory::get_data_source_form_options('widget');
         foreach ($widgetlist as $id => $source) {

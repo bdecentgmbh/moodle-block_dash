@@ -343,7 +343,6 @@ class contacts_widget extends abstract_widget {
             $contactuser = new \core_table\local\filter\integer_filter('contactuser');
             $contactuser->add_filter_value($contactuserid);
             $filterset->add_filter($contactuser);
-
             $table = new \block_dash\table\groups($context->instanceid);
             $table->set_filterset($filterset);
         }

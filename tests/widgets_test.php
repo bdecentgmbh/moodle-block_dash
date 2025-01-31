@@ -35,7 +35,7 @@ use core_message\tests\helper as testhelper;
  * @runInSeparateProcess
  * @runTestsInSeparateProcesses
  */
-class widgets_test extends \advanced_testcase {
+final class widgets_test extends \advanced_testcase {
 
     /**
      * Demo of test user.
@@ -76,6 +76,7 @@ class widgets_test extends \advanced_testcase {
      * This method is called before each test.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->setAdminUser();
         global $USER;
@@ -145,7 +146,7 @@ class widgets_test extends \advanced_testcase {
      * @param \page $page Page
      * @return void
      */
-    protected function create_block($page) {
+    protected function create_block($page): void {
         $page->blocks->add_block_at_end_of_default_region('dash');
     }
 
@@ -158,7 +159,7 @@ class widgets_test extends \advanced_testcase {
      * @runInSeparateProcess
      * @runTestsInSeparateProcesses
      */
-    public function test_mylearning() {
+    public function test_mylearning(): void {
         $user = self::getDataGenerator()->create_and_enrol($this->course1, 'student');
         $teacher = self::getDataGenerator()->create_and_enrol($this->course1, 'editingteacher');
         self::getDataGenerator()->enrol_user($user->id, $this->course2->id);
@@ -206,7 +207,7 @@ class widgets_test extends \advanced_testcase {
      * @covers ::contacts_widget
      * @return void
      */
-    public function test_mycontacts() {
+    public function test_mycontacts(): void {
         global $DB;
 
         $block = $this->create_user_block('My contacts', 'block_dash\local\widget\contacts\contacts_widget');
@@ -249,7 +250,7 @@ class widgets_test extends \advanced_testcase {
      * @covers ::groups_widget
      * @return void
      */
-    public function test_mygroups() {
+    public function test_mygroups(): void {
         global $CFG;
 
         require_once($CFG->dirroot.'/group/lib.php');

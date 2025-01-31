@@ -129,7 +129,11 @@ class groups extends \table_sql implements dynamic_table {
         return format_string(get_course($row->courseid)->fullname);
     }
 
-    #[\Override]
+    /**
+     * Check if the current user has the capability to see this table.
+     *
+     * @return bool
+     */
     public function has_capability(): bool {
         return true;
     }

@@ -236,7 +236,8 @@ function block_dash_is_totara() {
  * @return bool
  */
 function block_dash_has_pro() {
-    return array_key_exists('dash', core_component::get_plugin_list('local'));
+    global $CFG;
+    return file_exists("$CFG->dirroot/local/dash");
 }
 
 /**

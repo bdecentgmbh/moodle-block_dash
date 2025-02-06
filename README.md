@@ -32,7 +32,7 @@ The pro version (different repository) adds the following features:
 See the changes.md.
 
 # Installation
-Install the plugin like any other plugin to folder /mod/pulse
+Install the plugin like any other plugin to folder /blocks/dash
 See http://docs.moodle.org/en/Installing_plugins for details on installing Moodle plugins
 
 # Initial Configuration

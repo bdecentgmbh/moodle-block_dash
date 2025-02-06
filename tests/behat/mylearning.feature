@@ -77,8 +77,9 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
     And ".fa.fa-check" "css_element" should exist in the ".block_dash-info-element .card:nth-child(1)" "css_element"
 
   @javascript @_file_upload
-  Scenario: Course badges list in Mylearning widget
-    Given I log in as "admin"
+  Scenario: Course badges list in Mylearning widget for Moodle ≤ 4.4
+    Given the site is running Moodle version 4.4 or lower
+    And I log in as "admin"
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
     And I set the following fields to these values:
@@ -91,6 +92,30 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
     And I press "Save"
     And I press "Enable access"
     And I press "Continue"
+    And I follow badge recipients
+    And I press "Award badge"
+    And I set the field "potentialrecipients[]" to "Student First (student1@example.com)"
+    And I press "Award badge"
+    And I log out
+    When I log in as "student1"
+    Then ".collected .activatebadge[alt=\"Badge 1\"]" "css_element" should exist in the "My Learning" "block"
+
+  @javascript @_file_upload
+  Scenario: Course badges list in Mylearning widget for Moodle ≥ 4.5
+    Given the site is running Moodle version 4.5 or higher
+    And I log in as "admin"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges > Add a new badge" in current page administration
+    And I set the following fields to these values:
+      | id_name        | Badge 1 |
+      | id_description | Badge 1 |
+    And I upload "blocks/badges/tests/fixtures/badge.png" file to "Image" filemanager
+    And I press "Create badge"
+    And I select "Manual issue by role" from the "Add badge criteria" singleselect
+    And I set the field "Teacher" to "1"
+    And I press "Save"
+    And I press "Enable access"
+    And I click on "Enable" "button" in the "Confirm" "dialogue"
     And I follow badge recipients
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student First (student1@example.com)"

@@ -128,4 +128,17 @@ class groups extends \table_sql implements dynamic_table {
     public function col_course($row) {
         return format_string(get_course($row->courseid)->fullname);
     }
+
+    /**
+     * Check capability for users accessing the groups table.
+     *
+     * @return bool
+     */
+    public function has_capability(): bool {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        $context = $this->course->id == SITEID ? \context_system::instance() : $this->get_context();
+        return has_capability('block/dash:mygroups_view', $context);
+    }
 }

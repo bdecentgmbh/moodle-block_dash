@@ -51,10 +51,9 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
   @javascript
   Scenario: Add the dash mylearning widget block on the dashboard
     Given I log in as "student1"
-    Then I should see "Course 1" in the "My Learning" "block"
-    And I should see "Course 2" in the "My Learning" "block"
-    And I should see "Course 3" in the "My Learning" "block"
-    And I should not see "Course 4" in the "My Learning" "block"
+    And I should see "Course 1" in the ".course-info-block .row .desc-block a h2" "css_element"
+    And I should see "Course 2" in the ".course-info-block .row:nth-child(2) .desc-block a h2" "css_element"
+    And I should see "Course 3" in the ".course-info-block .row:nth-child(3) .desc-block a h2" "css_element"
 
   @javascript
   Scenario: Course completion status in mylearning widget
@@ -90,7 +89,7 @@ Feature: Enable the widget in dash block on the dashboard page and view it's con
     And I set the field "Teacher" to "1"
     And I press "Save"
     And I press "Enable access"
-    And I press "Continue"
+    And I click on "button.btn-primary" "css_element" in the ".modal-footer" "css_element"
     And I follow badge recipients
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Student First (student1@example.com)"

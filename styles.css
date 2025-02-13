@@ -410,7 +410,17 @@ body .select2-container {
 .modal form.mform#block-dash #fgroup_id_buttonar {
     display: none;
 }
-
+.modal .mform .fcontainer .block_dash-form-range-input .felement {
+    gap: 15px;
+}
+.modal .mform .fcontainer .block_dash-form-range-input .admin_range {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.modal .mform .fcontainer .block_dash-form-range-input .admin_range + .form-control {
+    max-width: 60px;
+}
 /* Mylearning -widget */
 
 

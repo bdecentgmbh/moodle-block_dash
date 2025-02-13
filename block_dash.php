@@ -237,8 +237,11 @@ class block_dash extends block_base {
                 return $this->content;
             }
 
-            if (!$this->verify_access_restrictions() && !(($datasource->is_widget() && $datasource->is_empty())
-                || (!$datasource->is_widget() && $datasource->get_data()->is_empty()))) {
+            if (!$this->verify_access_restrictions()) {
+                $config = $datasource->get_block_instance()->config;
+                if (!$hidewhenempty && isset($config->emptystate['text'])) {
+                    $this->content->text = format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]);
+                }
                 return $this->content;
             }
 
@@ -522,7 +525,7 @@ class block_dash extends block_base {
             $conditions['coursecompletion'] = $this->restriction_bycoursecompletion();
         }
 
-        if (!empty($this->config->restrict_grade) && isset($this->config->restrict_grade)) {
+        if (!empty($this->config->restrict_graderange) && isset($this->config->restrict_graderange)) {
             // Restriction by course grade.
             $conditions['coursegrade'] = $this->restriction_bycoursegrade();
         }
@@ -731,20 +734,47 @@ class block_dash extends block_base {
         global $USER, $CFG;
         require_once($CFG->dirroot . '/grade/querylib.php');
 
-        if (isset($this->config->restrict_grade) && !empty($this->config->restrict_grade)) {
-            $restrictgrade = $this->config->restrict_grade;
-            $course = $this->page->course;
+        if (isset($this->config->restrict_graderange) && !empty($this->config->restrict_graderange)) {
+            $graderange = $this->config->restrict_graderange;
 
+            // Return false if no status is defined.
+            if (empty($graderange) || $graderange == 'none') {
+                return false;
+            }
+
+            if (isset($this->config->restrict_grademin) && !empty($this->config->restrict_grademin)) {
+                $grademin = $this->config->restrict_grademin;
+            }
+
+            if (isset($this->config->restrict_grademax) && !empty($this->config->restrict_grademax)) {
+                $grademax = $this->config->restrict_grademax;
+            }
+
+            $course = $this->page->course;
             $grade = grade_get_course_grade($USER->id, $course->id);
             $coursetotal = (int) $grade->grade;
+
             if (empty($coursetotal) && ($coursetotal == null)) {
                 return false;
             }
 
-            if ($coursetotal <= $restrictgrade) {
-                return true;
+            switch ($graderange) {
+                case 'lowerthan':
+                    if ($coursetotal < $grademin) {
+                        return true;
+                    }
+                    break;
+                case 'higherthan':
+                    if ($coursetotal > $grademin) {
+                        return true;
+                    }
+                    break;
+                case 'between':
+                    if ($coursetotal >= $grademin && $coursetotal <= $grademax) {
+                        return true;
+                    }
+                    break;
             }
-
         }
         return false;
     }

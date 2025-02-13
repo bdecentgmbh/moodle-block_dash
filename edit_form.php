@@ -264,10 +264,28 @@ class block_dash_edit_form extends block_edit_form {
             $mform->addHelpButton('config_restrict_coursecompletion', 'restrictbycoursecompletion', 'block_dash');
 
             // Course grade.
-            $mform->addElement('text', 'config_restrict_grade', get_string('restrictbygrade', 'block_dash'));
-            $mform->addRule('config_restrict_grade', null, 'numeric', null, 'client');
-            $mform->setType('config_restrict_grade', PARAM_INT);
-            $mform->addHelpButton('config_restrict_grade', 'restrictbygrade', 'block_dash');
+            $graderange = [
+                'none' => get_string('none'),
+                'lowerthan' => get_string('lowerthan', 'block_dash'),
+                'higherthan' => get_string('higherthan', 'block_dash'),
+                'between' => get_string('between', 'block_dash'),
+            ];
+            $mform->addElement('select', 'config_restrict_graderange', get_string('restrictbygrade', 'block_dash'), $graderange);
+            $mform->addHelpButton('config_restrict_graderange', 'restrictbygrade', 'block_dash');
+
+            require_once($CFG->dirroot.'/blocks/dash/form/element-range.php');
+            MoodleQuickForm::registerElementType('dashrange', $CFG->dirroot.'/blocks/dash/form/element-range.php',
+            'moodlequickform_dashrange');
+
+            $mform->addElement('dashrange', 'config_restrict_grademin', '');
+            $mform->setType('config_restrict_grademin', PARAM_INT);
+            $mform->addRule('config_restrict_grademin', null, 'numeric', null, 'client');
+            $mform->hideIf('config_restrict_grademin', 'config_restrict_graderange', 'eq', 'none');
+
+            $mform->addElement('dashrange', 'config_restrict_grademax', '');
+            $mform->setType('config_restrict_grademax', PARAM_INT);
+            $mform->addRule('config_restrict_grademax', null, 'numeric', null, 'client');
+            $mform->hideIf('config_restrict_grademax', 'config_restrict_graderange', 'neq', 'between');
 
             // Activity completion status.
             $completionoptions = [

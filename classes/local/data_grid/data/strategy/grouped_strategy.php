@@ -24,6 +24,8 @@
 
 namespace block_dash\local\data_grid\data\strategy;
 
+require_once($CFG->dirroot . '/blocks/dash/lib.php');
+
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;

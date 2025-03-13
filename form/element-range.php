@@ -18,10 +18,10 @@
  * Dash - Form element for range input.
  *
  * @package   block_dash
+ * @copyright  2019 bdecent gmbh <https://bdecent.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core\output\html_writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -70,7 +70,7 @@ class moodlequickform_dashrange extends MoodleQuickForm_text implements templata
         $context = $this->export_for_template_base($output);
 
         // Create range input.
-        $rangeinput = html_writer::tag('input', null, 
+        $rangeinput = \html_writer::tag('input', null,
             ['type' => 'range', 'name' => 'graderange', 'id' => $this->_attributes['name']]);
 
         // Get ID of the element.

@@ -525,7 +525,7 @@ class block_dash extends block_base {
             $conditions['coursecompletion'] = $this->restriction_bycoursecompletion();
         }
 
-        if (!empty($this->config->restrict_graderange) && isset($this->config->restrict_graderange)) {
+        if (isset($this->config->restrict_graderange) && ($this->config->restrict_graderange !== 'none')) {
             // Restriction by course grade.
             $conditions['coursegrade'] = $this->restriction_bycoursegrade();
         }
@@ -559,7 +559,6 @@ class block_dash extends block_base {
         // Default to false if operator is invalid.
         return false;
     }
-
 
     /**
      * Generate the queries to verify the user has selected cohort.
@@ -733,6 +732,7 @@ class block_dash extends block_base {
     public function restriction_bycoursegrade() {
         global $USER, $CFG;
         require_once($CFG->dirroot . '/grade/querylib.php');
+        require_once($CFG->libdir . '/gradelib.php');
 
         if (isset($this->config->restrict_graderange) && !empty($this->config->restrict_graderange)) {
             $graderange = $this->config->restrict_graderange;

@@ -129,7 +129,7 @@ class behat_block_dash extends behat_base {
     public function i_check_dash_css($value, $selector, $type): void {
         $stylejs = "
             return (
-                Y.one('{$selector}').getComputedStyle('{$type}')
+                window.getComputedStyle(document.querySelector('$selector')).getPropertyValue('$type')
             )
         ";
         if (strpos($this->evaluate_script($stylejs), $value) === false) {

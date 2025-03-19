@@ -39,17 +39,20 @@ class image_attribute extends abstract_field_attribute {
      * @return mixed
      */
     public function transform_data($data, \stdClass $record) {
-
+        $alt = $this->get_option('title');
+        if (isset($record->$alt)) {
+            $alt = $record->$alt;
+        }
         if (($url = $this->get_option('customurl')) && ($labelfield = $this->get_option('label_field'))) {
             $url = $this->update_placeholders($record, urldecode($url));
-            return \html_writer::img($url, $this->get_option('title'), [
+            return \html_writer::img($url, $alt, [
                 'class' => 'img-responsive',
                 'role' => 'presentation ',
             ]);
         }
 
         if ($data) {
-            return \html_writer::img($data, $this->get_option('title'), [
+            return \html_writer::img($data, $alt, [
                 'class' => 'img-responsive',
                 'role' => 'presentation ',
             ]);

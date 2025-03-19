@@ -458,11 +458,12 @@ class builder {
      * @throws exception\invalid_operator_exception
      */
     public function count($isunique): int {
+        global $DB;
         $builder = clone $this;
 
         if ($isunique) {
             $builder->set_selects([
-                'uni' => 'CONCAT_WS("-", cm.id, u.id, c.id, cc.id)',
+                'uni' => $DB->sql_concat('MAX(cm.id)', 'MAX(u.id)', 'MAX(c.id)', 'MAX(cc.id)'),
                 'count' => 'COUNT(*)']
             );
         } else {

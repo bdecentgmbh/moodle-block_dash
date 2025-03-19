@@ -142,9 +142,7 @@ abstract class select_filter extends filter {
     public function create_form_element(filter_collection_interface $filtercollection,
                                         $elementnameprefix = '') {
         global $OUTPUT;
-
         $options = $this->options;
-        asort($options);
         $options = array_filter($options);
 
         // Display the select box as tags only for grid layouts.
@@ -173,7 +171,6 @@ abstract class select_filter extends filter {
         }
 
         $name = $elementnameprefix . $this->get_name();
-
         return $OUTPUT->render_from_template('block_dash/filter_select', [
             'name' => $name,
             'options' => $newoptions,

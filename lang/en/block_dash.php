@@ -930,3 +930,4 @@ $string['activityprogress'] = 'Activity completion progress of students';
 $string['wholecourse'] = 'Whole course';
 $string['highlightsection'] = 'Highlighted section';
 $string['anygroup'] = 'Any group';
+$string['disabledaddons'] = "This addon has been disabled and cannot be enabled.";

@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Configuration file for the dash plugin.
  *
  * @package    block_dash
- * @copyright  2022 bdecent gmbh <https://bdecent.de>
+ * @copyright  2025 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025032900;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2021051700;        // Requires this Moodle version.
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release = '2.6';
-$plugin->supported = [401, 405];
+// Add the short name of the addons you want to disable.
+// Example: 'activity_completion' will disable 'dashaddon_activity_completion'.
+// Block Dash widgets like 'contacts', 'groups', or 'mylearning' are part of this list.
+$CFG->dashdisabledaddons = [
+    // activity_completion,
+];

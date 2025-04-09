@@ -28,5 +28,5 @@ defined('MOODLE_INTERNAL') || die();
 // Example: 'activity_completion' will disable 'dashaddon_activity_completion'.
 // Block Dash widgets like 'contacts', 'groups', or 'mylearning' are part of this list.
 $CFG->dashdisabledaddons = [
-    // activity_completion,
+
 ];

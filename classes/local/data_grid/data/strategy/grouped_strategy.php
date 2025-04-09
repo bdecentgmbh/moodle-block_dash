@@ -24,7 +24,7 @@
 
 namespace block_dash\local\data_grid\data\strategy;
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/blocks/dash/lib.php');
 

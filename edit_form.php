@@ -440,8 +440,8 @@ class block_dash_edit_form extends block_edit_form {
                                 var subConfig;
                                 if (subConfig = e.target.closest("[data-target=\"subsource-config\"]")) {
                                     if (subConfig.parentNode !== null) {
-                                        var dataSource = subConfig.parentNode.querySelector("[name=\"config_data_source_idnumber\"]");
-                                        dataSource.click(); // = true;
+                                        var data = subConfig.parentNode.querySelector("[name=\"config_data_source_idnumber\"]");
+                                        data.click(); // = true;
                                     }
                                 }
                             });

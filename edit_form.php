@@ -299,7 +299,7 @@ class block_dash_edit_form extends block_edit_form {
                 get_string('restrictbyactivitycompletion', 'block_dash'), $completionoptions);
             $mform->addHelpButton('config_restrict_activitycompletion', 'restrictbyactivitycompletion', 'block_dash');
 
-            if ($context != CONTEXT_MODULE) {
+            if (($context != CONTEXT_MODULE) && (SITEID != $this->page->course->id)) {
                 // Include the activities for the restrict access.
                 $completion = new \completion_info(get_course($this->page->course->id));
                 $activities = $completion->get_activities();

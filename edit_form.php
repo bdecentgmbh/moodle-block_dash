@@ -299,7 +299,7 @@ class block_dash_edit_form extends block_edit_form {
                 get_string('restrictbyactivitycompletion', 'block_dash'), $completionoptions);
             $mform->addHelpButton('config_restrict_activitycompletion', 'restrictbyactivitycompletion', 'block_dash');
 
-            if ($context != CONTEXT_MODULE) {
+            if (($context != CONTEXT_MODULE) && (SITEID != $this->page->course->id)) {
                 // Include the activities for the restrict access.
                 $completion = new \completion_info(get_course($this->page->course->id));
                 $activities = $completion->get_activities();
@@ -417,29 +417,37 @@ class block_dash_edit_form extends block_edit_form {
             $mform->addHelpButton('widgets', 'readymatewidgets', 'block_dash');
         }
 
-        // Content layout.
-        $customfeatures = data_source_factory::get_data_source_form_options('custom');
-        if ($customfeatures) {
-            foreach ($customfeatures as $id => $source) {
-                if ($id::has_capbility($context)) {
-                    $id::get_features_config($mform, $source);
-                    $showcustom = true;
-                }
-            }
-            if (isset($showcustom)) {
+        $contentaddon = 0;
 
-                $page->requires->js_amd_inline('require(["jquery"], function($) {
-                        $("body").on("change", "[data-target=\"subsource-config\"] [type=radio]", function(e) {
-                            var subConfig;
-                            if (subConfig = e.target.closest("[data-target=\"subsource-config\"]")) {
-                                if (subConfig.parentNode !== null) {
-                                    var dataSource = subConfig.parentNode.querySelector("[name=\"config_data_source_idnumber\"]");
-                                    dataSource.click(); // = true;
+        // Content layout.
+        if (block_dash_has_pro()) {
+            $contentaddon = get_config('dashaddon_content', 'enabled');
+        }
+
+        if ($contentaddon && !in_array('content', block_dash_disabled_addons_list())) {
+            $customfeatures = data_source_factory::get_data_source_form_options('custom');
+            if ($customfeatures) {
+                foreach ($customfeatures as $id => $source) {
+                    if ($id::has_capbility($context)) {
+                        $id::get_features_config($mform, $source);
+                        $showcustom = true;
+                    }
+                }
+                if (isset($showcustom)) {
+
+                    $page->requires->js_amd_inline('require(["jquery"], function($) {
+                            $("body").on("change", "[data-target=\"subsource-config\"] [type=radio]", function(e) {
+                                var subConfig;
+                                if (subConfig = e.target.closest("[data-target=\"subsource-config\"]")) {
+                                    if (subConfig.parentNode !== null) {
+                                        var data = subConfig.parentNode.querySelector("[name=\"config_data_source_idnumber\"]");
+                                        data.click(); // = true;
+                                    }
                                 }
-                            }
-                        });
-                    })'
-                );
+                            });
+                        })'
+                    );
+                }
             }
         }
     }

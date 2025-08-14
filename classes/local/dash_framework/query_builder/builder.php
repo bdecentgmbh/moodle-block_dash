@@ -112,6 +112,18 @@ class builder {
     private $rawjoinsparameters = [];
 
     /**
+     * @var int|null
+     */
+    private $count = null;
+
+    /**
+     * Last count SQL and parameters.
+     *
+     * @var array
+     */
+    private $lastcount = ['sql' => '', 'params' => []];
+
+    /**
      * Fields to retried from sql query. Sql select field.
      * @param string $field
      * @param string $alias
@@ -438,7 +450,7 @@ class builder {
     /**
      * Execute query and return results.
      *
-     * @return array
+     * @return moodle_recordset
      * @throws dml_exception
      * @throws exception\invalid_operator_exception
      */
@@ -446,7 +458,7 @@ class builder {
         global $DB;
 
         [$sql, $params] = $this->get_sql_and_params();
-        return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
+        return $DB->get_recordset_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
     }
 
     /**
@@ -459,21 +471,38 @@ class builder {
      */
     public function count($isunique): int {
         global $DB;
+
+        if ($this->count !== null) {
+            // If count is already calculated, return it.
+            [$sql, $params] = $this->get_sql_and_params();
+            if ($this->lastcount['sql'] === $sql && $this->lastcount['params'] === $params) {
+                return $this->count;
+            }
+        }
+
         $builder = clone $this;
 
         if ($isunique) {
+
             $builder->set_selects([
                 'uni' => $DB->sql_concat('MAX(cm.id)', 'MAX(u.id)', 'MAX(c.id)', 'MAX(cc.id)'),
                 'count' => 'COUNT(*)']
             );
+
         } else {
             $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
         }
 
         $builder->limitfrom(0)->limitnum(0)->remove_orderby();
-        if (!$records = $builder->query()) {
-            return 0;
-        }
-        return array_values($records)[0]->count;
+
+        [$sql, $params] = $builder->get_sql_and_params();
+        $this->lastcount['sql'] = $sql;
+        $this->lastcount['params'] = $params;
+
+        $count = $DB->count_records_sql($sql, $params);
+
+        $this->count = $count;
+
+        return $count;
     }
 }

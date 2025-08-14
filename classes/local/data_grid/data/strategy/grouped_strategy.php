@@ -64,7 +64,7 @@ class grouped_strategy implements data_strategy_interface {
     /**
      * Convert records.
      *
-     * @param \stdClass[] $records
+     * @param \moodle_recordset $records
      * @param field_interface[] $fielddefinitions
      * @return data_collection_interface
      */
@@ -99,6 +99,11 @@ class grouped_strategy implements data_strategy_interface {
                 $sections[$groupby]->add_data(new field('label', $label, $fielddefinition->get_visibility()));
             }
             $sections[$groupby]->add_child_collection('rows', $row);
+        }
+
+        if (method_exists($records, 'close')) {
+            // Close the recordset to free resources.
+            $records->close();
         }
 
         foreach ($sections as $section) {

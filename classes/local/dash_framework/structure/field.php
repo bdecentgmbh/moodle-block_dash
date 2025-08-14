@@ -88,6 +88,16 @@ class field implements field_interface {
     private $sortselect;
 
     /**
+     * @var string SQL for joins, if this field is a join field.
+     */
+    public $fieldjoinsql;
+
+    /**
+     * @var bool If true, the field will be joined even if it is not visible.
+     */
+    private $forcejoin = false;
+
+    /**
      * Constructor.
      *
      * @param string $name The column name of the field as it appears in the table (e.g. firstname).
@@ -100,6 +110,8 @@ class field implements field_interface {
      * @param array $options Arbitrary options belonging to this field.
      * @param int $visibility Visibility of the field (if it should be displayed to the user).
      * @param string $sortselect
+     * @param string $fieldjoinsql SQL for joins, if this field is a join field.
+     * @param bool $forcejoin If true, the field will be joined even if it is not visible.
      */
     public function __construct(string $name,
                                 lang_string $title,
@@ -108,7 +120,7 @@ class field implements field_interface {
                                 array $attributes = [],
                                 $options = [],
                                 $visibility = self::VISIBILITY_VISIBLE,
-                                $sortselect = null) {
+                                $sortselect = null, $fieldjoinsql = '', $forcejoin=false) {
         $this->name = $name;
         $this->title = $title;
         $this->table = $table;
@@ -120,6 +132,9 @@ class field implements field_interface {
         foreach ($attributes as $attribute) {
             $this->add_attribute($attribute);
         }
+
+        $this->fieldjoinsql = $fieldjoinsql;
+        $this->forcejoin = $forcejoin;
     }
 
     /**
@@ -419,6 +434,24 @@ class field implements field_interface {
             value="' . $this->get_title() . '">';
 
         return $html;
+    }
+
+    /**
+     * Get SQL for joins, if this field is a join field.
+     *
+     * @return string
+     */
+    public function get_field_join_sql() {
+        return $this->fieldjoinsql;
+    }
+
+    /**
+     * If true, the field will be joined even if it is not visible.
+     *
+     * @return bool
+     */
+    public function is_force_join() {
+        return $this->forcejoin ? true : false;
     }
 
     /**

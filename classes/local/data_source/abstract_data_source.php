@@ -199,7 +199,18 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @return builder
      */
     final public function get_query(): builder {
+        global $DB;
+
         if (is_null($this->query)) {
+
+            $visiblefields = [];
+            $fields = $this->get_preferences('available_fields');
+            foreach ($fields as $fieldname => $preferences) {
+                if (isset($preferences['visible']) && $preferences['visible']) {
+                    $visiblefields[] = $fieldname;
+                }
+            }
+
             $this->query = $this->get_query_template();
 
             if (count($this->get_available_fields()) == 0) {
@@ -214,7 +225,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $fields = $this->get_available_fields();
 
             foreach ($fields as $field) {
+
                 if (is_null($field->get_select())) {
+                    continue;
+                }
+
+                // Dont include the selects for the fields, which is have join and not visible.
+                if ($field->get_field_join_sql() && !in_array($field->get_alias(), $visiblefields) && !$field->is_force_join()) {
+                    // echo $field->get_alias() .;
                     continue;
                 }
 
@@ -234,8 +252,14 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 if ($field->has_attribute(identifier_attribute::class)) {
                     $identifierselects[] = $field->get_select();
                 }
+
+                // Include the custom join for fields.
+                $fjoin = $field->get_field_join_sql();
+                if ($fjoin && (in_array($field->get_alias(), $visiblefields) || $field->is_force_join())) {
+                    $this->query->join_raw($fjoin, []);
+                }
             }
-            global $DB;
+
             $concat = $DB->sql_concat_join("'-'", $identifierselects);
             if (count($identifierselects) > 1) {
                 $this->query->select($concat, 'unique_id');

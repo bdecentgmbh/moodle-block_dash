@@ -34,27 +34,13 @@ use dml_exception;
  *
  * @package block_dash
  */
-class join {
+class join_raw extends join {
 
-    /**
-     * Inner JOIN query.
-     */
-    const TYPE_INNER_JOIN = 'JOIN';
-
-    /**
-     * SQL Left Join.
-     */
-    const TYPE_LEFT_JOIN = 'LEFT JOIN';
-
-    /**
-     * SQL right Join.
-     */
-    const TYPE_RIGHT_JOIN = 'RIGHT JOIN';
 
     /**
      * @var string Table name of joined table.
      */
-    private $table;
+    private $query;
 
     /**
      * @var string Joined table alias.
@@ -87,9 +73,9 @@ class join {
      * @param string $jointype SQL join type. See self::TYPE_*
      * @param array $extraparameters Extra parameters used in join SQL.
      */
-    public function __construct(string $table, string $alias, string $jointablefield, string $origintablefield,
+    public function __construct(string $query, string $alias, string $jointablefield, string $origintablefield,
                                 $jointype = self::TYPE_INNER_JOIN, array $extraparameters = []) {
-        $this->table = $table;
+        $this->query = $query;
         $this->alias = $alias;
         // Join table field.
         if (!empty($jointablefield)) {
@@ -118,21 +104,12 @@ class join {
     }
 
     /**
-     * Remove a join condition.
-     *
-     * @param string $condition
-     */
-    public function get_join_conditions(): array {
-        return $this->joinconditions;
-    }
-
-    /**
      * Get SQL and params for join.
      *
      * @return array<string, array>
      */
     public function get_sql_and_params(): array {
-        $sql = sprintf('%s {%s} %s ON ', $this->jointype, $this->table, $this->alias);
+        $sql = sprintf('%s (%s) %s ON ', $this->jointype, $this->query, $this->alias);
         $sql .= implode(' AND ', $this->joinconditions);
 
         return [$sql, $this->extraparameters];

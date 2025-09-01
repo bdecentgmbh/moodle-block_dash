@@ -42,6 +42,6 @@
 
 {{#js}}
     require(["block_dash/dash_instance"], function(DashInstance) {
-        new DashInstance("#inst{{block_instance_id}}", "{{block_instance_id}}", "{{block_context_id}}", {{#editing}}true{{/editing}}{{^editing}}false{{/editing}}, "{{istotara}}", "{{pagelayout}}", "{{pagecontext}}");
+        new DashInstance("#inst{{block_instance_id}}", "{{block_instance_id}}", "{{block_context_id}}", {{#editing}}true{{/editing}}{{^editing}}false{{/editing}}, "{{istotara}}", "{{pagelayout}}", "{{pagecontext}}", "{{sortdirections}}");
     });
 {{/js}}

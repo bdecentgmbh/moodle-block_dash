@@ -1,8 +1,8 @@
 define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'core/modal_events',
     'block_dash/preferences_modal', 'block_dash/datepicker', 'block_dash/select2', 'core/fragment', 'core/templates'],
-    function($, UI, Log, Ajax, Notification, ModalEvents, PreferencesModal, DatePicker, Select2, Fragment, Templates) {
+    function ($, UI, Log, Ajax, Notification, ModalEvents, PreferencesModal, DatePicker, Select2, Fragment, Templates) {
 
-        var DashInstance = function(root, blockInstanceId, blockContextid, editing, istotara, pagelayout, pagecontext) {
+        var DashInstance = function (root, blockInstanceId, blockContextid, editing, istotara, pagelayout, pagecontext, sortDirections = {}) {
             this.root = $(root);
             this.blockInstanceId = blockInstanceId;
             this.blockContextid = blockContextid;
@@ -10,7 +10,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
             this.blockPreferencesModal = null;
             this.editing = editing;
             this.sortField = null;
-            this.sortDirections = {};
+            this.sortDirections = sortDirections || {};
             this.isTotara = istotara;
             this.pageLayout = pagelayout;
             this.pageContext = pagecontext;
@@ -20,7 +20,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
         DashInstance.prototype.BLOCK_CONTENT_SELECTOR = '.dash-block-content';
         DashInstance.prototype.FILTER_FORM_SELECTOR = '.filter-form';
 
-        DashInstance.prototype.init = function() {
+        DashInstance.prototype.init = function () {
 
             Log.debug('Initializing dash instance', this);
 
@@ -36,7 +36,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 this.getRoot().find('.dash-edit-preferences').hide();
 
                 // Select the parent datasource for the sub config.
-                this.getRoot().on('change', '[data-target="subsource-config"] [type=radio]', function(e) {
+                this.getRoot().on('change', '[data-target="subsource-config"] [type=radio]', function (e) {
                     var subConfig;
                     if (e.target.closest('[data-target="subsource-config"]')) {
                         subConfig = e.target.closest('[data-target="subsource-config"]');
@@ -47,7 +47,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     }
                 }.bind(this));
 
-                this.getRoot().find('.dash-configuration-form [name="config_data_source_idnumber"]').on('change', function() {
+                this.getRoot().find('.dash-configuration-form [name="config_data_source_idnumber"]').on('change', function () {
 
                     var dataSource = this.getRoot().find('.dash-configuration-form');
                     var formData = $(dataSource).find('form').serialize();
@@ -59,7 +59,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                             contextid: this.blockContextid,
                             jsonformdata: JSON.stringify(formData)
                         },
-                        done: function() {
+                        done: function () {
                             // Hide the preference link for others.
                             this.getRoot().find('.dash-edit-preferences').show();
                             this.refresh();
@@ -74,26 +74,26 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
 
             if (this.editing) {
                 this.blockPreferencesModal = new PreferencesModal(this.getRoot().find('.dash-edit-preferences'),
-                    this.blockContextid, function() {
+                    this.blockContextid, function () {
                         // Preferences changed, go back to first page.
                         this.currentPage = 0;
                         this.refresh();
                     }.bind(this));
             }
             this.getRoot().on('change', 'select:not(.norefresh), input:not(.select2-search__field, .norefresh)',
-                function(e) {
-                e.preventDefault();
+                function (e) {
+                    e.preventDefault();
 
-                Log.debug('Submitting filter form');
-                Log.debug(e);
-                Log.debug($(e.target).serializeArray());
+                    Log.debug('Submitting filter form');
+                    Log.debug(e);
+                    Log.debug($(e.target).serializeArray());
 
-                // Filter results, go back to first page.
-                this.currentPage = 0;
-                this.refresh();
-            }.bind(this));
+                    // Filter results, go back to first page.
+                    this.currentPage = 0;
+                    this.refresh();
+                }.bind(this));
 
-            this.getRoot().on('submit', '.downloadreport .reportoption form', function(e) {
+            this.getRoot().on('submit', '.downloadreport .reportoption form', function (e) {
                 e.preventDefault();
                 let params = new URLSearchParams($(e.target).serialize());
                 let sortDirection = null;
@@ -101,7 +101,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     sortDirection = this.sortDirections[this.sortField];
                 }
                 var args = {
-                    'download' : params.get('download'),
+                    'download': params.get('download'),
                     "block_instance_id": this.blockInstanceId,
                     "filter_form_data": JSON.stringify(this.getFilterForm().serializeArray()),
                     "page": this.currentPage,
@@ -130,7 +130,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
             }.bind(this));
 
             // Adding support for tab filters.
-            this.getRoot().on('click', 'button.tab-filter', function(e) {
+            this.getRoot().on('click', 'button.tab-filter', function (e) {
                 e.preventDefault();
                 var elem = $(e.currentTarget);
 
@@ -163,13 +163,13 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 this.refresh();
             }.bind(this));
 
-            this.getBlockContentArea().on('click', '.page-link', function(e) {
+            this.getBlockContentArea().on('click', '.page-link', function (e) {
                 e.preventDefault();
                 this.currentPage = $(e.target).data('page');
                 this.refresh();
             }.bind(this));
 
-            this.getBlockContentArea().on('click', '.dash-sort', function(e) {
+            this.getBlockContentArea().on('click', '.dash-sort', function (e) {
                 const $target = $(e.target);
                 this.sortField = $target.data('sort');
 
@@ -186,6 +186,8 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
             if (this.isTotara) {
                 this.setDynamicTable();
             }
+
+            this.loadAjaxPagination();
         };
 
         /**
@@ -194,7 +196,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
          * @method getRoot
          * @return {object} jQuery object
          */
-        DashInstance.prototype.getRoot = function() {
+        DashInstance.prototype.getRoot = function () {
             return this.root;
         };
 
@@ -204,7 +206,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
          * @method getRoot
          * @return {object} jQuery object
          */
-        DashInstance.prototype.getBlockContentArea = function() {
+        DashInstance.prototype.getBlockContentArea = function () {
             return this.getRoot().find(this.BLOCK_CONTENT_SELECTOR);
         };
 
@@ -213,11 +215,11 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
          *
          * @returns {object} jQuery object
          */
-        DashInstance.prototype.getFilterForm = function() {
+        DashInstance.prototype.getFilterForm = function () {
             return this.getRoot().find(this.FILTER_FORM_SELECTOR);
         };
 
-        DashInstance.prototype.getBlockContent = function() {
+        DashInstance.prototype.getBlockContent = function () {
             let sortDirection = null;
             if (this.sortField && this.sortDirections.hasOwnProperty(this.sortField)) {
                 sortDirection = this.sortDirections[this.sortField];
@@ -231,17 +233,19 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     "page": this.currentPage,
                     "sort_field": this.sortField,
                     "sort_direction": sortDirection,
-                    "pagelayout" : this.pageLayout,
-                    "pagecontext" : this.pageContext,
+                    "pagelayout": this.pageLayout,
+                    "pagecontext": this.pageContext,
                 }
             };
             return Ajax.call([request])[0];
         };
 
-        DashInstance.prototype.refresh = function() {
+        DashInstance.prototype.refresh = function () {
+
             this.getBlockContentArea().css('opacity', 0.5);
             this.getBlockContent()
-                .then(function(response) {
+                .then(function (response) {
+                    this.loadAjaxPagination(); // Load pagination.
                     this.getBlockContentArea().html(response.html);
                     this.getBlockContentArea().css('opacity', 1);
                     this.initDatePickers();
@@ -249,19 +253,20 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     if (response.scripts) {
                         Templates.runTemplateJS($(response.scripts).html() || response.scripts);
                     }
+
                 }.bind(this))
                 .catch(Notification.exception);
         };
 
-        DashInstance.prototype.initDatePickers = function() {
+        DashInstance.prototype.initDatePickers = function () {
             this.getRoot().find('.datepicker').datepicker2({
                 autoclose: true,
                 format: "dd/mm/yyyy"
             });
         };
 
-        DashInstance.prototype.initSelect2 = function() {
-            this.getRoot().find('.select2').each(function(index, element) {
+        DashInstance.prototype.initSelect2 = function () {
+            this.getRoot().find('.select2').each(function (index, element) {
                 let placeholder = null;
                 if ($(element).find("option[value='-1']")) {
                     placeholder = {
@@ -274,9 +279,9 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     allowClear: true,
                     theme: 'bootstrap4',
                     placeholder: placeholder
-                }).on('select2:unselecting', function() {
+                }).on('select2:unselecting', function () {
                     $(this).data('unselecting', true);
-                }).on('select2:opening', function(e) {
+                }).on('select2:opening', function (e) {
                     if ($(this).data('unselecting')) {
                         $(this).removeData('unselecting');
                         e.preventDefault();
@@ -285,19 +290,20 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
             }.bind(this));
         };
 
-        DashInstance.prototype.setDynamicTable = function() {
+        DashInstance.prototype.setDynamicTable = function () {
 
-            $('body').delegate('[data-table-dynamic="true"] thead th a', 'click', function(e) {
+            $('body').delegate('[data-table-dynamic="true"] thead th a', 'click', function (e) {
                 e.preventDefault();
                 updateTable($(this));
             });
 
-            $('body').delegate('.modal-body .paging a', 'click', function(e) {
+            $('body').delegate('.modal-body .paging a', 'click', function (e) {
                 e.preventDefault();
                 updateTable($(this));
             });
 
-            var updateTable = function(element) {
+            var updateTable = function (element) {
+
                 var table = element.parents('.modal-body').find('table');
 
                 var href = element.attr('href');
@@ -328,6 +334,37 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                 }).catch(Notification.exception);
             };
         };
+
+        DashInstance.prototype.loadAjaxPagination = function () {
+
+
+            if (this.getRoot().find('.ajax-pagination').length == 0) {
+                return;
+            }
+
+            let sortDirection = null;
+            if (this.sortField && this.sortDirections.hasOwnProperty(this.sortField)) {
+                sortDirection = this.sortDirections[this.sortField];
+            }
+
+            var request = {
+                methodname: 'block_dash_get_block_pagination',
+                args: {
+                    "block_instance_id": this.blockInstanceId,
+                    "filter_form_data": JSON.stringify(this.getFilterForm().serializeArray()),
+                    "page": this.currentPage,
+                    "sort_field": this.sortField,
+                    "sort_direction": sortDirection,
+                    "pagelayout": this.pageLayout,
+                    "pagecontext": this.pageContext,
+                }
+            };
+
+            Ajax.call([request])[0].then(function (response) {
+                this.getRoot().find('.ajax-pagination').html(response.html);
+            }.bind(this)).catch(Notification.exception);
+
+        }
 
         return DashInstance;
     });

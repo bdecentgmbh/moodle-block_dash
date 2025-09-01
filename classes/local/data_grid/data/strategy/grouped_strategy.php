@@ -101,11 +101,6 @@ class grouped_strategy implements data_strategy_interface {
             $sections[$groupby]->add_child_collection('rows', $row);
         }
 
-        if (method_exists($records, 'close')) {
-            // Close the recordset to free resources.
-            $records->close();
-        }
-
         foreach ($sections as $section) {
             $griddata->add_child_collection('sections', $section);
         }

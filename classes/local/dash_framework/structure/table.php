@@ -41,6 +41,16 @@ abstract class table implements table_interface {
     private $alias;
 
     /**
+     * @var array
+     */
+    protected $additionaljoins = [];
+
+    /**
+     * @var array
+     */
+    protected $sqlctelist = [];
+
+    /**
      * Build a new table.
      * @param string $tablename
      * @param string $alias
@@ -66,5 +76,24 @@ abstract class table implements table_interface {
      */
     public function get_alias(): string {
         return $this->alias;
+    }
+
+    /**
+     * Get additional joins necessary for this table.
+     *
+     * @return array|null
+     */
+    public function get_additional_joins(): ?array {
+        return $this->additionaljoins;
+    }
+
+    /**
+     * Get sql CTE definition if necessary.
+     *
+     * @return array|null
+     */
+    public function get_sql_cte(): ?array {
+
+        return $this->sqlctelist;
     }
 }

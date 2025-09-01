@@ -73,10 +73,6 @@ class standard_strategy implements data_strategy_interface {
             $griddata->add_child_collection('rows', $row);
         }
 
-        if (method_exists($records, 'close')) {
-            $records->close();
-        }
-
         return $griddata;
     }
 }

@@ -182,7 +182,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
         if ($this->paginator == null) {
             $this->paginator = new paginator(function () {
-                $count = $this->get_query()->count($this->count_by_uniqueid());
+                $count = $this->get_query(true)->count($this->count_by_uniqueid());
                 if ($maxlimit = $this->get_max_limit()) {
                     return $maxlimit < $count ? $maxlimit : $count;
                 }
@@ -198,10 +198,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      *
      * @return builder
      */
-    final public function get_query(): builder {
+    final public function get_query($count=false): builder {
         global $DB;
 
-        if (is_null($this->query)) {
+        if (is_null($this->query) || $count) {
 
             $visiblefields = [];
             $fields = $this->get_preferences('available_fields');
@@ -211,7 +211,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 }
             }
 
-            $this->query = $this->get_query_template();
+            $this->query = $count ? $this->get_count_query_template() : $this->get_query_template();
 
             if (count($this->get_available_fields()) == 0) {
                 throw new \moodle_exception('Cannot build empty query in data source.');
@@ -265,6 +265,26 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 $this->query->select($concat, 'unique_id');
             }
 
+            // Include joins for tables.
+            foreach ($this->get_tables() as $table) {
+
+                $sqlcte = $table->get_sql_cte();
+                if (!empty($sqlcte)) {
+                    $this->query->set_sql_cte($sqlcte);
+                }
+
+                $additionaljoins = $table->get_additional_joins();
+
+                if (empty($additionaljoins)) {
+                    continue;
+                }
+
+                foreach ($additionaljoins as $additionaljoin) {
+                    $this->query->join_raw($additionaljoin);
+                }
+
+            }
+
             if ($this->get_layout()->supports_pagination()) {
                 $perpage = $this->get_per_page();
 
@@ -287,6 +307,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             }
 
             if ($sorting = $this->get_sorting()) {
+
                 foreach ($sorting as $field => $direction) {
                     // Configured field is removed then remove the order.
                     if (is_null($this->get_field($field))) {
@@ -295,6 +316,13 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                     $this->query->orderby($this->get_field($field)->get_sort_select(), $direction);
                 }
             }
+
+        }
+
+        if ($count) {
+            $query = clone $this->query;
+            $this->query = null; // Reset query so it is rebuilt next time.
+            return $query;
         }
 
         return $this->query;
@@ -396,6 +424,22 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             }
         }
         return $this->data;
+    }
+
+
+    /**
+     * Set the intital data to the datasource for pagination.
+     */
+    final public function set_data_pagination() {
+
+        if (is_null($this->data)) {
+            // If the block has no preferences do not query any data.
+            if (empty($this->get_all_preferences())) {
+                return block_dash_get_data_collection();
+            }
+
+            $this->before_data();
+        }
     }
 
     /**
@@ -752,4 +796,12 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         return false;
     }
 
+    /**
+     * Load the pagination via ajax.
+     *
+     * For the large data sets, it is better to load the pagination via ajax.
+     */
+    public function supports_ajax_pagination() {
+        return false;
+    }
 }

@@ -37,91 +37,98 @@ class builder {
     /**
      * @var string
      */
-    private $table;
+    protected $table;
 
     /**
      * @var string
      */
-    private $tablealias;
+    protected $tablealias;
 
     /**
      * @var string[]
      */
-    private $selects = [];
+    protected $selects = [];
 
     /**
      * @var array
      */
-    private $wheres = [];
+    protected $wheres = [];
 
     /**
      * @var array
      */
-    private $rawwhere;
+    protected $rawwhere;
 
     /**
      * @var array
      */
-    private $rawwhereparameters = [];
+    protected $rawwhereparameters = [];
 
     /**
      * @var int Return a subset of records, starting at this point (optional).
      */
-    private $limitfrom = 0;
+    protected $limitfrom = 0;
 
     /**
      * @var int Return a subset comprising this many records in total (optional, required if $limitfrom is set).
      */
-    private $limitnum = 0;
+    protected $limitnum = 0;
 
     /**
      * @var array ['field1' => 'ASC', 'field2' => 'DESC', ...]
      */
-    private $orderby = [];
+    protected $orderby = [];
 
     /**
      * @var join[]
      */
-    private $joins = [];
+    protected $joins = [];
 
     /**
      * @var array ['field1', 'field2', ...]
      */
-    private $groupby = [];
+    protected $groupby = [];
 
     /**
      * Extra conditions to be added in WHERE clause.
      *
      * @var array
      */
-    private $rawconditions = [];
+    protected $rawconditions = [];
 
     /**
      * @var array
      */
-    private $rawconditionparameters = [];
+    protected $rawconditionparameters = [];
 
     /**
      * @var array
      */
-    private $rawjoins = [];
+    protected $rawjoins = [];
 
     /**
      * @var array
      */
-    private $rawjoinsparameters = [];
+    protected $rawjoinsparameters = [];
 
     /**
      * @var int|null
      */
-    private $count = null;
+    protected static $lastcount = null;
 
     /**
      * Last count SQL and parameters.
      *
      * @var array
      */
-    private $lastcount = ['sql' => '', 'params' => []];
+    protected static $lastcountcachekey = null;
+
+    /**
+     * Whether to put order by before joins.
+     *
+     * @var array
+     */
+    protected $sqlctelist = [];
 
     /**
      * Fields to retried from sql query. Sql select field.
@@ -162,6 +169,16 @@ class builder {
     }
 
     /**
+     * Set whether to put order by before joins.
+     *
+     * @return $this
+     */
+    public function set_sql_cte($fromsql) {
+        $this->sqlctelist = array_merge($this->sqlctelist, $fromsql);
+        return $this;
+    }
+
+    /**
      * Join table in query.
      *
      * @param string $table Table name of joined table.
@@ -185,8 +202,8 @@ class builder {
      * @param array $parameters Extra parameters used in join SQL.
      * @return $this
      */
-    public function join_raw(string $joinsql, array $parameters = []): builder {
-        $this->rawjoins[] = [$joinsql, $parameters];
+    public function join_raw(join $join): builder {
+        $this->rawjoins[] = $join;
         return $this;
     }
 
@@ -409,7 +426,20 @@ class builder {
      * @throws exception\invalid_operator_exception
      */
     final public function get_sql_and_params(): array {
-        $sql = 'SELECT DISTINCT ' . $this->build_select() . ' FROM {' . $this->table . '} ' . $this->tablealias;
+        global $DB;
+
+        $sql = '';
+
+        if (!empty($this->sqlctelist)) {
+
+            foreach ($this->sqlctelist as $viewname => $fromsql) {
+                $sql .= $fromsql . ' ';
+            }
+        }
+
+        $unique = array_key_exists('unique_id', $this->selects) ? '' : 'DISTINCT' ;
+        $sql .= 'SELECT ' . $unique . ' ' . $this->build_select() . ' FROM {' . $this->table . '} ' . $this->tablealias;
+
         $params = [];
 
         foreach ($this->joins as $join) {
@@ -419,7 +449,7 @@ class builder {
         }
 
         foreach ($this->rawjoins as $join) {
-            [$jsql, $jparams] = $join;
+            [$jsql, $jparams] = $join->get_sql_and_params();
             $sql .= ' ' . $jsql . ' ';
             $params = array_merge($params, $jparams);
         }
@@ -458,7 +488,8 @@ class builder {
         global $DB;
 
         [$sql, $params] = $this->get_sql_and_params();
-        return $DB->get_recordset_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
+        return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
+
     }
 
     /**
@@ -472,20 +503,11 @@ class builder {
     public function count($isunique): int {
         global $DB;
 
-        if ($this->count !== null) {
-            // If count is already calculated, return it.
-            [$sql, $params] = $this->get_sql_and_params();
-            if ($this->lastcount['sql'] === $sql && $this->lastcount['params'] === $params) {
-                return $this->count;
-            }
-        }
-
         $builder = clone $this;
 
         if ($isunique) {
 
             $builder->set_selects([
-                'uni' => $DB->sql_concat('MAX(cm.id)', 'MAX(u.id)', 'MAX(c.id)', 'MAX(cc.id)'),
                 'count' => 'COUNT(*)']
             );
 
@@ -494,14 +516,23 @@ class builder {
         }
 
         $builder->limitfrom(0)->limitnum(0)->remove_orderby();
-
         [$sql, $params] = $builder->get_sql_and_params();
-        $this->lastcount['sql'] = $sql;
-        $this->lastcount['params'] = $params;
+
+        $countcachekey = md5($sql . serialize($params));
+
+        if (self::$lastcount !== null) {
+
+            // If count is already calculated, return it.
+            if (self::$lastcountcachekey == $countcachekey) {
+                return self::$lastcount;
+            }
+        }
+
+        self::$lastcountcachekey = $countcachekey;
 
         $count = $DB->count_records_sql($sql, $params);
 
-        $this->count = $count;
+        self::$lastcount = $count;
 
         return $count;
     }

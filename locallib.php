@@ -25,6 +25,9 @@
 defined('MOODLE_INTERNAL') || die('No direct access');
 
 require_once($CFG->dirroot.'/lib/formslib.php');
+require($CFG->dirroot . '/lib/tablelib.php');
+
+use block_dash\local\data_source\data_source_interface;
 
 /**
  * Moodleform to create group with course selector option.
@@ -59,5 +62,86 @@ class create_group extends moodleform {
         $mform->addRule('courseid', get_string('required'), 'required', null, 'client');
 
         $this->add_action_buttons();
+    }
+}
+
+/**
+ * Table class for download the dash block as csv or any other format.
+ */
+class block_dash_download_table extends table_sql {
+
+    /**
+     * Dash block datasource.
+     */
+    public $datasource = null;
+
+    /**
+     * Raw sql from datasource query.
+     */
+    public $sql;
+
+    /**
+     * Raw sql params from datasource query.
+     */
+    public $params;
+
+    /**
+     * Set the datasource for the table.
+     */
+    public function set_datasource(data_source_interface $datasource) {
+        $this->datasource = $datasource;
+    }
+
+    /**
+     * Set the sql and param for the table.
+     *
+     * @param string $sql
+     * @param array $params
+     */
+    public function set_data($sql, $params) {
+        global $DB;
+        $this->sql = $sql;
+        $this->params = $params; //
+    }
+
+    /**
+     * Query the database and load the data.
+     *
+     * @param int $pagesize
+     * @param bool $useinitialsbar
+     */
+    public function query_db($pagesize, $useinitialsbar = true) {
+        global $DB;
+        $this->rawdata = $DB->get_records_sql($this->sql, $this->params);
+    }
+
+    /**
+     * Formats a single row of data for output based on dash data collection stratergy.
+     *
+     * @param mixed $record
+     * @return array
+     *
+     */
+    public  function format_row($record) {
+
+        if (is_array($record)) {
+            $record = (object) $record;
+        }
+
+        $formattedrow = array();
+
+        foreach ($this->datasource->get_sorted_fields() as $fielddefinition) {
+
+            $name = $fielddefinition->get_alias();
+
+            if (!property_exists($record, $name)) {
+                continue;
+            }
+
+            $formattedcolumn = $fielddefinition->transform_data($record->$name, $record);
+            $formattedrow[$name] = strip_tags($formattedcolumn);
+        }
+
+        return $formattedrow;
     }
 }

@@ -284,7 +284,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
             $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadcsv", 'block_dash'), 'get');
             $downloadoptions[] = html_writer::tag('li', $button, ['class' => 'reportoption list-inline-item']);
 
-            $options["download"] = "xls";
+            $options["download"] = "excel";
             $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadexcel"), 'get');
             $downloadoptions[] = html_writer::tag('li', $button, ['class' => 'reportoption list-inline-item']);
 

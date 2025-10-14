@@ -33,12 +33,24 @@ function xmldb_block_dash_upgrade($oldversion) {
     if ($oldversion < 2020070202) {
         // Data source classes have moved to `local` namespace. Update all instances of Dash that use a class name as
         // the data source idnumber.
-        foreach ($DB->get_records('block_instances', ['blockname' => 'dash']) as $record) {
-            $instance = block_instance('dash', $record);
-            if (isset($instance->config->data_source_idnumber)) {
-                $instance->config->data_source_idnumber = str_replace('block_dash\\', 'block_dash\\local\\',
-                    $instance->config->data_source_idnumber);
-                $instance->instance_config_save($instance->config);
+        $records = $DB->get_records('block_instances', ['blockname' => 'dash']);
+        
+        foreach ($records as $record) {
+            if (!empty($record->configdata)) {
+                $config = unserialize(base64_decode($record->configdata));
+                
+                if (isset($config->data_source_idnumber)) {
+                    // Update the namespace from 'block_dash\\' to 'block_dash\\local\\'
+                    $config->data_source_idnumber = str_replace(
+                        'block_dash\\', 
+                        'block_dash\\local\\',
+                        $config->data_source_idnumber
+                    );
+                    
+                    // Save directly to database
+                    $record->configdata = base64_encode(serialize($config));
+                    $DB->update_record('block_instances', $record);
+                }
             }
         }
 

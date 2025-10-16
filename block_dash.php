@@ -127,9 +127,18 @@ class block_dash extends block_base {
      * @return void
      */
     public function instance_config_save($data, $nolongerused = false) {
+        global $USER;
+        // Only attempt to save draft files when there is a valid logged-in user context
+        // and not during CLI/upgrade runs. During CLI upgrade there is no user (id = 0),
+        // which causes core\context\user::instance(0) to throw invaliduser.
         if (isset($data->backgroundimage)) {
-            file_save_draft_area_files($data->backgroundimage, $this->context->id, 'block_dash', 'images',
-                0, ['subdirs' => 0, 'maxfiles' => 1]);
+            $draftid = (int)$data->backgroundimage;
+            $hasvaliduser = !empty($USER) && !empty($USER->id) && (int)$USER->id > 0;
+            $iscli = defined('CLI_SCRIPT') && CLI_SCRIPT;
+            if ($draftid > 0 && $hasvaliduser && !$iscli) {
+                file_save_draft_area_files($draftid, $this->context->id, 'block_dash', 'images', 0,
+                    ['subdirs' => 0, 'maxfiles' => 1]);
+            }
         }
         if (isset($data->dash_configure_options) && isset($data->data_source_idnumber)) {
             $datasource = data_source_factory::build_data_source($data->data_source_idnumber,

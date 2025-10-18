@@ -34,7 +34,6 @@ require_once("$CFG->libdir/filelib.php");
  * Dash block class.
  */
 class block_dash extends block_base {
-
     /**
      * Initialize block instance.
      *
@@ -122,15 +121,17 @@ class block_dash extends block_base {
     /**
      * Serialize and store config data
      *
-     * @param string $data
+     * @param object $data
      * @param bool $nolongerused
      * @return void
      */
     public function instance_config_save($data, $nolongerused = false) {
+       
         if (isset($data->backgroundimage)) {
             file_save_draft_area_files($data->backgroundimage, $this->context->id, 'block_dash', 'images',
                 0, ['subdirs' => 0, 'maxfiles' => 1]);
         }
+        
         if (isset($data->dash_configure_options) && isset($data->data_source_idnumber)) {
             $datasource = data_source_factory::build_data_source($data->data_source_idnumber,
                 $this->context);
@@ -143,6 +144,35 @@ class block_dash extends block_base {
             }
             unset($data->dash_configure_options);
         }
+
+
+        // To do - move to learning path widget.
+        
+        $learningpaths = [
+            'desktop_learningpath',
+            'tablet_learningpath',
+            'mobile_learningpath',
+        ];
+
+        
+        if (!property_exists($data, 'parentblkcontextid')) {
+            $data->orgparentblkcontextid = $this->context->id;
+        }
+
+        $syscontext = \context_system::instance();
+        foreach ($learningpaths as $area) {
+           if (!empty($data->{$area})) {
+               file_save_draft_area_files(
+                    $data->{$area},
+                    $syscontext->id,
+                    'dashaddon_learningpath',
+                    'blk_' . $area, 
+                    $data->orgparentblkcontextid,
+                    ['subdirs' => 0, 'maxfiles' => -1]
+                );
+            }
+        }
+
 
         parent::instance_config_save($data, $nolongerused);
     }

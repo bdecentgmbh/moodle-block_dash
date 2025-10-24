@@ -34,7 +34,6 @@ use block_dash\local\data_source\form\preferences_form;
  * @package block_dash
  */
 class grid_layout extends abstract_layout {
-
     /**
      * Get mustache template name.
      *

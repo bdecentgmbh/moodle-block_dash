@@ -32,7 +32,6 @@ use moodle_url;
  * Contacts widget contains list of available contacts.
  */
 class contacts_widget extends abstract_widget {
-
     /**
      * Get the name of widget.
      *

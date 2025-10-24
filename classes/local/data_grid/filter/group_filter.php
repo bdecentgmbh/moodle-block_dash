@@ -32,7 +32,6 @@ use context;
  * @package block_dash
  */
 class group_filter extends select_filter {
-
     /**
      * Get user groups in context.
      *

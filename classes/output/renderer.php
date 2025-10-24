@@ -34,7 +34,6 @@ use Mustache_Engine;
  * @package block_dash
  */
 class renderer extends \plugin_renderer_base {
-
     /**
      * @var Mustache_Engine
      */

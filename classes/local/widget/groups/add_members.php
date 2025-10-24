@@ -34,7 +34,6 @@ require_once($CFG->dirroot . '/user/selector/lib.php');
  * Moodleform helps to add members to groups.
  */
 class add_members extends \moodleform {
-
     /**
      * Moodle form field definitions.
      *

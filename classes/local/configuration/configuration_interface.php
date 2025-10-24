@@ -31,7 +31,6 @@ use block_dash\local\data_source\data_source_interface;
  * @package block_dash
  */
 interface configuration_interface {
-
     /**
      * Get context.
      *

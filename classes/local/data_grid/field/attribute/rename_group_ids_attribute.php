@@ -32,7 +32,6 @@ use coding_exception;
  * @package block_dash
  */
 class rename_group_ids_attribute extends rename_ids_attribute {
-
     /**
      * Check if group exists in context.
      *

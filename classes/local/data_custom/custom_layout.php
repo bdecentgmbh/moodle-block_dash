@@ -30,7 +30,6 @@ use block_dash\local\widget\abstract_layout;
  * Layout section for the contacts widget.
  */
 class custom_layout extends abstract_layout {
-
     /**
      * Tempalte mustache file name, the layout uses.
      *

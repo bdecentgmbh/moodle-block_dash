@@ -32,7 +32,6 @@ use stdClass;
  * @package block_dash
  */
 final class query_debug implements \renderable, \templatable {
-
     /**
      * @var string SQL compiled raw query.
      */

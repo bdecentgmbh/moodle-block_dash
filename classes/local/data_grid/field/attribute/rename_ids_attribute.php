@@ -32,7 +32,6 @@ use dml_exception;
  * @package block_dash
  */
 class rename_ids_attribute extends abstract_field_attribute {
-
     /** @var array stored the fields used in current table.*/
     private static $fieldstore = [];
 

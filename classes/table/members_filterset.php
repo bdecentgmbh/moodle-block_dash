@@ -33,7 +33,6 @@ use core_table\local\filter\integer_filter;
  * Group memebers table filterset.
  */
 class members_filterset extends filterset {
-
     /**
      * Get the required filters.
      *

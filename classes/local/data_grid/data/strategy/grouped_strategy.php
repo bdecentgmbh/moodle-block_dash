@@ -38,7 +38,6 @@ use block_dash\local\dash_framework\structure\field_interface;
  * @package block_dash
  */
 class grouped_strategy implements data_strategy_interface {
-
     /**
      * @var field_interface
      */

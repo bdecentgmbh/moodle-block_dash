@@ -29,5 +29,4 @@ namespace block_dash\local\data_grid\field\attribute;
  * @package block_dash
  */
 class context_attribute extends abstract_field_attribute {
-
 }

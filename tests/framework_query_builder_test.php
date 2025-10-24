@@ -37,7 +37,6 @@ use block_dash\local\dash_framework\query_builder\where;
  * @group query_builder_test
  */
 final class framework_query_builder_test extends \advanced_testcase {
-
     /**
      * Test for where() to ensure that the where conditions are correctly applied.
      *

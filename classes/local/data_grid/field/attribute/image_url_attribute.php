@@ -29,5 +29,4 @@ namespace block_dash\local\data_grid\field\attribute;
  * @package block_dash
  */
 class image_url_attribute extends abstract_field_attribute {
-
 }

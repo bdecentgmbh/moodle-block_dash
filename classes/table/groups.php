@@ -34,7 +34,6 @@ require_once($CFG->dirroot.'/lib/tablelib.php');
  * List of groups table.
  */
 class groups extends \table_sql implements dynamic_table {
-
     /**
      * Contact users filter value.
      *

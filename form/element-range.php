@@ -45,7 +45,7 @@ class moodlequickform_dashrange extends MoodleQuickForm_text implements templata
      * @param string $elementlabel (optional) Text field label.
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array.
      */
-    public function __construct($elementname=null, $elementlabel=null, $attributes=null) {
+    public function __construct($elementname = null, $elementlabel = null, $attributes = null) {
         parent::__construct($elementname, $elementlabel, $attributes);
         // Add a CSS class for styling the color picker.
         $class = $this->getAttribute('class');

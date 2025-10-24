@@ -74,7 +74,7 @@ class moodle_url_attribute extends abstract_field_attribute {
      * @param string $customvalue
      * @return void
      */
-    public function set_transform_field($field, $customvalue=null) {
+    public function set_transform_field($field, $customvalue = null) {
         if ($customvalue !== null) {
             $this->set_option('url', new moodle_url($customvalue));
         }

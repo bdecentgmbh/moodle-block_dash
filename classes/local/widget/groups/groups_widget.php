@@ -85,12 +85,13 @@ class groups_widget extends abstract_widget {
      * @return void
      */
     public function update_data_before_render(&$data) {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
 
         $context = $this->get_block_instance()->context;
         $option = [
             'headermenu' => 'true',
             'creategroup' => has_capability('block/dash:mygroups_creategroup', $context),
+            'datatoggle' => ($CFG->branch >= 500) ? 'data-bs-toggle' : 'data-toggle',
         ];
         $data['blockmenu'] = $OUTPUT->render_from_template('block_dash/widget_groups', $option);
     }
@@ -160,6 +161,7 @@ class groups_widget extends abstract_widget {
             'leavegroup' => has_capability('block/dash:mygroups_leavegroup', $context),
             'viewmembers' => has_capability('block/dash:mygroups_viewmembers', $context),
             'creategroup' => has_capability('block/dash:mygroups_creategroup', $context),
+            'datatoggle' => ($CFG->branch >= 500) ? 'data-bs-toggle' : 'data-toggle',
         ] : [];
 
         if (!$jsincluded) {

@@ -125,7 +125,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @return string
      * @throws coding_exception
      */
-    public static function get_name_from_class($fullclassname, $help=false) {
+    public static function get_name_from_class($fullclassname, $help = false) {
         $component = explode('\\', $fullclassname)[0];
         $class = array_reverse(explode('\\', $fullclassname))[0];
 
@@ -198,7 +198,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      * @param bool $count
      * @return builder
      */
-    final public function get_query($count=false): builder {
+    final public function get_query($count = false): builder {
         global $DB;
 
         if (is_null($this->query) || $count) {

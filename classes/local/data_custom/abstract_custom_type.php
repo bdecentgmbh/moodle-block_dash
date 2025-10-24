@@ -38,7 +38,6 @@ use block_dash\local\widget\abstract_widget;
  * Widgets extend class for new widgets.
  */
 abstract class abstract_custom_type extends abstract_widget implements \templatable {
-
     /**
      * List of data to generate widget template content.
      *
@@ -78,5 +77,4 @@ abstract class abstract_custom_type extends abstract_widget implements \templata
     public function layout() {
         return new custom_layout($this);
     }
-
 }

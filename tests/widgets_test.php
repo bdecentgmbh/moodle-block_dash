@@ -300,6 +300,5 @@ final class widgets_test extends \advanced_testcase {
 
         $this->assertEquals(0, $data['creategroup']);
         $this->assertEquals(0, $data['adduser']);
-
     }
 }

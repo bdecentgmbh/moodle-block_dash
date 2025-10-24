@@ -35,8 +35,6 @@ use dml_exception;
  * @package block_dash
  */
 class join_raw extends join {
-
-
     /**
      * @var string Table name of joined table.
      */

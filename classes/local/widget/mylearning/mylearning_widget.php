@@ -479,6 +479,8 @@ class mylearning_widget extends abstract_widget {
                 }
                 $sectionvalues['modules'] = $sectioncontents;
                 $sectionvalues['hidemodules'] = count($sectioncontents) > 0 ? false : true;
+                $sectionvalues['datatoggle'] = ($CFG->branch >= 500) ? 'data-bs-toggle' : 'data-toggle';
+                $sectionvalues['datatarget'] = ($CFG->branch >= 500) ? 'data-bs-target' : 'data-target';
                 // Assign result to $coursecontents.
                 $coursecontents[$key] = $sectionvalues;
                 // Break the loop if we are filtering.

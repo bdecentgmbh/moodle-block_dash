@@ -232,7 +232,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
      * @throws \coding_exception
      */
     public function export_for_template(\renderer_base $output) {
-        global $OUTPUT, $PAGE;
+        global $OUTPUT, $PAGE, $CFG;
 
         $config = $this->get_data_source()->get_block_instance()->config;
         $noresulttxt = \html_writer::tag('p', get_string('noresults'), ['class' => 'text-muted']);
@@ -247,6 +247,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
             'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4,
             'noresult' => (isset($config->emptystate))
                 ? format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]) : $noresulttxt,
+            'datatoggle' => ($CFG->branch >= 500) ? 'data-bs-toggle' : 'data-toggle',
+            'datatarget' => ($CFG->branch >= 500) ? 'data-bs-target' : 'data-target',
         ];
 
         if (!empty($this->get_data_source()->get_all_preferences())) {

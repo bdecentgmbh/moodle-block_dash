@@ -800,7 +800,10 @@ body .select2-container {
 .section-block.restricted .section-action {
     opacity: .5;
 }
-
+.dash-block-content .dash-filters form.filter-form > .sort-group .filter-form-control {
+    max-width: 300px;
+    border: 1px solid #ced4da;
+}
 .dash-block-content .dash-filters form.filter-form > .sort-group button {
     margin-bottom: 10px;
 }
@@ -847,8 +850,9 @@ body .select2-container {
 @media (min-width: 767px) {
     .dash-block-content .dash-filters form.filter-form > .sort-group {
         width: 47%;
-        display: inline-block;
-        vertical-align: middle;
+        vertical-align: top;
+        display: inline-flex;
+        flex-direction: column;
     }
 }
 

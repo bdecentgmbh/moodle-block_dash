@@ -47,7 +47,7 @@ class moodlequickform_dashcolorpicker extends MoodleQuickForm_text implements te
      * @param string $elementlabel (optional) Text field label.
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array.
      */
-    public function __construct($elementname=null, $elementlabel=null, $attributes=null) {
+    public function __construct($elementname = null, $elementlabel = null, $attributes = null) {
         parent::__construct($elementname, $elementlabel, $attributes);
         $this->setType('text');
 

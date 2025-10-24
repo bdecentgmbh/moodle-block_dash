@@ -33,7 +33,6 @@ use stdClass;
  * @package block_dash
  */
 abstract class abstract_field_attribute implements field_attribute_interface {
-
     /**
      * @var array
      */

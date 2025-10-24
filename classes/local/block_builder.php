@@ -37,7 +37,6 @@ use moodle_exception;
  * @package block_dash
  */
 class block_builder {
-
     /**
      * @var configuration_interface
      */
@@ -86,8 +85,6 @@ class block_builder {
         }
         return false;
     }
-
-
 
     /**
      * Get content object for block instance.
@@ -193,5 +190,4 @@ class block_builder {
     public static function create(\block_base $blockinstance) {
         return new block_builder($blockinstance);
     }
-
 }

@@ -32,7 +32,6 @@ use block_dash\local\data_grid\data\data_collection_interface;
  * @package block_dash
  */
 interface data_strategy_interface {
-
     /**
      * Convert database records into data collections.
      *

@@ -234,8 +234,8 @@ class block_dash_edit_form extends block_edit_form {
         $mform->addElement('select', 'config_restrict_rolecontext', get_string('restrictrolecontext', 'block_dash'), $rolecontext);
         $mform->setDefault('config_restrict_rolecontext', 1);
         $mform->setType('config_restrict_rolecontext', PARAM_INT);
-        $mform->addHelpButton('config_restrict_rolecontext', 'restrictrolecontext', 'block_dash');
-
+        $mform->addHelpButton('config_restrict_rolecontext', 'restrictrolecontext', 'block_dash');       
+       
         // Course restrictions.
         $context = $this->page->context->contextlevel;
         if ($context == CONTEXT_COURSE || $context == CONTEXT_MODULE) {
@@ -459,6 +459,7 @@ class block_dash_edit_form extends block_edit_form {
     public static function display_form_when_adding(): bool {
         return false;
     }
+    
 }
 
 /**

@@ -185,3 +185,13 @@ Feature: Add a dash to an admin pages
     And I should see "Student"
     And I should see "First"
     And I should see "student1@example.com"
+
+  @javascript
+  Scenario: Course completion not available in dash block on site home course
+    When I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And I add the "Dash" block
+    And I click on "Users" "radio"
+    And I configure the "New Dash" block
+    Then I should not see "Course completion"

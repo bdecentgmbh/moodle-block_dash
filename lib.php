@@ -371,3 +371,23 @@ function block_dash_visible_addons($id) {
     }
     return true;
 }
+
+/**
+ * Get the disable addons list from the config file parameters.
+ *
+ * @return array $disabledaddons
+ */
+function block_dash_disabled_addons_list() {
+    global $CFG;
+    $disabledaddons = [];
+
+    // @codingStandardsIgnoreStart
+    if (file_exists($CFG->dirroot . '/blocks/dash/config.php')) {
+        require_once($CFG->dirroot . '/blocks/dash/config.php');
+        // @codingStandardsIgnoreEnd
+        // Fetch disabled addons from CFG.
+        $disabledaddons = isset($CFG->dashdisabledaddons) ? $CFG->dashdisabledaddons : [];
+    }
+
+    return $disabledaddons;
+}

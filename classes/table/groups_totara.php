@@ -33,7 +33,6 @@ require_once($CFG->dirroot.'/lib/tablelib.php');
  * List of groups table.
  */
 class groups_totara extends \table_sql {
-
     /**
      * Define table field definitions and filter data
      *

@@ -33,7 +33,6 @@ use MoodleQuickForm;
  * @package block_dash
  */
 class filter implements filter_interface {
-
     /**
      * @var mixed The value a user has chosen. Or the default.
      */

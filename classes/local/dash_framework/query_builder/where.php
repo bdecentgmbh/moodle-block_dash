@@ -35,7 +35,6 @@ use dml_exception;
  * @package block_dash
  */
 class where {
-
     /**
      * @var int Unique counter for param/placeholder names.
      */

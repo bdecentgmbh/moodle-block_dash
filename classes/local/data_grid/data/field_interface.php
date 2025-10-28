@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\data;
  * @package block_dash
  */
 interface field_interface {
-
     /**
      * Get field name.
      *

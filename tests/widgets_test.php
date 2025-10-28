@@ -36,7 +36,6 @@ use core_message\tests\helper as testhelper;
  * @runTestsInSeparateProcesses
  */
 final class widgets_test extends \advanced_testcase {
-
     /**
      * Demo of test user.
      *
@@ -300,6 +299,5 @@ final class widgets_test extends \advanced_testcase {
 
         $this->assertEquals(0, $data['creategroup']);
         $this->assertEquals(0, $data['adduser']);
-
     }
 }

@@ -36,7 +36,6 @@ require_once($CFG->dirroot.'/lib/form/text.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodlequickform_dashcolorpicker extends MoodleQuickForm_text implements templatable {
-
     use templatable_form_element {
         export_for_template as export_for_template_base;
     }
@@ -48,7 +47,7 @@ class moodlequickform_dashcolorpicker extends MoodleQuickForm_text implements te
      * @param string $elementlabel (optional) Text field label.
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array.
      */
-    public function __construct($elementname=null, $elementlabel=null, $attributes=null) {
+    public function __construct($elementname = null, $elementlabel = null, $attributes = null) {
         parent::__construct($elementname, $elementlabel, $attributes);
         $this->setType('text');
 

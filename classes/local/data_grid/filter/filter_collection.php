@@ -32,7 +32,6 @@ use MoodleQuickForm;
  * @package block_dash
  */
 class filter_collection implements filter_collection_interface {
-
     /**
      * @var filter_interface[] Every filter that belongs to this collection.
      */

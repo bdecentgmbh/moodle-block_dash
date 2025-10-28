@@ -22,7 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once('HTML/QuickForm/input.php');
@@ -35,7 +34,6 @@ require_once($CFG->dirroot.'/lib/form/templatable_form_element.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodlequickform_dashrange extends MoodleQuickForm_text implements templatable {
-
     use templatable_form_element {
         export_for_template as export_for_template_base;
     }
@@ -47,7 +45,7 @@ class moodlequickform_dashrange extends MoodleQuickForm_text implements templata
      * @param string $elementlabel (optional) Text field label.
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array.
      */
-    public function __construct($elementname=null, $elementlabel=null, $attributes=null) {
+    public function __construct($elementname = null, $elementlabel = null, $attributes = null) {
         parent::__construct($elementname, $elementlabel, $attributes);
         // Add a CSS class for styling the color picker.
         $class = $this->getAttribute('class');

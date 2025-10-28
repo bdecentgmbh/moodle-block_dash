@@ -33,7 +33,6 @@ use dml_exception;
  * @package block_dash
  */
 class builder {
-
     /**
      * @var string
      */
@@ -171,6 +170,7 @@ class builder {
     /**
      * Set whether to put order by before joins.
      *
+     * @param array $fromsql
      * @return $this
      */
     public function set_sql_cte($fromsql) {
@@ -198,8 +198,7 @@ class builder {
     /**
      * Join raw in query.
      *
-     * @param string $joinsql SQL join type. See self::TYPE_*
-     * @param array $parameters Extra parameters used in join SQL.
+     * @param join $join
      * @return $this
      */
     public function join_raw(join $join): builder {
@@ -437,7 +436,7 @@ class builder {
             }
         }
 
-        $unique = array_key_exists('unique_id', $this->selects) ? '' : 'DISTINCT' ;
+        $unique = array_key_exists('unique_id', $this->selects) ? '' : 'DISTINCT';
         $sql .= 'SELECT ' . $unique . ' ' . $this->build_select() . ' FROM {' . $this->table . '} ' . $this->tablealias;
 
         $params = [];
@@ -489,7 +488,6 @@ class builder {
 
         [$sql, $params] = $this->get_sql_and_params();
         return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
-
     }
 
     /**
@@ -507,9 +505,7 @@ class builder {
 
         if ($isunique) {
 
-            $builder->set_selects([
-                'count' => 'COUNT(*)']
-            );
+            $builder->set_selects(['count' => 'COUNT(*)']);
 
         } else {
             $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
@@ -530,7 +526,9 @@ class builder {
 
         self::$lastcountcachekey = $countcachekey;
 
-        $count = $DB->count_records_sql($sql, $params);
+        // Instead of count_records_sql we use get_field_sql to avoid non negative count exception due do the groupby in the datasource.
+        $count = $DB->get_field_sql($sql, $params);
+        $count = $count ?: 0;
 
         self::$lastcount = $count;
 

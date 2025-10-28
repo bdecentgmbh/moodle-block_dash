@@ -31,7 +31,6 @@ use renderer_base;
  * @package block_dash
  */
 class paginator {
-
     /**
      * Template name.
      */
@@ -173,7 +172,6 @@ class paginator {
         $count = $this->get_page_count();
         $frontdivider = false;
         $backdivider = false;
-
 
         $items = [];
         for ($i = 0; $i < min($count, 20); $i++) {

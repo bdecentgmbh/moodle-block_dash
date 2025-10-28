@@ -32,7 +32,6 @@ use block_dash\local\paginator;
  * widget layout definitions.
  */
 abstract class abstract_layout extends \block_dash\local\layout\abstract_layout  implements layout_interface, \templatable {
-
     /**
      * Get data for layout mustache template.
      *

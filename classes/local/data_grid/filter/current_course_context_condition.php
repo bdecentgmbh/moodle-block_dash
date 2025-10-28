@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class current_course_context_condition extends condition {
-
     /**
      * Get values from filter based on user selection. All filters must return an array of values.
      *

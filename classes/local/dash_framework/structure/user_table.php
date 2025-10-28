@@ -45,7 +45,6 @@ use moodle_url;
  * @package block_dash
  */
 class user_table extends table {
-
     /**
      * Build a new table.
      */

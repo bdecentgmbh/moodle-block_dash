@@ -35,7 +35,6 @@ use block_dash\local\data_grid\field\field_definition_interface;
  * @package block_dash
  */
 abstract class abstract_field_definition implements field_definition_interface {
-
     /**
      * @var string Unique name of field (e.g. u_firstname).
      */

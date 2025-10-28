@@ -34,7 +34,6 @@ use lang_string;
  * @package block_dash
  */
 class field implements field_interface {
-
     /**
      * @var string The column name of the field as it appears in the table (e.g. firstname).
      */
@@ -146,6 +145,7 @@ class field implements field_interface {
      * @return mixed
      */
     final public function transform_data($data, \stdClass $record) {
+
         foreach ($this->attributes as $attribute) {
             $data = $attribute->transform_data($data, $record);
         }

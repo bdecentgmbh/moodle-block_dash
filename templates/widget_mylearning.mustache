@@ -70,7 +70,7 @@
                             <div class="card {{#completed}}completed-bg{{/completed}}">
                                 <div class="card-header {{^uservisible}} restricted {{/uservisible}}" id="section-head-{{id}}">  <!--Course accordion header block-->
                                     <h5 class="mb-0">
-                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#section-content-{{id}}" aria-expanded="true" aria-controls="section-content-{{id}}">{{{name}}}</button>
+                                        <button class="btn btn-link collapsed" {{datatoggle}}="collapse" {{datatarget}}="#section-content-{{id}}" aria-expanded="true" aria-controls="section-content-{{id}}">{{{name}}}</button>
                                         {{#completed}}
                                         <div class="completion-card completed"> <!-- Course section completed -->
                                             <p><i class="fa fa-check"></i></p>
@@ -172,7 +172,7 @@
                             <div class="card {{#completed}}completed-bg{{/completed}}">
                                 <div class="card-header {{^uservisible}} restricted {{/uservisible}}" id="section-head-{{id}}">  <!--Course accordion header block-->
                                     <h5 class="mb-0">
-                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#section-content-{{id}}" aria-expanded="true" aria-controls="section-content-{{id}}">{{{name}}}</button>
+                                        <button class="btn btn-link collapsed" {{datatoggle}}="collapse" {{datatarget}}="#section-content-{{id}}" aria-expanded="true" aria-controls="section-content-{{id}}">{{{name}}}</button>
                                         {{#completed}}
                                         <div class="completion-card completed"> <!-- Course section completed -->
                                             <p><i class="fa fa-check"></i></p>

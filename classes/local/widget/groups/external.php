@@ -36,7 +36,6 @@ require_once($CFG->dirroot . '/group/lib.php');
  * Group widget external function definitions.
  */
 class external extends external_api {
-
     /**
      * Get the users details if not assigned to the group.
      *

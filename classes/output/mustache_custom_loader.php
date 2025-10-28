@@ -31,7 +31,6 @@ use core\output\mustache_template_finder;
  * @package block_dash
  */
 class mustache_custom_loader extends \Mustache_Loader_FilesystemLoader {
-
     /**
      * Provide a default no-args constructor (we don't really need anything).
      */

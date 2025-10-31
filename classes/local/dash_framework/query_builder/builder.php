@@ -33,7 +33,6 @@ use dml_exception;
  * @package block_dash
  */
 class builder {
-
     /**
      * @var string
      */
@@ -384,6 +383,14 @@ class builder {
      */
     protected function build_select(): string {
         $selects = [];
+
+        // Move the unique id to the first position.
+        if (array_key_exists('unique_id', $this->selects)) {
+            $uniqueid = $this->selects['unique_id'];
+            unset($this->selects['unique_id']);
+            $this->selects = array_merge(['unique_id' => $uniqueid], $this->selects);
+        }
+
         foreach ($this->selects as $alias => $select) {
             $selects[] = $select . ' AS ' . $alias;
         }
@@ -489,7 +496,6 @@ class builder {
 
         [$sql, $params] = $this->get_sql_and_params();
         return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
-
     }
 
     /**

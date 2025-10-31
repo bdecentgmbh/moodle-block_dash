@@ -32,7 +32,6 @@ use block_dash\local\data_custom\abstract_custom_type;
  * @package block_dash
  */
 class data_source_factory implements data_source_factory_interface {
-
     /**
      * Cache registered data sources so they are only retrieved once.
      *
@@ -190,5 +189,4 @@ class data_source_factory implements data_source_factory_interface {
 
         return $options;
     }
-
 }

@@ -31,7 +31,6 @@ use block_dash\local\data_source\data_source_interface;
  * @package block_dash
  */
 class layout_factory implements layout_factory_interface {
-
     /**
      * @var array
      */

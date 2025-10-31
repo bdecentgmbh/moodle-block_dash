@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 abstract class select_filter extends filter {
-
     /**
      * All option value.
      */

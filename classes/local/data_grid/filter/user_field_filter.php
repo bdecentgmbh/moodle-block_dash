@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class user_field_filter extends select_filter {
-
     /**
      * User field.
      *

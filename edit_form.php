@@ -36,7 +36,6 @@ require_once($CFG->dirroot.'/cohort/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_dash_edit_form extends block_edit_form {
-
     /**
      * Add form fields.
      *
@@ -466,7 +465,6 @@ class block_dash_edit_form extends block_edit_form {
  * Dash features form to configure the data source or widget.
  */
 class block_dash_featuresform extends \moodleform {
-
     /**
      * Defined the form fields for the datasource selector list.
      *

@@ -33,7 +33,6 @@ use moodle_url;
  * @package block_dash
  */
 class course_information_url_attribute extends abstract_field_attribute {
-
     /**
      * Transforms the given data by generating a URL based on the course context.
      *

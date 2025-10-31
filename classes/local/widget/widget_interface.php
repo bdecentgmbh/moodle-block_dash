@@ -87,4 +87,3 @@ interface widget_interface {
      */
     public function get_widget_data();
 }
-

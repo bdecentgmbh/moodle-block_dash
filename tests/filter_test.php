@@ -38,7 +38,6 @@ use block_dash\local\data_grid\filter\filter_interface;
  * @group filter_test
  */
 final class filter_test extends \advanced_testcase {
-
     /**
      * @var filter_collection_interface
      */

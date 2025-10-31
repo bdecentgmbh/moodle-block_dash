@@ -45,7 +45,6 @@ use moodle_url;
  * @package block_dash
  */
 abstract class abstract_layout implements layout_interface, \templatable {
-
     /**
      * @var int Used for creating unique checkbox controller group IDs.
      */
@@ -262,7 +261,10 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $templatedata['error'] .= $OUTPUT->notification($error, 'error');
             }
 
-            if (!$this->get_data_source()->supports_ajax_pagination() && $this->get_data_source()->get_paginator()->get_page_count() > 1) {
+            if (
+                !$this->get_data_source()->supports_ajax_pagination() &&
+                $this->get_data_source()->get_paginator()->get_page_count() > 1
+            ) {
                 $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()
                     ->get_paginator()
                     ->export_for_template($OUTPUT));

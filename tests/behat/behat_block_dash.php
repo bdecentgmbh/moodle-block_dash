@@ -32,7 +32,6 @@ Behat\Mink\Exception\ExpectationException as ExpectationException;
  * Custom behat step definitions.
  */
 class behat_block_dash extends behat_base {
-
     /**
      * Turns block editing mode on.
      *

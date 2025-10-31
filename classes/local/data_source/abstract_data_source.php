@@ -44,7 +44,6 @@ use coding_exception;
  * @package block_dash
  */
 abstract class abstract_data_source implements data_source_interface, \templatable {
-
     /**
      * @var \context
      */
@@ -196,6 +195,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     /**
      * Get fully built query for execution.
      *
+     * @param bool $count
      * @return builder
      */
     final public function get_query($count=false): builder {
@@ -204,7 +204,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if (is_null($this->query) || $count) {
 
             $visiblefields = [];
-            $fields = $this->get_preferences('available_fields');
+            $fields = $this->get_preferences('available_fields') ?? [];
             foreach ($fields as $fieldname => $preferences) {
                 if (isset($preferences['visible']) && $preferences['visible']) {
                     $visiblefields[] = $fieldname;
@@ -232,7 +232,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
                 // Dont include the selects for the fields, which is have join and not visible.
                 if ($field->get_field_join_sql() && !in_array($field->get_alias(), $visiblefields) && !$field->is_force_join()) {
-                    // echo $field->get_alias() .;
                     continue;
                 }
 
@@ -425,7 +424,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
         return $this->data;
     }
-
 
     /**
      * Set the intital data to the datasource for pagination.

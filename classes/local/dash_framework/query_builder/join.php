@@ -120,7 +120,7 @@ class join {
     /**
      * Remove a join condition.
      *
-     * @param string $condition
+     * @return array
      */
     public function get_join_conditions(): array {
         return $this->joinconditions;

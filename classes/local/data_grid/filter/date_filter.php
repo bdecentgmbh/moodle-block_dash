@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class date_filter extends filter {
-
     /**
      * Round date up to the end of the day.
      */

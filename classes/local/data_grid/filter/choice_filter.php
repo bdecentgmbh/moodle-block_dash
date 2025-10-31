@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class choice_filter extends select_filter {
-
     /**
      * @var array
      */

@@ -50,7 +50,6 @@ use context;
  * @package block_dash
  */
 class users_data_source extends abstract_data_source {
-
     /**
      * Constructor.
      *

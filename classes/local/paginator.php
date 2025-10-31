@@ -31,7 +31,6 @@ use renderer_base;
  * @package block_dash
  */
 class paginator {
-
     /**
      * Template name.
      */
@@ -175,13 +174,24 @@ class paginator {
         $backdivider = false;
 
         $items = [];
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < min($count, 20); $i++) {
             $items[$i] = [
                 'index' => $i,
                 'page' => $i,
                 'label' => $i + 1,
                 'active' => $this->get_current_page() == $i,
             ];
+        }
+
+        if ($count > 20) {
+            for ($i = $count; $i > $count - 20; $i--) {
+                $items[$i] = [
+                    'index' => $i,
+                    'page' => $i,
+                    'label' => $i + 1,
+                    'active' => $this->get_current_page() == $i,
+                ];
+            }
         }
 
         // There's some hard coded values here. Maybe at some point clean up this algorithm.
@@ -193,8 +203,8 @@ class paginator {
             $frontdivider = true;
         }
 
-        if ($this->get_page_count() - 1 >= $this->get_current_page() + 3) {
-            $pagecount = $this->get_page_count();
+        if ($count - 1 >= $this->get_current_page() + 3) {
+            $pagecount = $count;
             for ($i = $this->get_current_page() + 3; $i < $pagecount - 2; $i++) {
                 unset($items[$i]);
                 $backdivider = true;
@@ -244,7 +254,7 @@ class paginator {
         }
 
         $summary = get_string('pagination_summary', 'block_dash', [
-            'total' => $this->get_record_count(),
+            'total' => $recordcount,
             'per_page' => $this->get_per_page(),
             'limit_from' => $this->get_limit_from() + 1,
             'limit_to' => $limitto,

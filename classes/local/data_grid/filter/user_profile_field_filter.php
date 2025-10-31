@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class user_profile_field_filter extends select_filter {
-
     /**
      * @var string Record ID of custom profile field.
      */

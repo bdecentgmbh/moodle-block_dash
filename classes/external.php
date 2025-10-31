@@ -33,6 +33,7 @@ use block_dash\local\data_source\form\preferences_form;
 use block_dash\output\renderer;
 use block_dash\local\configuration\configuration;
 use block_dash\local\data_source\data_source_factory;
+use block_dash\local\paginator;
 use external_api;
 
 /**
@@ -44,6 +45,59 @@ use external_api;
  */
 class external extends external_api {
     // Region get_block_content.
+
+    /**
+     * Returns description of get_database_schema_structure() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function get_block_pagination_parameters() {
+        return new \external_function_parameters([
+            'block_instance_id' => new \external_value(PARAM_INT),
+            'filter_form_data' => new \external_value(PARAM_RAW),
+            'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
+            'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
+            'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
+            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
+            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
+        ]);
+    }
+
+    /**
+     * Get block pagination.
+     *
+     * @param int $blockinstanceid
+     * @param string $filterformdata
+     * @param int $page
+     * @param string $sortfield
+     * @param string $sortdirection
+     * @param string $pagelayout
+     * @param int $pagecontext
+     *
+     * @return array
+     * @throws \coding_exception
+     * @throws \invalid_parameter_exception
+     * @throws \moodle_exception
+     * @throws \restricted_context_exception
+     */
+    public static function get_block_pagination($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
+        $pagelayout = '', $pagecontext = 0) {
+        global $PAGE, $DB, $OUTPUT, $SITE;
+
+        return self::get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
+            $pagelayout, $pagecontext, true);
+    }
+
+    /**
+     * Returns description of get_block_content() result value.
+     *
+     * @return \external_description
+     */
+    public static function get_block_pagination_returns() {
+        return new \external_single_structure([
+            'html' => new \external_value(PARAM_RAW),
+        ]);
+    }
 
     /**
      * Returns description of get_database_schema_structure() parameters.
@@ -72,6 +126,7 @@ class external extends external_api {
      * @param string $sortdirection
      * @param string $pagelayout
      * @param int $pagecontext
+     * @param bool $returnpagination If true, only return the pagination html.
      *
      * @return array
      * @throws \coding_exception
@@ -80,7 +135,7 @@ class external extends external_api {
      * @throws \restricted_context_exception
      */
     public static function get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
-        $pagelayout = '', $pagecontext = 0) {
+        $pagelayout = '', $pagecontext = 0, $returnpagination = false) {
         global $PAGE, $DB, $OUTPUT, $SITE;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
@@ -142,9 +197,17 @@ class external extends external_api {
                     ->apply_filter($filter['name'], $filter['value']);
             }
 
+            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page($params['page']);
+
             $datasource = $bb->get_configuration()->get_data_source();
 
-            $bb->get_configuration()->get_data_source()->get_paginator()->set_current_page($params['page']);
+            // ... Only need to send the pagination html.
+            if ($returnpagination) {
+                $datasource->set_data_pagination();
+                return ['html' => $OUTPUT->render_from_template(paginator::TEMPLATE, $datasource
+                    ->get_paginator()->export_for_template($OUTPUT))];
+            }
+
             if (get_class($datasource->get_layout()) == 'local_dash\layout\cards_layout' || $datasource->is_widget()
                     && $datasource->supports_currentscript()) {
                 // Cloned from moodle lib\external\externalib.php 422.

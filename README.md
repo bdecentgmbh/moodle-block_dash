@@ -6,7 +6,7 @@ Dash is a very powerful and flexible tool – you can build so many things with 
 This plugin requires Moodle 3.7+
 
 # Motivation for this plugin
-Dash is intended to be used in conjunction with a theme — while the theme takes care of the design, Dash allows administrators to create custom layouts and interfaces using configuration only. The Dash framework enables you to create data driven interfaces and reports. Choose from several data sources and several layouts to build the interfaces you need. The core of dash is a block (this repository) – which means that you can add a dash almost everywhere. 
+Dash is intended to be used in conjunction with a theme — while the theme takes care of the design, Dash allows administrators to create custom layouts and interfaces using configuration only. The Dash framework enables you to create data driven interfaces and reports. Choose from several data sources and several layouts to build the interfaces you need. The core of dash is a block (this repository) – which means that you can add a dash almost everywhere.
 
 # Free version
 The free version (this repository) has the following features:
@@ -21,7 +21,7 @@ The free version (this repository) has the following features:
 # Pro version
 The pro version (different repository) adds the following features:
 - More data sources
-- Unlimited dashboards 
+- Unlimited dashboards
 - More templates (e.g. a grid layout)
 - "Skill graph" widget (competency radar)
 - "Course enrolments" widget
@@ -63,5 +63,5 @@ If you are running a legacy version of Moodle, but want or need to run the lates
 This Moodle plugin is shipped with an english language pack only. All translations into other languages must be managed through AMOS (https://lang.moodle.org) by what they will become part of Moodle's official language pack.
 
 # Copyright
-bdecent gmbh 
+bdecent gmbh
 bdecent.de

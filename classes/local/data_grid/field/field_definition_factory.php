@@ -33,7 +33,6 @@ use block_dash\local\data_grid\field\attribute\field_attribute_interface;
  * @package block_dash
  */
 class field_definition_factory implements field_definition_factory_interface {
-
     /**
      * Cache registered field definitions so they are only retrieved once.
      *

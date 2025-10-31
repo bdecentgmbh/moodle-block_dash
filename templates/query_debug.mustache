@@ -28,20 +28,35 @@
 </button>
 
 {{#js}}
-    require(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalFactory, Events) {
+    require(['jquery', 'core/modal_factory', 'core/modal_events', 'core/modal', 'core/notification'],
+        function($, ModalFactory, Events, Modal, Notification) {
         var trigger = $('#query-debug-modal-{{uniqueid}}-trigger');
         var body = '<p>' + trigger.data('body') + '</p>';
+        var promise;
+        if ((typeof Modal.registerModalType !== 'undefined')) {
+            promise = Modal.create({
+                title: '{{#str}}querydebug, block_dash{{/str}}',
+                body: body,
+                large: true
+            }, trigger);
+        } else {
+            promise = ModalFactory.create({
+                title: '{{#str}}querydebug, block_dash{{/str}}',
+                body: body,
+                type: ModalFactory.types.SAVE_CANCEL,
+                large: true
+            }, trigger);
+        }
 
-        ModalFactory.create({
-            title: '{{#str}}querydebug, block_dash{{/str}}',
-            body: body,
-            type: ModalFactory.types.SAVE_CANCEL,
-            large: true
-        }, trigger).done(function(modal) {
+        promise.then(function(modal) {
+            trigger.on('click', function() {
+                modal.show();
+            });
             modal.getRoot().on(Events.shown, function() {
                 var params = JSON.stringify(trigger.data('params'), null, 2);
                 $(this).find('.modal-body').find('pre').html(params);
             });
-        });
+            return modal;
+        }).catch(Notification.exception);
     });
 {{/js}}

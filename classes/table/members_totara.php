@@ -34,7 +34,6 @@ require_once($CFG->dirroot.'/lib/tablelib.php');
  * List of group memebers table.
  */
 class members_totara extends \table_sql {
-
     /**
      * Define table field definitions and filter data
      *
@@ -115,7 +114,6 @@ class members_totara extends \table_sql {
     public function get_context(): \context {
         return \context_block::instance($this->uniqueid);
     }
-
 
     /**
      * Set the base url of the table, used in the ajax data update.

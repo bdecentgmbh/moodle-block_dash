@@ -32,7 +32,6 @@ use moodle_url;
  * @package block_dash
  */
 class moodle_url_attribute extends abstract_field_attribute {
-
     /**
      * After records are relieved from database each field has a chance to transform the data.
      * Example: Convert unix timestamp into a human readable date format

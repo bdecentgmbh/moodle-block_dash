@@ -6,9 +6,9 @@
  * @copyright  2017 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
-        'core/fragment', 'core/ajax', 'block_dash/select2', 'core/notification'],
-    function($, Str, ModalFactory, ModalEvents, Fragment, Ajax, Select2, Notification) {
+define(['jquery', 'core/str', 'core/modal_events',
+        'core/fragment', 'core/ajax', 'core/notification', 'core/modal_save_cancel'],
+    function($, Str, ModalEvents, Fragment, Ajax, Notification, ModalSaveCancel) {
 
     /**
      * Constructor
@@ -47,20 +47,25 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
      */
     PreferencesModal.prototype.init = function(selector) {
         var triggers = $(selector);
-        // Fetch the title string.
+
         return Str.get_string('editpreferences', 'block_dash').then(function(title) {
-            // Create the modal.
-            return ModalFactory.create({
-                type: ModalFactory.types.DEFAULT,
+            return ModalSaveCancel.create({
                 title: title,
-                body: this.getBody()
-            }, triggers);
+                body: this.getBody(),
+                large: true,
+                show: false
+            });
         }.bind(this)).then(function(modal) {
             // Keep a reference to the modal.
             this.modal = modal;
 
-            // Forms are big, we want a big modal.
-            this.modal.setLarge();
+            // Hide the modal footer since the form has its own save/cancel buttons
+            this.modal.getFooter().hide();
+
+            triggers.on('click', function(e) {
+                e.preventDefault();
+                this.modal.show();
+            }.bind(this));
 
             // We want to reset the form every time it is opened.
             this.modal.getRoot().on(ModalEvents.shown, function() {
@@ -68,10 +73,6 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
             }.bind(this));
 
             this.modal.getRoot().on('change', '#id_config_preferences_layout', this.submitFormAjax.bind(this, false));
-
-            this.modal.getRoot().on('click', '[data-action=cancel]', () => {
-                this.modal.hide();
-            });
 
             // We catch the modal save event, and use it to submit the form inside the modal.
             // Triggering a form submission will give JS validation scripts a chance to check for errors.

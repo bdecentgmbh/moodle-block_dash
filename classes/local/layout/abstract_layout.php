@@ -45,7 +45,6 @@ use moodle_url;
  * @package block_dash
  */
 abstract class abstract_layout implements layout_interface, \templatable {
-
     /**
      * @var int Used for creating unique checkbox controller group IDs.
      */
@@ -262,10 +261,15 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $templatedata['error'] .= $OUTPUT->notification($error, 'error');
             }
 
-            if ($this->get_data_source()->get_paginator()->get_page_count() > 1) {
+            if (
+                !$this->get_data_source()->supports_ajax_pagination() &&
+                $this->get_data_source()->get_paginator()->get_page_count() > 1
+            ) {
                 $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()
                     ->get_paginator()
                     ->export_for_template($OUTPUT));
+            } else {
+                $templatedata['paginator'] = html_writer::tag('div', '', ['class' => 'ajax-pagination']);
             }
         }
 
@@ -282,7 +286,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
             $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadcsv", 'block_dash'), 'get');
             $downloadoptions[] = html_writer::tag('li', $button, ['class' => 'reportoption list-inline-item']);
 
-            $options["download"] = "xls";
+            $options["download"] = "excel";
             $button = $OUTPUT->single_button(new moodle_url($PAGE->url, $options), get_string("downloadexcel"), 'get');
             $downloadoptions[] = html_writer::tag('li', $button, ['class' => 'reportoption list-inline-item']);
 

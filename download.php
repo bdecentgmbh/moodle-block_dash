@@ -23,6 +23,7 @@
  */
 
 require(__DIR__.'/../../config.php');
+require($CFG->dirroot . '/blocks/dash/locallib.php');
 
 if (!defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', true);
@@ -48,78 +49,52 @@ $block = block_instance($binstance->blockname, $binstance);
 if ($sortfield) {
     $block->set_sort($sortfield, $sortdir);
 }
+
 $bbdownload = block_builder::create($block);
 if (!$bbdownload->get_configuration()->get_data_source()->get_preferences('exportdata') ) {
     return false;
 }
+
 foreach (json_decode($filterformdata, true) as $filter) {
     $bbdownload->get_configuration()
         ->get_data_source()
         ->get_filter_collection()
         ->apply_filter($filter['name'], $filter['value']);
 }
-$bbdownload->get_configuration()->get_data_source()->get_paginator()->set_current_page($currentpage);
+
 $bbdownloadsource = $bbdownload->get_configuration()->get_data_source();
-$file = $bbdownload->get_configuration()->get_data_source()->get_name();
-$filename = $file . "_" . get_string('strdatasource', 'block_dash');
-if ($download == "xls") {
-    require_once("$CFG->libdir/excellib.class.php");
-    // Calculate file name.
-    // Creating a workbook.
-    $workbook = new \MoodleExcelWorkbook("-");
-    // Send HTTP headers.
-    $filename .= "_" . time();
-    $workbook->send($filename);
-    // Creating the first worksheet.
-    $myxls = $workbook->add_worksheet('dash');
-    // Print names of all the fields.
-    $i = 0;
-    foreach ($bbdownloadsource->export_for_template($renderer)['data']->first_child()['data'] as $col) {
-        if ($col->is_visible()) {
-            $myxls->write_string(0, $i++, $col->get_label());
-        }
+$bbdownloadsource->set_data_pagination(); // Set before data method to apply filters first.
+$bbdownloadsource->get_query()->limitfrom(0)->limitnum(0);
+
+// Fetch the list of fields to show. List the fields as headers and columns.
+$headers = [];
+$columns = [];
+$fields = $bbdownloadsource->get_available_fields();
+foreach ($fields as $key => $field) {
+    if (is_null($field->get_select()) || !$field->get_visibility()) {
+        continue;
     }
-    $rowdata = $bbdownloadsource->export_for_template($renderer)['data']['rows'];
-    if ($rowdata) {
-        // Generate the data for the body of the spreadsheet.
-        $j = 1;
-        foreach ($rowdata as $row) {
-            $fields = [];
-            $k = 0;
-            foreach ($row['data'] as $data) {
-                if ($data->is_visible()) {
-                    $myxls->write_string($j, $k++, trim(strip_tags(format_text($data->get_value(), true))));
-                }
-            }
-            $j++;
-        }
-    }
-    // Close the workbook.
-    $workbook->close();
-} else if ($download == 'csv') {
-    require_once("$CFG->libdir/csvlib.class.php");
-    $csvexport = new \csv_export_writer("-");
-    $csvexport->set_filename($filename);
-    $headers = [];
-    foreach ($bbdownloadsource->export_for_template($renderer)['data']->first_child()['data'] as $col) {
-        if ($col->is_visible()) {
-            $headers[] = $col->get_label();
-        }
-    }
-    $csvexport->add_data($headers);
-    $rowdata = $bbdownloadsource->export_for_template($renderer)['data']['rows'];
-    if ($rowdata) {
-        foreach ($rowdata as $row) {
-            $cols = [];
-            foreach ($row['data'] as $data) {
-                if ($data->is_visible()) {
-                    $cols[] = trim(strip_tags(format_text($data->get_value(), true)));
-                }
-            }
-            $csvexport->add_data($cols);
-        }
-    }
-    $csvexport->download_file();
+    $headers[] = $field->get_title();
+    $columns[] = $key;
 }
 
+// Generate the filename.
+$file = $bbdownload->get_configuration()->get_data_source()->get_name();
+$filename = $file . "_" . get_string('strdatasource', 'block_dash');
 
+$downloadtable = new block_dash_download_table('dash_downloadtable');
+
+// Define the columns and headers.
+$downloadtable->define_columns($columns);
+$downloadtable->define_headers($headers);
+$downloadtable->define_baseurl(new moodle_url('/blocks/dash/download.php', ['block_instance_id' => $instanceid]));
+
+// Set the datasource for the table.
+$downloadtable->set_datasource($bbdownloadsource);
+
+$downloadtable->is_downloading($download, $filename);
+
+list($sql, $params) = $bbdownloadsource->get_query()->get_sql_and_params();
+$downloadtable->set_data($sql, $params);
+
+$downloadtable->out(0, false);

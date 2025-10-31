@@ -33,7 +33,6 @@ use html_writer;
  * Groups widget contains list of available contacts.
  */
 class groups_widget extends abstract_widget {
-
     /**
      * Max Memebers count in group will displayed as images.
      */

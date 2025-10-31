@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class bool_filter extends select_filter {
-
     /**
      * Return a list of operations this filter can handle.
      *

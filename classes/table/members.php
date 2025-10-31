@@ -35,7 +35,6 @@ require_once($CFG->dirroot.'/lib/tablelib.php');
  * List of group memebers table.
  */
 class members extends \table_sql implements dynamic_table {
-
     /**
      * Group filter value.
      *

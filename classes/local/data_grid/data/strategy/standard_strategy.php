@@ -42,7 +42,7 @@ class standard_strategy implements data_strategy_interface {
     /**
      * Convert records.
      *
-     * @param \stdClass[] $records
+     * @param \moodle_recordset $records
      * @param field_interface[] $fielddefinitions
      * @return data_collection_interface
      */

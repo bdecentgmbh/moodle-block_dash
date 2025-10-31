@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class condition extends filter {
-
     /**
      * Check if a user value was set.
      *
@@ -58,5 +57,4 @@ class condition extends filter {
     public function create_form_element(filter_collection_interface $filtercollection, $elementnameprefix = '') {
         // Intentionally left blank.
     }
-
 }

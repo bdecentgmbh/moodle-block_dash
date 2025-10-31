@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class logged_in_user_condition extends condition {
-
     /**
      * Get values from filter based on user selection. All filters must return an array of values.
      *
@@ -56,5 +55,4 @@ class logged_in_user_condition extends condition {
 
         return get_string('loggedinuser', 'block_dash');
     }
-
 }

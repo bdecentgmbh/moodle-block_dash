@@ -36,7 +36,6 @@ use moodle_url;
  * Mylearning widget class contains the courses user enrolled and not completed.
  */
 class mylearning_widget extends abstract_widget {
-
     /**
      * Get the name of widget.
      *

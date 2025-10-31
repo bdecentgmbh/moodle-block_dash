@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\field;
  * @package block_dash
  */
 class sql_field_definition extends abstract_field_definition {
-
     /**
      * @var string SQL select statement for this field.
      */

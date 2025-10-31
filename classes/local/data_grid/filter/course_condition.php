@@ -32,7 +32,6 @@ use MoodleQuickForm;
  * @package block_dash
  */
 class course_condition extends condition {
-
     /**
      * Get values from filter based on user selection. All filters must return an array of values.
      *

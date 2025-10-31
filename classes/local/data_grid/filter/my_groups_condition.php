@@ -29,7 +29,6 @@ namespace block_dash\local\data_grid\filter;
  * @package block_dash
  */
 class my_groups_condition extends condition {
-
     /**
      * Condition values.
      *

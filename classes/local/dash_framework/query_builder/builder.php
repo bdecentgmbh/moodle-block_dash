@@ -123,6 +123,119 @@ class builder {
     protected static $lastcountcachekey = null;
 
     /**
+     * Last built COUNT sql (for debug).
+     * @var string|null
+     */
+    protected static $lastcountsql = null;
+
+    /**
+     * Last built COUNT params (for debug).
+     * @var array
+     */
+    protected static $lastcountparams = [];
+
+    /**
+     * Sanitize CTE definitions to avoid Moodle table prefix replacement on CTE names.
+     * Converts patterns like: WITH {cte} AS (...) or , {cte} AS (...) to WITH cte AS (...) / , cte AS (...).
+     *
+     * @param string $sql
+     * @return string
+     */
+    protected function sanitize_cte_sql(string $sql): string {
+        global $DB;
+        // 1) Drop Moodle table braces around CTE names.
+        $patterns = [
+            '/\bWITH(?:\s+RECURSIVE)?\s+\{([a-zA-Z0-9_]+)\}\s+AS\b/i',
+            '/,\s*\{([a-zA-Z0-9_]+)\}\s+AS\b/i',
+        ];
+        $replacements = [
+            'WITH $1 AS',
+            ', $1 AS',
+        ];
+        $sql = preg_replace($patterns, $replacements, $sql);
+
+        // 2) For joins to module tables that may not exist, replace the table with a dummy derived table
+        // providing the columns typically referenced (id, name, timemodified).
+        // Pattern matches: [LEFT] JOIN {tablename} alias
+        $manager = isset($DB) ? $DB->get_manager() : null;
+        $sql = preg_replace_callback(
+            '/\b(LEFT\s+JOIN|JOIN|RIGHT\s+JOIN)\s+\{([a-zA-Z0-9_]+)\}\s+([a-zA-Z0-9_]+)\b/i',
+            function ($m) use ($manager) {
+                $jointype = strtoupper($m[1]);
+                $tablename = $m[2];
+                $alias = $m[3];
+                // If we cannot check, keep as-is.
+                if (!$manager || $manager->table_exists($tablename)) {
+                    return $m[0];
+                }
+                // Replace with a harmless derived table exposing common columns.
+                return 'LEFT JOIN (SELECT NULL AS id, NULL AS name, NULL AS timemodified) ' . $alias;
+            },
+            $sql
+        );
+
+        // 3) For existing module tables missing specific columns (e.g., timemodified or name),
+        // replace references 'alias.timemodified' or 'alias.name' with NULL to avoid unknown column errors.
+        if ($manager) {
+            // Build alias -> table map from FROM/JOIN clauses.
+            $aliasmap = [];
+            if (preg_match_all('/\bFROM\s+\{([a-zA-Z0-9_]+)\}\s+([a-zA-Z0-9_]+)/i', $sql, $mfrom, PREG_SET_ORDER)) {
+                foreach ($mfrom as $row) {
+                    $aliasmap[$row[2]] = $row[1];
+                }
+            }
+            if (preg_match_all('/\b(LEFT\s+JOIN|JOIN|RIGHT\s+JOIN)\s+\{([a-zA-Z0-9_]+)\}\s+([a-zA-Z0-9_]+)/i', $sql, $mjoin, PREG_SET_ORDER)) {
+                foreach ($mjoin as $row) {
+                    $aliasmap[$row[3]] = $row[2];
+                }
+            }
+
+            foreach ($aliasmap as $alias => $table) {
+                if (!$manager->table_exists($table)) {
+                    // Already handled above by replacing the JOIN, skip.
+                    continue;
+                }
+                $cols = [];
+                try {
+                    $cols = $DB->get_columns($table) ?? [];
+                } catch (\Throwable $e) {
+                    // If we cannot fetch columns, be conservative.
+                    $cols = [];
+                }
+                // Replace alias.timemodified if missing.
+                if (!isset($cols['timemodified'])) {
+                    $sql = preg_replace('/\b' . preg_quote($alias, '/') . '\.timemodified\b/i', 'NULL', $sql);
+                }
+                // Replace alias.name if missing.
+                if (!isset($cols['name'])) {
+                    $sql = preg_replace('/\b' . preg_quote($alias, '/') . '\.name\b/i', 'NULL', $sql);
+                }
+            }
+        }
+
+        return $sql;
+    }
+
+    /**
+     * Replace any references to defined CTE names written as {ctename} with plain ctename.
+     * This avoids Moodle table prefix expansion for CTEs.
+     *
+     * @param string $sql
+     * @return string
+     */
+    protected function sanitize_cte_references(string $sql): string {
+        if (empty($this->sqlctelist)) {
+            return $sql;
+        }
+        foreach (array_keys($this->sqlctelist) as $ctename) {
+            // Replace occurrences of {ctename} with ctename (word boundaries around name).
+            $pattern = '/\{' . preg_quote($ctename, '/') . '\}/';
+            $sql = preg_replace($pattern, $ctename, $sql);
+        }
+        return $sql;
+    }
+
+    /**
      * Whether to put order by before joins.
      *
      * @var array
@@ -438,13 +551,15 @@ class builder {
         $sql = '';
 
         if (!empty($this->sqlctelist)) {
-
             foreach ($this->sqlctelist as $viewname => $fromsql) {
-                $sql .= $fromsql . ' ';
+                $sql .= $this->sanitize_cte_sql($fromsql) . ' ';
             }
         }
 
-        $unique = array_key_exists('unique_id', $this->selects) ? '' : 'DISTINCT';
+        // Avoid adding a top-level DISTINCT for COUNT queries to prevent SQL errors.
+        $selectvalues = array_values($this->selects);
+        $iscountselect = count($selectvalues) === 1 && preg_match('/^\s*COUNT\s*\(/i', (string)$selectvalues[0]);
+        $unique = (!$iscountselect && !array_key_exists('unique_id', $this->selects)) ? 'DISTINCT' : '';
         $sql .= 'SELECT ' . $unique . ' ' . $this->build_select() . ' FROM {' . $this->table . '} ' . $this->tablealias;
 
         $params = [];
@@ -481,6 +596,7 @@ class builder {
             $sql .= ' ORDER BY ' . implode(', ', $orderbys);
         }
 
+        $sql = $this->sanitize_cte_references($sql);
         return [$sql, $params];
     }
 
@@ -495,13 +611,20 @@ class builder {
         global $DB;
 
         [$sql, $params] = $this->get_sql_and_params();
+        // Emit debug info when developer debugging is enabled.
+        if (function_exists('debugging')) {
+            debugging('[block_dash] DATA SQL: ' . $sql . ' | params=' . json_encode($params), DEBUG_DEVELOPER);
+        }
+        if (function_exists('error_log')) {
+            @error_log('[block_dash] DATA SQL: ' . $sql . ' | params=' . json_encode($params));
+        }
         return $DB->get_records_sql($sql, $params, $this->get_limitfrom(), $this->get_limitnum());
     }
 
     /**
      * Get number of records this query will return.
      *
-     * @param int $isunique Counted by unique id.
+     * @param bool $isunique When true, count distinct main table IDs.
      * @return int
      * @throws dml_exception
      * @throws exception\invalid_operator_exception
@@ -509,37 +632,109 @@ class builder {
     public function count($isunique): int {
         global $DB;
 
-        $builder = clone $this;
-
-        if ($isunique) {
-
-            $builder->set_selects([
-                'count' => 'COUNT(*)']
-            );
-
-        } else {
-            $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
+        // Clone and normalise the base query first.
+        $base = clone $this;
+        $base->limitfrom(0)->limitnum(0)->remove_orderby();
+        if (!empty($base->groupby)) {
+            $base->groupby = [];
         }
 
-        $builder->limitfrom(0)->limitnum(0)->remove_orderby();
-        [$sql, $params] = $builder->get_sql_and_params();
+        // Build the inner query to wrap for a robust COUNT on all DBs.
+        // Prepare inner select and lift any CTEs to the top-level (MariaDB/MySQL require WITH at statement start).
+        $inner = clone $base;
+        $cteprefix = '';
+        if (!empty($inner->sqlctelist)) {
+            foreach ($inner->sqlctelist as $viewname => $fromsql) {
+                $cteprefix .= $this->sanitize_cte_sql($fromsql) . ' ';
+            }
+            // Prevent duplication of CTEs inside the derived table.
+            $inner->sqlctelist = [];
+        }
+
+        $hascte = trim($cteprefix) !== '';
+        if ($hascte) {
+            // Build a direct COUNT query when CTEs are present to avoid referencing CTEs from a derived table.
+            $direct = clone $base;
+            if ($isunique) {
+                $direct->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
+            } else {
+                $direct->set_selects(['count' => 'COUNT(*)']);
+            }
+            [$innersql, $params] = $direct->get_sql_and_params();
+            $sql = $innersql; // $innersql already includes the sanitized CTE prefix at the start.
+        } else {
+            // No CTEs – safe to wrap in a derived table for robust COUNT behaviour.
+            // Always select the main table id with a stable alias.
+            $inner->set_selects(['unique_id' => $this->tablealias . '.id']);
+            [$innersql, $params] = $inner->get_sql_and_params();
+            if ($isunique) {
+                $sql = 'SELECT COUNT(DISTINCT x.unique_id) AS count FROM (' . $innersql . ') x';
+            } else {
+                $sql = 'SELECT COUNT(*) AS count FROM (' . $innersql . ') x';
+            }
+        }
+
+        // Store for debug.
+        self::$lastcountsql = $sql;
+        self::$lastcountparams = $params;
 
         $countcachekey = md5($sql . serialize($params));
-
         if (self::$lastcount !== null) {
-
-            // If count is already calculated, return it.
             if (self::$lastcountcachekey == $countcachekey) {
                 return self::$lastcount;
             }
         }
 
         self::$lastcountcachekey = $countcachekey;
-
-        $count = $DB->count_records_sql($sql, $params);
-
+        // Emit debug info when developer debugging is enabled.
+        if (function_exists('debugging')) {
+            debugging('[block_dash] COUNT SQL: ' . $sql . ' | params=' . json_encode($params), DEBUG_DEVELOPER);
+        }
+        if (function_exists('error_log')) {
+            @error_log('[block_dash] COUNT SQL: ' . $sql . ' | params=' . json_encode($params));
+        }
+        try {
+            $count = $DB->count_records_sql($sql, $params);
+        } catch (\dml_exception $e) {
+            if (function_exists('error_log')) {
+                @error_log('[block_dash] COUNT ERROR: ' . $e->getMessage() . ' | sql=' . $sql);
+            }
+            // Fallback: try a direct COUNT(*) without a derived table.
+            $fallback = clone $base;
+            $fallback->set_selects(['count' => 'COUNT(*)']);
+            [$fsql, $fparams] = $fallback->get_sql_and_params();
+            if (function_exists('debugging')) {
+                debugging('[block_dash] FALLBACK COUNT SQL: ' . $fsql . ' | params=' . json_encode($fparams), DEBUG_DEVELOPER);
+            }
+            if (function_exists('error_log')) {
+                @error_log('[block_dash] FALLBACK COUNT SQL: ' . $fsql . ' | params=' . json_encode($fparams));
+            }
+            try {
+                $count = $DB->count_records_sql($fsql, $fparams);
+            } catch (\dml_exception $e2) {
+                if (function_exists('error_log')) {
+                    @error_log('[block_dash] FALLBACK COUNT ERROR: ' . $e2->getMessage() . ' | sql=' . $fsql);
+                }
+                throw $e2; // rethrow to surface the DB error.
+            }
+        }
         self::$lastcount = $count;
-
         return $count;
+    }
+
+    /**
+     * Get last built COUNT SQL (debugging aid).
+     * @return string|null
+     */
+    public static function get_last_count_sql() {
+        return self::$lastcountsql;
+    }
+
+    /**
+     * Get last built COUNT params (debugging aid).
+     * @return array
+     */
+    public static function get_last_count_params(): array {
+        return self::$lastcountparams;
     }
 }

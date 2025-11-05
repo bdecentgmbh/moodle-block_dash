@@ -255,7 +255,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 // Include the custom join for fields.
                 $fjoin = $field->get_field_join_sql();
                 if ($fjoin && (in_array($field->get_alias(), $visiblefields) || $field->is_force_join())) {
-                    $this->query->join_raw($fjoin, []);
+                    // Only accept proper join objects here; ignore raw strings.
+                    if ($fjoin instanceof \block_dash\local\dash_framework\query_builder\join) {
+                        $this->query->join_raw($fjoin);
+                    }
                 }
             }
 

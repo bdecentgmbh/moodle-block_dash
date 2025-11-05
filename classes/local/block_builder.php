@@ -155,8 +155,23 @@ class block_builder {
             $text .= $OUTPUT->render_from_template('block_dash/block', $data);
 
             if (is_siteadmin() && $supportsdebug && $CFG->debug > 0) {
+                // Main data SQL.
                 [$sql, $params] = $bb->get_configuration()->get_data_source()->get_query()->get_sql_and_params();
                 $text .= $renderer->render(new query_debug($sql, $params));
+
+                // Count SQL.
+                try {
+                    $countbuilder = $bb->get_configuration()->get_data_source()->get_query(true);
+                    // Trigger count build (and execution) to capture the built SQL and params for debugging.
+                    $countbuilder->count($bb->get_configuration()->get_data_source()->count_by_uniqueid());
+                    $countsql = \block_dash\local\dash_framework\query_builder\builder::get_last_count_sql();
+                    $countparams = \block_dash\local\dash_framework\query_builder\builder::get_last_count_params();
+                    if (!empty($countsql)) {
+                        $text .= $renderer->render(new query_debug($countsql, $countparams));
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore errors while building count; they will be raised by the main rendering flow as well.
+                }
             }
         } else {
             // @codingStandardsIgnoreStart
@@ -189,6 +204,7 @@ class block_builder {
      * @param \block_base $blockinstance
      * @return block_builder
      * @throws \coding_exception
+     * delete_me
      */
     public static function create(\block_base $blockinstance) {
         return new block_builder($blockinstance);

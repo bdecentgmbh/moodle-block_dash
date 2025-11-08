@@ -59,7 +59,6 @@ class category_image_url_attribute extends abstract_field_attribute {
 
         // Verify the category images are added for the category or the fallback image is uploaded then use that.
         if (isset($files[$data]) || isset($files[0])) {
-
             // Category imaage or fallback image.
             $file = $files[$data] ?? $files[0];
             // Generate the URL.
@@ -69,7 +68,8 @@ class category_image_url_attribute extends abstract_field_attribute {
                 $file->get_filearea(),
                 $file->get_itemid(),
                 $file->get_filepath(),
-                $file->get_filename(), false
+                $file->get_filename(),
+                false
             );
 
             return $fileurl->out(false);

@@ -101,7 +101,7 @@ class group_filter extends select_filter {
      * @throws \coding_exception|\dml_exception
      */
     public function get_sql_and_params() {
-        list($sql, $params) = parent::get_sql_and_params();
+        [$sql, $params] = parent::get_sql_and_params();
 
         if ($sql) {
             $sql = 'EXISTS (SELECT * FROM {groups_members} gm100 WHERE gm100.userid = u.id AND ' . $sql . ')';

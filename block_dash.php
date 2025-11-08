@@ -126,15 +126,23 @@ class block_dash extends block_base {
      * @return void
      */
     public function instance_config_save($data, $nolongerused = false) {
-       
+
         if (isset($data->backgroundimage)) {
-            file_save_draft_area_files($data->backgroundimage, $this->context->id, 'block_dash', 'images',
-                0, ['subdirs' => 0, 'maxfiles' => 1]);
+            file_save_draft_area_files(
+                $data->backgroundimage,
+                $this->context->id,
+                'block_dash',
+                'images',
+                0,
+                ['subdirs' => 0, 'maxfiles' => 1]
+            );
         }
-        
+
         if (isset($data->dash_configure_options) && isset($data->data_source_idnumber)) {
-            $datasource = data_source_factory::build_data_source($data->data_source_idnumber,
-                $this->context);
+            $datasource = data_source_factory::build_data_source(
+                $data->data_source_idnumber,
+                $this->context
+            );
             if ($datasource) {
                 if (method_exists($datasource, 'set_default_preferences')) {
                     $configpreferences = ['config_preferences' => []];
@@ -145,34 +153,31 @@ class block_dash extends block_base {
             unset($data->dash_configure_options);
         }
 
-
         // To do - move to learning path widget.
-        
+
         $learningpaths = [
             'desktop_learningpath',
             'tablet_learningpath',
             'mobile_learningpath',
         ];
 
-        
         if (!property_exists($data, 'parentblkcontextid')) {
             $data->orgparentblkcontextid = $this->context->id;
         }
 
         $syscontext = \context_system::instance();
         foreach ($learningpaths as $area) {
-           if (!empty($data->{$area})) {
-               file_save_draft_area_files(
+            if (!empty($data->{$area})) {
+                file_save_draft_area_files(
                     $data->{$area},
                     $syscontext->id,
                     'dashaddon_learningpath',
-                    'blk_' . $area, 
+                    'blk_' . $area,
                     $data->orgparentblkcontextid,
                     ['subdirs' => 0, 'maxfiles' => -1]
                 );
             }
         }
-
 
         parent::instance_config_save($data, $nolongerused);
     }
@@ -261,9 +266,11 @@ class block_dash extends block_base {
                 $hidewhenempty = $this->config->hide_when_empty;
             }
 
-            if ($datasource && $hidewhenempty && (($datasource->is_widget() && $datasource->is_empty())
+            if (
+                $datasource && $hidewhenempty && (($datasource->is_widget() && $datasource->is_empty())
                 || (!$datasource->is_widget() && $datasource->get_data()->is_empty()))
-                && !$this->page->user_is_editing()) {
+                && !$this->page->user_is_editing()
+            ) {
                 return $this->content;
             }
 
@@ -305,7 +312,6 @@ class block_dash extends block_base {
             foreach ($cssclasses as $class) {
                 $attributes['class'] .= ' ' . trim($class);
             }
-
         }
         if (isset($this->config->width)) {
             $attributes['class'] .= ' dash-block-width-' . $this->config->width;
@@ -348,8 +354,10 @@ class block_dash extends block_base {
 
         if ($this->get_background_image_url()) {
             if ($backgroundgradient) {
-                $blockcss[] = sprintf('background-image: %s, url(%s);',
-                    $backgroundgradient, $this->get_background_image_url()->out()
+                $blockcss[] = sprintf(
+                    'background-image: %s, url(%s);',
+                    $backgroundgradient,
+                    $this->get_background_image_url()->out()
                 );
             } else {
                 $blockcss[] = sprintf('background-image: url(%s);', $this->get_background_image_url());
@@ -486,7 +494,7 @@ class block_dash extends block_base {
             $info = \block_dash\local\data_source\data_source_factory::get_data_source_info($datasource);
             $type = $info['type'] ?? 'datasource';
 
-            switch($type) {
+            switch ($type) {
                 case 'datasource':
                     $hascapability = has_capability('block/dash:managedatasource', $this->context);
                     break;
@@ -497,7 +505,6 @@ class block_dash extends block_base {
                     $hascapability = $datasource::has_capbility($this->context);
                     break;
             }
-
         } else {
             $hascapability = true;
         }
@@ -597,7 +604,7 @@ class block_dash extends block_base {
      */
     public function restriction_bycohorts() {
         global $CFG, $USER;
-        require_once($CFG->dirroot.'/cohort/lib.php'); // Cohort library file inclusion.
+        require_once($CFG->dirroot . '/cohort/lib.php'); // Cohort library file inclusion.
 
         if (isset($this->config->restrict_cohorts) && is_array($this->config->restrict_cohorts)) {
             $cohorts = $this->config->restrict_cohorts;
@@ -647,7 +654,7 @@ class block_dash extends block_base {
                 }
             }
 
-            list($insql, $inparam) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'role');
+            [$insql, $inparam] = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'role');
 
             $contextsql = '';
             if (isset($this->config->restrict_rolecontext)) {
@@ -670,7 +677,6 @@ class block_dash extends block_base {
             // Records found user will have access otherwise restrict the user to view the dashboard.
             return count($records) > 0 ? true : false;
         }
-
     }
 
     /**
@@ -719,7 +725,7 @@ class block_dash extends block_base {
             $completion = new \completion_info($course);
 
             foreach ($completionoptions as $key => $status) {
-                switch($status) {
+                switch ($status) {
                     case 'notenrolled':
                         if (!is_enrolled($context, $USER->id) || isguestuser($USER->id)) {
                             return true;
@@ -731,8 +737,10 @@ class block_dash extends block_base {
                         }
                         break;
                     case 'inprogress':
-                        if (is_enrolled($context, $USER->id) && ($this->count_modules_completed($USER->id) != 0) &&
-                            !$completion->is_course_complete($USER->id)) {
+                        if (
+                            is_enrolled($context, $USER->id) && ($this->count_modules_completed($USER->id) != 0) &&
+                            !$completion->is_course_complete($USER->id)
+                        ) {
                             return true;
                         }
                         break;

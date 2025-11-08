@@ -44,14 +44,20 @@ class configuration extends abstract_configuration {
 
         $datasource = null;
         if (isset($blockinstance->config->data_source_idnumber)) {
-            if (!$datasource = data_source_factory::build_data_source($blockinstance->config->data_source_idnumber,
-                $parentcontext)) {
+            if (
+                !$datasource = data_source_factory::build_data_source(
+                    $blockinstance->config->data_source_idnumber,
+                    $parentcontext
+                )
+            ) {
                 return false;
             }
 
-            if (isset($blockinstance->config->preferences)
+            if (
+                isset($blockinstance->config->preferences)
                 && is_array($blockinstance->config->preferences)
-                && !empty($blockinstance->config->preferences)) {
+                && !empty($blockinstance->config->preferences)
+            ) {
                 $datasource->set_preferences($blockinstance->config->preferences);
             }
 

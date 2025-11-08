@@ -65,8 +65,12 @@ class standard_strategy implements data_strategy_interface {
                     $row->set_context(\context::instance_by_id($record->$name));
                 }
 
-                $row->add_data(new field($name, $fielddefinition->transform_data($record->$name, $fullrecord),
-                    $fielddefinition->get_visibility(), $fielddefinition->get_title()));
+                $row->add_data(new field(
+                    $name,
+                    $fielddefinition->transform_data($record->$name, $fullrecord),
+                    $fielddefinition->get_visibility(),
+                    $fielddefinition->get_title()
+                ));
             }
 
             $griddata->add_child_collection('rows', $row);

@@ -29,7 +29,7 @@ use html_writer;
 
 defined('MOODLE_INTERNAL') || die('No direct access');
 
-require_once($CFG->dirroot.'/lib/tablelib.php');
+require_once($CFG->dirroot . '/lib/tablelib.php');
 /**
  * List of groups table.
  */

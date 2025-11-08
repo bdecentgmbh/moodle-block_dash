@@ -24,7 +24,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-
     require_once("$CFG->dirroot/blocks/dash/lib.php");
 
     // Default high scores.
@@ -46,7 +45,7 @@ if ($ADMIN->fulltree) {
         get_string('cssclass_help', 'block_dash'),
         '',
         PARAM_TEXT
-        ));
+    ));
 
     $settings->add(new admin_setting_configselect(
         'block_dash/showheader',
@@ -57,7 +56,7 @@ if ($ADMIN->fulltree) {
             0 => get_string('hidden', 'block_dash'),
             1 => get_string('visible'),
         ]
-        ));
+    ));
 
     $settings->add(new admin_setting_configselect(
         'block_dash/hide_when_empty',
@@ -68,7 +67,7 @@ if ($ADMIN->fulltree) {
             0 => get_string('no'),
             1 => get_string('yes'),
         ]
-        ));
+    ));
 
     $settings->add(new admin_setting_configcheckbox(
         'block_dash/disableall',
@@ -87,32 +86,42 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext(
         'block_dash/suggestinterests',
         get_string('suggestinterests', 'block_dash'),
-        get_string('suggestinterests_desc', 'block_dash'), 0, PARAM_INT)
-    );
+        get_string('suggestinterests_desc', 'block_dash'),
+        0,
+        PARAM_INT
+    ));
 
     $settings->add(new admin_setting_configtext(
         'block_dash/suggestcohort',
         get_string('suggestcohort', 'block_dash'),
-        get_string('suggestcohort_desc', 'block_dash'), 0, PARAM_INT)
-    );
+        get_string('suggestcohort_desc', 'block_dash'),
+        0,
+        PARAM_INT
+    ));
 
     $settings->add(new admin_setting_configtext(
         'block_dash/suggestgroups',
         get_string('suggestgroups', 'block_dash'),
-        get_string('suggestgroups_desc', 'block_dash'), 0, PARAM_INT)
-    );
+        get_string('suggestgroups_desc', 'block_dash'),
+        0,
+        PARAM_INT
+    ));
 
     $users = block_dash_get_suggest_users();
     $settings->add(new admin_setting_configmultiselect(
         'block_dash/suggestusers',
         get_string('suggestusers', 'block_dash'),
-        get_string('suggestusers_desc', 'block_dash'), [], $users)
-    );
+        get_string('suggestusers_desc', 'block_dash'),
+        [],
+        $users
+    ));
 
     if ($ADMIN->fulltree) {// Category images.
-
-        $settings->add(new admin_setting_heading('block_dash_categoryimg', get_string('categoryimgheadingsub', 'block_dash'),
-        format_text(get_string('categoryimgdesc', 'block_dash'), FORMAT_MARKDOWN)));
+        $settings->add(new admin_setting_heading(
+            'block_dash_categoryimg',
+            get_string('categoryimgheadingsub', 'block_dash'),
+            format_text(get_string('categoryimgdesc', 'block_dash'), FORMAT_MARKDOWN)
+        ));
 
         $name = 'block_dash/categoryimgfallback';
         $title = get_string('categoryimgfallback', 'block_dash');
@@ -143,5 +152,4 @@ if ($ADMIN->fulltree) {
             module.enhance('#id_s_block_dash_suggestusers');
         });
     ");
-
 }

@@ -105,7 +105,6 @@ abstract class abstract_layout implements layout_interface, \templatable {
      * data source and data grid.
      */
     public function before_data() {
-
     }
 
     /**
@@ -115,7 +114,6 @@ abstract class abstract_layout implements layout_interface, \templatable {
      * @param data_collection_interface $datacollection
      */
     public function after_data(data_collection_interface $datacollection) {
-
     }
 
     /**
@@ -154,8 +152,12 @@ abstract class abstract_layout implements layout_interface, \templatable {
 
                     $title = $availablefield->get_table()->get_title();
 
-                    $icon = $OUTPUT->pix_icon('i/dragdrop', get_string('dragitem', 'block_dash'), 'moodle',
-                        ['class' => 'drag-handle']);
+                    $icon = $OUTPUT->pix_icon(
+                        'i/dragdrop',
+                        get_string('dragitem', 'block_dash'),
+                        'moodle',
+                        ['class' => 'drag-handle']
+                    );
                     $title = $icon . '<b>' . $title . '</b>: ' . $availablefield->get_title();
 
                     $totaratitle = block_dash_is_totara() ? $title : null;
@@ -167,8 +169,13 @@ abstract class abstract_layout implements layout_interface, \templatable {
                     ]);
                     $mform->setType($fieldname, PARAM_BOOL);
                 }
-                $mform->addGroup($group, 'available_fields', get_string('enabledfields', 'block_dash'),
-                    [''], false);
+                $mform->addGroup(
+                    $group,
+                    'available_fields',
+                    get_string('enabledfields', 'block_dash'),
+                    [''],
+                    false
+                );
 
                 $this->add_checkbox_toggleall(self::$currentgroupid, $form, $mform);
 
@@ -263,8 +270,10 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $templatedata['error'] .= $OUTPUT->notification($error, 'error');
             }
 
-            if (!$this->get_data_source()->supports_ajax_pagination() &&
-                $this->get_data_source()->get_paginator()->get_page_count() > 1) {
+            if (
+                !$this->get_data_source()->supports_ajax_pagination() &&
+                $this->get_data_source()->get_paginator()->get_page_count() > 1
+            ) {
                 $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()
                     ->get_paginator()
                     ->export_for_template($OUTPUT));
@@ -320,7 +329,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
             if ($fieldname && !is_array($fieldname) && isset($datacollection[$fieldname])) {
                 $datacollection->add_data(new field($newname, $datacollection[$fieldname], true));
             } else if ($fieldname && is_array($fieldname)) {
-                $value = array_map(function($field) use ($datacollection) {
+                $value = array_map(function ($field) use ($datacollection) {
                     return $datacollection[$field];
                 }, $fieldname);
                 $datacollection->add_data(new field($newname, implode(" ", $value), true));

@@ -98,7 +98,8 @@ class contacts_widget extends abstract_widget {
                                 AND m.useridfrom != ?
                                 AND mua.id is NULL
                             GROUP BY m.useridfrom';
-            $unreadcounts = $DB->get_records_sql($unreadcountssql,
+            $unreadcounts = $DB->get_records_sql(
+                $unreadcountssql,
                 [
                     $userid,
                     \core_message\api::MESSAGE_ACTION_READ,
@@ -117,7 +118,7 @@ class contacts_widget extends abstract_widget {
             $unreadcounts = $DB->get_records_sql($unreadcountssql, [$userid]);
         }
 
-        array_walk($contactslist, function($value) use ($unreadcounts, $PAGE) {
+        array_walk($contactslist, function ($value) use ($unreadcounts, $PAGE) {
             $muserid = (isset($value->id)) ? $value->id : $value->userid; // Totara support.
             $value->contacturl = new \moodle_url('/message/index.php', ['id' => $muserid]);
             $user = \core_user::get_user($muserid);
@@ -169,8 +170,12 @@ class contacts_widget extends abstract_widget {
         $userpicture = new \user_picture($user);
         $userpicture->size = 1; // Size f1.
         $user->profileimageurl = $userpicture->get_url($PAGE)->out(false);
-        $user->addcontacticon = $icon = $OUTPUT->pix_icon('t/addcontact', get_string('addtocontacts', 'block_dash'), 'moodle',
-        ['class' => 'drag-handle']);
+        $user->addcontacticon = $icon = $OUTPUT->pix_icon(
+            't/addcontact',
+            get_string('addtocontacts', 'block_dash'),
+            'moodle',
+            ['class' => 'drag-handle']
+        );
         return $user;
     }
 
@@ -181,14 +186,14 @@ class contacts_widget extends abstract_widget {
      */
     public function include_suggest_contacts() {
         global $USER, $DB, $CFG;
-        require_once($CFG->dirroot. '/cohort/lib.php');
+        require_once($CFG->dirroot . '/cohort/lib.php');
         $userid = $USER->id;
         // User interests.
         $interests = \core_tag_tag::get_item_tags_array('core', 'user', $userid);
         $intereststatus = get_config('block_dash', 'suggestinterests');
 
         if (!empty($interests) && $intereststatus) {
-            list($insql, $inparams) = $DB->get_in_or_equal($interests, SQL_PARAMS_NAMED, 'tg');
+            [$insql, $inparams] = $DB->get_in_or_equal($interests, SQL_PARAMS_NAMED, 'tg');
 
             $sql = "SELECT ti.*, tg.name, tg.rawname FROM {tag_instance} ti
             JOIN {tag} tg ON tg.id = ti.tagid
@@ -198,7 +203,6 @@ class contacts_widget extends abstract_widget {
 
         $suggestions = [];
         if (isset($lists) && !empty($lists)) {
-
             $i = 0;
             foreach ($lists as $list) {
                 $suggestiontext = get_string('suggestion:interest', 'block_dash', ['interest' => $list->name]);
@@ -224,7 +228,7 @@ class contacts_widget extends abstract_widget {
         $cohorts = array_column($usercohorts, 'id');
         $cohortstatus = get_config('block_dash', 'suggestcohort');
         if (!empty($cohorts) && $cohortstatus) {
-            list($insql, $inparams) = $DB->get_in_or_equal($cohorts, SQL_PARAMS_NAMED, 'ch');
+            [$insql, $inparams] = $DB->get_in_or_equal($cohorts, SQL_PARAMS_NAMED, 'ch');
             $sql = "SELECT cm.*, ch.name FROM {cohort_members} cm
                     JOIN {cohort} ch ON ch.id = cm.cohortid
                     WHERE cm.userid <> :userid AND cm.cohortid $insql";
@@ -233,8 +237,11 @@ class contacts_widget extends abstract_widget {
         if (isset($members) && !empty($members)) {
             $i = 0;
             foreach ($members as $member) {
-                $suggestiontext = get_string('suggestion:cohort', 'block_dash',
-                    ['cohort' => $member->name]);
+                $suggestiontext = get_string(
+                    'suggestion:cohort',
+                    'block_dash',
+                    ['cohort' => $member->name]
+                );
                 if (in_array($member->userid, array_keys($suggestions))) {
                     $suggestions[$member->userid]->suggestinfo[] = $suggestiontext;
                 } else {
@@ -277,7 +284,7 @@ class contacts_widget extends abstract_widget {
         $suggestusers = get_config('block_dash', 'suggestusers');
         $users = explode(',', $suggestusers);
         $suggestiontext = get_string('suggestion:users', 'block_dash');
-        $users = array_filter($users, function($value) {
+        $users = array_filter($users, function ($value) {
             return !is_null($value) && $value !== '';
         });
         if (!empty($users)) {
@@ -296,7 +303,7 @@ class contacts_widget extends abstract_widget {
             array_flip(array_column(\core_message\api::get_contacts($userid), 'userid'));
 
         $contactusers = array_keys($contactslist);
-        $suggestions = array_filter($suggestions, function($value) use ($contactusers) {
+        $suggestions = array_filter($suggestions, function ($value) use ($contactusers) {
             if (!in_array($value->id, $contactusers)) {
                 return $value;
             }
@@ -331,14 +338,14 @@ class contacts_widget extends abstract_widget {
      */
     public function load_groups($context, $args) {
         global $CFG;
-        require_once($CFG->dirroot.'/lib/grouplib.php');
+        require_once($CFG->dirroot . '/lib/grouplib.php');
         $contactuserid = (int) $args->contactuser;
 
         if (block_dash_is_totara()) {
             $table = new \block_dash\table\groups_totara($context->instanceid);
             $table->set_filterset($contactuserid);
         } else {
-            $filterset = new \block_dash\table\groups_filterset('dash-groups-'.$context->id);
+            $filterset = new \block_dash\table\groups_filterset('dash-groups-' . $context->id);
             $contactuser = new \core_table\local\filter\integer_filter('contactuser');
             $contactuser->add_filter_value($contactuserid);
             $filterset->add_filter($contactuser);

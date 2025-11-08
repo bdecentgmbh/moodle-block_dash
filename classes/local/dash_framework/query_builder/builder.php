@@ -189,8 +189,14 @@ class builder {
      * @param array $extraparameters Extra parameters used in join SQL.
      * @return $this
      */
-    public function join(string $table, string $alias, string $jointablefield, string $origintablefield,
-                         $jointype = join::TYPE_INNER_JOIN, array $extraparameters = []): builder {
+    public function join(
+        string $table,
+        string $alias,
+        string $jointablefield,
+        string $origintablefield,
+        $jointype = join::TYPE_INNER_JOIN,
+        array $extraparameters = []
+    ): builder {
         $this->joins[] = new join($table, $alias, $jointablefield, $origintablefield, $jointype, $extraparameters);
         return $this;
     }
@@ -241,8 +247,12 @@ class builder {
      *
      * @return where
      */
-    public function where(string $selector, array $values, string $operator = where::OPERATOR_EQUAL,
-        string $conjunctive = where::CONJUNCTIVE_OPERATOR_AND): where {
+    public function where(
+        string $selector,
+        array $values,
+        string $operator = where::OPERATOR_EQUAL,
+        string $conjunctive = where::CONJUNCTIVE_OPERATOR_AND
+    ): where {
         $where = new where($selector, $values, $operator, $conjunctive);
         $this->wheres[] = $where;
         return $where;
@@ -383,6 +393,14 @@ class builder {
      */
     protected function build_select(): string {
         $selects = [];
+
+        // Move the unique id to the first position.
+        if (array_key_exists('unique_id', $this->selects)) {
+            $uniqueid = $this->selects['unique_id'];
+            unset($this->selects['unique_id']);
+            $this->selects = array_merge(['unique_id' => $uniqueid], $this->selects);
+        }
+
         foreach ($this->selects as $alias => $select) {
             $selects[] = $select . ' AS ' . $alias;
         }
@@ -430,7 +448,6 @@ class builder {
         $sql = '';
 
         if (!empty($this->sqlctelist)) {
-
             foreach ($this->sqlctelist as $viewname => $fromsql) {
                 $sql .= $fromsql . ' ';
             }
@@ -504,9 +521,7 @@ class builder {
         $builder = clone $this;
 
         if ($isunique) {
-
             $builder->set_selects(['count' => 'COUNT(*)']);
-
         } else {
             $builder->set_selects(['count' => 'COUNT(DISTINCT ' . $this->tablealias . '.id)']);
         }
@@ -517,7 +532,6 @@ class builder {
         $countcachekey = md5($sql . serialize($params));
 
         if (self::$lastcount !== null) {
-
             // If count is already calculated, return it.
             if (self::$lastcountcachekey == $countcachekey) {
                 return self::$lastcount;
@@ -526,7 +540,8 @@ class builder {
 
         self::$lastcountcachekey = $countcachekey;
 
-        // Instead of count_records_sql we use get_field_sql to avoid non negative count exception due do the groupby in the datasource.
+        // Instead of count_records_sql we use get_field_sql to avoid non negative
+        // count exception due do the groupby in the datasource.
         $count = $DB->get_field_sql($sql, $params);
         $count = $count ?: 0;
 

@@ -153,7 +153,8 @@ class field_definition_factory implements field_definition_factory_interface {
             $fielddefinitioninfo['title'],
             isset($fielddefinitioninfo['visibility']) ? $fielddefinitioninfo['visibility'] :
                 field_definition_interface::VISIBILITY_VISIBLE,
-            isset($fielddefinitioninfo['options']) ? $fielddefinitioninfo['options'] : []);
+            isset($fielddefinitioninfo['options']) ? $fielddefinitioninfo['options'] : []
+        );
 
         if (isset($fielddefinitioninfo['tables'])) {
             $newfielddefinition->set_option('tables', $fielddefinitioninfo['tables']);
@@ -223,7 +224,6 @@ class field_definition_factory implements field_definition_factory_interface {
     public static function get_field_definition_options($fields) {
         $options = [];
         foreach ($fields as $field) {
-
             $title = $field->get_table()->get_table_name() . ': ' . $field->get_title();
 
             $options[$field->get_alias()] = $title;

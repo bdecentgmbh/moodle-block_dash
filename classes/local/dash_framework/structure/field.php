@@ -112,14 +112,18 @@ class field implements field_interface {
      * @param string $fieldjoinsql SQL for joins, if this field is a join field.
      * @param bool $forcejoin If true, the field will be joined even if it is not visible.
      */
-    public function __construct(string $name,
-                                lang_string $title,
-                                table $table,
-                                $select = null,
-                                array $attributes = [],
-                                $options = [],
-                                $visibility = self::VISIBILITY_VISIBLE,
-                                $sortselect = null, $fieldjoinsql = '', $forcejoin=false) {
+    public function __construct(
+        string $name,
+        lang_string $title,
+        table $table,
+        $select = null,
+        array $attributes = [],
+        $options = [],
+        $visibility = self::VISIBILITY_VISIBLE,
+        $sortselect = null,
+        $fieldjoinsql = '',
+        $forcejoin = false
+    ) {
         $this->name = $name;
         $this->title = $title;
         $this->table = $table;

@@ -36,8 +36,11 @@ function xmldb_block_dash_upgrade($oldversion) {
         foreach ($DB->get_records('block_instances', ['blockname' => 'dash']) as $record) {
             $instance = block_instance('dash', $record);
             if (isset($instance->config->data_source_idnumber)) {
-                $instance->config->data_source_idnumber = str_replace('block_dash\\', 'block_dash\\local\\',
-                    $instance->config->data_source_idnumber);
+                $instance->config->data_source_idnumber = str_replace(
+                    'block_dash\\',
+                    'block_dash\\local\\',
+                    $instance->config->data_source_idnumber
+                );
                 $instance->instance_config_save($instance->config);
             }
         }

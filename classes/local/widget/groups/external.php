@@ -44,8 +44,10 @@ class external extends external_api {
     public static function get_non_members_parameters() {
 
         return new \external_function_parameters([
-            'query' => new \external_value(PARAM_RAW,
-                'Query string (full or partial user full name or other details)'),
+            'query' => new \external_value(
+                PARAM_RAW,
+                'Query string (full or partial user full name or other details)'
+            ),
             'groupid' => new \external_value(PARAM_INT, 'group id (0 if none)'),
         ]);
     }
@@ -57,10 +59,11 @@ class external extends external_api {
      */
     public static function get_non_members_returns() {
         return new \external_multiple_structure(
-                new \external_single_structure([
+            new \external_single_structure([
                     'id' => new \external_value(PARAM_INT, 'User id'),
                     'fullname' => new \external_value(PARAM_RAW, 'Full name as text'),
-                ]));
+            ])
+        );
     }
 
     /**
@@ -97,7 +100,7 @@ class external extends external_api {
             foreach ($users as $role => $user) {
                 $list = array_merge($list, $user);
             }
-            array_walk($list, function(&$user) use ($potentialmembersselector) {
+            array_walk($list, function (&$user) use ($potentialmembersselector) {
                 $user = ['id' => $user->id, 'fullname' => fullname($user)];
             });
 

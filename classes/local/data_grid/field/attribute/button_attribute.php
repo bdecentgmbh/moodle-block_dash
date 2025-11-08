@@ -60,7 +60,6 @@ class button_attribute extends abstract_field_attribute {
             if ($labelfield = $this->get_option('label_field')) {
                 return $OUTPUT->single_button($data, $record->$labelfield, 'get', $params);
             }
-
         }
 
         return $data;
@@ -82,7 +81,7 @@ class button_attribute extends abstract_field_attribute {
      * @param string $customvalue
      * @return void
      */
-    public function set_transform_field($field, $customvalue=null) {
+    public function set_transform_field($field, $customvalue = null) {
         $this->set_option('label_field', $field);
 
         if ($customvalue !== null) {

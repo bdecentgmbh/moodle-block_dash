@@ -30,7 +30,6 @@ namespace block_dash\local\data_grid\field;
  * @package block_dash
  */
 interface field_definition_factory_interface {
-
     /**
      * Build and return a field definition based on unique identifier.
      *

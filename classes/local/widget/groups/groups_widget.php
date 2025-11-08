@@ -107,7 +107,7 @@ class groups_widget extends abstract_widget {
         static $jsincluded = false;
 
         $userid = $USER->id;
-        require_once($CFG->dirroot.'/lib/grouplib.php');
+        require_once($CFG->dirroot . '/lib/grouplib.php');
         require_once($CFG->dirroot . '/user/selector/lib.php');
 
         $context = $this->get_block_instance()->context;
@@ -115,7 +115,7 @@ class groups_widget extends abstract_widget {
 
         $mygroups = groups_get_my_groups();
 
-        array_walk($mygroups, function($group) use ($context) {
+        array_walk($mygroups, function ($group) use ($context) {
             $newgroup = groups_get_group($group->id);
             global $USER;
 
@@ -125,7 +125,10 @@ class groups_widget extends abstract_widget {
             }
             $conversation = (method_exists('\core_message\api', 'get_conversation_by_area'))
                 ? \core_message\api::get_conversation_by_area(
-                    'core_group', 'groups', $group->id, $coursecontext->id
+                    'core_group',
+                    'groups',
+                    $group->id,
+                    $coursecontext->id
                 ) : '';
 
             $group->name = format_string($group->name);
@@ -136,12 +139,12 @@ class groups_widget extends abstract_widget {
             $members = groups_get_members($group->id);
             unset($members[$USER->id]);
             if (count($members) > self::MEMBERSCOUNT) {
-                $group->membercount = "+".(count($members) - self::MEMBERSCOUNT);
+                $group->membercount = "+" . (count($members) - self::MEMBERSCOUNT);
                 $members = array_slice($members, 0, self::MEMBERSCOUNT);
             }
             $group->members = array_values($members);
 
-            array_walk($group->members, function($member) {
+            array_walk($group->members, function ($member) {
                 global $PAGE;
                 // Set the user picture data.
                 $userpicture = new \user_picture($member);
@@ -150,7 +153,6 @@ class groups_widget extends abstract_widget {
                 $member->fullname = fullname($member);
                 $member->profileurl = new \moodle_url('/user/profile.php', ['id' => $member->id]);
             });
-
         });
 
         $this->data = (!empty($mygroups)) ? [
@@ -181,14 +183,14 @@ class groups_widget extends abstract_widget {
      */
     public function viewmembers($context, $args) {
         global $CFG;
-        require_once($CFG->dirroot.'/lib/grouplib.php');
+        require_once($CFG->dirroot . '/lib/grouplib.php');
         $groupid = (int) $args->group;
 
         if (block_dash_is_totara()) {
             $table = new \block_dash\table\members_totara($context->instanceid);
             $table->set_filterset($groupid);
         } else {
-            $filterset = new \block_dash\table\members_filterset('dash-groups-'.$context->id);
+            $filterset = new \block_dash\table\members_filterset('dash-groups-' . $context->id);
             $group = new \core_table\local\filter\integer_filter('group');
             $group->add_filter_value($groupid);
             $filterset->add_filter($group);
@@ -232,8 +234,8 @@ class groups_widget extends abstract_widget {
     public function creategroup($context, $args) {
         global $CFG;
 
-        require_once($CFG->dirroot.'/lib/enrollib.php');
-        require_once($CFG->dirroot.'/blocks/dash/locallib.php');
+        require_once($CFG->dirroot . '/lib/enrollib.php');
+        require_once($CFG->dirroot . '/blocks/dash/locallib.php');
 
         $group = new \create_group();
         return $group->render();

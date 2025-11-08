@@ -30,7 +30,6 @@ namespace block_dash\local\data_source;
  * @package block_dash
  */
 interface data_source_factory_interface {
-
     /**
      * Build and return a data source based on unique identifier.
      *

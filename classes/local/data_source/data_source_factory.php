@@ -46,7 +46,6 @@ class data_source_factory implements data_source_factory_interface {
      */
     protected static function get_data_source_registry() {
         if (is_null(self::$datasourceregistry)) {
-
             self::$datasourceregistry = [];
             if ($pluginsfunction = get_plugins_with_function('register_data_sources')) {
                 foreach ($pluginsfunction as $plugintype => $plugins) {

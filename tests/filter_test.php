@@ -89,8 +89,10 @@ final class filter_test extends \advanced_testcase {
         $this->filtercollection->remove_filter($filter);
 
         $this->assertFalse($this->filtercollection->has_filters());
-        $this->assertFalse($this->filtercollection->remove_filter($filter),
-            'Ensure false is returend when filter was already removed.');
+        $this->assertFalse(
+            $this->filtercollection->remove_filter($filter),
+            'Ensure false is returend when filter was already removed.'
+        );
     }
 
     /**
@@ -121,7 +123,7 @@ final class filter_test extends \advanced_testcase {
     public function test_filter_sql_and_params_collection(): void {
         $this->assertTrue($this->filtercollection->apply_filter('filter1', 123));
 
-        list($sql, $params) = $this->filtercollection->get_sql_and_params();
+        [$sql, $params] = $this->filtercollection->get_sql_and_params();
         $this->assertEquals('table.fieldname = :param1', $sql[0], 'Ensure SQL is generated.');
         $this->assertEquals($params, ['param1' => 123], 'Ensure params are returned.');
     }

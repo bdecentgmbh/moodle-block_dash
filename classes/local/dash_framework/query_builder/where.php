@@ -147,8 +147,12 @@ class where {
      * @param string $operator
      * @param string $conjunctive
      */
-    public function __construct(string $selector, array $values, string $operator = self::OPERATOR_EQUAL,
-        string $conjunctive = self::CONJUNCTIVE_OPERATOR_AND) {
+    public function __construct(
+        string $selector,
+        array $values,
+        string $operator = self::OPERATOR_EQUAL,
+        string $conjunctive = self::CONJUNCTIVE_OPERATOR_AND
+    ) {
         $this->selector = $selector;
         $this->values = array_values($values);
         $this->operator = $operator;
@@ -235,13 +239,13 @@ class where {
                 break;
             case self::OPERATOR_LIKE:
                 $placeholder = self::get_param_name();
-                $sql = $DB->sql_like($this->selector, ':'.$placeholder);
-                $params[$placeholder] = isset($this->values[0]) ? '%'.$this->values[0].'%' : '';
+                $sql = $DB->sql_like($this->selector, ':' . $placeholder);
+                $params[$placeholder] = isset($this->values[0]) ? '%' . $this->values[0] . '%' : '';
                 break;
             case self::OPERATOR_NOT_LIKE:
                 $placeholder = self::get_param_name();
-                $sql = $DB->sql_like($this->selector, ':'.$placeholder, true, true, true);
-                $params[$placeholder] = isset($this->values[0]) ? '%'.$DB->sql_like_escape($this->values[0]).'%' : '';
+                $sql = $DB->sql_like($this->selector, ':' . $placeholder, true, true, true);
+                $params[$placeholder] = isset($this->values[0]) ? '%' . $DB->sql_like_escape($this->values[0]) . '%' : '';
                 break;
             default:
                 throw new invalid_operator_exception('', ['operator' => $this->operator]);

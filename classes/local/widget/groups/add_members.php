@@ -26,8 +26,8 @@ namespace block_dash\local\widget\groups;
 
 defined('MOODLE_INTERNAL') || die('No direct access');
 
-require_once($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot.'/lib/grouplib.php');
+require_once($CFG->dirroot . '/lib/formslib.php');
+require_once($CFG->dirroot . '/lib/grouplib.php');
 require_once($CFG->dirroot . '/user/selector/lib.php');
 
 /**

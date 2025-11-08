@@ -145,7 +145,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         }
 
         if ($help && !empty($helpid)) {
-            return ($stringmanager->string_exists($helpid['name'].'_help', $helpid['component'])) ? $helpid : [];
+            return ($stringmanager->string_exists($helpid['name'] . '_help', $helpid['component'])) ? $helpid : [];
         }
 
         return ($help) ? $helpid : $name;
@@ -202,7 +202,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         global $DB;
 
         if (is_null($this->query) || $count) {
-
             $visiblefields = [];
             $fields = $this->get_preferences('available_fields') ?? [];
             foreach ($fields as $fieldname => $preferences) {
@@ -218,14 +217,13 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             }
 
             if ($this->get_filter_collection() && $this->get_filter_collection()->has_filters()) {
-                list ($filtersql, $filterparams) = $this->get_filter_collection()->get_sql_and_params();
+                 [$filtersql, $filterparams] = $this->get_filter_collection()->get_sql_and_params();
                 $this->query->where_raw($filtersql[0], $filterparams);
             }
 
             $fields = $this->get_available_fields();
 
             foreach ($fields as $field) {
-
                 if (is_null($field->get_select())) {
                     continue;
                 }
@@ -286,7 +284,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 foreach ($additionaljoins as $additionaljoin) {
                     $this->query->join_raw($additionaljoin);
                 }
-
             }
 
             if ($this->get_layout()->supports_pagination()) {
@@ -311,7 +308,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             }
 
             if ($sorting = $this->get_sorting()) {
-
                 foreach ($sorting as $field => $direction) {
                     // Configured field is removed then remove the order.
                     if (is_null($this->get_field($field))) {
@@ -320,7 +316,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                     $this->query->orderby($this->get_field($field)->get_sort_select(), $direction);
                 }
             }
-
         }
 
         if ($count) {
@@ -517,8 +512,12 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if ($form->get_tab() == preferences_form::TAB_GENERAL) {
             $mform->addElement('static', 'data_source_name', get_string('datasource', 'block_dash'), $this->get_name());
 
-            $mform->addElement('select', 'config_preferences[layout]', get_string('layout', 'block_dash'),
-                layout_factory::get_layout_form_options());
+            $mform->addElement(
+                'select',
+                'config_preferences[layout]',
+                get_string('layout', 'block_dash'),
+                layout_factory::get_layout_form_options()
+            );
             $mform->setType('config_preferences[layout]', PARAM_TEXT);
         }
 
@@ -536,13 +535,20 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                 }
             }
 
-            $mform->addElement('select', 'config_preferences[default_sort]', get_string('defaultsortfield', 'block_dash'),
-                $sortablefields);
+            $mform->addElement(
+                'select',
+                'config_preferences[default_sort]',
+                get_string('defaultsortfield', 'block_dash'),
+                $sortablefields
+            );
             $mform->setType('config_preferences[default_sort]', PARAM_TEXT);
             $mform->addHelpButton('config_preferences[default_sort]', 'defaultsortfield', 'block_dash');
 
-            $mform->addElement('select', 'config_preferences[default_sort_direction]',
-                get_string('defaultsortdirection', 'block_dash'), [ 'asc' => 'ASC', 'desc' => 'DESC']
+            $mform->addElement(
+                'select',
+                'config_preferences[default_sort_direction]',
+                get_string('defaultsortdirection', 'block_dash'),
+                [ 'asc' => 'ASC', 'desc' => 'DESC']
             );
             $mform->setType('config_preferences[default_sort_direction]', PARAM_TEXT);
 
@@ -660,10 +666,10 @@ abstract class abstract_data_source implements data_source_interface, \templatab
      */
     public function get_sorted_fields() {
         if (is_null($this->sortedfields)) {
-            $fields = $this->get_available_fields();;
+            $fields = $this->get_available_fields();
+            ;
 
             if ($this->get_layout()->supports_field_visibility()) {
-
                 $sortedfields = [];
 
                 // First add the identifiers, in order, so they always come first in the query.
@@ -691,7 +697,6 @@ abstract class abstract_data_source implements data_source_interface, \templatab
 
                     $fields = $sortedfields;
                 }
-
             }
 
             $this->sortedfields = array_values($fields);

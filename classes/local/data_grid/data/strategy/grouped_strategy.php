@@ -54,8 +54,10 @@ class grouped_strategy implements data_strategy_interface {
      * @param field_interface $groupbyfielddefinition
      * @param field_interface $grouplabelfielddefinition
      */
-    public function __construct(field_interface $groupbyfielddefinition,
-                                field_interface $grouplabelfielddefinition) {
+    public function __construct(
+        field_interface $groupbyfielddefinition,
+        field_interface $grouplabelfielddefinition
+    ) {
         $this->groupbyfielddefinition = $groupbyfielddefinition;
         $this->grouplabelfielddefinition = $grouplabelfielddefinition;
     }
@@ -93,8 +95,12 @@ class grouped_strategy implements data_strategy_interface {
                     continue;
                 }
 
-                $row->add_data(new field($alias, $fielddefinition->transform_data($record->$alias, $fullrecord),
-                    $fielddefinition->get_visibility(), $fielddefinition->get_title()));
+                $row->add_data(new field(
+                    $alias,
+                    $fielddefinition->transform_data($record->$alias, $fullrecord),
+                    $fielddefinition->get_visibility(),
+                    $fielddefinition->get_title()
+                ));
             }
 
             if (!isset($sections[$groupby])) {

@@ -101,7 +101,6 @@ class grid_layout extends abstract_layout {
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
 
         if ($form->get_tab() == preferences_form::TAB_FIELDS) {
-
             // Hide the table.
             $mform->addElement('advcheckbox', 'config_preferences[hidetable]', get_string('hidetable', 'block_dash'));
             $mform->setType('config_preferences[hidetable]', PARAM_BOOL);
@@ -115,6 +114,5 @@ class grid_layout extends abstract_layout {
             $mform->setDefault('config_preferences[exportdata]', get_config('block_dash', 'exportdata'));
         }
         parent::build_preferences_form($form, $mform);
-
     }
 }

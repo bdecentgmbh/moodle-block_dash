@@ -80,12 +80,27 @@ class external extends external_api {
      * @throws \moodle_exception
      * @throws \restricted_context_exception
      */
-    public static function get_block_pagination($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
-        $pagelayout = '', $pagecontext = 0) {
+    public static function get_block_pagination(
+        $blockinstanceid,
+        $filterformdata,
+        $page,
+        $sortfield,
+        $sortdirection,
+        $pagelayout = '',
+        $pagecontext = 0
+    ) {
         global $PAGE, $DB, $OUTPUT, $SITE;
 
-        return self::get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
-            $pagelayout, $pagecontext, true);
+        return self::get_block_content(
+            $blockinstanceid,
+            $filterformdata,
+            $page,
+            $sortfield,
+            $sortdirection,
+            $pagelayout,
+            $pagecontext,
+            true
+        );
     }
 
     /**
@@ -134,8 +149,16 @@ class external extends external_api {
      * @throws \moodle_exception
      * @throws \restricted_context_exception
      */
-    public static function get_block_content($blockinstanceid, $filterformdata, $page, $sortfield, $sortdirection,
-        $pagelayout = '', $pagecontext = 0, $returnpagination = false) {
+    public static function get_block_content(
+        $blockinstanceid,
+        $filterformdata,
+        $page,
+        $sortfield,
+        $sortdirection,
+        $pagelayout = '',
+        $pagecontext = 0,
+        $returnpagination = false
+    ) {
         global $PAGE, $DB, $OUTPUT, $SITE;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
@@ -159,8 +182,11 @@ class external extends external_api {
         $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
         if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
-            if ($dashboard = \dashaddon_dashboard\model\dashboard::get_record(
-                    ['shortname' => $block->instance->defaultregion])) {
+            if (
+                $dashboard = \dashaddon_dashboard\model\dashboard::get_record(
+                    ['shortname' => $block->instance->defaultregion]
+                )
+            ) {
                 if ($dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC) {
                     $public = true;
                 }
@@ -169,7 +195,7 @@ class external extends external_api {
 
         if (!$public) {
             // Verify the block created for frontpage. and user not loggedin allow to access the block content.
-            list($unused, $course, $cm) = get_context_info_array($block->context->id);
+            [$unused, $course, $cm] = get_context_info_array($block->context->id);
             if (isset($course->id) && $course->id == $SITE->id && !isloggedin()) {
                 require_course_login($course);
                 $coursecontext = \context_course::instance($course->id);
@@ -208,8 +234,10 @@ class external extends external_api {
                     ->get_paginator()->export_for_template($OUTPUT))];
             }
 
-            if (get_class($datasource->get_layout()) == 'local_dash\layout\cards_layout' || $datasource->is_widget()
-                    && $datasource->supports_currentscript()) {
+            if (
+                get_class($datasource->get_layout()) == 'local_dash\layout\cards_layout' || $datasource->is_widget()
+                    && $datasource->supports_currentscript()
+            ) {
                 // Cloned from moodle lib\external\externalib.php 422.
                 // Hack alert: Set a default URL to stop the annoying debug.
                 $PAGE->set_url('/');
@@ -290,7 +318,7 @@ class external extends external_api {
         if (!empty($block->config)) {
             $config = clone($block->config);
         } else {
-            $config = new \stdClass;
+            $config = new \stdClass();
         }
 
         if (!isset($config->preferences)) {
@@ -303,8 +331,10 @@ class external extends external_api {
 
         if (isset($data['config_data_source_idnumber'])) {
             $config->data_source_idnumber = $data['config_data_source_idnumber'];
-            $datasource = data_source_factory::build_data_source($config->data_source_idnumber,
-                $context);
+            $datasource = data_source_factory::build_data_source(
+                $config->data_source_idnumber,
+                $context
+            );
             if ($datasource) {
                 if (method_exists($datasource, 'set_default_preferences')) {
                     $datasource->set_default_preferences($data);

@@ -21,13 +21,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
+define(['jquery', 'core/ajax', 'core/templates'], function ($, Ajax, Templates) {
 
     return /** @alias module:block_dash/group-user-selector */ {
 
-        processResults: function(selector, results) {
+        processResults: function (selector, results) {
             var users = [];
-            $.each(results, function(index, user) {
+            $.each(results, function (index, user) {
                 users.push({
                     value: user.id,
                     label: user._label
@@ -36,12 +36,12 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
             return users;
         },
 
-        transport: function(selector, query, success, failure) {
+        transport: function (selector, query, success, failure) {
             var promise;
 
             // Search within specific course if known and if the 'search within' dropdown is set
             // to search within course or activity.
-            var args = {query: query};
+            var args = { query: query };
 
             var groupid = $(selector).data('groupid');
             if (typeof groupid !== "undefined" && $('#id_searchwithin').val() !== '') {
@@ -51,22 +51,22 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
             }
 
             // Call AJAX request.
-            promise = Ajax.call([{methodname: 'block_dash_groups_get_non_members', args: args}]);
+            promise = Ajax.call([{ methodname: 'block_dash_groups_get_non_members', args: args }]);
 
             // When AJAX request returns, handle the results.
-            promise[0].then(function(results) {
+            promise[0].then(function (results) {
                 var promises = [];
 
                 // Render label with user name and picture.
-                $.each(results, function(index, user) {
+                $.each(results, function (index, user) {
                     promises.push(Templates.render('mod_assign/list_participant_user_summary', user));
                 });
 
                 // Apply the label to the results.
-                return $.when.apply($.when, promises).then(function() {
+                return $.when.apply($.when, promises).then(function () {
                     var args = arguments;
                     var i = 0;
-                    $.each(results, function(index, user) {
+                    $.each(results, function (index, user) {
                         user._label = args[i++];
                     });
                     success(results);

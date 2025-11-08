@@ -31,7 +31,7 @@ use block_dash\local\paginator;
 /**
  * widget layout definitions.
  */
-abstract class abstract_layout extends \block_dash\local\layout\abstract_layout  implements layout_interface, \templatable {
+abstract class abstract_layout extends \block_dash\local\layout\abstract_layout implements layout_interface, \templatable {
     /**
      * Get data for layout mustache template.
      *
@@ -60,7 +60,6 @@ abstract class abstract_layout extends \block_dash\local\layout\abstract_layout 
         if (!empty($this->get_data_source()->get_all_preferences())) {
             try {
                 $templatedata['data'] = $this->get_data_source()->get_widget_data();
-
             } catch (\Exception $e) {
                 $error = \html_writer::tag('p', get_string('databaseerror', 'block_dash'));
                 if (is_siteadmin()) {

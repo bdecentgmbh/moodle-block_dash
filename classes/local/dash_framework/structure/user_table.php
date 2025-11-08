@@ -75,8 +75,12 @@ class user_table extends table {
             new field('firstname', new lang_string('firstname'), $this),
             new field('lastname', new lang_string('lastname'), $this),
             new field('fullname', new lang_string('fullname'), $this, $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname'])),
-            new field('fullname_linked', new lang_string('fullnamelinked', 'block_dash'),
-                $this, $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']), [
+            new field(
+                'fullname_linked',
+                new lang_string('fullnamelinked', 'block_dash'),
+                $this,
+                $DB->sql_concat_join("' '", ['u.firstname', 'u.lastname']),
+                [
                     new moodle_url_attribute(['url' => new moodle_url('/user/profile.php', ['id' => 'u_id'])]),
                     new link_attribute(['label_field' => 'u_fullname_linked']),
                 ],
@@ -165,7 +169,10 @@ class user_table extends table {
                 new lang_string('customfield', 'block_dash', ['name' => format_string($customfield->name)]),
                 $this,
                 "profile.$name$i",
-                $profileattributes, [], field_interface::VISIBILITY_VISIBLE , '',
+                $profileattributes,
+                [],
+                field_interface::VISIBILITY_VISIBLE,
+                '',
             );
 
             $select[] = "MAX(CASE WHEN profile.fieldid = $customfield->id THEN profile.data END) AS $name$i";
@@ -174,7 +181,7 @@ class user_table extends table {
         }
 
         // Create one join with all profile fields.
-        $query = "SELECT ". implode(', ', $select) . " FROM {user_info_data} profile GROUP BY profile.userid";
+        $query = "SELECT " . implode(', ', $select) . " FROM {user_info_data} profile GROUP BY profile.userid";
         // Add the profile field join to the user table.
         $this->additionaljoins['profile'] = new join_raw(
             $query,

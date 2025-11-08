@@ -32,7 +32,6 @@ use MoodleQuickForm;
  * @package block_dash
  */
 interface filter_collection_interface {
-
     /**
      * Initialize all filters.
      */
@@ -177,5 +176,6 @@ interface filter_collection_interface {
         moodleform $form,
         MoodleQuickForm $mform,
         string $type = 'filter',
-        $fieldnameformat = 'filters[%s]'): void;
+        $fieldnameformat = 'filters[%s]'
+    ): void;
 }

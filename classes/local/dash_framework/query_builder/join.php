@@ -86,8 +86,14 @@ class join {
      * @param string $jointype SQL join type. See self::TYPE_*
      * @param array $extraparameters Extra parameters used in join SQL.
      */
-    public function __construct(string $table, string $alias, string $jointablefield, string $origintablefield,
-                                $jointype = self::TYPE_INNER_JOIN, array $extraparameters = []) {
+    public function __construct(
+        string $table,
+        string $alias,
+        string $jointablefield,
+        string $origintablefield,
+        $jointype = self::TYPE_INNER_JOIN,
+        array $extraparameters = []
+    ) {
         $this->table = $table;
         $this->alias = $alias;
         // Join table field.

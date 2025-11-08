@@ -36,7 +36,6 @@ use block_dash\local\layout\layout_interface;
  * @package block_dash
  */
 interface data_source_interface {
-
     /**
      * Get human readable name of data source.
      *

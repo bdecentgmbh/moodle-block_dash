@@ -71,6 +71,9 @@ class preferences_form extends \moodleform {
             $this->_customdata['tab'] = self::TABS[0];
         }
 
+        // Disable form change checker to prevent node missing errors when multiple widget/datasource blocks are added to a page.
+        $this->_form->disable_form_change_checker();
+
         $configuration = configuration::create_from_instance($block);
         if ($configuration->is_fully_configured()) {
             $configuration->get_data_source()->build_preferences_form($this, $this->_form);

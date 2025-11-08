@@ -249,7 +249,7 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $identifierselects = [];
             foreach ($this->get_available_fields() as $field) {
                 if ($field->has_attribute(identifier_attribute::class)) {
-                    $identifierselects[] = $field->get_select();
+                    $identifierselects[] = "COALESCE(" . $field->get_select() . ", '0')";
                 }
 
                 // Include the custom join for fields.
@@ -260,13 +260,18 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             }
 
             $concat = $DB->sql_concat_join("'-'", $identifierselects);
+
             if (count($identifierselects) > 1) {
+                // Quick FIX - DASH-1128
+                // In Some cases the still the same unique id is generated even with multiple identifiers.
+                // Add Distinct to ensure uniqueness. Still need to Include better way to generate unique ids.
+                // TO avoid the distinct for high volume data sets performance issues.
+                $concat = !$this->supports_ajax_pagination() ? 'DISTINCT ' . $concat : $concat;
                 $this->query->select($concat, 'unique_id');
             }
 
             // Include joins for tables.
             foreach ($this->get_tables() as $table) {
-
                 $sqlcte = $table->get_sql_cte();
                 if (!empty($sqlcte)) {
                     $this->query->set_sql_cte($sqlcte);

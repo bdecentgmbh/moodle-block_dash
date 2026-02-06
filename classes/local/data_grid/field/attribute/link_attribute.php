@@ -70,6 +70,15 @@ class link_attribute extends abstract_field_attribute {
     }
 
     /**
+     * Does the attribute support direct sql field name to construct the data without receiving the data to transform.
+     *
+     * @return bool
+     */
+    public function supports_direct_field() {
+        return true;
+    }
+
+    /**
      * Set the options before transform the data. this will usefull for dynamic field setup.
      *
      * @param string $field

@@ -153,6 +153,15 @@ abstract class abstract_field_attribute implements field_attribute_interface {
     }
 
     /**
+     * Does the attribute support direct sql field name to construct the data without receiving the data to transform.
+     *
+     * @return bool
+     */
+    public function supports_direct_field() {
+        return false;
+    }
+
+    /**
      * Set the custom data options to transform the data.
      *
      * @param mixed $field

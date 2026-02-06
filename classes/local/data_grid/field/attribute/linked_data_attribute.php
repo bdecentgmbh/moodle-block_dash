@@ -54,4 +54,38 @@ class linked_data_attribute extends abstract_field_attribute {
 
         return $data;
     }
+
+    /**
+     * Need custom value for transform data, which table uses the attribute dynamically.
+     *
+     * @return bool
+     */
+    public function is_needs_construct_data() {
+        return true;
+    }
+
+    /**
+     * Does the attribute support direct sql field name to construct the data without receiving the data to transform.
+     *
+     * @return bool
+     */
+    public function supports_direct_field() {
+        return true;
+    }
+
+    /**
+     * Set the options before transform the data. this will usefull for dynamic field setup.
+     *
+     * @param string $field
+     * @param string $customvalue
+     *
+     * @return void
+     */
+    public function set_transform_field($field, $customvalue = null) {
+        $this->set_option('label_field', $field);
+
+        if ($customvalue !== null) {
+            $this->set_option('url', new \moodle_url($customvalue));
+        }
+    }
 }

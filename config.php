@@ -22,11 +22,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// phpcs:disable moodle.Files.MoodleInternal.MoodleInternalNotNeeded
+// phpcs:disable moodle.Commenting.InlineComment.InvalidEndChar
+// phpcs:disable moodle.Files.RequireLogin.Missing
+
 defined('MOODLE_INTERNAL') || die();
 
-// Add the short name of the addons you want to disable.
+// Add the short name of the addons you want to disable to the $CFG->dashdisabledaddons array.
+// You can either modify this config file here or you can add the $CFG->dashdisabledaddons setting
+// Moodle core's config.php.
+//
 // Example: 'activity_completion' will disable 'dashaddon_activity_completion'.
 // Block Dash widgets like 'contacts', 'groups', or 'mylearning' are part of this list.
-$CFG->dashdisabledaddons = [
+//
+// $CFG->dashdisabledaddons = ['activity_completion'];
 
-];

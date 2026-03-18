@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die('No direct access');
 use core_table\dynamic as dynamic_table;
 use html_writer;
 
-require_once($CFG->dirroot.'/lib/tablelib.php');
+require_once($CFG->dirroot . '/lib/tablelib.php');
 
 /**
  * List of group memebers table.

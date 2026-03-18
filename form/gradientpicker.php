@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once('HTML/QuickForm/input.php');
-require_once($CFG->dirroot.'/lib/form/templatable_form_element.php');
-require_once($CFG->dirroot.'/lib/form/text.php');
+require_once($CFG->dirroot . '/lib/form/templatable_form_element.php');
+require_once($CFG->dirroot . '/lib/form/text.php');
 
 /**
  * Form element for color picker.
@@ -47,7 +47,7 @@ class moodlequickform_dashgradientpicker extends MoodleQuickForm_text implements
      * @param string $elementlabel (optional) Text field label.
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array.
      */
-    public function __construct($elementname=null, $elementlabel=null, $attributes=null) {
+    public function __construct($elementname = null, $elementlabel = null, $attributes = null) {
         parent::__construct($elementname, $elementlabel, $attributes);
         $this->setType('text');
 
@@ -56,7 +56,7 @@ class moodlequickform_dashgradientpicker extends MoodleQuickForm_text implements
         if (empty($class)) {
             $class = '';
         }
-        $this->updateAttributes(['class' => $class.' block_dash-form-gradient-picker']);
+        $this->updateAttributes(['class' => $class . ' block_dash-form-gradient-picker']);
     }
 
     /**
@@ -78,8 +78,7 @@ class moodlequickform_dashgradientpicker extends MoodleQuickForm_text implements
                         modes : ["linear-gradient", "solid"],
                     });
                 }
-            })'
-        );
+            })');
 
         return $context;
     }

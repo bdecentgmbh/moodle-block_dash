@@ -37,7 +37,6 @@ use moodle_exception;
  * @package block_dash
  */
 class block_builder {
-
     /**
      * @var configuration_interface
      */
@@ -79,15 +78,15 @@ class block_builder {
         if ($this->blockinstance->page->course->id != SITEID) {
             $format = course_get_format($this->blockinstance->page->course->id);
             $course = $format->get_course();
-            if (isset($this->blockinstance->config->data_source_idnumber) && $this->blockinstance->page->user_is_editing() &&
-                $this->blockinstance->config->data_source_idnumber == 'dashaddon_content\local\block_dash\content_customtype') {
+            if (
+                isset($this->blockinstance->config->data_source_idnumber) && $this->blockinstance->page->user_is_editing() &&
+                $this->blockinstance->config->data_source_idnumber == 'dashaddon_content\local\block_dash\content_customtype'
+            ) {
                 return true;
             }
         }
         return false;
     }
-
-
 
     /**
      * Get content object for block instance.
@@ -141,13 +140,19 @@ class block_builder {
             ];
 
             if (isset($this->blockinstance->config->header_content)) {
-                $data['header_content'] = format_text($this->blockinstance->config->header_content['text'],
-                        $this->blockinstance->config->header_content['format'], ['noclean' => true]);
+                $data['header_content'] = format_text(
+                    $this->blockinstance->config->header_content['text'],
+                    $this->blockinstance->config->header_content['format'],
+                    ['noclean' => true]
+                );
             }
 
             if (isset($this->blockinstance->config->footer_content)) {
-                $data['footer_content'] = format_text($this->blockinstance->config->footer_content['text'],
-                    $this->blockinstance->config->footer_content['format'], ['noclean' => true]);
+                $data['footer_content'] = format_text(
+                    $this->blockinstance->config->footer_content['text'],
+                    $this->blockinstance->config->footer_content['format'],
+                    ['noclean' => true]
+                );
             }
 
             $source->update_data_before_render($data);
@@ -163,14 +168,17 @@ class block_builder {
             // Ignore the phplint due to block class not allowed to include the PAGE global variable.
             if ($this->blockinstance->page->user_is_editing()) {
                 // @codingStandardsIgnoreEnd
-                require_once($CFG->dirroot.'/blocks/edit_form.php');
-                require_once($CFG->dirroot.'/blocks/dash/edit_form.php');
+                require_once($CFG->dirroot . '/blocks/edit_form.php');
+                require_once($CFG->dirroot . '/blocks/dash/edit_form.php');
 
-                $form = new \block_dash_featuresform(null, ['block' => $this->blockinstance->context]);
+                $form = new \block_dash\form\block_dash_featuresform(null, ['block' => $this->blockinstance->context]);
 
                 $desc = html_writer::tag('p', get_string('choosefeature', 'block_dash'));
-                $data['preloaded'] = html_writer::tag('div',
-                    $desc.$form->render(), ['class' => 'dash-configuration-form hide']);
+                $data['preloaded'] = html_writer::tag(
+                    'div',
+                    $desc . $form->render(),
+                    ['class' => 'dash-configuration-form hide']
+                );
                 $text .= $OUTPUT->render_from_template('block_dash/block', $data);
             } else {
                 $text .= \html_writer::tag('p', get_string('editthisblock', 'block_dash'));
@@ -193,5 +201,4 @@ class block_builder {
     public static function create(\block_base $blockinstance) {
         return new block_builder($blockinstance);
     }
-
 }

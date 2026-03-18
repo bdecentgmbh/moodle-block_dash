@@ -129,18 +129,34 @@ class users_data_source extends abstract_data_source {
 
         $filtercollection->add_filter(new group_filter('group', 'gm100.groupid'));
 
-        $filtercollection->add_filter(new user_field_filter('u_department', 'u.department', 'department',
-            get_string('department')));
-        $filtercollection->add_filter(new user_field_filter('u_institution', 'u.institution', 'institution',
-            get_string('institution')));
+        $filtercollection->add_filter(new user_field_filter(
+            'u_department',
+            'u.department',
+            'department',
+            get_string('department')
+        ));
+        $filtercollection->add_filter(new user_field_filter(
+            'u_institution',
+            'u.institution',
+            'institution',
+            get_string('institution')
+        ));
 
-        $filter = new date_filter('u_lastlogin', 'u.lastlogin', date_filter::DATE_FUNCTION_FLOOR,
-            get_string('lastlogin'));
+        $filter = new date_filter(
+            'u_lastlogin',
+            'u.lastlogin',
+            date_filter::DATE_FUNCTION_FLOOR,
+            get_string('lastlogin')
+        );
         $filter->set_operation(filter::OPERATION_GREATER_THAN_EQUAL);
         $filtercollection->add_filter($filter);
 
-        $filter = new date_filter('u_firstaccess', 'u.firstaccess', date_filter::DATE_FUNCTION_FLOOR,
-            get_string('firstaccess'));
+        $filter = new date_filter(
+            'u_firstaccess',
+            'u.firstaccess',
+            date_filter::DATE_FUNCTION_FLOOR,
+            get_string('firstaccess')
+        );
         $filter->set_operation(filter::OPERATION_GREATER_THAN_EQUAL);
         $filtercollection->add_filter($filter);
 
@@ -163,8 +179,12 @@ class users_data_source extends abstract_data_source {
                     $definitions[] = new bool_filter($alias, $select, $field->name);
                     break;
                 case 'datetime':
-                    $filtercollection->add_filter(new date_filter($alias, $select, date_filter::DATE_FUNCTION_FLOOR,
-                            $field->name));
+                    $filtercollection->add_filter(new date_filter(
+                        $alias,
+                        $select,
+                        date_filter::DATE_FUNCTION_FLOOR,
+                        $field->name
+                    ));
                     break;
                 case 'textarea':
                     break;

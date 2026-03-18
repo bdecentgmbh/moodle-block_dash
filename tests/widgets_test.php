@@ -164,14 +164,26 @@ final class widgets_test extends \advanced_testcase {
         self::getDataGenerator()->enrol_user($user->id, $this->course2->id);
         self::getDataGenerator()->enrol_user($user->id, $this->course3->id);
 
-        $assign = $this->getDataGenerator()->create_module('assign', ['course' => $this->course1->id],
-            ['completion' => 1]);
-        $data = $this->getDataGenerator()->create_module('data', ['course' => $this->course1->id],
-            ['completion' => 1]);
-        $this->getDataGenerator()->create_module('page', ['course' => $this->course1->id],
-            ['completion' => 1]);
-        $this->getDataGenerator()->create_module('page', ['course' => $this->course1->id],
-            ['completion' => 1]);
+        $assign = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $this->course1->id],
+            ['completion' => 1]
+        );
+        $data = $this->getDataGenerator()->create_module(
+            'data',
+            ['course' => $this->course1->id],
+            ['completion' => 1]
+        );
+        $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $this->course1->id],
+            ['completion' => 1]
+        );
+        $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $this->course1->id],
+            ['completion' => 1]
+        );
 
         // Mark two of them as completed for a user.
         $cmassign = get_coursemodule_from_id('assign', $assign->cmid);
@@ -194,7 +206,7 @@ final class widgets_test extends \advanced_testcase {
         $section = $endcourse->coursecontent[0];
 
         $this->assertEquals(3, count($data['courses']));
-        $this->assertNotFalse(stripos(end($data['courses'])->contacts, fullname($teacher)) );
+        $this->assertNotFalse(stripos(end($data['courses'])->contacts, fullname($teacher)));
         $this->assertEquals(4, count($endcourse->coursecontent[0]['modules']));
         $this->assertEquals(1, $firstmodule['completiondata']['state']);
         $this->assertEquals(2, $section['activitycompleted']);
@@ -217,10 +229,14 @@ final class widgets_test extends \advanced_testcase {
         \core_message\api::add_contact($this->users[1]->id, $this->users[4]->id);
 
         // Create some individual conversations.
-        $ic1 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-            [$this->users[1]->id, $this->users[2]->id]);
-        $ic2 = \core_message\api::create_conversation(\core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
-            [$this->users[1]->id, $this->users[3]->id]);
+        $ic1 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$this->users[1]->id, $this->users[2]->id]
+        );
+        $ic2 = \core_message\api::create_conversation(
+            \core_message\api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            [$this->users[1]->id, $this->users[3]->id]
+        );
 
         // Send some messages to individual conversations.
         $im1 = testhelper::send_fake_message_to_conversation($this->users[1], $ic1->id, 'Message 1');
@@ -253,7 +269,7 @@ final class widgets_test extends \advanced_testcase {
     public function test_mygroups(): void {
         global $CFG;
 
-        require_once($CFG->dirroot.'/group/lib.php');
+        require_once($CFG->dirroot . '/group/lib.php');
 
         role_assign(1, $this->users[1]->id, \context_system::instance()->id);
 
@@ -300,6 +316,5 @@ final class widgets_test extends \advanced_testcase {
 
         $this->assertEquals(0, $data['creategroup']);
         $this->assertEquals(0, $data['adduser']);
-
     }
 }

@@ -32,7 +32,6 @@ use lang_string;
  * @package block_dash
  */
 interface field_interface {
-
     /**
      * Visible to user.
      */

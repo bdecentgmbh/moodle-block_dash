@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(__DIR__.'/../../config.php');
+require(__DIR__ . '/../../config.php');
 require($CFG->dirroot . '/blocks/dash/locallib.php');
 
 if (!defined('AJAX_SCRIPT')) {
@@ -51,7 +51,7 @@ if ($sortfield) {
 }
 
 $bbdownload = block_builder::create($block);
-if (!$bbdownload->get_configuration()->get_data_source()->get_preferences('exportdata') ) {
+if (!$bbdownload->get_configuration()->get_data_source()->get_preferences('exportdata')) {
     return false;
 }
 
@@ -82,7 +82,7 @@ foreach ($fields as $key => $field) {
 $file = $bbdownload->get_configuration()->get_data_source()->get_name();
 $filename = $file . "_" . get_string('strdatasource', 'block_dash');
 
-$downloadtable = new block_dash_download_table('dash_downloadtable');
+$downloadtable = new \block_dash\form\block_dash_download_table('dash_downloadtable');
 
 // Define the columns and headers.
 $downloadtable->define_columns($columns);
@@ -94,7 +94,7 @@ $downloadtable->set_datasource($bbdownloadsource);
 
 $downloadtable->is_downloading($download, $filename);
 
-list($sql, $params) = $bbdownloadsource->get_query()->get_sql_and_params();
+[$sql, $params] = $bbdownloadsource->get_query()->get_sql_and_params();
 $downloadtable->set_data($sql, $params);
 
 $downloadtable->out(0, false);

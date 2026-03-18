@@ -33,7 +33,6 @@ use stdClass;
  * @package block_dash
  */
 abstract class abstract_field_attribute implements field_attribute_interface {
-
     /**
      * @var array
      */
@@ -150,6 +149,15 @@ abstract class abstract_field_attribute implements field_attribute_interface {
      * @return bool
      */
     public function is_needs_construct_data() {
+        return false;
+    }
+
+    /**
+     * Does the attribute support direct sql field name to construct the data without receiving the data to transform.
+     *
+     * @return bool
+     */
+    public function supports_direct_field() {
         return false;
     }
 

@@ -29,7 +29,6 @@ namespace block_dash\local\dash_framework\structure;
  * @package block_dash
  */
 interface table_interface {
-
     /**
      * Get human readable title for table.
      *

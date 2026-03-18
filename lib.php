@@ -386,7 +386,9 @@ function block_dash_disabled_addons_list() {
     // in Moodle's global config.php.
     //
     if (file_exists($CFG->dirroot . '/blocks/dash/config.php')) {
+        // phpcs:disable moodle.Files.RequireLogin.Missing
         require_once($CFG->dirroot . '/blocks/dash/config.php');
+        // phpcs:enable moodle.Files.RequireLogin.Missing
     }
 
     // Step 2: Pick disabled addons from the global variable, if it exists.
@@ -395,4 +397,3 @@ function block_dash_disabled_addons_list() {
     // Return the list.
     return $disabledaddons;
 }
-

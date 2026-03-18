@@ -376,15 +376,23 @@ function block_dash_visible_addons($id) {
  */
 function block_dash_disabled_addons_list() {
     global $CFG;
-    $disabledaddons = [];
 
-    // @codingStandardsIgnoreStart
+    // Step 1: If a plugin config is present within the plugin, require it.
+    // This step might not be necessary as the plugin's config.php might also be loaded already,
+    // but better be safe than sorry.
+    //
+    // Regardless if the plugin's config.php is already loaded or not, a definition of
+    // $CFG->dashdisabledaddons in that file will supersede a defition of $CFG->dashdisabledaddons
+    // in Moodle's global config.php.
+    //
     if (file_exists($CFG->dirroot . '/blocks/dash/config.php')) {
         require_once($CFG->dirroot . '/blocks/dash/config.php');
-        // @codingStandardsIgnoreEnd
-        // Fetch disabled addons from CFG.
-        $disabledaddons = isset($CFG->dashdisabledaddons) ? $CFG->dashdisabledaddons : [];
     }
 
+    // Step 2: Pick disabled addons from the global variable, if it exists.
+    $disabledaddons = isset($CFG->dashdisabledaddons) ? $CFG->dashdisabledaddons : [];
+
+    // Return the list.
     return $disabledaddons;
 }
+

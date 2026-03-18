@@ -24,7 +24,6 @@
 
 // phpcs:disable moodle.Files.MoodleInternal.MoodleInternalNotNeeded
 // phpcs:disable moodle.Commenting.InlineComment.InvalidEndChar
-// phpcs:disable moodle.Files.RequireLogin.Missing
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,4 +35,3 @@ defined('MOODLE_INTERNAL') || die();
 // Block Dash widgets like 'contacts', 'groups', or 'mylearning' are part of this list.
 //
 // $CFG->dashdisabledaddons = ['activity_completion'];
-

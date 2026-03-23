@@ -230,6 +230,11 @@ class external extends external_api {
             // ... Only need to send the pagination html.
             if ($returnpagination) {
                 $datasource->set_data_pagination();
+
+                if ($datasource->get_paginator()->get_page_count() <= 1) {
+                    return ['html' => ''];
+                }
+
                 return ['html' => $OUTPUT->render_from_template(paginator::TEMPLATE, $datasource
                     ->get_paginator()->export_for_template($OUTPUT))];
             }

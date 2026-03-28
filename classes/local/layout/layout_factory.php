@@ -83,13 +83,33 @@ class layout_factory implements layout_factory_interface {
     }
 
     /**
+     * Map old local_dash layout identifiers to new block_dash identifiers.
+     * @var array
+     */
+    private static $layoutmigrationmap = [
+        'local_dash\layout\cards_layout'         => 'block_dash\local\layout\cards_layout',
+        'local_dash\layout\cards_slider_layout'  => 'block_dash\local\layout\cards_slider_layout',
+        'local_dash\layout\cards_masonry_layout' => 'block_dash\local\layout\cards_masonry_layout',
+        'local_dash\layout\accordion_layout'     => 'block_dash\local\layout\accordion_layout',
+        'local_dash\layout\accordion_layout2'    => 'block_dash\local\layout\accordion_layout2',
+        'local_dash\layout\one_stat_layout'      => 'block_dash\local\layout\one_stat_layout',
+        'local_dash\layout\two_stat_layout'      => 'block_dash\local\layout\two_stat_layout',
+        'local_dash\layout\timeline_layout'      => 'block_dash\local\layout\timeline_layout',
+    ];
+
+    /**
      * Get layout object with datasource.
      *
      * @param string $identifier
      * @param data_source_interface $datasource
-     * @return data_source_interface
+     * @return layout_interface|null
      */
     public static function build_layout($identifier, data_source_interface $datasource) {
+        // Runtime fallback: remap old local_dash identifiers to block_dash.
+        if (!self::exists($identifier) && isset(self::$layoutmigrationmap[$identifier])) {
+            $identifier = self::$layoutmigrationmap[$identifier];
+        }
+
         if (!self::exists($identifier)) {
             return null;
         }
@@ -116,7 +136,25 @@ class layout_factory implements layout_factory_interface {
         $options = [];
 
         foreach (self::get_layout_registry() as $identifier => $layoutinfo) {
-            $options[$identifier] = $layoutinfo['name'];
+            if (!isset($layoutinfo['type']) || in_array($layoutinfo['type'], ['block', 'both'])) {
+                $options[$identifier] = $layoutinfo['name'];
+            }
+        }
+
+        return $options;
+    }
+    /**
+     * Get options array for details area custom content select form field.
+     *
+     * @return array
+     */
+    public static function get_details_area_form_options() {
+        $options = [];
+
+        foreach (self::get_layout_registry() as $identifier => $layoutinfo) {
+            if (isset($layoutinfo['type']) && in_array($layoutinfo['type'], ['detailsarea', 'both'])) {
+                $options[$identifier] = $layoutinfo['name'];
+            }
         }
 
         return $options;

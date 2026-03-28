@@ -525,7 +525,8 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             $layout->build_preferences_form($form, $mform);
         }
 
-        if ($form->get_tab() == preferences_form::TAB_FIELDS) {
+        if ($form->get_tab() == preferences_form::TAB_GENERAL && !$this->is_widget()) {
+            // Sort by, sort direction, limit and per-page are shown on the Layout tab.
             $mform->addElement('html', '<hr>');
 
             $sortablefields = [];

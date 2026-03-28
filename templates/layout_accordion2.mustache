@@ -1,0 +1,160 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_dash/layout_accordion2
+
+    Example context (json):
+    {
+        "sitefullname": "Moodle - 311",
+        "courseurl": "https://localhost/moodle/course/view.php?id=2"
+    }
+}}
+{{< block_dash/layout }}
+    {{$body}}
+        {{#bootstrap4}}
+            <div id="accordion-{{uniqueid}}" class="accordion-layout">
+                {{#data.sections}}
+                    <div class="card">
+                        <div class="card-header" id="heading-{{uniqueid}}-{{groupby}}">
+                            <a href="javascript:void(0);">
+                                <h5 class="mb-0 collapsed" {{datatoggle}}="collapse" {{datatarget}}="#collapse-{{uniqueid}}-{{groupby}}" aria-expanded="true" aria-controls="collapse-{{uniqueid}}-{{groupby}}">
+                                    {{{label}}}
+                                </h5>
+                            </a>
+                        </div>
+
+                        <div id="collapse-{{uniqueid}}-{{groupby}}" class="collapse" aria-labelledby="heading-{{uniqueid}}-{{groupby}}" {{dataparent}}="#accordion-{{uniqueid}}">
+                            <div class="card-body">
+                                {{#rows}}
+                                    <div class="card"
+                                        data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}"
+                                        data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                                        data-detailbody3="{{detailbody3}}" data-detailfooter="{{detailfooter}}"
+                                        data-detailfooterright="{{detailfooterright}}"
+                                        data-customcontent="{{customcontent}}">
+                                        <div class="card-body floating-details-show">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="icons-no-margin">
+                                                    {{#preferences.field1_icon}}
+                                                        {{{preferences.field1_icon}}}
+                                                    {{/preferences.field1_icon}}
+                                                    {{{field1}}}
+                                                </div>
+                                                <div class="icons-no-margin">
+                                                    {{#preferences.field2_icon}}
+                                                        {{{preferences.field2_icon}}}
+                                                    {{/preferences.field2_icon}}
+                                                    {{{field2}}}
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <div class="icons-no-margin">
+                                                    {{#preferences.field3_icon}}
+                                                        {{{preferences.field3_icon}}}
+                                                    {{/preferences.field3_icon}}
+                                                    {{{field3}}}
+                                                </div>
+                                                <div class="icons-no-margin">
+                                                    {{#preferences.field4_icon}}
+                                                        {{{preferences.field4_icon}}}
+                                                    {{/preferences.field4_icon}}
+                                                    {{{field4}}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{/rows}}
+                            </div>
+                        </div>
+                    </div>
+                {{/data.sections}}
+            </div>
+        {{/bootstrap4}}
+        {{#bootstrap3}}
+            <div class="panel-group" id="accordion-bs3-{{uniqueid}}" role="tablist" aria-multiselectable="true">
+                {{#data.sections}}
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="heading-{{uniqueid}}-{{groupby}}">
+                            <h4 class="panel-title">
+                                <a role="button" {{datatoggle}}="collapse" data-parent="#accordion-bs3-{{uniqueid}}" href="#collapse-{{uniqueid}}-{{groupby}}" aria-expanded="false" aria-controls="collapse-{{uniqueid}}-{{groupby}}">
+                                    {{{label}}}
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse-{{uniqueid}}-{{groupby}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{uniqueid}}-{{groupby}}">
+                            <div class="panel-body">
+                                {{#rows}}
+                                    <div class="panel"
+                                        data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}"
+                                        data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                                        data-detailbody3="{{detailbody3}}" data-detailfooter="{{detailfooter}}"
+                                        data-detailfooterright="{{detailfooterright}}"
+                                        data-customcontent="{{customcontent}}">
+                                        <div class="panel-body">
+                                            <div class="justify-content-between">
+                                                <div class="icons-no-margin pull-right">
+                                                    {{#preferences.field2_icon}}
+                                                        {{{preferences.field2_icon}}}
+                                                    {{/preferences.field2_icon}}
+                                                    {{{field2}}}
+                                                </div>
+                                                <div class="icons-no-margin">
+                                                    {{#preferences.field1_icon}}
+                                                        {{{preferences.field1_icon}}}
+                                                    {{/preferences.field1_icon}}
+                                                    {{{field1}}}
+                                                </div>
+                                            </div>
+                                            <div class="justify-content-between">
+                                                <div class="icons-no-margin pull-right">
+                                                    {{#preferences.field4_icon}}
+                                                        {{{preferences.field4_icon}}}
+                                                    {{/preferences.field4_icon}}
+                                                    {{{field4}}}
+                                                </div>
+                                                <div class="icons-no-margin">
+                                                    {{#preferences.field3_icon}}
+                                                        {{{preferences.field3_icon}}}
+                                                    {{/preferences.field3_icon}}
+                                                    {{{field3}}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{/rows}}
+                            </div>
+                        </div>
+                    </div>
+                {{/data.sections}}
+            </div>
+        {{/bootstrap3}}
+        {{#preferences.showdetailsarea}}
+            {{#js}}
+                require(['block_dash/details_area'], function(DetailsArea) {
+                    DetailsArea.init('#accordion-{{uniqueid}}, #accordion-bs3-{{uniqueid}}', {
+                        detailsBgColor: '{{preferences.details_bg_color}}',
+                        detailsTextColor: '{{preferences.details_text_color}}',
+                        rowSelector: '.card[data-detailheader], .panel[data-detailheader]',
+                        mode: '{{preferences.details_area_mode}}',
+                        detailsAreaSize: '{{preferences.details_area_size}}',
+                        customContentHeight: '{{preferences.details_custom_content_height}}'
+                    });
+                });
+            {{/js}}
+        {{/preferences.showdetailsarea}}
+    {{/body}}
+{{/ block_dash/layout }}

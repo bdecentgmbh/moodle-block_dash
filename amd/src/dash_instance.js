@@ -248,6 +248,19 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     this.loadAjaxPagination(); // Load pagination.
                     this.getBlockContentArea().html(response.html);
                     this.getBlockContentArea().css('opacity', 1);
+                    if (response.layoutclass) {
+                        let block = this.getRoot().closest('.block_dash');
+
+                        let classes = block.attr('class').split(' ');
+
+                        let filtered = classes.filter(function(cls) {
+                            return cls.indexOf('block_dash-local-layout-') !== 0;
+                        });
+
+                        block.attr('class', filtered.join(' '));
+
+                        block.addClass(response.layoutclass);
+                    }
                     this.initDatePickers();
                     this.initSelect2();
                     if (response.scripts) {

@@ -74,11 +74,11 @@ class moodlequickform_dashcolorpicker extends MoodleQuickForm_text implements te
         // Build loading icon.
         $icon = new pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', ['class' => 'loadingicon']);
         $icondata = $icon->export_for_template($output);
-        $iconoutput = $output->render_from_template('core/pix_icon', $icondata);
+        $iconoutputdata = $output->render_from_template('core/pix_icon', $icondata);
 
         // Get ID of the element.
         $id = $this->getAttribute('id');
-
+        $iconoutput = json_decode($iconoutputdata);
         // Add JS to append the color picker div before the element and initiate the color picker utility method.
         $PAGE->requires->js_amd_inline("
             var element = document.getElementById('$id');

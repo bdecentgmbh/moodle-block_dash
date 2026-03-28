@@ -48,7 +48,7 @@ abstract class abstract_layout extends \block_dash\local\layout\abstract_layout 
             'error' => '',
             'paginator' => '',
             'data' => null,
-            'uniqueid' => uniqid(),
+            'uniqueid' => $this->get_data_source()->get_block_instance()->instance->id,
             'is_totara' => block_dash_is_totara(),
             'bootstrap3' => get_config('block_dash', 'bootstrap_version') == 3,
             'bootstrap4' => get_config('block_dash', 'bootstrap_version') == 4,

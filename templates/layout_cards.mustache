@@ -1,0 +1,806 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_dash/layout_cards
+
+    Example context (json):
+    {
+        "sitefullname": "Moodle - 311",
+        "courseurl": "https://localhost/moodle/course/view.php?id=2"
+    }
+}}
+{{< block_dash/layout }}
+
+    {{$body}}
+        <div class="container-fluid p-0">
+            {{#bootstrap3}}
+                <div class="bootstrap3">
+                    <div class="row flex">
+                        {{^data.rows}}
+                            {{#noresult}}{{{noresult}}}{{/noresult}}
+                        {{/data.rows}}
+                        {{#data.rows}}
+                            <div class="col-12 col-sm-{{preferences.columns}} pb-4 flex {{#bgimageurl}}card-background{{/bgimageurl}}"
+                                {{#bgimageurl}} style="background-image:url('{{{bgimageurl}}}');" {{/bgimageurl}} >
+                                <div class="panel panel-default h-100">
+
+                                    {{#imageoverlay}}
+                                        <span class="badge badge-primary text-white card-img-top-overlay py1">{{{imageoverlay}}}</span>
+                                    {{/imageoverlay}}
+                                    {{#imageurl}}
+                                        {{{imageurl}}}
+                                    {{/imageurl}}
+                                    <div class="panel-body">
+                                        {{#subheading}}
+                                            <h6 class="card-title card-title-sub">{{{subheading}}}</h6>
+                                        {{/subheading}}
+                                        <h4 class="panel-title">{{{heading}}}</h4>
+                                        <p>
+                                            <div class="card-body-1">{{{body}}}</div>
+                                            <div class="card-body-2">{{{body2}}}</div>
+                                            <div class="card-body-3">{{{body3}}}</div>
+                                        </p>
+                                        <div class="footer-card">
+                                            {{#footerright}}
+                                                <small class="text-muted float-right card-footer-right">{{{footerright}}}</small>
+                                            {{/footerright}}
+                                            {{#footer}}
+                                                <small class="text-muted float-left card-footer-left">{{{footer}}}</small>
+                                            {{/footer}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{/data.rows}}
+                    </div>
+                </div>
+            {{/bootstrap3}}
+            {{#bootstrap4}}
+                <!-- <div class="row">-->
+                    {{#preferences.layout_default}}
+{{#preferences.masonrysearch}}
+    <div class="grid-searchbox mb-3">
+        <input type="text"
+               class="form-control grid-quicksearch-{{uniqueid}}"
+               placeholder="Search">
+    </div>
+{{/preferences.masonrysearch}}
+
+{{#preferences.masonrysort}}
+    <div class="btn-group grid-sorter-{{uniqueid}} mb-3" role="group">
+        <button type="button" class="btn btn-primary asc active">
+            {{#str}} strasc, block_dash{{/str}}
+        </button>
+        <button type="button" class="btn btn-primary desc">
+            {{#str}} strdesc, block_dash{{/str}}
+        </button>
+    </div>
+{{/preferences.masonrysort}}
+                        <div class="row grid-layout layout_base card-layout-{{uniqueid}} card-layout-default card-layout-row{{#preferences.columnsclass}} {{preferences.columnsclass}}{{/preferences.columnsclass}}{{#preferences.detailareaexpand}} expand-block{{/preferences.detailareaexpand}}
+                        {{#preferences.detailareafloating}} floating-block{{/preferences.detailareafloating}}{{#preferences.detailareamodal}} modal-block{{/preferences.detailareamodal}}{{#preferences.fitcontentdetailsarea}} fit-content{{/preferences.fitcontentdetailsarea}}
+                        {{#preferences.fitcarddetailsarea}} fit-card{{/preferences.fitcarddetailsarea}}">
+                            {{^data.rows}}
+                                {{#noresult}}{{{noresult}}}{{/noresult}}
+                            {{/data.rows}}
+                            {{#data.rows}}
+                                <div class="col-12 col-sm-{{preferences.columns}} card-block-parent card-block default {{stylingoptions}}" data-recordid="{{tablesort}}">
+                                    <div class="card-info" data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}" data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                                        data-detailbody3="{{detailbody3}}" data-detailfooterright="{{detailfooterright}}" data-detailfooter="{{detailfooter}}"
+                                        data-customcontent="{{customcontent}}">
+                                    </div>
+                                    <div class="card {{#bgimageurl}}card-background{{/bgimageurl}}"
+                                        {{#bgimageurl}} style="background-image:url('{{{bgimageurl}}}');" {{/bgimageurl}}>
+                                        {{#imageoverlay}}
+                                            <span class="badge badge-primary text-white card-img-top-overlay py1">{{{imageoverlay}}}</span>
+                                        {{/imageoverlay}}
+                                        {{#imageurl}}
+                                            {{{imageurl}}}
+                                        {{/imageurl}}
+                                        <div class="card-body">
+                                            {{#subheading}}
+                                                <h6 class="card-title card-title-sub">{{{subheading}}}</h6>
+                                            {{/subheading}}
+                                            <h4 class="card-title">{{{heading}}}</h4>
+                                            <div class="card-text">
+                                                <div class="card-body-1">{{{body}}}</div>
+                                                <div class="card-body-2">{{{body2}}}</div>
+                                                <div class="card-body-3">{{{body3}}}</div>
+                                            </div>
+                                            <div class="card-text card-footer">
+                                                {{#footerright}}
+                                                    <small class="float-right card-footer-right {{layoutmode}}">{{{footerright}}}</small>
+                                                {{/footerright}}
+                                                {{#footer}}
+                                                    <small class="float-left card-footer-left">{{{footer}}}</small>
+                                                {{/footer}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{#preferences.showdetailsarea}}
+                                        {{#preferences.fitcarddetailsarea}}
+                                            {{> block_dash/layouts_cards_detailarea}}
+                                        {{/preferences.fitcarddetailsarea}}
+                                    {{/preferences.showdetailsarea}}
+                                </div>
+                                {{#preferences.showdetailsarea}}
+                                    {{#preferences.fitcontentdetailsarea}}
+                                        {{> block_dash/layouts_cards_detailarea}}
+                                    {{/preferences.fitcontentdetailsarea}}
+                                {{/preferences.showdetailsarea}}
+                            {{/data.rows}}
+                        </div>
+                    {{/preferences.layout_default}}
+                    {{#preferences.layout_slider}}
+                    
+                        {{#preferences.masonrysearch}}
+                            <div class="slider-searchbox mb-3">
+                                <input type="text"
+                                       class="form-control slider-quicksearch-{{uniqueid}}"
+                                       placeholder="Search">
+                            </div>
+                        {{/preferences.masonrysearch}}
+                    
+                        {{#preferences.masonrysort}}
+                            <div class="btn-group slider-sorter-{{uniqueid}} mb-3" role="group">
+                                <button type="button" class="btn btn-primary asc active">
+                                    {{#str}} strasc, block_dash{{/str}}
+                                </button>
+                                <button type="button" class="btn btn-primary desc">
+                                    {{#str}} strdesc, block_dash{{/str}}
+                                </button>
+                            </div>
+                        {{/preferences.masonrysort}}
+                        <div class="layout_base card-layout-{{uniqueid}} card_layout_slider slider-{{uniqueid}} card-layout-row{{#preferences.detailareaexpand}} expand-block{{/preferences.detailareaexpand}}
+                        {{#preferences.detailareafloating}} floating-block{{/preferences.detailareafloating}}{{#preferences.detailareamodal}} modal-block{{/preferences.detailareamodal}}{{#preferences.fitcontentdetailsarea}} fit-content{{/preferences.fitcontentdetailsarea}}
+                        {{#preferences.fitcarddetailsarea}} fit-card{{/preferences.fitcarddetailsarea}} {{preferences.sliderclass}}">
+                            {{^data.rows}}
+                                {{#noresult}}{{{noresult}}}{{/noresult}}
+                            {{/data.rows}}
+                            {{#data.rows}}
+                                <div class="card-block slider {{stylingoptions}}" data-recordid="{{tablesort}}">
+                                    <div class="card-info"
+                                        data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}" data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                                        data-detailbody3="{{detailbody3}}" data-detailfooterright="{{detailfooterright}}" data-detailfooter="{{detailfooter}}"
+                                        data-customcontent="{{customcontent}}">
+                                    </div>
+                                    <div class="slider-card">
+                                        <div class="card {{#bgimageurl}}card-background{{/bgimageurl}}"
+                                            {{#bgimageurl}} style="background-image:url('{{{bgimageurl}}}');" {{/bgimageurl}}>
+                                            {{#imageoverlay}}
+                                                <span class="badge badge-primary text-white card-img-top-overlay py1">{{{imageoverlay}}}</span>
+                                            {{/imageoverlay}}
+                                            {{#imageurl}}
+                                                {{{imageurl}}}
+                                            {{/imageurl}}
+                                            <div class="card-body">
+                                                {{#subheading}}
+                                                    <h6 class="card-title card-title-sub">{{{subheading}}}</h6>
+                                                {{/subheading}}
+                                                <h4 class="card-title">{{{heading}}}</h4>
+                                                <div class="card-text">
+                                                    <div class="card-body-1">{{{body}}}</div>
+                                                    <div class="card-body-2">{{{body2}}}</div>
+                                                    <div class="card-body-3">{{{body3}}}</div>
+                                                </div>
+                                                <div class="card-text footer-card">
+                                                    {{#footerright}}
+                                                        <small class="float-right card-footer-right {{layoutmode}}">{{{footerright}}}</small>
+                                                    {{/footerright}}
+                                                    {{#footer}}
+                                                        <small class="float-left card-footer-left">{{{footer}}}</small>
+                                                    {{/footer}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{#preferences.showdetailsarea}}
+                                            {{#preferences.fitcarddetailsarea}}
+                                                {{> block_dash/layouts_cards_detailarea}}
+                                            {{/preferences.fitcarddetailsarea}}
+                                        {{/preferences.showdetailsarea}}
+                                    </div>
+                                    {{#preferences.showdetailsarea}}
+                                        {{#preferences.fitcontentdetailsarea}}
+                                            {{> block_dash/layouts_cards_detailarea}}
+                                        {{/preferences.fitcontentdetailsarea}}
+                                    {{/preferences.showdetailsarea}}
+                                </div>
+                            {{/data.rows}}
+                        </div>
+                    {{/preferences.layout_slider}}
+
+                    {{#preferences.layout_masonry}}
+                        {{#preferences.masonrysearch}}
+                        <div class="masonry-searchbox">
+                            <input type="text" name="masonry-searchbox" class="masonry-quicksearch-{{uniqueid}} form-control" size="40" placeholder="Search"/>
+                        </div>
+                        {{/preferences.masonrysearch}}
+
+                        {{#preferences.masonrysort}}
+                            <div id="masonry-sorter" class="btn-group masonry-sorter-{{uniqueid}}">
+                                <button class="btn btn-primary asc active" data-sort-value="number" data-sort-direction="asc"> {{#str}} strasc, block_dash{{/str}}</button>
+                                <button class="btn btn-primary desc" data-sort-value="number" data-sort-direction="desc"> {{#str}} strdesc, block_dash {{/str}}</button>
+                            </div>
+                        {{/preferences.masonrysort}}
+                        {{^data.rows}}
+                            {{#noresult}}{{{noresult}}}{{/noresult}}
+                        {{/data.rows}}
+                        <div class="layout_base card-layout-{{uniqueid}} card_layout_masonry card-layout-row{{#preferences.detailareaexpand}} expand-block{{/preferences.detailareaexpand}}
+                        {{#preferences.detailareafloating}} floating-block{{/preferences.detailareafloating}}{{#preferences.detailareamodal}} modal-block{{/preferences.detailareamodal}}{{#preferences.fitcontentdetailsarea}} fit-content{{/preferences.fitcontentdetailsarea}}
+                        {{#preferences.fitcarddetailsarea}} fit-card{{/preferences.fitcarddetailsarea}}">
+                            {{#data.rows}}
+                                <div class="card-block masonry filtr-item {{stylingoptions}}"
+                                data-recordid="{{tablesort}}">
+                                <div class="card-info" data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}" data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                                    data-detailbody3="{{detailbody3}}" data-detailfooterright="{{detailfooterright}}" data-detailfooter="{{detailfooter}}"
+                                    data-customcontent="{{customcontent}}">
+                                </div>
+                                    <div class="card {{#bgimageurl}}card-background{{/bgimageurl}}"
+                                        {{#bgimageurl}} style="background-image:url('{{{bgimageurl}}}');" {{/bgimageurl}}>
+                                        {{#imageoverlay}}
+                                            <span class="badge badge-primary text-white card-img-top-overlay py1">{{{imageoverlay}}}</span>
+                                        {{/imageoverlay}}
+                                        {{#imageurl}}
+                                            {{{imageurl}}}
+                                        {{/imageurl}}
+                                        <div class="card-body">
+                                            {{#subheading}}
+                                                <h6 class="card-title card-title-sub">{{{subheading}}}</h6>
+                                            {{/subheading}}
+                                            <h4 class="card-title">{{{heading}}}</h4>
+                                            <div class="card-text">
+                                                <div class="card-body-1">{{{body}}}</div>
+                                                <div class="card-body-2">{{{body2}}}</div>
+                                                <div class="card-body-3">{{{body3}}}</div>
+                                            </div>
+                                            <div class="card-text footer-card">
+                                                {{#footerright}}
+                                                    <small class="text-muted float-right card-footer-right {{layoutmode}}">{{{footerright}}}</small>
+                                                {{/footerright}}
+                                                {{#footer}}
+                                                    <small class="text-muted float-left card-footer-left">{{{footer}}}</small>
+                                                {{/footer}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{#preferences.showdetailsarea}}
+                                        {{> block_dash/layouts_cards_detailarea}}
+                                    {{/preferences.showdetailsarea}}
+                                </div>
+                            {{/data.rows}}
+                        </div>
+                    {{/preferences.layout_masonry}}
+
+                <!-- </div> -->
+            {{/bootstrap4}}
+        </div>
+    {{/body}}
+{{/ block_dash/layout }}
+
+{{#preferences.layout_masonry}}
+<script src="{{config.wwwroot}}/blocks/dash/js/isotope.js"></script>
+<script>
+    var qsRegex;
+    var grid = document.querySelector( '.card-layout-{{uniqueid}}' + '.card_layout_masonry');
+    var iso_{{uniqueid}} = new Isotope( grid, {
+        itemSelector: '.filtr-item',
+        masonry: {
+            columnWidth: 10
+        },
+        filter: function(element) {
+            if (element == 0 || element == null) {
+                element = this;
+            }
+            var text = element.textContent || element.innerText;
+            return (qsRegex && text != undefined) ? text.match(qsRegex) : true;
+        },
+        getSortData: {
+            number: '[data-recordid]',
+        }
+    });
+
+    var buttons = document.querySelectorAll('.masonry-sorter-{{uniqueid}} button');
+    var val = grid.closest(".masonry-sorter-{{uniqueid}} button");
+    var ascButton = document.querySelectorAll(".masonry-sorter-{{uniqueid}} button.asc")[0];
+    var descButton = document.querySelectorAll(".masonry-sorter-{{uniqueid}} button.desc")[0];
+    buttons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            ascButton.classList.remove('active');
+            descButton.classList.remove('active');
+            //button.previousElementSibling.classList.remove
+            button.classList.add('active');
+            / Get the element name to sort /
+            var sortValue = button.getAttribute('data-sort-value');
+
+            / Get the sorting direction: asc||desc /
+            var sortDirection = button.getAttribute('data-sort-direction');
+
+            / convert it to a boolean /
+            sortDirection = sortDirection == 'asc';
+
+            / pass it to isotope /
+            iso_{{uniqueid}}.arrange({ sortBy: sortValue, sortAscending: sortDirection });
+        });
+    });
+
+    // use value of search field to filter
+    var quicksearch = document.querySelector('.masonry-quicksearch-{{uniqueid}}');
+    if (quicksearch) {
+        // use value of search field to filter
+        quicksearch.addEventListener('keyup', debounce(function() {
+        qsRegex = new RegExp(quicksearch.value, 'gi');
+            iso_{{uniqueid}}.arrange();
+        }, 200));
+    }
+
+    var masonryMore = grid.querySelectorAll(".filtr-item .masonry-more");
+    if (masonryMore) {
+        masonryMore.forEach(function(moreItem) {
+            moreItem.addEventListener('click', function() {
+                iso_{{uniqueid}}.arrange();
+            });
+        });
+    }
+
+    // debounce so filtering doesn't happen every millisecond
+    function debounce(fn, threshold) {
+        var timeout;
+        threshold = threshold || 100;
+        return function debounced() {
+            clearTimeout(timeout);
+            var args = arguments;
+            var _this = this;
+            function delayed() {
+            fn.apply(_this, args);
+            }
+            timeout = setTimeout(delayed, threshold);
+        };
+    }
+
+</script>
+
+{{/preferences.layout_masonry}}
+
+
+{{#js}}
+require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events', 'core/templates', 'core/str',
+    'core/notification', 'block_dash/grid'],
+    function($, slick, Modal, ModalEvents, Templates, Str, Notification, Grid) {
+    {{#preferences.layout_default}}
+        {{#preferences.detailareaexpand}}
+            {{#preferences.fitcarddetailsarea}}
+                Grid.init("{{uniqueid}}", "{{preferences.columns}}");
+            {{/preferences.fitcarddetailsarea}}
+        {{/preferences.detailareaexpand}}
+    {{/preferences.layout_default}}
+
+
+    $(document).ready(function() {
+        {{#preferences.detailareafloating}}
+            var floatingParent = ".dash-block-content .card-layout-row.card-layout-{{uniqueid}}";
+            var floatingHideTimeout = null;
+            var floatingShowTimeout = null;
+            var floatingCurrentBlock = null;
+            var floatingPendingBlock = null;
+            var floatingIsVisible = false;
+
+            // Timing configuration (in milliseconds).
+            var SHOW_DELAY = 180;   // Delay before showing (prevents accidental triggers).
+            var HIDE_DELAY = 350;   // Delay before hiding (allows mouse to move to panel).
+
+            /**
+             * Hide ALL floating details in this layout - ensures only one is ever visible.
+             */
+            function hideAllFloatingDetails() {
+                // Remove all floating-details classes from all blocks.
+                $(".card-layout-{{uniqueid}} .card-block").removeClass("floating-details");
+                // Remove all show-detail classes from all details panels.
+                $(".card-layout-{{uniqueid}} .details-area-block").removeClass("show-detail");
+                // Remove related layout classes.
+                $(".card-layout-{{uniqueid}} .card-block").removeClass("block-n-float");
+                $(".card-layout-{{uniqueid}} .slick-slide").removeClass("float-slider-column slider-n-float");
+                $(".card-layout-{{uniqueid}}").removeClass("floating-card");
+            }
+
+            /**
+             * Actually show floating details for a card block (internal).
+             */
+            function doShowFloatingDetails($cardBlock) {
+                // If already showing for this block, nothing to do.
+                if (floatingCurrentBlock === $cardBlock[0] && floatingIsVisible) {
+                    return;
+                }
+
+                // ALWAYS hide ALL other details first - ensures only one visible at a time.
+                hideAllFloatingDetails();
+
+                floatingCurrentBlock = $cardBlock[0];
+                floatingIsVisible = true;
+
+                $cardBlock.closest('.layout_base').addClass("floating-card");
+
+                if ($cardBlock.closest('.layout_base').hasClass('fit-card')) {
+                    $cardBlock.addClass('floating-details');
+                    if ($cardBlock.hasClass('slider')) {
+                        $cardBlock.parents(".slick-slide").addClass("float-slider-column");
+                        $cardBlock.parents(".slick-slide").prevAll(".slick-active").addClass('slider-n-float');
+                    } else {
+                        $cardBlock.prevAll(".card-block").addClass('block-n-float');
+                    }
+                    $cardBlock.find(".card.details-area-block").addClass('show-detail');
+                } else {
+                    $cardBlock.addClass('floating-details');
+                    if ($cardBlock.hasClass('slider')) {
+                        $cardBlock.find(".card.details-area-block").addClass('show-detail');
+                    } else {
+                        {{#preferences.layout_default}}
+                            $cardBlock.next(".card.details-area-block").addClass('show-detail');
+                        {{/preferences.layout_default}}
+                    }
+
+                    if ($cardBlock.hasClass('masonry')) {
+                        {{#preferences.layout_masonry}}
+                            $cardBlock.find(".card.details-area-block").addClass('show-detail');
+                        {{/preferences.layout_masonry}}
+                    }
+                }
+            }
+
+            /**
+             * Actually hide floating details (internal).
+             */
+            function doHideFloatingDetails() {
+                // Use the cleanup function to ensure ALL details are hidden.
+                hideAllFloatingDetails();
+                floatingCurrentBlock = null;
+                floatingIsVisible = false;
+            }
+
+            /**
+             * Schedule showing with a small delay (debounce rapid movements).
+             */
+            function scheduleFloatingShow($cardBlock) {
+                // Cancel any pending hide.
+                clearTimeout(floatingHideTimeout);
+
+                // If already showing this block, nothing to do.
+                if (floatingCurrentBlock === $cardBlock[0] && floatingIsVisible) {
+                    return;
+                }
+
+                // Immediately hide any other visible block so two panels are never shown at once.
+                if (floatingIsVisible && floatingCurrentBlock && floatingCurrentBlock !== $cardBlock[0]) {
+                    hideAllFloatingDetails();
+                    floatingCurrentBlock = null;
+                    floatingIsVisible = false;
+                }
+
+                // If already pending show for same block, nothing to do.
+                if (floatingPendingBlock === $cardBlock[0]) {
+                    return;
+                }
+
+                // Cancel any previous pending show.
+                clearTimeout(floatingShowTimeout);
+                floatingPendingBlock = $cardBlock[0];
+
+                floatingShowTimeout = setTimeout(function() {
+                    // Only show if this block is still the pending one.
+                    if (floatingPendingBlock === $cardBlock[0]) {
+                        doShowFloatingDetails($cardBlock);
+                        floatingPendingBlock = null;
+                    }
+                }, SHOW_DELAY);
+            }
+
+            /**
+             * Schedule hide with delay to allow mouse to move to panel.
+             */
+            function scheduleFloatingHide() {
+                // Cancel any pending show.
+                clearTimeout(floatingShowTimeout);
+                floatingPendingBlock = null;
+
+                // Cancel any existing hide timeout.
+                clearTimeout(floatingHideTimeout);
+
+                floatingHideTimeout = setTimeout(function() {
+                    doHideFloatingDetails();
+                }, HIDE_DELAY);
+            }
+
+            /**
+             * Cancel all pending show/hide operations.
+             */
+            function cancelAllFloatingTimeouts() {
+                clearTimeout(floatingShowTimeout);
+                clearTimeout(floatingHideTimeout);
+                floatingPendingBlock = null;
+            }
+
+            /**
+             * Check if element is part of the current floating details (trigger or panel).
+             */
+            function isPartOfCurrentFloating(element) {
+                if (!element) {
+                    return false;
+                }
+                // Check against current block.
+                if (floatingCurrentBlock) {
+                    var $cardBlock = $(floatingCurrentBlock);
+                    if ($cardBlock[0] === element || $.contains($cardBlock[0], element)) {
+                        return true;
+                    }
+                    var $detailsPanel = $cardBlock.find(".details-area-block").add($cardBlock.next(".details-area-block"));
+                    for (var i = 0; i < $detailsPanel.length; i++) {
+                        if ($detailsPanel[i] === element || $.contains($detailsPanel[i], element)) {
+                            return true;
+                        }
+                    }
+                }
+                // Check against pending block.
+                if (floatingPendingBlock) {
+                    var $pendingBlock = $(floatingPendingBlock);
+                    if ($pendingBlock[0] === element || $.contains($pendingBlock[0], element)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // Mouseenter on trigger - schedule show with delay.
+            $(floatingParent).on('mouseenter', '[data-action="open-details-modal"]', function() {
+                cancelAllFloatingTimeouts();
+                var $cardBlock = $(this).closest('.card-block');
+                scheduleFloatingShow($cardBlock);
+            });
+
+            // Mouseleave on trigger - schedule hide unless moving to the panel.
+            $(floatingParent).on('mouseleave', '[data-action="open-details-modal"]', function(e) {
+                if (isPartOfCurrentFloating(e.relatedTarget)) {
+                    return;
+                }
+                scheduleFloatingHide();
+            });
+
+            // Mouseenter on details panel - cancel any pending hide.
+            $(floatingParent).on('mouseenter', '.details-area-block', function() {
+                cancelAllFloatingTimeouts();
+            });
+
+            // Mouseleave on details panel - schedule hide unless moving to trigger.
+            $(floatingParent).on('mouseleave', '.details-area-block', function(e) {
+                if (isPartOfCurrentFloating(e.relatedTarget)) {
+                    return;
+                }
+                scheduleFloatingHide();
+            });
+
+            // Also bind to card-block for better coverage.
+            $(floatingParent).on('mouseenter', '.card-block.floating-details', function() {
+                cancelAllFloatingTimeouts();
+            });
+
+            $(floatingParent).on('mouseleave', '.card-block.floating-details', function(e) {
+                if (isPartOfCurrentFloating(e.relatedTarget)) {
+                    return;
+                }
+                scheduleFloatingHide();
+            });
+        {{/preferences.detailareafloating}}
+        var layoutClickHandler = ".dash-block-content .card-layout-{{uniqueid}}.card-layout-row > div.card-block";
+        var layoutClickParent = ".dash-block-content .card-layout-{{uniqueid}}.card-layout-row";
+        $(layoutClickParent).on('click', '[data-action="open-details-modal"]', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $cardBlock = $(this).closest('.card-block');
+            {{#preferences.detailareaexpand}}
+                if ($cardBlock.hasClass('slider')) {
+                    if ($cardBlock.parents(".slick-slide").find(".card-block.slider").length > 1) {
+                        // Check the slick div inside more then one slider.
+                        if ($cardBlock.parents(".slick-slide").find(".card-block.slider").hasClass('expand-details') && !$cardBlock.hasClass('expand-details')) {
+                            $cardBlock.parents(".slick-slide").removeClass("expand-slider-column");
+                        }
+                    } else {
+                        $(".card-layout-{{uniqueid}} .slick-slide").not($cardBlock.parents(".slick-slide")).removeClass("expand-slider-column");
+                    }
+                    $(".card-layout-{{uniqueid}} .slick-slide .card-block").not($cardBlock).removeClass("expand-details");
+                    if (!$(".card-layout-{{uniqueid}} .slick-slide .card-block").hasClass('expand-details')) {
+                        $cardBlock.closest('.layout_base').addClass("expand-card");
+                    } else {
+                        $cardBlock.closest('.layout_base').removeClass("expand-card");
+                    }
+                } else {
+                    $(".card-layout-{{uniqueid}} > div.card-block").not($cardBlock).removeClass("expand-details");
+                    if (!$(layoutClickHandler).hasClass('expand-details')) {
+                        $cardBlock.closest('.layout_base').addClass("expand-card");
+                    } else {
+                        $cardBlock.closest('.layout_base').removeClass("expand-card");
+                    }
+                }
+                // Check the fit-card or not.
+                if ($cardBlock.closest('.layout_base').hasClass('fit-card')) {
+                    $cardBlock.toggleClass('expand-details');
+                    if ($cardBlock.hasClass('slider')) {
+                        $cardBlock.parents(".slick-slide").toggleClass("expand-slider-column");
+                        if ($(".card-layout-{{uniqueid}} .slick-slide .card-block").hasClass('expand-details')) {
+                            $(".card-layout-{{uniqueid}} .slick-slide.slick-active").removeClass("slider-n-expand");
+                        }
+                        $cardBlock.parents(".slick-slide").prevAll(".slick-active").toggleClass('slider-n-expand');
+                    } else {
+                        if ($(layoutClickHandler).hasClass('expand-details')) {
+                            $(".card-layout-{{uniqueid}} > div.card-block").removeClass("block-n-expand");
+                        }
+                        $cardBlock.prevAll().toggleClass('block-n-expand');
+                    }
+                    $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                    $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
+                } else {
+                    $cardBlock.toggleClass('expand-details');
+                    if ($cardBlock.hasClass('slider')) {
+                        $cardBlock.parents(".slick-slide").toggleClass("expand-slider-column");
+                        $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                        $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
+                    }  else {
+                        {{#preferences.layout_default}}
+                            $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($cardBlock.next(".details-area-block")).removeClass("show-detail");
+                            $cardBlock.next(".card.details-area-block").toggleClass('show-detail');
+                        {{/preferences.layout_default}}
+                    }
+
+                    if ($cardBlock.hasClass('masonry')) {
+                        {{#preferences.layout_masonry}}
+                            $(".card-layout-row.card-layout-{{uniqueid}}.expand-block .details-area-block").not($cardBlock.find(".details-area-block")).removeClass("show-detail");
+                            $cardBlock.find(".card.details-area-block").toggleClass('show-detail');
+                        {{/preferences.layout_masonry}}
+                    }
+                }
+
+                {{#preferences.layout_masonry}}
+                if (iso_{{uniqueid}}) {
+                    setTimeout(function() {
+                        iso_{{uniqueid}}.arrange();
+                    }, 150);
+                    setTimeout(function() {
+                        iso_{{uniqueid}}.arrange();
+                    }, 300);
+                    setTimeout(function() {
+                        iso_{{uniqueid}}.arrange();
+                    }, 500);
+                }
+                {{/preferences.layout_masonry}}
+            {{/preferences.detailareaexpand}}
+
+
+            {{#preferences.detailareamodal}}
+                var templatecontext = {
+                    detailheader: $cardBlock.find(".card-info").attr('data-detailheader'),
+                    detailheading: $cardBlock.find(".card-info").attr('data-detailheading'),
+                    detailbody: $cardBlock.find(".card-info").attr('data-detailbody'),
+                    detailbody2: $cardBlock.find(".card-info").attr('data-detailbody2'),
+                    detailbody3: $cardBlock.find(".card-info").attr('data-detailbody3'),
+                    detailfooter: $cardBlock.find(".card-info").attr('data-detailfooter'),
+                    detailfooterright: $cardBlock.find(".card-info").attr('data-detailfooterright'),
+                    customcontent: $cardBlock.find(".card-info").attr('data-customcontent') || '',
+                    details_bg_color: "{{preferences.details_bg_color}}",
+                    details_text_color: "{{preferences.details_text_color}}",
+                    detailmodal: "true"
+                };
+                Modal.create({
+                    title: Str.get_string('strinfo', 'block_dash'),
+                    type: Modal.types.CANCEL,
+                    body: Templates.render('block_dash/layouts_cards_detailarea', templatecontext),
+                    large: true,
+                }).then(modal => {
+                    modal.show();
+                    modal.getRoot().on(ModalEvents.hidden, function() {
+                        modal.destroy();
+                    }).catch(Notification.exception);
+                    return modal;
+                });
+            {{/preferences.detailareamodal}}
+
+            // Update URL hash to the detail-id so the URL is shareable.
+            {{#preferences.showdetailsarea}}
+                var detailId = $(this).attr('data-detail-id');
+                if (detailId && window.history && window.history.replaceState) {
+                    window.history.replaceState(null, '', '#' + detailId);
+                }
+            {{/preferences.showdetailsarea}}
+        });
+
+
+        {{#preferences.layout_slider}}
+            var sliderClass = ".card_layout_slider.slider-{{uniqueid}}";
+            $(sliderClass).slick(
+                {
+                    infinite: true,
+                    slidesToShow: {{preferences.slidesToShow}},
+                    slidesToScroll: {{preferences.slidesToScroll}},
+                    autoplay: {{preferences.autoplay}},
+                    autoplaySpeed: {{preferences.autoplaySpeed}},
+                    arrows: {{preferences.arrows}},
+                    prevArrow: '<button class="slick-prev" type="button" aria-label="{{#str}}previous, core{{/str}}">{{#str}}previous, core{{/str}}</button>',
+                    nextArrow: '<button class="slick-next" type="button" aria-label="{{#str}}next, core{{/str}}">{{#str}}next, core{{/str}}</button>',
+                    centerMode: {{preferences.centerMode}},
+                    centerPadding: '{{preferences.centerPadding}}px',
+                    dots: {{preferences.dots}},
+                    draggable: {{preferences.draggable}},
+                    fade: {{preferences.fade}},
+                    infinite: {{preferences.infinite}},
+                    rows: {{preferences.rows}},
+                    slidesPerRow: {{preferences.slidesPerRow}},
+                    speed: {{preferences.speed}},
+                    swipeToSlide: {{preferences.swipeToSlide}},
+                    variableWidth: {{preferences.variableWidth}},
+                    vertical: {{preferences.vertical}},
+                    verticalSwiping: {{preferences.verticalSwiping}},
+                    responsive: [
+                        {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 3,
+                            infinite: true,
+                            dots: true
+                        }
+                        },
+                        {
+                        breakpoint: 600,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 2
+                        }
+                        },
+                        {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                        }
+                    ]
+                }
+            );
+        {{/preferences.layout_slider}}
+
+        {{#preferences.layout_default}}
+            require(['block_dash/cards_filter_sort'], function(CardsFilterSort) {
+                CardsFilterSort.init('{{uniqueid}}');
+            });
+        {{/preferences.layout_default}}
+
+        {{#preferences.layout_slider}}
+            require(['block_dash/cards_filter_sort'], function(CardsFilterSort) {
+                CardsFilterSort.init('{{uniqueid}}');
+            });
+        {{/preferences.layout_slider}}
+
+        {{#preferences.layout_masonry}}
+            $('.card_layout_masonry .card-block .masonry-more a').click(function(){
+                $(this).closest('.card-block').toggleClass('show-content');
+            });
+        {{/preferences.layout_masonry}}
+    });
+
+    {{#preferences.showdetailsarea}}
+        // Initialise hash-based auto-open so shared URLs with #dash-detail-... fragments work.
+        require(['block_dash/details_area'], function(DetailsArea) {
+            DetailsArea.hashInit();
+        });
+    {{/preferences.showdetailsarea}}
+});
+{{/js}}

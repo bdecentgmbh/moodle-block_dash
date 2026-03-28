@@ -230,35 +230,31 @@ class external extends external_api {
             // ... Only need to send the pagination html.
             if ($returnpagination) {
                 $datasource->set_data_pagination();
-
-                if ($datasource->get_paginator()->get_page_count() <= 1) {
-                    return ['html' => ''];
-                }
-
                 return ['html' => $OUTPUT->render_from_template(paginator::TEMPLATE, $datasource
                     ->get_paginator()->export_for_template($OUTPUT))];
             }
 
-            if (
-                get_class($datasource->get_layout()) == 'local_dash\layout\cards_layout' || $datasource->is_widget()
-                    && $datasource->supports_currentscript()
-            ) {
-                // Cloned from moodle lib\external\externalib.php 422.
-                // Hack alert: Set a default URL to stop the annoying debug.
-                $PAGE->set_url('/');
-                // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
-                $OUTPUT->header();
+            // Cloned from moodle lib\external\externalib.php 422.
+            // Hack alert: Set a default URL to stop the annoying debug.
+            $PAGE->set_url('/');
+            // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
+            $OUTPUT->header();
 
-                $PAGE->start_collecting_javascript_requirements();
+            $PAGE->start_collecting_javascript_requirements();
 
-                $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
+            $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
 
-                $javascript = $PAGE->requires->get_end_code();
-            } else {
-                $datarendered = $renderer->render_data_source($bb->get_configuration()->get_data_source());
-                $javascript = '';
+            $javascript = $PAGE->requires->get_end_code();
+            $layout = '';
+            if (!empty($block->config->preferences['layout'])) {
+                $layout = str_replace('\\', '-', $block->config->preferences['layout']);
             }
-            return ['html' => $datarendered, 'scripts' => $javascript];
+
+            return [
+                'html' => $datarendered,
+                'scripts' => $javascript,
+                'layoutclass' => $layout
+            ];
         }
 
         return ['html' => 'Error', 'scripts' => ''];
@@ -273,10 +269,11 @@ class external extends external_api {
         return new \external_single_structure([
             'html' => new \external_value(PARAM_RAW),
             'scripts' => new \external_value(PARAM_RAW),
+            'layoutclass' => new \external_value(PARAM_TEXT, 'Layout class')
         ]);
     }
 
-    // Endregion.
+// Endregion.
 
     // Region submit_preferences_form.
 

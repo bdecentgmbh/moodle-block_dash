@@ -146,6 +146,14 @@ class behat_block_dash_generator extends behat_generator_base {
             $preferences['config_preferences']['perpage'] = (int)$data['perpage'];
         }
 
+        if (isset($data['details_area'])) {
+            $preferences['config_preferences']['details_area'] = $data['details_area'];
+        }
+
+        if (isset($data['details_custom_content'])) {
+            $preferences['config_preferences']['details_custom_content'] = $data['details_custom_content'];
+        }
+
         $config->preferences = $preferences['config_preferences'] ?? [];
 
         if (isset($data['title'])) {

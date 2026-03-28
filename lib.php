@@ -25,8 +25,14 @@
 use block_dash\local\data_source\categories_data_source;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
+use block_dash\local\layout\cards_layout;
+use block_dash\local\layout\cards_slider_layout;
+use block_dash\local\layout\cards_masonry_layout;
 use block_dash\local\layout\accordion_layout;
+use block_dash\local\layout\accordion_layout2;
 use block_dash\local\layout\one_stat_layout;
+use block_dash\local\layout\two_stat_layout;
+use block_dash\local\layout\timeline_layout;
 use block_dash\local\data_source\users_data_source;
 use block_dash\local\widget\mylearning\mylearning_widget;
 use block_dash\local\widget\groups\groups_widget;
@@ -77,6 +83,38 @@ function block_dash_register_layouts() {
         [
             'name' => get_string('layoutgrid', 'block_dash'),
             'identifier' => grid_layout::class,
+        ],
+        [
+            'name' => get_string('layoutcards', 'block_dash'),
+            'identifier' => cards_layout::class,
+        ],
+        [
+            'name' => get_string('layoutcards_slider', 'block_dash'),
+            'identifier' => cards_slider_layout::class,
+        ],
+        [
+            'name' => get_string('layoutcards_masonry', 'block_dash'),
+            'identifier' => cards_masonry_layout::class,
+        ],
+        [
+            'name' => get_string('layoutaccordion', 'block_dash'),
+            'identifier' => accordion_layout::class,
+        ],
+        [
+            'name' => get_string('layoutaccordion2', 'block_dash'),
+            'identifier' => accordion_layout2::class,
+        ],
+        [
+            'name' => get_string('layoutonestat', 'block_dash'),
+            'identifier' => one_stat_layout::class,
+        ],
+        [
+            'name' => get_string('layouttwostat', 'block_dash'),
+            'identifier' => two_stat_layout::class,
+        ],
+        [
+            'name' => get_string('layouttimeline', 'block_dash'),
+            'identifier' => timeline_layout::class,
         ],
     ];
 }
@@ -387,4 +425,31 @@ function block_dash_disabled_addons_list() {
     }
 
     return $disabledaddons;
+}
+
+/**
+ * Get card block column class.
+ *
+ * @param int $column
+ * @return string
+ */
+function block_dash_get_card_column_customclass($column) {
+    switch ($column) {
+        case 12:
+            return 'one-column-block';
+        case 6:
+            return 'two-column-block';
+        case 4:
+            return 'three-column-block';
+        case 3:
+            return 'four-column-block';
+        case 25:
+            return 'five-column-block';
+        case 2:
+            return 'six-column-block';
+        case 1:
+            return 'twelve-column-block';
+        default:
+            return '';
+    }
 }

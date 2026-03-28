@@ -149,6 +149,7 @@ class field implements field_interface {
      * @return mixed
      */
     final public function transform_data($data, \stdClass $record) {
+
         foreach ($this->attributes as $attribute) {
             $data = $attribute->transform_data($data, $record);
         }

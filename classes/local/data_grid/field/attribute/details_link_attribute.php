@@ -30,7 +30,6 @@ namespace block_dash\local\data_grid\field\attribute;
  * @package block_dash
  */
 class details_link_attribute extends abstract_field_attribute {
-
     /**
      * Transform the raw data into a stretched "Details" link element.
      *
@@ -71,27 +70,8 @@ class details_link_attribute extends abstract_field_attribute {
      */
     public static function build_detail_id(\stdClass $record, int $blockinstanceid = 0): string {
         $parts = ['b' . $blockinstanceid];
-        $hasrecordid = false;
-        /* if (!empty($record->c_id)) {
-            $parts[] = 'c' . (int) $record->c_id;
-            $hasrecordid = true;
-        }
-        if (!empty($record->u_id)) {
-            $parts[] = 'u' . (int) $record->u_id;
-            $hasrecordid = true;
-        }
-        if (!empty($record->cc_id)) {
-            $parts[] = 'cc' . (int) $record->cc_id;
-            $hasrecordid = true;
-        }
-        if (!empty($record->g_id)) {
-            $parts[] = 'g' . (int) $record->g_id;
-            $hasrecordid = true;
-        } */
-        if (!$hasrecordid) {
-            // Fallback: short hash from the record's scalar values.
-            $parts[] = 'r' . substr(md5(json_encode((array) $record)), 0, 8);
-        }
+        // Fallback: short hash from the record's scalar values.
+        $parts[] = 'r' . substr(md5(json_encode((array) $record)), 0, 8);
         return 'dash-detail-' . implode('-', $parts);
     }
 }

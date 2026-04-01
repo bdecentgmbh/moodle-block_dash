@@ -378,6 +378,8 @@
 {{#js}}
 require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events', 'core/templates', 'core/str',
     'core/notification', 'block_dash/grid'],
+    // eslint-disable-next-line no-unused-vars
+    /* eslint-disable no-multiple-empty-lines */
     function($, slick, Modal, ModalEvents, Templates, Str, Notification, Grid) {
     {{#preferences.layout_default}}
         {{#preferences.detailareaexpand}}
@@ -386,7 +388,6 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
             {{/preferences.fitcarddetailsarea}}
         {{/preferences.detailareaexpand}}
     {{/preferences.layout_default}}
-
 
     $(document).ready(function() {
         {{#preferences.detailareafloating}}
@@ -601,12 +602,12 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
                 scheduleFloatingHide();
             });
         {{/preferences.detailareafloating}}
-        var layoutClickHandler = ".dash-block-content .card-layout-{{uniqueid}}.card-layout-row > div.card-block";
+        var layoutClickHandler = ".dash-block-content .card-layout-{{uniqueid}}.card-layout-row > div.card-block"; // eslint-disable-line no-unused-vars
         var layoutClickParent = ".dash-block-content .card-layout-{{uniqueid}}.card-layout-row";
         $(layoutClickParent).on('click', '[data-action="open-details-modal"]', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            var $cardBlock = $(this).closest('.card-block');
+            var $cardBlock = $(this).closest('.card-block'); // eslint-disable-line no-unused-vars
             {{#preferences.detailareaexpand}}
                 if ($cardBlock.hasClass('slider')) {
                     if ($cardBlock.parents(".slick-slide").find(".card-block.slider").length > 1) {
@@ -683,8 +684,6 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
                 }
                 {{/preferences.layout_masonry}}
             {{/preferences.detailareaexpand}}
-
-
             {{#preferences.detailareamodal}}
                 var templatecontext = {
                     detailheader: $cardBlock.find(".card-info").attr('data-detailheader'),
@@ -721,8 +720,6 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
                 }
             {{/preferences.showdetailsarea}}
         });
-
-
         {{#preferences.layout_slider}}
             var sliderClass = ".card_layout_slider.slider-{{uniqueid}}";
             $(sliderClass).slick(
@@ -776,19 +773,16 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
                 }
             );
         {{/preferences.layout_slider}}
-
         {{#preferences.layout_default}}
             require(['block_dash/cards_filter_sort'], function(CardsFilterSort) {
                 CardsFilterSort.init('{{uniqueid}}');
             });
         {{/preferences.layout_default}}
-
         {{#preferences.layout_slider}}
             require(['block_dash/cards_filter_sort'], function(CardsFilterSort) {
                 CardsFilterSort.init('{{uniqueid}}');
             });
         {{/preferences.layout_slider}}
-
         {{#preferences.layout_masonry}}
             $('.card_layout_masonry .card-block .masonry-more a').click(function(){
                 $(this).closest('.card-block').toggleClass('show-content');

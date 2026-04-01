@@ -35,4 +35,11 @@
         <license>Apache</license>
         <licenseversion>2.0</licenseversion>
     </library>
+    <library>
+        <location>amd/src/slick.js</location>
+        <name>Slick Carousel</name>
+        <version>1.8.1</version>
+        <license>MIT</license>
+        <licenseversion>1.0</licenseversion>
+    </library>
 </libraries>

@@ -28,7 +28,6 @@ namespace block_dash\local\layout;
  * Cards slider layout: renders cards as a horizontal Slick slider.
  */
 class cards_slider_layout extends cards_layout {
-
     /**
      * Slider mode does not use pagination.
      *
@@ -60,12 +59,12 @@ class cards_slider_layout extends cards_layout {
         $mform->addElement('advcheckbox', 'config_preferences[masonrysearch]', get_string('strmasonrysearch', 'block_dash'));
         $mform->setType('config_preferences[masonrysearch]', PARAM_BOOL);
         $mform->setDefault('config_preferences[masonrysearch]', false);
-        
+
         // Sort.
         $mform->addElement('advcheckbox', 'config_preferences[masonrysort]', get_string('strmasonrysort', 'block_dash'));
         $mform->setType('config_preferences[masonrysort]', PARAM_BOOL);
         $mform->setDefault('config_preferences[masonrysort]', false);
-        // ---- Slider options ----
+        // Slider options.
         $mform->addElement('advcheckbox', 'config_preferences[autoplay]', get_string('autoplay', 'block_dash'));
         $mform->setType('config_preferences[autoplay]', PARAM_BOOL);
         $mform->addHelpButton('config_preferences[autoplay]', 'autoplay', 'block_dash');
@@ -166,42 +165,7 @@ class cards_slider_layout extends cards_layout {
         $mform->addHelpButton('config_preferences[verticalSwiping]', 'verticalSwiping', 'block_dash');
         $mform->setDefault('config_preferences[verticalSwiping]', false);
 
-        // ---- Styling options (CSS class fields from custom fields) ----
-        $options = [];
-        if (
-            in_array("dashaddon_courses\local\dash_framework\structure\course_table", array_map(
-                'get_class',
-                $this->get_data_source()->get_tables()
-            ))
-        ) {
-            if (class_exists('\core_course\customfield\course_handler')) {
-                $handler = \core_course\customfield\course_handler::create();
-                $fields = $handler->get_fields();
-                foreach ($fields as $field) {
-                    $alias = 'c_f_' . strtolower($field->get('shortname'));
-                    $options[$alias] = format_string($field->get_formatted_name());
-                }
-            }
-        } else if (
-            in_array("block_dash\local\dash_framework\structure\user_table", array_map(
-                'get_class',
-                $this->get_data_source()->get_tables()
-            ))
-        ) {
-            $fields = profile_get_custom_fields();
-            foreach ($fields as $field) {
-                $alias = 'u_pf_' . strtolower($field->shortname);
-                $options[$alias] = format_string($field->name);
-            }
-        }
-        $select = $mform->addElement(
-            'select',
-            'config_preferences[layoutstyles]',
-            get_string('styleoptions', 'block_dash'),
-            $options,
-            ['class' => 'select2-form']
-        );
-        $mform->addHelpButton('config_preferences[layoutstyles]', 'styleoptions', 'block_dash');
-        $select->setMultiple(true);
+        // Styling options (CSS class fields from custom fields).
+        $this->add_layout_styles_field($mform);
     }
 }

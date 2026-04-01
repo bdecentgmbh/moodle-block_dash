@@ -37,7 +37,6 @@ use block_dash\local\data_grid\field\attribute\details_link_attribute;
  * @package block_dash
  */
 class details_area_table extends table {
-
     /** @var string Table alias used for field prefixes. */
     const ALIAS = 'da';
 

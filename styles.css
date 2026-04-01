@@ -1189,8 +1189,10 @@ tr.dash-details-expanded {
     width: 100%;
     display: flex;
 }
-.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item:has(.dash-details-floating-panel) .floating-details-show,
-.block_dash-local-layout-two_stat_layout .dash-details-enabled.dash-details-size-like-item:has(.dash-details-floating-panel) .floating-details-show {
+.block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item:has(.dash-details-floating-panel)
+.floating-details-show,
+.block_dash-local-layout-two_stat_layout .dash-details-enabled.dash-details-size-like-item:has(.dash-details-floating-panel)
+.floating-details-show {
     width: 42%;
 }
 .block_dash-local-layout-one_stat_layout .dash-details-enabled.dash-details-size-like-item .dash-details-expand-panel,
@@ -1244,7 +1246,8 @@ tr.dash-details-expanded {
 .dash-table tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-content {
     border-radius: 5px;
 }
-.accordion-layout .dash-table tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-content.dash-details-expand-content {
+.accordion-layout .dash-table tr.dash-details-expand-row.dash-details-size-fit-content
+.dash-details-expand-content.dash-details-expand-content {
     width: 100%;
 }
 .dash-table tr.dash-details-expand-row.dash-details-size-fit-content .dash-details-expand-content.dash-details-expand-content {
@@ -1491,13 +1494,12 @@ tr.dash-details-expanded {
     left: -1px;
 }
 .dash-block-content .timeline:before {
-    top: 0;
-    bottom: 0;
-    position: absolute;
     content: " ";
     width: 3px;
     background-color: #eee;
+    position: absolute;
     top: 16px;
+    bottom: 0;
     left: 50%;
     margin-left: -1.5px;
 }
@@ -1506,7 +1508,7 @@ tr.dash-details-expanded {
     margin-bottom: 20px;
     position: relative;
 }
-.dash-block-content .timeline li:last-child{
+.dash-block-content .timeline li:last-child {
     margin-bottom: 0;
 }
 .dash-block-content .timeline:not(:has(.dash-details-expanded)) li,
@@ -2340,7 +2342,8 @@ tr.dash-details-expanded {
 .block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide .card-block.floating-details .slider-card {
     margin-bottom: 0;
 }
-.block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide .card-block.expand-details .details-area-block {
+.block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide
+.card-block.expand-details .details-area-block {
     width: 100%;
 }
 .block_dash .dash-block-content .card_layout_slider.fit-content .slick-list .slick-slide

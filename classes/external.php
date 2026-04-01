@@ -253,7 +253,7 @@ class external extends external_api {
             return [
                 'html' => $datarendered,
                 'scripts' => $javascript,
-                'layoutclass' => $layout
+                'layoutclass' => $layout,
             ];
         }
 
@@ -269,11 +269,11 @@ class external extends external_api {
         return new \external_single_structure([
             'html' => new \external_value(PARAM_RAW),
             'scripts' => new \external_value(PARAM_RAW),
-            'layoutclass' => new \external_value(PARAM_TEXT, 'Layout class')
+            'layoutclass' => new \external_value(PARAM_TEXT, 'Layout class'),
         ]);
     }
 
-// Endregion.
+    // Endregion.
 
     // Region submit_preferences_form.
 

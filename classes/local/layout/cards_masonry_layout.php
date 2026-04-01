@@ -28,7 +28,6 @@ namespace block_dash\local\layout;
  * Cards masonry layout: renders cards in a Masonry grid arrangement.
  */
 class cards_masonry_layout extends cards_layout {
-
     /**
      * Masonry mode does not use pagination.
      *
@@ -56,7 +55,7 @@ class cards_masonry_layout extends cards_layout {
      * @param \MoodleQuickForm $mform
      */
     protected function build_tab_general(\moodleform $form, \MoodleQuickForm $mform) {
-        // ---- Masonry options ----
+        // Masonry options.
 
         // Search box toggle.
         $mform->addElement('advcheckbox', 'config_preferences[masonrysearch]', get_string('strmasonrysearch', 'block_dash'));
@@ -68,42 +67,7 @@ class cards_masonry_layout extends cards_layout {
         $mform->setType('config_preferences[masonrysort]', PARAM_BOOL);
         $mform->setDefault('config_preferences[masonrysort]', false);
 
-        // ---- Styling options (CSS class fields from custom fields) ----
-        $options = [];
-        if (
-            in_array("dashaddon_courses\local\dash_framework\structure\course_table", array_map(
-                'get_class',
-                $this->get_data_source()->get_tables()
-            ))
-        ) {
-            if (class_exists('\core_course\customfield\course_handler')) {
-                $handler = \core_course\customfield\course_handler::create();
-                $fields = $handler->get_fields();
-                foreach ($fields as $field) {
-                    $alias = 'c_f_' . strtolower($field->get('shortname'));
-                    $options[$alias] = format_string($field->get_formatted_name());
-                }
-            }
-        } else if (
-            in_array("block_dash\local\dash_framework\structure\user_table", array_map(
-                'get_class',
-                $this->get_data_source()->get_tables()
-            ))
-        ) {
-            $fields = profile_get_custom_fields();
-            foreach ($fields as $field) {
-                $alias = 'u_pf_' . strtolower($field->shortname);
-                $options[$alias] = format_string($field->name);
-            }
-        }
-        $select = $mform->addElement(
-            'select',
-            'config_preferences[layoutstyles]',
-            get_string('styleoptions', 'block_dash'),
-            $options,
-            ['class' => 'select2-form']
-        );
-        $mform->addHelpButton('config_preferences[layoutstyles]', 'styleoptions', 'block_dash');
-        $select->setMultiple(true);
+        // Styling options (CSS class fields from custom fields).
+        $this->add_layout_styles_field($mform);
     }
 }

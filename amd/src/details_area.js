@@ -33,6 +33,7 @@ define([
 ], function($, Modal, ModalEvents, Templates, Str, Notification) {
 
     /** Track which containers have been initialised to prevent double-bind. */
+    // eslint-disable-next-line no-unused-vars
     var initialisedContainers = {};
 
     /** Whether page-level hash handlers have been bound (idempotent guard). */
@@ -312,10 +313,8 @@ define([
                     '<div class="dash-details-expand-content">' + html + '</div>' +
                     '</div>');
             } else {
-                console.log($originalRow);
                 // Accordion2 has .floating-details-show; custom layouts may not.
                 var $floating = $originalRow.find('.floating-details-show').first();
-                console.log($floating);
                 if ($floating.length) {
                     $insertPoint = $floating;
                 }

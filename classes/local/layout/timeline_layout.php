@@ -133,14 +133,18 @@ class timeline_layout extends abstract_layout {
                     continue;
                 }
                 // Check for event_color_attribute from local_dash if available.
-                if (class_exists('local_dash\data_grid\field\attribute\event\event_color_attribute')
-                        && $field->has_attribute('local_dash\data_grid\field\attribute\event\event_color_attribute')) {
+                if (
+                    class_exists('local_dash\\data_grid\\field\\attribute\\event\\event_color_attribute')
+                    && $field->has_attribute('local_dash\\data_grid\\field\\attribute\\event\\event_color_attribute')
+                ) {
                     $colorfields[] = $field;
                     continue;
                 }
                 // Also check for the local_dash color_attribute for backward compatibility.
-                if (class_exists('local_dash\data_grid\field\attribute\color_attribute')
-                        && $field->has_attribute('local_dash\data_grid\field\attribute\color_attribute')) {
+                if (
+                    class_exists('local_dash\\data_grid\\field\\attribute\\color_attribute')
+                    && $field->has_attribute('local_dash\\data_grid\\field\\attribute\\color_attribute')
+                ) {
                     $colorfields[] = $field;
                 }
             }

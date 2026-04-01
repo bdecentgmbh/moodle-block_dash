@@ -116,7 +116,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
      */
     public function before_data() {
         // Propagate the block-level "details_custom_content" preference to the
-        // smart_course_button and enrollment_options field attributes so they
+        // smart_course_button and enrollment_options field attributes.
         $customcontentkey = $this->get_data_source()->get_preferences('details_custom_content');
         $hascustomcontent = (!empty($customcontentkey) && $customcontentkey !== 'none');
 
@@ -194,7 +194,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 $customcontent = get_config('block_dash', 'standard_terms');
                 $customcontent = $customcontent ? format_text($customcontent, FORMAT_HTML) : '';
             } else {
-                if(block_dash_has_pro()){
+                if (block_dash_has_pro()) {
                     if ($layout = $DB->get_record('dashaddon_developer_layout', ['id' => $customcontentkey])) {
                         if (!empty($layout->mustache_template)) {
                             $customcontent = format_text($layout->mustache_template, FORMAT_HTML);
@@ -236,7 +236,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
             $content = $customcontent;
             $customcontentkey = $this->get_data_source()->get_preferences('details_custom_content');
             if ($customcontentkey && $customcontentkey !== 'none' && $customcontentkey !== 'standard_terms') {
-                if(block_dash_has_pro()){
+                if (block_dash_has_pro()) {
                     if ($layout = $DB->get_record('dashaddon_developer_layout', ['id' => $customcontentkey])) {
                         $renderer = $PAGE->get_renderer('block_dash');
                         $layoutobject = new \dashaddon_developer\layout\persistent_layout(
@@ -414,38 +414,66 @@ abstract class abstract_layout implements layout_interface, \templatable {
             $availablefields = $this->get_data_source()->get_available_fields();
             $alloptions = array_merge($noneoption, field_definition_factory::get_field_definition_options($availablefields));
 
-            $mform->addElement('select', 'config_preferences[details_header]',
-                get_string('details_header', 'block_dash'), $alloptions);
+            $mform->addElement(
+                'select',
+                'config_preferences[details_header]',
+                get_string('details_header', 'block_dash'),
+                $alloptions
+            );
             $mform->setType('config_preferences[details_header]', PARAM_TEXT);
             $mform->hideIf('config_preferences[details_header]', 'config_preferences[details_area]', 'eq', 'disabled');
 
-            $mform->addElement('select', 'config_preferences[details_title]',
-                get_string('details_title', 'block_dash'), $alloptions);
+            $mform->addElement(
+                'select',
+                'config_preferences[details_title]',
+                get_string('details_title', 'block_dash'),
+                $alloptions
+            );
             $mform->setType('config_preferences[details_title]', PARAM_TEXT);
             $mform->hideIf('config_preferences[details_title]', 'config_preferences[details_area]', 'eq', 'disabled');
 
-            $mform->addElement('select', 'config_preferences[details_body_1]',
-                get_string('details_body_1', 'block_dash'), $alloptions);
+            $mform->addElement(
+                'select',
+                'config_preferences[details_body_1]',
+                get_string('details_body_1', 'block_dash'),
+                $alloptions
+            );
             $mform->setType('config_preferences[details_body_1]', PARAM_TEXT);
             $mform->hideIf('config_preferences[details_body_1]', 'config_preferences[details_area]', 'eq', 'disabled');
 
-            $mform->addElement('select', 'config_preferences[details_body_2]',
-                get_string('details_body_2', 'block_dash'), $alloptions);
+            $mform->addElement(
+                'select',
+                'config_preferences[details_body_2]',
+                get_string('details_body_2', 'block_dash'),
+                $alloptions
+            );
             $mform->setType('config_preferences[details_body_2]', PARAM_TEXT);
             $mform->hideIf('config_preferences[details_body_2]', 'config_preferences[details_area]', 'eq', 'disabled');
 
-            $mform->addElement('select', 'config_preferences[details_body_3]',
-                get_string('details_body_3', 'block_dash'), $alloptions);
+            $mform->addElement(
+                'select',
+                'config_preferences[details_body_3]',
+                get_string('details_body_3', 'block_dash'),
+                $alloptions
+            );
             $mform->setType('config_preferences[details_body_3]', PARAM_TEXT);
             $mform->hideIf('config_preferences[details_body_3]', 'config_preferences[details_area]', 'eq', 'disabled');
 
-            $mform->addElement('select', 'config_preferences[details_footer_left]',
-                get_string('details_footer_left', 'block_dash'), $alloptions);
+            $mform->addElement(
+                'select',
+                'config_preferences[details_footer_left]',
+                get_string('details_footer_left', 'block_dash'),
+                $alloptions
+            );
             $mform->setType('config_preferences[details_footer_left]', PARAM_TEXT);
             $mform->hideIf('config_preferences[details_footer_left]', 'config_preferences[details_area]', 'eq', 'disabled');
 
-            $mform->addElement('select', 'config_preferences[details_footer_right]',
-                get_string('details_footer_right', 'block_dash'), $alloptions);
+            $mform->addElement(
+                'select',
+                'config_preferences[details_footer_right]',
+                get_string('details_footer_right', 'block_dash'),
+                $alloptions
+            );
             $mform->setType('config_preferences[details_footer_right]', PARAM_TEXT);
             $mform->hideIf('config_preferences[details_footer_right]', 'config_preferences[details_area]', 'eq', 'disabled');
 
@@ -496,11 +524,15 @@ abstract class abstract_layout implements layout_interface, \templatable {
             );
             $mform->hideIf(
                 'config_preferences[details_custom_content_height]',
-                'config_preferences[details_area]', 'eq', 'disabled'
+                'config_preferences[details_area]',
+                'eq',
+                'disabled'
             );
             $mform->hideIf(
                 'config_preferences[details_custom_content_height]',
-                'config_preferences[details_custom_content]', 'eq', 'none'
+                'config_preferences[details_custom_content]',
+                'eq',
+                'none'
             );
         }
     }
@@ -536,7 +568,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
         // Details area boolean flags – available for ALL layouts.
         $preferences['showdetailsarea'] = isset($preferences['details_area']) &&
             ($preferences['details_area'] != 'disabled') ? true : false;
-        
+
         $preferences['detailareaexpand'] = isset($preferences['details_area']) &&
             ($preferences['details_area'] == 'expanding') ? true : false;
         $preferences['detailareafloating'] = isset($preferences['details_area']) &&
@@ -574,7 +606,6 @@ abstract class abstract_layout implements layout_interface, \templatable {
 
         if (block_dash_has_pro() && $DB->get_manager()->table_exists('dashaddon_developer_layout')) {
             $layouts = $DB->get_records('dashaddon_developer_layout');
-    
             foreach ($layouts as $layout) {
                 if (in_array($layout->type, ['detailsarea', 'both'])) {
                     $options[$layout->id] = $layout->name;
@@ -668,9 +699,11 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 'preferences' => $this->process_preferences($this->get_data_source()->get_all_preferences()),
             ]);
         }
-        //values for placeholders.
-        if (class_exists('\dashaddon_developer\layout\vars') &&
-            method_exists('\dashaddon_developer\layout\vars', 'current_user_context')) {
+        // Values for placeholders.
+        if (
+            class_exists('\dashaddon_developer\layout\vars') &&
+            method_exists('\dashaddon_developer\layout\vars', 'current_user_context')
+        ) {
             $templatedata = array_merge($templatedata, \dashaddon_developer\layout\vars::current_user_context());
         }
         return $templatedata;

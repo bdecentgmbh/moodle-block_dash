@@ -33,7 +33,6 @@ namespace block_dash\local\data_grid\field\attribute;
  * @package block_dash
  */
 class details_button_attribute extends abstract_field_attribute {
-
     /**
      * Transform the raw data into a "Details" button element.
      *

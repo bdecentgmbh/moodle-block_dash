@@ -153,9 +153,7 @@ class cards_layout extends abstract_layout {
             $this->build_tab_general($form, $mform);
         }
 
-        // -------------------------------------------------------------------------
         // Fields tab: card field mapping (image, heading, body, footer, etc.).
-        // -------------------------------------------------------------------------
         if ($form->get_tab() == preferences_form::TAB_FIELDS) {
             // Normal grid item field mapping.
             $imageurlfields = [];
@@ -308,6 +306,18 @@ class cards_layout extends abstract_layout {
         $mform->setDefault('config_preferences[columns]', 3);
 
         // Styling options (custom-field-based CSS classes applied to each card).
+        $this->add_layout_styles_field($mform);
+    }
+
+    /**
+     * Add the layout styles multi-select field to the form.
+     *
+     * Builds a list of custom field options from course or user profile fields
+     * and adds a multi-select element for choosing CSS class styling.
+     *
+     * @param \MoodleQuickForm $mform
+     */
+    protected function add_layout_styles_field(\MoodleQuickForm $mform) {
         $options = [];
         if (
             in_array("dashaddon_courses\local\dash_framework\structure\course_table", array_map(
@@ -372,5 +382,4 @@ class cards_layout extends abstract_layout {
         // Map details area fields + custom content (handled by parent).
         parent::after_data($datacollection);
     }
-
 }

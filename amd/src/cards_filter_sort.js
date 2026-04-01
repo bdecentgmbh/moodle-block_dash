@@ -1,17 +1,41 @@
 define(['jquery'], function($) {
 
+    /**
+     * Get the CSS selector for a slider by unique ID.
+     *
+     * @param {string} uniqueid The unique identifier.
+     * @returns {string}
+     */
     function getSliderSelector(uniqueid) {
         return '.card_layout_slider.slider-' + uniqueid;
     }
 
+    /**
+     * Get the CSS selector for a grid by unique ID.
+     *
+     * @param {string} uniqueid The unique identifier.
+     * @returns {string}
+     */
     function getGridSelector(uniqueid) {
         return '.card-layout-' + uniqueid + '.card-layout-default';
     }
 
+    /**
+     * Get the card elements in a grid.
+     *
+     * @param {string} uniqueid The unique identifier.
+     * @returns {jQuery}
+     */
     function getGridCards(uniqueid) {
         return $(getGridSelector(uniqueid)).children('.card-block.default');
     }
 
+    /**
+     * Get the detail pair element for a card.
+     *
+     * @param {jQuery} $card The card element.
+     * @returns {jQuery}
+     */
     function getGridDetailPair($card) {
         var $next = $card.next();
         if ($next.length && $next.hasClass('details-area-block')) {
@@ -20,6 +44,11 @@ define(['jquery'], function($) {
         return $();
     }
 
+    /**
+     * Apply search filtering to a slider.
+     *
+     * @param {string} uniqueid The unique identifier.
+     */
     function applySliderSearch(uniqueid) {
         var $slider = $(getSliderSelector(uniqueid));
         var $search = $('.slider-quicksearch-' + uniqueid);
@@ -42,6 +71,12 @@ define(['jquery'], function($) {
         });
     }
 
+    /**
+     * Apply sort ordering to a slider.
+     *
+     * @param {string} uniqueid The unique identifier.
+     * @param {string} direction The sort direction ('asc' or 'desc').
+     */
     function applySliderSort(uniqueid, direction) {
         var $slider = $(getSliderSelector(uniqueid));
 
@@ -75,6 +110,11 @@ define(['jquery'], function($) {
         applySliderSearch(uniqueid);
     }
 
+    /**
+     * Initialise search and sort controls for a slider.
+     *
+     * @param {string} uniqueid The unique identifier.
+     */
     function initSlider(uniqueid) {
         var $search = $('.slider-quicksearch-' + uniqueid);
         var $sorter = $('.slider-sorter-' + uniqueid);
@@ -98,6 +138,11 @@ define(['jquery'], function($) {
         }
     }
 
+    /**
+     * Apply search filtering to a grid.
+     *
+     * @param {string} uniqueid The unique identifier.
+     */
     function applyGridSearch(uniqueid) {
         var term = ($('.grid-quicksearch-' + uniqueid).val() || '').toLowerCase();
 
@@ -118,6 +163,12 @@ define(['jquery'], function($) {
         });
     }
 
+    /**
+     * Apply sort ordering to a grid.
+     *
+     * @param {string} uniqueid The unique identifier.
+     * @param {string} direction The sort direction ('asc' or 'desc').
+     */
     function applyGridSort(uniqueid, direction) {
         var $container = $(getGridSelector(uniqueid));
 
@@ -153,6 +204,11 @@ define(['jquery'], function($) {
         applyGridSearch(uniqueid);
     }
 
+    /**
+     * Initialise search and sort controls for a grid.
+     *
+     * @param {string} uniqueid The unique identifier.
+     */
     function initGrid(uniqueid) {
         var $search = $('.grid-quicksearch-' + uniqueid);
         var $sorter = $('.grid-sorter-' + uniqueid);
@@ -176,6 +232,11 @@ define(['jquery'], function($) {
         }
     }
 
+    /**
+     * Initialise filter and sort for a layout instance.
+     *
+     * @param {string} uniqueid The unique identifier.
+     */
     function init(uniqueid) {
         initSlider(uniqueid);
         initGrid(uniqueid);

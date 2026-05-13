@@ -37,6 +37,7 @@ use block_dash\local\data_grid\filter\logged_in_user_condition;
 use block_dash\local\data_grid\filter\filter_collection;
 use block_dash\local\data_grid\filter\filter_collection_interface;
 use block_dash\local\data_grid\filter\my_groups_condition;
+use block_dash\local\data_grid\filter\online_users_condition;
 use block_dash\local\data_grid\filter\participants_condition;
 use block_dash\local\data_grid\filter\user_field_filter;
 use block_dash\local\data_grid\filter\user_profile_field_filter;
@@ -164,6 +165,10 @@ class users_data_source extends abstract_data_source {
         $filtercollection->add_filter(new participants_condition('participants', 'u.id'));
         $filtercollection->add_filter(new my_groups_condition('my_groups', 'gm300.groupid'));
         $filtercollection->add_filter(new current_course_condition('current_course', 'c.id'));
+
+        $onlineusers = new online_users_condition('online_users', 'u.lastaccess');
+        $onlineusers->set_operation(filter::OPERATION_GREATER_THAN);
+        $filtercollection->add_filter($onlineusers);
 
         if (block_dash_has_pro()) {
             $filtercollection->add_filter(new \local_dash\data_grid\filter\relations_role_condition('parentrole', 'u.id'));

@@ -717,6 +717,7 @@ $string['lefttop'] = "Left Top";
 $string['like_item'] = 'Like item';
 $string['like_item_help'] = 'Make the details area the same size as the card.';
 $string['loggedinuser'] = 'Logged in user';
+$string['loggedinusers'] = 'Logged in users';
 $string['loginstreakdays'] = 'Login streak days';
 $string['loginstreakdaysdesc'] = 'Set the number of consecutive days required to maintain a streak.';
 $string['lowerthan'] = 'Lower than';

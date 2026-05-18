@@ -841,6 +841,7 @@ $string['readymatewidgets'] = 'Ready to use widgets';
 $string['readymatewidgets_help'] = 'Use the bellow widgets, widgets are easy to use, there is no need to setup additional configurations.';
 $string['recentcoursename'] = 'Recent course';
 $string['redirecttodashboard'] = "Redirect to dashboard";
+$string['redirecttodashboard_help'] = 'Automatically forward users to the Dashboard if they attempt to access the course URL without a valid enrollment.';
 $string['relations'] = 'Relations';
 $string['relations_help'] = 'Includes users assigned specific user context roles (e.g., mentor, parent, line manager, coach).';
 $string['resourcesheading'] = 'Resources';

@@ -70,6 +70,11 @@ class filter_collection implements filter_collection_interface {
      */
     public function init() {
         foreach ($this->get_filters() as $filter) {
+            // Skip filters that are not used in this request to avoid loading
+            // (and then discarding) their options. See filter::should_initialise().
+            if (!$filter->should_initialise()) {
+                continue;
+            }
             $filter->init();
         }
     }

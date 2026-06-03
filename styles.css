@@ -1730,7 +1730,6 @@ tr.dash-details-expanded {
     border-top-right-radius: 5px;
 }
 .block_dash .dash-container .dash-block-content .card img {
-    max-width: 150px;
     height: 100%;
     object-fit: cover;
     border-radius: 7px;

@@ -335,8 +335,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
     final public function get_filter_collection() {
         if (is_null($this->filtercollection)) {
             $this->filtercollection = $this->build_filter_collection();
-            $this->filtercollection->init();
 
+            // Apply saved filter preferences before init() so that init() can skip
+            // filters that are not enabled (avoids loading options that are never used).
             if ($this->get_preferences('filters')) {
                 foreach ($this->get_preferences('filters') as $filtername => $filterpreferences) {
                     if (is_array($filterpreferences) || is_object($filterpreferences)) {
@@ -346,6 +347,8 @@ abstract class abstract_data_source implements data_source_interface, \templatab
                     }
                 }
             }
+
+            $this->filtercollection->init();
         }
 
         return $this->filtercollection;

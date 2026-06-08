@@ -169,6 +169,28 @@ class filter implements filter_interface {
     }
 
     /**
+     * Whether this filter needs to be initialised for the current request.
+     *
+     * Initialising a filter loads its list of available options, which can be an
+     * expensive operation (e.g. one query per option). A block only ever uses a
+     * filter when it is enabled in the block configuration, when it carries a
+     * value (or default value) that contributes to the query, when it is required,
+     * or when it is a condition (always applied). Every other filter in the
+     * collection would have its loaded options discarded, so there is no point
+     * initialising it.
+     *
+     * @return bool
+     */
+    public function should_initialise(): bool {
+        $preferences = $this->get_preferences();
+        return $this->is_applied()
+            || $this->is_required()
+            || $this->has_raw_value()
+            || $this->has_default_raw_value()
+            || !empty($preferences['enabled']);
+    }
+
+    /**
      * Set if filter is required.
      *
      * @param bool $required

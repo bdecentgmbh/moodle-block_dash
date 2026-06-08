@@ -1011,6 +1011,7 @@ $string['tablejoin'] = 'Select Join table';
 $string['tablejoin_help'] = 'Choose the table to join with main table. Use the alias for conditions.';
 $string['tablejoinon'] = 'Enter condition query to join';
 $string['tablejoinsalias'] = 'Table alias';
+$string['tablejoinsalias_help'] = 'Add the mandatory table alias without any additional syntax into the text field.';
 $string['tablejoinshdr'] = 'Join tables';
 $string['tablejoinstatichdr'] = 'Joint table #{$a}';
 $string['tablet_learningpath'] = 'Tablet resources';

@@ -116,6 +116,19 @@ if ($ADMIN->fulltree) {
         $users
     ));
 
+    $settings->add(new admin_setting_heading(
+        'block_dash_standard_terms_heading',
+        get_string('standard_terms', 'block_dash'),
+        get_string('standard_terms_desc', 'block_dash')
+    ));
+
+    $settings->add(new admin_setting_confightmleditor(
+        'block_dash/standard_terms',
+        get_string('standard_terms', 'block_dash'),
+        get_string('standard_terms_desc', 'block_dash'),
+        ''
+    ));
+
     if ($ADMIN->fulltree) {// Category images.
         $settings->add(new admin_setting_heading(
             'block_dash_categoryimg',

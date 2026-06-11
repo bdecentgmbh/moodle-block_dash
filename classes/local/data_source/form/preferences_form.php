@@ -38,11 +38,14 @@ require_once($CFG->libdir . '/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class preferences_form extends \moodleform {
-    /** @var string General tab id. */
+    /** @var string Layout tab id (previously General). */
     const TAB_GENERAL = 'tabgeneral';
 
     /** @var string Preference modal fields tab. */
     const TAB_FIELDS = 'tabfields';
+
+    /** @var string Details area tab id. */
+    const TAB_DETAILS = 'tabdetailsarea';
 
     /** @var string Preference modal Filters tab. */
     const TAB_FILTERS = 'tabfilters';
@@ -54,6 +57,7 @@ class preferences_form extends \moodleform {
     const TABS = [
         self::TAB_GENERAL,
         self::TAB_FIELDS,
+        self::TAB_DETAILS,
         self::TAB_FILTERS,
         self::TAB_CONDITIONS,
     ];

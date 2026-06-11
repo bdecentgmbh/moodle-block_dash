@@ -1,0 +1,81 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_dash/layouts_cards_detailarea
+
+    Example context (json):
+    {
+        "detailheader": "Demo header",
+        "detailheading": "Demo heading",
+		"detailbody": "Demo body content"
+    }
+}}
+<div class="card details-area-block"
+    style="{{#preferences}}background-color: {{preferences.details_bg_color}};color:{{preferences.details_text_color}};{{/preferences}}
+    {{#details_bg_color}}background-color: {{details_bg_color}};{{/details_bg_color}}
+    {{#details_text_color}}color:{{details_text_color}};{{/details_text_color}}">
+    <div class="card-block">
+        <div class="card-body">
+            {{#detailheader}}
+            <div class="details-area-header">
+                <h5 class="details-panel-title">{{{detailheader}}}</h5>
+            </div>
+            {{/detailheader}}
+            {{#detailheading}}
+            <div class="title-block">
+                <h4> {{{detailheading}}} </h4>
+            </div>
+            {{/detailheading}}
+            <div class="body-block">
+                {{#detailbody}}
+                <div class="desc-block">
+                    <p>{{{detailbody}}}</p>
+                </div>
+                {{/detailbody}}
+                {{#detailbody2}}
+                <div class="detail-block">
+                    <p>{{{detailbody2}}}</p>
+                </div>
+                {{/detailbody2}}
+                {{#detailbody3}}
+                <div class="content-block">
+                    <p>{{{detailbody3}}}</p>
+                </div>
+                {{/detailbody3}}
+                {{#customcontent}}
+                <div class="details-custom-content" style="{{#preferences.details_custom_content_height}}min-height: {{preferences.details_custom_content_height}};{{/preferences.details_custom_content_height}}{{#customcontentheight}}min-height: {{customcontentheight}};{{/customcontentheight}}">
+                    {{{customcontent}}}
+                </div>
+                {{/customcontent}}
+            </div>
+        </div>
+        <div class="card-footer">
+            {{#detailfooter}}
+            <div class="footer-left">
+                {{{detailfooter}}}
+            </div>
+            {{/detailfooter}}
+
+
+            {{#detailfooterright}}
+            <div class="footer-right">
+               {{{detailfooterright}}}
+            </div>
+            {{/detailfooterright}}
+        </div>
+    </div>
+</div>

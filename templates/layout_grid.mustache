@@ -20,7 +20,7 @@
     Example context (json):
     {
         "sitefullname": "Moodle - 311",
-		"courseurl": "https://localhost/moodle/course/view.php?id=2"
+        "courseurl": "https://localhost/moodle/course/view.php?id=2"
     }
 }}
 {{< block_dash/layout }}
@@ -28,8 +28,8 @@
         {{^data.rows}}
             {{#noresult}}{{{noresult}}}{{/noresult}}
         {{/data.rows}}
-        <div class="table-responsive{{#preferences.hidetable}} d-none{{/preferences.hidetable}}">
-            <table class="table dash-table">
+        <div class="table-responsive{{#preferences.hidetable}} d-none{{/preferences.hidetable}} table-layout">
+            <table class="table dash-table{{#preferences.showdetailsarea}} dash-details-enabled{{/preferences.showdetailsarea}}" id="dash-grid-{{uniqueid}}">
                 <thead>
                     <tr>
                         {{#data.first_child.data}}
@@ -44,7 +44,12 @@
                 </thead>
                 <tbody>
                     {{#data.rows}}
-                        <tr {{#is_active}}class="table-active"{{/is_active}}>
+                        <tr class="card-table {{#is_active}}table-active{{/is_active}}"
+                            data-detailheader="{{detailheader}}" data-detailheading="{{detailheading}}"
+                            data-detailbody="{{detailbody}}" data-detailbody2="{{detailbody2}}"
+                            data-detailbody3="{{detailbody3}}" data-detailfooter="{{detailfooter}}"
+                            data-detailfooterright="{{detailfooterright}}"
+                            data-customcontent="{{customcontent}}">
                             {{#data}}
                                 {{#is_visible}}
                                     <td>{{{get_value}}}</td>
@@ -55,5 +60,19 @@
                 </tbody>
             </table>
         </div>
+        {{#preferences.showdetailsarea}}
+            {{#js}}
+                require(['block_dash/details_area'], function(DetailsArea) {
+                    DetailsArea.init('#dash-grid-{{uniqueid}}', {
+                        detailsBgColor: '{{preferences.details_bg_color}}',
+                        detailsTextColor: '{{preferences.details_text_color}}',
+                        rowSelector: 'tbody tr[data-detailheader]',
+                        mode: '{{preferences.details_area_mode}}',
+                        detailsAreaSize: '{{preferences.details_area_size}}',
+                        customContentHeight: '{{preferences.details_custom_content_height}}'
+                    });
+                });
+            {{/js}}
+        {{/preferences.showdetailsarea}}
     {{/body}}
 {{/ block_dash/layout }}

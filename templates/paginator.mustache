@@ -23,14 +23,16 @@
 		"courseurl": "https://localhost/moodle/course/view.php?id=2"
     }
 }}
-{{#show_page_summary}}
-    <div class="pagination-summary">{{summary}}</div>
-{{/show_page_summary}}
+{{#show_pagination}}
+    {{#show_page_summary}}
+        <div class="pagination-summary">{{summary}}</div>
+    {{/show_page_summary}}
 
-<nav>
-    <ul class="pagination">
-        {{#pages}}
-            <li class="page-item {{#active}}active{{/active}} {{#disabled}}disabled{{/disabled}}"><a class="page-link" data-page="{{page}}" {{^disabled}}href="#"{{/disabled}}>{{label}}</a></li>
-        {{/pages}}
-    </ul>
-</nav>
+    <nav>
+        <ul class="pagination">
+            {{#pages}}
+                <li class="page-item {{#active}}active{{/active}} {{#disabled}}disabled{{/disabled}}"><a class="page-link" data-page="{{page}}" {{^disabled}}href="#"{{/disabled}}>{{label}}</a></li>
+            {{/pages}}
+        </ul>
+    </nav>
+{{/show_pagination}}

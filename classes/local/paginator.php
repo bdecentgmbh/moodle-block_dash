@@ -268,6 +268,7 @@ class paginator {
             'pages' => $items,
             'show_page_summary' => $this->showpagesummary,
             'summary' => $summary,
+            'show_pagination' => $count > 1,
         ];
     }
 }

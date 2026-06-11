@@ -48,5 +48,37 @@ function xmldb_block_dash_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020070202, 'block', 'dash');
     }
 
+    if ($oldversion < 2026030500) {
+        // Remap layout identifiers from local_dash namespace to block_dash namespace.
+        // Layouts have been moved to block_dash for standalone availability.
+        $layoutmapping = [
+            'local_dash\\layout\\cards_layout'         => 'block_dash\\local\\layout\\cards_layout',
+            'local_dash\\layout\\cards_slider_layout'  => 'block_dash\\local\\layout\\cards_slider_layout',
+            'local_dash\\layout\\cards_masonry_layout' => 'block_dash\\local\\layout\\cards_masonry_layout',
+            'local_dash\\layout\\accordion_layout'     => 'block_dash\\local\\layout\\accordion_layout',
+            'local_dash\\layout\\accordion_layout2'    => 'block_dash\\local\\layout\\accordion_layout2',
+            'local_dash\\layout\\one_stat_layout'      => 'block_dash\\local\\layout\\one_stat_layout',
+            'local_dash\\layout\\two_stat_layout'      => 'block_dash\\local\\layout\\two_stat_layout',
+            'local_dash\\layout\\timeline_layout'      => 'block_dash\\local\\layout\\timeline_layout',
+        ];
+
+        $oldidentifiers = array_keys($layoutmapping);
+
+        foreach ($DB->get_records('block_instances', ['blockname' => 'dash']) as $record) {
+            $config = unserialize(base64_decode($record->configdata));
+            if (empty($config) || !isset($config->preferences['layout'])) {
+                continue;
+            }
+            $currentlayout = $config->preferences['layout'];
+            if (in_array($currentlayout, $oldidentifiers)) {
+                $config->preferences['layout'] = $layoutmapping[$currentlayout];
+                $record->configdata = base64_encode(serialize($config));
+                $DB->update_record('block_instances', $record);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2026030500, 'block', 'dash');
+    }
+
     return true;
 }

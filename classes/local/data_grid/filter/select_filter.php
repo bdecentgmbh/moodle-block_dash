@@ -131,6 +131,16 @@ abstract class select_filter extends filter {
     }
 
     /**
+     * Return the option values that should be visible in this filter's dropdown.
+     *
+     * @param filter_collection_interface $filtercollection
+     * @return array|null Valid option values, or null to show all options.
+     */
+    protected function get_active_option_values(filter_collection_interface $filtercollection): ?array {
+        return null;
+    }
+
+    /**
      * Override this method and call it after creating a form element.
      *
      * @param filter_collection_interface $filtercollection
@@ -143,8 +153,14 @@ abstract class select_filter extends filter {
         $elementnameprefix = ''
     ) {
         global $OUTPUT;
-        $options = $this->options;
-        $options = array_filter($options);
+
+        $activevalues = $this->get_active_option_values($filtercollection);
+        $options = array_filter($this->options);
+
+        if ($activevalues !== null) {
+            $alloption = isset($options[self::ALL_OPTION]) ? [self::ALL_OPTION => $options[self::ALL_OPTION]] : [];
+            $options = $alloption + array_intersect_key($options, array_flip($activevalues));
+        }
 
         // Display the select box as tags only for grid layouts.
         $tags = ($filtercollection->layout == 'local_dash\layout\cards_layout'

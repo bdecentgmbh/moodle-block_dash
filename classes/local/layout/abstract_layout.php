@@ -657,7 +657,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
 
             if (
                 !$this->get_data_source()->supports_ajax_pagination() &&
-                $this->get_data_source()->get_paginator()->get_page_count() > 1
+                $this->get_data_source()->get_paginator()->get_page_count() > 1 &&
+                $this->supports_pagination()
             ) {
                 $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()
                     ->get_paginator()

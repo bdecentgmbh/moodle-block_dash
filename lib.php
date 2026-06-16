@@ -183,8 +183,18 @@ function block_dash_output_fragment_block_preferences_form($args) {
     $formhtml = ob_get_contents();
     ob_end_clean();
 
+    // Allow datasources and widgets to restrict which tabs are shown.
+    $configuration = \block_dash\local\configuration\configuration::create_from_instance($block);
+    $activetabs = preferences_form::TABS;
+    if ($configuration->is_fully_configured()) {
+        $datasource = $configuration->get_data_source();
+        if (method_exists($datasource, 'get_preferences_form_tabs')) {
+            $activetabs = $datasource->get_preferences_form_tabs();
+        }
+    }
+
     $tabs = [];
-    foreach (preferences_form::TABS as $tab) {
+    foreach ($activetabs as $tab) {
         $tabs[] = [
             'label' => get_string($tab, 'block_dash'),
             'active' => $tab == $args->tab,

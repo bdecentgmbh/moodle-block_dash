@@ -61,9 +61,7 @@ final class filter_test extends \advanced_testcase {
         $this->user = $USER;
 
         $this->filtercollection = new filter_collection('testing', \context_system::instance());
-        $filter1 = new filter('filter1', 'table.fieldname');
-        $filter1->set_preferences(['enabled' => true]);
-        $this->filtercollection->add_filter($filter1);
+        $this->filtercollection->add_filter(new filter('filter1', 'table.fieldname'));
         $this->filtercollection->init();
     }
 

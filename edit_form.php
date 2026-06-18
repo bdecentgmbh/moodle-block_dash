@@ -432,7 +432,7 @@ class block_dash_edit_form extends block_edit_form {
 
             $group[] = $mform->createElement('html', html_writer::start_div('datasource-content'));
             foreach ($datasources as $id => $source) {
-                if (block_dash_visible_addons($id)) {
+                if (block_dash_visible_addons($id) && data_source_factory::is_visible_in_context($id, $context)) {
                     $group[] = $mform->createElement('html', html_writer::start_div('datasource-item'));
                     $group[] = $mform->createElement('radio', 'config_data_source_idnumber', '', $source['name'], $id);
                     if ($help = $source['help']) {
@@ -457,7 +457,7 @@ class block_dash_edit_form extends block_edit_form {
             );
             $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-content'));
             foreach ($widgetlist as $id => $source) {
-                if (block_dash_visible_addons($id)) {
+                if (block_dash_visible_addons($id) && data_source_factory::is_visible_in_context($id, $context)) {
                     $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-item'));
                     $widgets[] = $mform->createElement('radio', 'config_data_source_idnumber', '', $source['name'], $id);
                     if ($source['help']) {

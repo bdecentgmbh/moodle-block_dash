@@ -1,7 +1,7 @@
 
-define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
+define(['jquery', 'core/str', 'core/modal', 'core/modal_save_cancel', 'core/modal_events',
     'core/fragment', 'core/templates', 'core/ajax', 'core/notification'],
-    function ($, Str, Modal, ModalEvents, Fragment, Templates, AJAX, Notification) {
+    function ($, Str, Modal, ModalSaveCancel, ModalEvents, Fragment, Templates, AJAX, Notification) {
 
         return {
             init: function (contextID) {
@@ -13,7 +13,8 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
                         var target = e.target;
                         var group = target.getAttribute('data-group');
                         Modal.create({
-                            title: Str.get_string('groups', 'core')
+                            title: Str.get_string('groups', 'core'),
+                            removeOnClose: true
                         }).then(function (modal) {
                             modal.show();
                             var args = JSON.stringify({ group: group });
@@ -46,9 +47,9 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
                 function addGroupUsers(e) {
                     var target = e.target;
                     var group = target.getAttribute('data-group');
-                    Modal.create({
-                        type: Modal.types.SAVE_CANCEL,
+                    ModalSaveCancel.create({
                         title: Str.get_string('widget:groups:adduser', 'block_dash'),
+                        removeOnClose: true
                     }).then(function (modal) {
                         modal.setLarge(true);
                         modal.show();
@@ -125,10 +126,9 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
                     var target = e.target;
                     var group = target.getAttribute('data-group');
                     var groupname = target.getAttribute('data-groupname');
-
-                    Modal.create({
-                        type: Modal.types.SAVE_CANCEL,
+                    ModalSaveCancel.create({
                         title: Str.get_string('groups', 'core'),
+                        removeOnClose: true
                     }).then(function (modal) {
                         Str.get_string('confirm', 'core').then((html) => {
                             modal.setSaveButtonText(html);
@@ -183,9 +183,9 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events',
                  */
                 function createGroup() {
 
-                    Modal.create({
-                        type: Modal.types.SAVE_CANCEL,
+                    ModalSaveCancel.create({
                         title: Str.get_string('groups', 'core'),
+                        removeOnClose: true
                     }).then(function (modal) {
                         modal.show();
 

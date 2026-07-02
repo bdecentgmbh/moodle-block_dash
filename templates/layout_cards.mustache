@@ -376,11 +376,11 @@
 
 
 {{#js}}
-require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events', 'core/templates', 'core/str',
+require(['jquery', 'block_dash/slick', 'core/modal_cancel', 'core/modal_events', 'core/templates', 'core/str',
     'core/notification', 'block_dash/grid'],
     // eslint-disable-next-line no-unused-vars
     /* eslint-disable no-multiple-empty-lines */
-    function($, slick, Modal, ModalEvents, Templates, Str, Notification, Grid) {
+    function($, slick, ModalCancel, ModalEvents, Templates, Str, Notification, Grid) {
     {{#preferences.layout_default}}
         {{#preferences.detailareaexpand}}
             {{#preferences.fitcarddetailsarea}}
@@ -698,9 +698,8 @@ require(['jquery', 'block_dash/slick', 'core/modal_factory', 'core/modal_events'
                     details_text_color: "{{preferences.details_text_color}}",
                     detailmodal: "true"
                 };
-                Modal.create({
+                ModalCancel.create({
                     title: Str.get_string('strinfo', 'block_dash'),
-                    type: Modal.types.CANCEL,
                     body: Templates.render('block_dash/layouts_cards_detailarea', templatecontext),
                     large: true,
                 }).then(modal => {

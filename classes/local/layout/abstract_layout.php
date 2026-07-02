@@ -306,7 +306,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
      * @throws \coding_exception
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
 
         self::$currentgroupid = random_int(1, 10000);
 
@@ -341,7 +341,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
                     $group[] = $mform->createElement('advcheckbox', $fieldname, $title, $totaratitle, [
                         'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
                         'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
-                        'data-toggle' => 'slave', // For checkbox_toggleall.
+                        'data-toggle' => $CFG->branch >= 502 ? 'target' : 'slave', // For checkbox_toggleall.
                         'data-action' => 'toggle', // For checkbox_toggleall.
                     ]);
                     $mform->setType($fieldname, PARAM_BOOL);

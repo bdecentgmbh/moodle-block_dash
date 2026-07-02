@@ -1,4 +1,4 @@
-define(['core/str', 'core/modal_factory', 'core/modal_events',
+define(['core/str', 'core/modal', 'core/modal_events',
     'core/fragment', 'core/templates', 'core/notification', 'core_message/toggle_contact_button'],
     function (Str, Modal, ModalEvents, Fragment, Templates, Notification, Contact) {
 
@@ -12,7 +12,8 @@ define(['core/str', 'core/modal_factory', 'core/modal_events',
                         var target = e.target.closest('a');
                         contactUser = target.getAttribute('data-userid');
                         Modal.create({
-                            title: Str.get_string('groups', 'core')
+                            title: Str.get_string('groups', 'core'),
+                            removeOnClose: true
                         }).then(function (modal) {
                             modal.show();
 

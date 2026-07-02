@@ -415,6 +415,12 @@ body .select2-container {
 #page-wrapper:has(.block_dash) ~ * .modal .modal-content .modal-body .card-body a {
     color: var(--bs-heading-color);
 }
+#page-wrapper:has(.block_dash) {
+    ~ .modal .modal-content .modal-body .card-block .footer-right,
+    ~ div .modal .modal-content .modal-body .card-block .footer-right {
+        margin-top: 10px;
+    }
+}
 /* Mylearning -widget */
 
 
@@ -1331,7 +1337,6 @@ tr.dash-details-expanded {
     max-width: 750px;
     width: 100%;
 }
-
 .details-area-block .desc-block img {
     max-width: 150px;
 }
@@ -1339,6 +1344,12 @@ tr.dash-details-expanded {
 /* -- Floating: like_item → default narrow panel -- */
 .dash-details-floating-panel.dash-details-size-like-item {
     width: 100%;
+}
+.dash-details-expand-panel,
+.dash-details-floating-panel {
+    &.dash-details-size-like-item .details-area-block .card-block {
+        width: 100%;
+    }
 }
 .dash-details-floating-panel.dash-details-size-like-item .details-area-block .card-body a,
 .dash-details-floating-panel.dash-details-size-fit-content .details-area-block .card-body a {
@@ -1657,6 +1668,16 @@ tr.dash-details-expanded {
     width: 50%;
     margin-left: 20px;
 }
+.dash-block-content .timeline .timeline-panel .timeline-body img {
+    max-width: none;
+    max-height: none;
+    width: 100%;
+    height: auto;
+    margin-left: 0;
+}
+.dash-block-content .timeline .timeline-panel .timeline-body img.icon-responsive {
+    width: auto
+}
 .dash-block-content .timeline .timeline-panel > img {
     margin-bottom: 10px;
 }
@@ -1730,6 +1751,7 @@ tr.dash-details-expanded {
     border-top-right-radius: 5px;
 }
 .block_dash .dash-container .dash-block-content .card img {
+    max-height: none;
     height: 100%;
     object-fit: cover;
     border-radius: 7px;
@@ -2295,8 +2317,8 @@ tr.dash-details-expanded {
     align-items: center;
 }
 .block_dash .dash-block-content .card_layout_slider .slick-dots li button {
-    width: 30px;
-    height: 30px;
+    min-width: 35px;
+    height: 35px;
     color: #000;
     border: 0;
     border-radius: 50%;
@@ -2536,6 +2558,10 @@ tr.dash-details-expanded {
     width: 100%;
     text-align: right;
     float: right;
+}
+.block_dash .masonry .card.details-area-block .card-block .card-footer {
+    flex-direction: column;
+    gap: 10px;
 }
 .block_dash .card.details-area-block .card-block .card-footer .footer-right > * {
     text-align: left;

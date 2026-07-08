@@ -144,6 +144,27 @@ class data_source_factory implements data_source_factory_interface {
     }
 
     /**
+     * Whether a registered data source should be offered to the current user in
+     * the given context.
+     *
+     * A registering plugin may attach a `'visible' => callable($identifier,
+     * $context): bool` entry to its registry record to gate the data source by
+     * context/role at authoring time (e.g. dashaddon_repository's per-preset
+     * block-builder audience). Entries without a callback are always visible.
+     *
+     * @param string $identifier
+     * @param \context $context
+     * @return bool
+     */
+    public static function is_visible_in_context($identifier, \context $context) {
+        $info = self::get_data_source_info($identifier);
+        if ($info && isset($info['visible']) && is_callable($info['visible'])) {
+            return (bool) call_user_func($info['visible'], $identifier, $context);
+        }
+        return true;
+    }
+
+    /**
      * Get options array for select form fields.
      *
      * @param string $type

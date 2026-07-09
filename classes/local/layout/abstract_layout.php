@@ -341,7 +341,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
                     $group[] = $mform->createElement('advcheckbox', $fieldname, $title, $totaratitle, [
                         'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
                         'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
-                        'data-toggle' => $CFG->branch >= 502 ? 'target' : 'slave', // For checkbox_toggleall.
+                        'data-toggle' => $CFG->branch >= 501 ? 'target' : 'slave', // For checkbox_toggleall.
                         'data-action' => 'toggle', // For checkbox_toggleall.
                     ]);
                     $mform->setType($fieldname, PARAM_BOOL);

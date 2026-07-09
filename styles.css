@@ -1676,7 +1676,7 @@ tr.dash-details-expanded {
     margin-left: 0;
 }
 .dash-block-content .timeline .timeline-panel .timeline-body img.icon-responsive {
-    width: auto
+    width: auto;
 }
 .dash-block-content .timeline .timeline-panel > img {
     margin-bottom: 10px;

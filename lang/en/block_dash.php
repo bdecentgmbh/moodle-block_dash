@@ -625,6 +625,7 @@ $string['hidecoursecategorydesc'] = "When a user tries to access the URL /course
 $string['hideindividualskills'] = 'Hide individual skills';
 $string['hidemycourses'] = 'Hide my enrolled courses';
 $string['hideshow'] = 'Hide/Show';
+$string['hidesuspendedusers'] = 'Hide suspended users';
 $string['hidetable'] = "Hide the table content.";
 $string['hidetable_help'] = ' Enabling this option allows users to hide the table content in dash instance. Only the header and footer blocks will remain visible.';
 $string['hidewhenempty'] = 'Hide when empty';

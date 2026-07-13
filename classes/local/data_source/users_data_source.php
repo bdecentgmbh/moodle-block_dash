@@ -36,6 +36,7 @@ use block_dash\local\data_grid\filter\group_filter;
 use block_dash\local\data_grid\filter\logged_in_user_condition;
 use block_dash\local\data_grid\filter\filter_collection;
 use block_dash\local\data_grid\filter\filter_collection_interface;
+use block_dash\local\data_grid\filter\hide_suspended_users_condition;
 use block_dash\local\data_grid\filter\my_groups_condition;
 use block_dash\local\data_grid\filter\online_users_condition;
 use block_dash\local\data_grid\filter\participants_condition;
@@ -169,6 +170,8 @@ class users_data_source extends abstract_data_source {
         $onlineusers = new online_users_condition('online_users', 'u.lastaccess');
         $onlineusers->set_operation(filter::OPERATION_GREATER_THAN);
         $filtercollection->add_filter($onlineusers);
+
+        $filtercollection->add_filter(new hide_suspended_users_condition('hide_suspended_users', 'u.suspended'));
 
         if (block_dash_has_pro()) {
             $filtercollection->add_filter(new \local_dash\data_grid\filter\relations_role_condition('parentrole', 'u.id'));

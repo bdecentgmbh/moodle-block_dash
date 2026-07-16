@@ -787,6 +787,11 @@ require(['jquery', 'block_dash/slick', 'core/modal_cancel', 'core/modal_events',
                 $(this).closest('.card-block').toggleClass('show-content');
             });
         {{/preferences.layout_masonry}}
+        {{#preferences.showdetailsarea}}
+            $(".card-layout-{{uniqueid}} .card-block .card > img.img-responsive")
+                .attr('data-action', 'open-details-modal')
+                .css('cursor', 'pointer');
+        {{/preferences.showdetailsarea}}
     });
 
     {{#preferences.showdetailsarea}}

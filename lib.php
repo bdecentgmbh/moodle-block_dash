@@ -393,27 +393,37 @@ function block_dash_get_data_collection() {
  * @return bool
  */
 function block_dash_visible_addons($id) {
-    global $CFG;
-    preg_match('/(dashaddon_[a-zA-Z_]+)/', $id, $matches);
-    if ($matches) {
-        $value = $matches[1];
-        $parts = explode('\\', $value);
-        if ($parts) {
-            $addon = $parts[0];
-            $addondependencies = $addon . "_extend_added_dependencies";
-            if (get_config($addon, 'enabled')) {
-                $addonplugin = explode("dashaddon_", $addon)[1];
-                if (file_exists($CFG->dirroot . "/local/dash/addon/$addonplugin/lib.php")) {
-                    require_once($CFG->dirroot . "/local/dash/addon/$addonplugin/lib.php");
-                    if (function_exists($addondependencies) && !empty($addondependencies())) {
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
+    // The component is the first namespace segment of the data source / widget class.
+    $component = explode('\\', ltrim((string) $id, '\\'))[0];
+
+    // Only dash addon subplugins are gated here; block_dash, mod_videotime, tool_skills,
+    // skilladdon_*, composeaddon_* and everything else are always visible. Matching on the
+    // "dashaddon_" type marker keeps edition subplugins working too (e.g. wpdashaddon_*),
+    // where the previous hardcoded regex stripped the prefix and derived the wrong component.
+    if (strpos($component, 'dashaddon_') === false) {
+        return true;
+    }
+
+    // Hidden only when explicitly disabled; absence of the toggle counts as enabled, because
+    // edition subplugins such as wpdashaddon_* have no enable/disable setting of their own.
+    if (get_config($component, 'enabled') === '0') {
+        return false;
+    }
+
+    // Let the addon hide itself (missing Workplace plugin, capability, ...) through its
+    // <component>_extend_added_dependencies() hook, loaded from its own directory rather than
+    // a hardcoded local/dash/addon path so subplugins under other parents are found.
+    $dependencyfn = $component . '_extend_added_dependencies';
+    if (!function_exists($dependencyfn)) {
+        $dir = core_component::get_component_directory($component);
+        if ($dir && file_exists("$dir/lib.php")) {
+            require_once("$dir/lib.php");
         }
     }
+    if (function_exists($dependencyfn) && !empty($dependencyfn())) {
+        return false;
+    }
+
     return true;
 }
 

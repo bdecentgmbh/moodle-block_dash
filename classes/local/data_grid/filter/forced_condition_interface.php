@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Marker interface for conditions that must never be removed from a data source.
  *
  * @package    block_dash
- * @copyright  2022 bdecent gmbh <https://bdecent.de>
+ * @copyright  2026 bdecent gmbh <https://bdecent.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace block_dash\local\data_grid\filter;
 
-$plugin->version   = 2026071300;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2024100700;        // Requires this Moodle version.
-$plugin->component = 'block_dash';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release = '2.7';
-$plugin->supported = [405, 502];
+/**
+ * Conditions implementing this interface always apply, regardless of block preferences.
+ *
+ * Regular filters and conditions are stripped in before_data() unless they are enabled
+ * in the block instance preferences. A forced condition (for example a tenant restriction
+ * injected via the dash_augment_filter_collection callback) must survive that stripping,
+ * otherwise it would silently fail open.
+ */
+interface forced_condition_interface {
+}

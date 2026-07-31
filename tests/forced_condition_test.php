@@ -34,9 +34,9 @@ use block_dash\local\data_source\users_data_source;
  * @group block_dash
  * @group bdecent
  * @group forced_condition_test
+ * @covers \block_dash\local\data_source\abstract_data_source
  */
 final class forced_condition_test extends \advanced_testcase {
-
     /**
      * This method is called before each test.
      */
@@ -56,7 +56,7 @@ final class forced_condition_test extends \advanced_testcase {
      * @return condition
      */
     private function new_forced_condition(): condition {
-        return new class('testforced', 'u.id') extends condition implements forced_condition_interface {
+        return new class ('testforced', 'u.id') extends condition implements forced_condition_interface {
             /**
              * Static WHERE fragment for testing.
              *

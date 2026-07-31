@@ -48,7 +48,7 @@ function xmldb_block_dash_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020070202, 'block', 'dash');
     }
 
-    if ($oldversion < 2026030500) {
+    if ($oldversion < 2026070202) {
         // Remap layout identifiers from local_dash namespace to block_dash namespace.
         // Layouts have been moved to block_dash for standalone availability.
         $layoutmapping = [
@@ -77,7 +77,7 @@ function xmldb_block_dash_upgrade($oldversion) {
             }
         }
 
-        upgrade_plugin_savepoint(true, 2026030500, 'block', 'dash');
+        upgrade_plugin_savepoint(true, 2026070202, 'block', 'dash');
     }
 
     return true;

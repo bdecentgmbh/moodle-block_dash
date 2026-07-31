@@ -283,11 +283,7 @@ class block_dash extends block_base {
                 return $this->content;
             }
 
-            if (!$this->verify_access_restrictions()) {
-                $config = $datasource->get_block_instance()->config;
-                if (!$hidewhenempty && isset($config->emptystate['text'])) {
-                    $this->content->text = format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]);
-                }
+            if ($datasource && !$this->verify_access_restrictions()) {
                 return $this->content;
             }
 

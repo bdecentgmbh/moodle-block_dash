@@ -104,7 +104,7 @@ class cards_layout extends abstract_layout {
                 $preferences['centerMode'] = ($preferences['centerMode']) ? 'true' : 'false';
                 $preferences['dots'] = ($preferences['dots']) ? 'true' : 'false';
                 $preferences['draggable'] = ($preferences['draggable']) ? 'true' : 'false';
-                $preferences['fade'] = ($preferences['fade']) ? 'true' : 'false';
+                $preferences['fade'] = ($preferences['fade'] ?? false) ? 'true' : 'false';
                 $preferences['infinite'] = ($preferences['infinite']) ? 'true' : 'false';
                 $preferences['swipeToSlide'] = ($preferences['swipeToSlide']) ? 'true' : 'false';
                 $sliderclass .= ($preferences['variableWidth']) ? ' slider-variable-mode' : '';
@@ -112,6 +112,10 @@ class cards_layout extends abstract_layout {
                 $preferences['variableWidth'] = ($preferences['variableWidth']) ? 'true' : 'false';
                 $preferences['vertical'] = ($preferences['vertical']) ? 'true' : 'false';
                 $preferences['verticalSwiping'] = ($preferences['verticalSwiping']) ? 'true' : 'false';
+                if ($preferences['vertical'] === 'true' || $preferences['verticalSwiping'] === 'true') {
+                    $preferences['fade'] = 'false';
+                    $preferences['variableWidth'] = 'false';
+                }
                 $preferences['centerPadding'] = isset($preferences['centerPadding']) ?
                     intval($preferences['centerPadding']) : '';
                 $preferences['sliderclass'] = $sliderclass;

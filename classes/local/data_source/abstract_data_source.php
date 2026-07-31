@@ -31,6 +31,7 @@ use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\field\attribute\identifier_attribute;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\filter\filter_collection_interface;
+use block_dash\local\data_grid\filter\forced_condition_interface;
 use block_dash\local\paginator;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
@@ -336,6 +337,16 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         if (is_null($this->filtercollection)) {
             $this->filtercollection = $this->build_filter_collection();
 
+            // Allow other plugins to augment the filter collection of any data source
+            // (e.g. inject additional filters or forced conditions).
+            if ($pluginsfunction = get_plugins_with_function('dash_augment_filter_collection')) {
+                foreach ($pluginsfunction as $plugins) {
+                    foreach ($plugins as $pluginfunction) {
+                        $pluginfunction($this, $this->filtercollection);
+                    }
+                }
+            }
+
             // Apply saved filter preferences before init() so that init() can skip
             // filters that are not enabled (avoids loading options that are never used).
             if ($this->get_preferences('filters')) {
@@ -382,6 +393,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
             }
             // No preferences set yet, remove all filters.
             foreach ($this->get_filter_collection()->get_filters() as $filter) {
+                if ($filter instanceof forced_condition_interface) {
+                    continue;
+                }
                 if (!in_array($filter->get_name(), $enabledfilters)) {
                     $this->get_filter_collection()->remove_filter($filter);
                 }
@@ -389,6 +403,9 @@ abstract class abstract_data_source implements data_source_interface, \templatab
         } else {
             // No preferences set yet, remove all filters.
             foreach ($this->get_filter_collection()->get_filters() as $filter) {
+                if ($filter instanceof forced_condition_interface) {
+                    continue;
+                }
                 $this->get_filter_collection()->remove_filter($filter);
             }
         }

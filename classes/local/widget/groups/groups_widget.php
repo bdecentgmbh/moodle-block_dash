@@ -240,4 +240,13 @@ class groups_widget extends abstract_widget {
         $group = new \create_group();
         return $group->render();
     }
+
+    /**
+     * groups widget only needs the General tab.
+     *
+     * @return array
+     */
+    public function get_preferences_form_tabs(): array {
+        return [\block_dash\local\data_source\form\preferences_form::TAB_GENERAL];
+    }
 }

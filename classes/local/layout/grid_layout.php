@@ -56,6 +56,9 @@ class grid_layout extends abstract_layout {
      * @return bool
      */
     public function supports_pagination() {
+        if ($this->get_data_source()->get_preferences('hidetable')) {
+            return false;
+        }
         return true;
     }
 

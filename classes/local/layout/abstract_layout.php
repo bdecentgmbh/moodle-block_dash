@@ -68,12 +68,21 @@ abstract class abstract_layout implements layout_interface, \templatable {
         $this->datasource = $datasource;
         // Inject the details area table so every data source offers details button/link fields.
         // Pass the block instance ID so detail IDs are unique when multiple blocks are on one page.
-        $blockinstanceid = 0;
-        $bi = $datasource->get_block_instance();
-        if ($bi && isset($bi->instance->id)) {
-            $blockinstanceid = (int) $bi->instance->id;
+        $supportsdetailstab = true;
+        if (method_exists($datasource, 'get_preferences_form_tabs')) {
+            $supportsdetailstab = in_array(
+                \block_dash\local\data_source\form\preferences_form::TAB_DETAILS,
+                $datasource->get_preferences_form_tabs()
+            );
         }
-        $this->datasource->add_table(new details_area_table($blockinstanceid));
+        if ($supportsdetailstab) {
+            $blockinstanceid = 0;
+            $bi = $datasource->get_block_instance();
+            if ($bi && isset($bi->instance->id)) {
+                $blockinstanceid = (int) $bi->instance->id;
+            }
+            $this->datasource->add_table(new details_area_table($blockinstanceid));
+        }
     }
 
     /**
@@ -297,7 +306,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
      * @throws \coding_exception
      */
     public function build_preferences_form(\moodleform $form, \MoodleQuickForm $mform) {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
 
         self::$currentgroupid = random_int(1, 10000);
 
@@ -332,7 +341,7 @@ abstract class abstract_layout implements layout_interface, \templatable {
                     $group[] = $mform->createElement('advcheckbox', $fieldname, $title, $totaratitle, [
                         'group' => self::$currentgroupid, // For legacy add_checkbox_controller().
                         'data-togglegroup' => 'group' . self::$currentgroupid, // For checkbox_toggleall.
-                        'data-toggle' => 'slave', // For checkbox_toggleall.
+                        'data-toggle' => $CFG->branch >= 501 ? 'target' : 'slave', // For checkbox_toggleall.
                         'data-action' => 'toggle', // For checkbox_toggleall.
                     ]);
                     $mform->setType($fieldname, PARAM_BOOL);
@@ -657,7 +666,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
 
             if (
                 !$this->get_data_source()->supports_ajax_pagination() &&
-                $this->get_data_source()->get_paginator()->get_page_count() > 1
+                $this->get_data_source()->get_paginator()->get_page_count() > 1 &&
+                $this->supports_pagination()
             ) {
                 $templatedata['paginator'] = $OUTPUT->render_from_template(paginator::TEMPLATE, $this->get_data_source()
                     ->get_paginator()

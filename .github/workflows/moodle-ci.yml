@@ -1,6 +1,11 @@
 name: Moodle Plugin CI
 
-on: [push, pull_request]
+on:
+  # Pull requests are built on every branch; direct pushes only on the long-lived
+  # branches, so a PR branch does not build twice for the same commit.
+  push:
+    branches: [main, dev]
+  pull_request:
 
 jobs:
   test:
@@ -29,22 +34,16 @@ jobs:
       matrix:
         include:
           - php: "8.4"
-            moodle-branch: "main"
+            moodle-branch: "MOODLE_502_STABLE"
             database: "mariadb"
           - php: "8.4"
-            moodle-branch: "main"
-            database: "pgsql"          
-          - php: "8.4"
-            moodle-branch: "MOODLE_501_STABLE"
-            database: "mariadb"
+            moodle-branch: "MOODLE_502_STABLE"
+            database: "pgsql"
           - php: "8.4"
             moodle-branch: "MOODLE_501_STABLE"
-            database: "pgsql"        
-          - php: "8.3"
-            moodle-branch: "MOODLE_500_STABLE"
             database: "mariadb"
-          - php: "8.3"
-            moodle-branch: "MOODLE_500_STABLE"
+          - php: "8.4"
+            moodle-branch: "MOODLE_501_STABLE"
             database: "pgsql"
           - php: "8.2"
             moodle-branch: "MOODLE_405_STABLE"

@@ -25,8 +25,14 @@
 use block_dash\local\data_source\categories_data_source;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\local\layout\grid_layout;
+use block_dash\local\layout\cards_layout;
+use block_dash\local\layout\cards_slider_layout;
+use block_dash\local\layout\cards_masonry_layout;
 use block_dash\local\layout\accordion_layout;
+use block_dash\local\layout\accordion_layout2;
 use block_dash\local\layout\one_stat_layout;
+use block_dash\local\layout\two_stat_layout;
+use block_dash\local\layout\timeline_layout;
 use block_dash\local\data_source\users_data_source;
 use block_dash\local\widget\mylearning\mylearning_widget;
 use block_dash\local\widget\groups\groups_widget;
@@ -77,6 +83,38 @@ function block_dash_register_layouts() {
         [
             'name' => get_string('layoutgrid', 'block_dash'),
             'identifier' => grid_layout::class,
+        ],
+        [
+            'name' => get_string('layoutcards', 'block_dash'),
+            'identifier' => cards_layout::class,
+        ],
+        [
+            'name' => get_string('layoutcards_slider', 'block_dash'),
+            'identifier' => cards_slider_layout::class,
+        ],
+        [
+            'name' => get_string('layoutcards_masonry', 'block_dash'),
+            'identifier' => cards_masonry_layout::class,
+        ],
+        [
+            'name' => get_string('layoutaccordion', 'block_dash'),
+            'identifier' => accordion_layout::class,
+        ],
+        [
+            'name' => get_string('layoutaccordion2', 'block_dash'),
+            'identifier' => accordion_layout2::class,
+        ],
+        [
+            'name' => get_string('layoutonestat', 'block_dash'),
+            'identifier' => one_stat_layout::class,
+        ],
+        [
+            'name' => get_string('layouttwostat', 'block_dash'),
+            'identifier' => two_stat_layout::class,
+        ],
+        [
+            'name' => get_string('layouttimeline', 'block_dash'),
+            'identifier' => timeline_layout::class,
         ],
     ];
 }
@@ -145,8 +183,18 @@ function block_dash_output_fragment_block_preferences_form($args) {
     $formhtml = ob_get_contents();
     ob_end_clean();
 
+    // Allow datasources and widgets to restrict which tabs are shown.
+    $configuration = \block_dash\local\configuration\configuration::create_from_instance($block);
+    $activetabs = preferences_form::TABS;
+    if ($configuration->is_fully_configured()) {
+        $datasource = $configuration->get_data_source();
+        if (method_exists($datasource, 'get_preferences_form_tabs')) {
+            $activetabs = $datasource->get_preferences_form_tabs();
+        }
+    }
+
     $tabs = [];
-    foreach (preferences_form::TABS as $tab) {
+    foreach ($activetabs as $tab) {
         $tabs[] = [
             'label' => get_string($tab, 'block_dash'),
             'active' => $tab == $args->tab,
@@ -376,15 +424,51 @@ function block_dash_visible_addons($id) {
  */
 function block_dash_disabled_addons_list() {
     global $CFG;
-    $disabledaddons = [];
 
-    // @codingStandardsIgnoreStart
+    // Step 1: If a plugin config is present within the plugin, require it.
+    // This step might not be necessary as the plugin's config.php might also be loaded already,
+    // but better be safe than sorry.
+    //
+    // Regardless if the plugin's config.php is already loaded or not, a definition of
+    // $CFG->dashdisabledaddons in that file will supersede a defition of $CFG->dashdisabledaddons
+    // in Moodle's global config.php.
+    //
     if (file_exists($CFG->dirroot . '/blocks/dash/config.php')) {
+        // phpcs:disable moodle.Files.RequireLogin.Missing
         require_once($CFG->dirroot . '/blocks/dash/config.php');
-        // @codingStandardsIgnoreEnd
-        // Fetch disabled addons from CFG.
-        $disabledaddons = isset($CFG->dashdisabledaddons) ? $CFG->dashdisabledaddons : [];
+        // phpcs:enable moodle.Files.RequireLogin.Missing
     }
 
+    // Step 2: Pick disabled addons from the global variable, if it exists.
+    $disabledaddons = isset($CFG->dashdisabledaddons) ? $CFG->dashdisabledaddons : [];
+
+    // Return the list.
     return $disabledaddons;
+}
+
+/**
+ * Get card block column class.
+ *
+ * @param int $column
+ * @return string
+ */
+function block_dash_get_card_column_customclass($column) {
+    switch ($column) {
+        case 12:
+            return 'one-column-block';
+        case 6:
+            return 'two-column-block';
+        case 4:
+            return 'three-column-block';
+        case 3:
+            return 'four-column-block';
+        case 25:
+            return 'five-column-block';
+        case 2:
+            return 'six-column-block';
+        case 1:
+            return 'twelve-column-block';
+        default:
+            return '';
+    }
 }

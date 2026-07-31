@@ -60,7 +60,7 @@ class block_dash extends block_base {
      * @throws coding_exception
      */
     public function specialization() {
-        global $OUTPUT;
+        global $CFG, $OUTPUT;
 
         // Verify the dash output is disabled, then use the default title for the block. stop execution here.
         if (block_dash_is_disabled()) {
@@ -85,8 +85,9 @@ class block_dash extends block_base {
                     $addclass .= " collapsed";
                 }
 
+                $toggleattr = $CFG->branch >= 500 ? 'data-bs-toggle' : 'data-toggle';
                 $attr = [
-                    'data-toggle' => 'collapse',
+                    $toggleattr => 'collapse',
                     'class' => $addclass,
                     'href' => "#dash-{$this->instance->id}",
                     "aria-expanded" => "false",
@@ -282,11 +283,7 @@ class block_dash extends block_base {
                 return $this->content;
             }
 
-            if (!$this->verify_access_restrictions()) {
-                $config = $datasource->get_block_instance()->config;
-                if (!$hidewhenempty && isset($config->emptystate['text'])) {
-                    $this->content->text = format_text($config->emptystate['text'], FORMAT_HTML, ['noclean' => true]);
-                }
+            if ($datasource && !$this->verify_access_restrictions()) {
                 return $this->content;
             }
 

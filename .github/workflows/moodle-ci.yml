@@ -1,10 +1,11 @@
 name: Moodle Plugin CI
 
 on:
-  # Pull requests are built on every branch; direct pushes only on the long-lived
-  # branches, so a PR branch does not build twice for the same commit.
+  # Pull requests are built on every branch, so anything reaching dev has already
+  # been built by its PR. Direct pushes are only built on main, which is the one
+  # branch that receives commits outside the pull request flow (releases).
   push:
-    branches: [main, dev]
+    branches: [main]
   pull_request:
 
 jobs:

@@ -393,14 +393,21 @@ function block_dash_get_data_collection() {
  * @return bool
  */
 function block_dash_visible_addons($id) {
-    // The component is the first namespace segment of the data source / widget class.
-    $component = explode('\\', ltrim((string) $id, '\\'))[0];
+    // The component is the leading segment of the identifier. Most identifiers are class
+    // names ("dashaddon_courses\local\block_dash\..."), but widgets may register a custom
+    // identifier instead ("dashaddon_repository:my-contacts"), so both separators count.
+    $component = preg_split('/[\\\\:]/', ltrim((string) $id, '\\'))[0];
 
-    // Only dash addon subplugins are gated here; block_dash, mod_videotime, tool_skills,
-    // skilladdon_*, composeaddon_* and everything else are always visible. Matching on the
-    // "dashaddon_" type marker keeps edition subplugins working too (e.g. wpdashaddon_*),
-    // where the previous hardcoded regex stripped the prefix and derived the wrong component.
-    if (strpos($component, 'dashaddon_') === false) {
+    // Only the dash addon subplugin types are gated here; block_dash, mod_videotime,
+    // tool_skills, skilladdon_*, composeaddon_* and everything else are always visible.
+    //
+    // The plugin type is compared exactly. A substring test cannot be used: "wpdashaddon_x"
+    // contains "dashaddon_x", which is precisely how the previous regex stripped the "wp"
+    // prefix and resolved edition subplugins to a non-existent component. Add an edition's
+    // subplugin type here when it ships.
+    $gatedtypes = ['dashaddon', 'wpdashaddon'];
+    $type = strstr($component, '_', true);
+    if (!in_array($type, $gatedtypes, true)) {
         return true;
     }
 

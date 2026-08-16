@@ -155,11 +155,30 @@ class data_source_factory implements data_source_factory_interface {
 
         foreach (self::get_data_source_registry() as $identifier => $datasourceinfo) {
             // Skip if the identifier or name matches any disabled addon.
+            //
+            // Every comparison below is exact. Testing the whole identifier as a substring
+            // leaked entries across components, because "wpdashaddon_x" contains
+            // "dashaddon_x": disabling the local_dash "programs" addon also hid the Workplace
+            // edition's data source (DASH-1287). Matching a whole namespace segment keeps the
+            // documented short-name form working for block_dash's own widgets, e.g. "contacts"
+            // for block_dash\local\widget\contacts\contacts_widget. Identifiers are usually
+            // class names, but a widget may register a custom one such as
+            // "dashaddon_repository:my-contacts", so ":" separates segments too.
             $dsname = isset($datasourceinfo['name']) ? strtolower($datasourceinfo['name']) : '';
+            $segments = preg_split('/[\\\\:]/', ltrim($identifier, '\\'));
+            $component = $segments[0];
             $skip = false;
 
             foreach ($disabledaddons as $addon) {
-                if (strpos($identifier, $addon) !== false || $dsname === strtolower($addon)) {
+                // PHP 8 returns 0 from strpos($haystack, ''), so a stray empty element used
+                // to hide every data source in the picker.
+                if ($addon === '') {
+                    continue;
+                }
+                if ($component === $addon
+                        || $component === 'dashaddon_' . $addon
+                        || in_array($addon, $segments, true)
+                        || $dsname === strtolower($addon)) {
                     $skip = true;
                     break;
                 }

@@ -164,6 +164,11 @@ class data_source_factory implements data_source_factory_interface {
             // for block_dash\local\widget\contacts\contacts_widget. Identifiers are usually
             // class names, but a widget may register a custom one such as
             // "dashaddon_repository:my-contacts", so ":" separates segments too.
+            //
+            // The "dashaddon_" prefix below is the config format documented in config.php
+            // ("activity_completion" disables "dashaddon_activity_completion"), not knowledge
+            // of which editions exist. Any component, of any edition, is disabled by its full
+            // name, so a new edition needs no change here.
             $dsname = isset($datasourceinfo['name']) ? strtolower($datasourceinfo['name']) : '';
             $segments = preg_split('/[\\\\:]/', ltrim($identifier, '\\'));
             $component = $segments[0];

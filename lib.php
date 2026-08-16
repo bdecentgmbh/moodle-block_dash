@@ -387,10 +387,14 @@ function block_dash_get_data_collection() {
 }
 
 /**
- * Return the dash addon visible staus.
+ * Should the data source or widget with this identifier be offered in the feature picker?
  *
- * @param int $id ID
- * @return bool
+ * The identifier's component decides, through two rules that apply to every component
+ * alike: an explicit "enabled" setting of "0", and the component's own
+ * <component>_extend_added_dependencies() hook. No plugin or edition is named here.
+ *
+ * @param string $id Data source or widget identifier (a class name, or a custom identifier).
+ * @return bool True when it may be offered.
  */
 function block_dash_visible_addons($id) {
     // The component is the leading segment of the identifier. Most identifiers are class
@@ -398,28 +402,23 @@ function block_dash_visible_addons($id) {
     // identifier instead ("dashaddon_repository:my-contacts"), so both separators count.
     $component = preg_split('/[\\\\:]/', ltrim((string) $id, '\\'))[0];
 
-    // Only the dash addon subplugin types are gated here; block_dash, mod_videotime,
-    // tool_skills, skilladdon_*, composeaddon_* and everything else are always visible.
-    //
-    // The plugin type is compared exactly. A substring test cannot be used: "wpdashaddon_x"
-    // contains "dashaddon_x", which is precisely how the previous regex stripped the "wp"
-    // prefix and resolved edition subplugins to a non-existent component. Add an edition's
-    // subplugin type here when it ships.
-    $gatedtypes = ['dashaddon', 'wpdashaddon'];
-    $type = strstr($component, '_', true);
-    if (!in_array($type, $gatedtypes, true)) {
-        return true;
-    }
+    // Every component is asked the same two questions, so nothing here needs to know which
+    // plugins or editions exist. A new edition (dashaddon_*, wpdashaddon_*, composeaddon_*,
+    // ...) is gated correctly the day it ships, without a change to this block. The previous
+    // implementation matched the component name against a hardcoded "dashaddon_" marker,
+    // which both hid edition subplugins by accident ("wpdashaddon_x" contains "dashaddon_x")
+    // and silently ignored the opt-out hook of every component that did not match it.
 
-    // Hidden only when explicitly disabled; absence of the toggle counts as enabled, because
-    // edition subplugins such as wpdashaddon_* have no enable/disable setting of their own.
+    // 1. Hidden when explicitly disabled. A missing value counts as enabled: most addons,
+    // and every edition subplugin, ship no enable/disable setting of their own.
     if (get_config($component, 'enabled') === '0') {
         return false;
     }
 
-    // Let the addon hide itself (missing Workplace plugin, capability, ...) through its
-    // <component>_extend_added_dependencies() hook, loaded from its own directory rather than
-    // a hardcoded local/dash/addon path so subplugins under other parents are found.
+    // 2. Hidden when the component hides itself (missing dependency, capability, ...) through
+    // its <component>_extend_added_dependencies() hook, which returns the reason to display.
+    // The hook is loaded from the component's own directory rather than a hardcoded
+    // local/dash/addon path, so subplugins of any parent are found.
     $dependencyfn = $component . '_extend_added_dependencies';
     if (!function_exists($dependencyfn)) {
         $dir = core_component::get_component_directory($component);

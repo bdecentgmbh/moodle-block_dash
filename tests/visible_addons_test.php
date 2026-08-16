@@ -60,13 +60,13 @@ final class visible_addons_test extends \advanced_testcase {
     }
 
     /**
-     * Components that are not dash addon subplugins are never gated.
+     * A component that neither disables itself nor implements the hook is visible.
      */
-    public function test_non_addon_components_are_always_visible(): void {
+    public function test_components_without_an_opt_out_are_visible(): void {
         $this->assertTrue(block_dash_visible_addons(users_data_source::class));
         $this->assertTrue(block_dash_visible_addons('mod_videotime\\local\\block_dash\\videotime_data_source'));
         $this->assertTrue(block_dash_visible_addons('skilladdon_skillprogress\\widget\\progress_widget'));
-        $this->assertTrue(block_dash_visible_addons('composeaddon_example\\local\\block_dash\\example_data_source'));
+        $this->assertTrue(block_dash_visible_addons('composeaddon_hero\\local\\block_dash\\hero_data_source'));
     }
 
     /**
@@ -82,6 +82,32 @@ final class visible_addons_test extends \advanced_testcase {
 
         $this->assertTrue(block_dash_visible_addons(self::EDITION_SOURCE));
         $this->assertTrue(block_dash_visible_addons(self::EDITION_WIDGET));
+    }
+
+    /**
+     * Every component is gated by the same rules, whatever its plugin type.
+     *
+     * A new edition ships its own subplugin type (dashaddon, wpdashaddon, composeaddon,
+     * ...). None of them is named in block_dash, so this must hold for a type that did not
+     * exist when the gate was written — otherwise each edition needs a change to the block.
+     */
+    public function test_the_gate_names_no_plugin_type(): void {
+        $sources = [
+            'composeaddon_hero\\local\\block_dash\\hero_data_source',
+            'somefutureaddon_widget\\local\\block_dash\\future_data_source',
+            'videotimeplugin_dash\\local\\datasource\\videotime_stats_data_source',
+        ];
+
+        foreach ($sources as $source) {
+            $component = explode('\\', $source)[0];
+
+            $this->assertTrue(block_dash_visible_addons($source),
+                "{$component} should be visible while nothing disables it.");
+
+            set_config('enabled', '0', $component);
+            $this->assertFalse(block_dash_visible_addons($source),
+                "{$component} should be hidden once explicitly disabled.");
+        }
     }
 
     /**

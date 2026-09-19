@@ -101,7 +101,8 @@ body .select2-container {
     display: inline-block;
 }
 
-.dash-block-content img.img-responsive {
+.dash-block-content .card img.img-responsive {
+    min-height: 120px;
     max-height: 120px;
     object-fit: cover;
 }
@@ -1733,6 +1734,9 @@ tr.dash-details-expanded {
     height: 100%;
     object-fit: cover;
     border-radius: 7px;
+}
+.block_dash .dash-container .dash-block-content .timeline-layout .carddetails-area-block img {
+    max-height: none;
 }
 .block_dash .dash-container .dash-block-content .card .card-body p img {
     margin-bottom: 10px;

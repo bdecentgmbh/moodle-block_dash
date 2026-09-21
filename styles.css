@@ -1487,7 +1487,7 @@ tr.dash-details-expanded {
 .block_dash .panel .card-img-top {
     width: 100%;
 }
-.block_dash.local_dash-layout-cards_layout img.card-img-top.img-responsive {
+.block_dash.block_dash-local-layout-cards_layout img.card-img-top.img-responsive {
     object-fit: cover;
     height: 120px;
 }

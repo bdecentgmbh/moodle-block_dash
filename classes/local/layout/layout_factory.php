@@ -98,6 +98,22 @@ class layout_factory implements layout_factory_interface {
     ];
 
     /**
+     * Resolve a layout identifier to the one it is registered under.
+     *
+     * Runtime fallback: remaps old local_dash identifiers to block_dash.
+     *
+     * @param string $identifier
+     * @return string
+     */
+    public static function normalise_identifier($identifier) {
+        if (!self::exists($identifier) && isset(self::$layoutmigrationmap[$identifier])) {
+            return self::$layoutmigrationmap[$identifier];
+        }
+
+        return $identifier;
+    }
+
+    /**
      * Get layout object with datasource.
      *
      * @param string $identifier
@@ -105,10 +121,7 @@ class layout_factory implements layout_factory_interface {
      * @return layout_interface|null
      */
     public static function build_layout($identifier, data_source_interface $datasource) {
-        // Runtime fallback: remap old local_dash identifiers to block_dash.
-        if (!self::exists($identifier) && isset(self::$layoutmigrationmap[$identifier])) {
-            $identifier = self::$layoutmigrationmap[$identifier];
-        }
+        $identifier = self::normalise_identifier($identifier);
 
         if (!self::exists($identifier)) {
             return null;

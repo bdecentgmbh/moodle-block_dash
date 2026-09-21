@@ -83,6 +83,23 @@ if ($ADMIN->fulltree) {
         0
     ));
 
+    // Filters with few options are displayed as buttons.
+    $settings->add(new admin_setting_configtext(
+        'block_dash/filterbuttonscount',
+        get_string('filterbuttonscount', 'block_dash'),
+        get_string('filterbuttonscount_desc', 'block_dash'),
+        \block_dash\local\data_grid\filter\select_filter::DEFAULT_BUTTONS_COUNT,
+        PARAM_INT
+    ));
+
+    $settings->add(new admin_setting_configmultiselect(
+        'block_dash/filterbuttonslayouts',
+        get_string('filterbuttonslayouts', 'block_dash'),
+        get_string('filterbuttonslayouts_desc', 'block_dash'),
+        \block_dash\local\data_grid\filter\select_filter::DEFAULT_BUTTONS_LAYOUTS,
+        \block_dash\local\layout\layout_factory::get_layout_form_options()
+    ));
+
     $settings->add(new admin_setting_configtext(
         'block_dash/suggestinterests',
         get_string('suggestinterests', 'block_dash'),

@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die('No direct access');
 require_once("$CFG->libdir/externallib.php");
 
 use block_dash\local\block_builder;
+use block_dash\local\dashboard_lookup;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\output\renderer;
 use block_dash\local\configuration\configuration;
@@ -132,36 +133,6 @@ class external extends external_api {
     }
 
     /**
-     * Find the dashboard a block was added to, if it was added to one.
-     *
-     * The dashboard's short name is read from the block's page type pattern, which the dashboard page builds as
-     * "dashaddon-dashboard-<shortname>". The region the block was created in only carries the short name when the
-     * block was added to the dashboard's own region: a block added to one of the page layout's regions, such as
-     * side-pre, carries that region's name instead, and the dashboard would not be found.
-     *
-     * @param \block_base $block The block instance.
-     * @return \dashaddon_dashboard\model\dashboard|null The dashboard, or null when the block is not on one.
-     */
-    protected static function get_block_dashboard($block) {
-        $prefix = 'dashaddon-dashboard-';
-        $pagetypepattern = (string) $block->instance->pagetypepattern;
-
-        if (!class_exists('\dashaddon_dashboard\model\dashboard') || strpos($pagetypepattern, $prefix) !== 0) {
-            return null;
-        }
-
-        $shortname = substr($pagetypepattern, strlen($prefix));
-        if ($shortname === '' || $shortname === '*') {
-            // A wildcard pattern says nothing about which dashboard, so fall back to the region the block was made in.
-            $shortname = (string) $block->instance->defaultregion;
-        }
-
-        $dashboard = \dashaddon_dashboard\model\dashboard::get_record(['shortname' => $shortname]);
-
-        return $dashboard ?: null;
-    }
-
-    /**
      * Get block content.
      *
      * @param int $blockinstanceid
@@ -211,9 +182,7 @@ class external extends external_api {
         $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
 
-        $dashboard = self::get_block_dashboard($block);
-        $public = $dashboard
-            && $dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC;
+        $public = dashboard_lookup::is_public_dashboard($blockinstance);
 
         if (!$public) {
             // Verify the block created for frontpage. and user not loggedin allow to access the block content.

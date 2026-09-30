@@ -62,7 +62,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          ini-values: max_input_vars=6000
+          # setup-php enables the OPcache JIT on PHP 8. In the Behat web server it made OPcache segfault and take
+          # down all server processes mid-suite (PLS-1077); OPcache itself stays enabled.
+          ini-values: max_input_vars=6000, opcache.jit=disable, opcache.jit_buffer_size=0
           coverage: none
 
       - name: Initialise moodle-plugin-ci
@@ -125,3 +127,12 @@ jobs:
       - name: Behat features
         if: ${{ always() }}
         run: moodle-plugin-ci behat --profile chrome
+        env:
+          # Serve the browser's parallel requests with several built-in web server processes.
+          PHP_CLI_SERVER_WORKERS: 4
+
+      # If the Behat web server dies mid-suite, every later scenario fails with ERR_CONNECTION_REFUSED and the
+      # kernel log shows why. Until the JIT was disabled above, this was an OPcache segfault (PLS-1077).
+      - name: Check the kernel log for crashed processes
+        if: ${{ always() }}
+        run: sudo dmesg -T | grep -iE 'out of memory|oom-kill|killed process|segfault|general protection' || echo 'None.'

@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die('No direct access');
 require_once("$CFG->libdir/externallib.php");
 
 use block_dash\local\block_builder;
+use block_dash\local\dashboard_lookup;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\output\renderer;
 use block_dash\local\configuration\configuration;
@@ -178,20 +179,10 @@ class external extends external_api {
         if ($pagelayout) {
             $PAGE->set_pagelayout($pagelayout);
         }
-        $public = false;
         $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
-        if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
-            if (
-                $dashboard = \dashaddon_dashboard\model\dashboard::get_record(
-                    ['shortname' => $block->instance->defaultregion]
-                )
-            ) {
-                if ($dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC) {
-                    $public = true;
-                }
-            }
-        }
+
+        $public = dashboard_lookup::is_public_dashboard($blockinstance);
 
         if (!$public) {
             // Verify the block created for frontpage. and user not loggedin allow to access the block content.

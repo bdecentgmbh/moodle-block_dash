@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die('No direct access');
 
 require_once($CFG->dirroot . '/lib/formslib.php');
-require($CFG->dirroot . '/lib/tablelib.php');
+require_once($CFG->dirroot . '/lib/tablelib.php');
 
 use block_dash\local\data_source\data_source_interface;
 

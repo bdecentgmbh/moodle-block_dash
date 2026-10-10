@@ -23,6 +23,12 @@
  */
 
 namespace block_dash\local\data_grid\filter;
+
+use block_dash\local\layout\cards_layout;
+use block_dash\local\layout\cards_masonry_layout;
+use block_dash\local\layout\cards_slider_layout;
+use block_dash\local\layout\layout_factory;
+
 /**
  * Class select_filter.
  *
@@ -33,6 +39,20 @@ abstract class select_filter extends filter {
      * All option value.
      */
     const ALL_OPTION = -1;
+
+    /**
+     * Default for the highest number of options that are still displayed as buttons.
+     */
+    const DEFAULT_BUTTONS_COUNT = 4;
+
+    /**
+     * Default for the layouts that display filters with few options as buttons.
+     */
+    const DEFAULT_BUTTONS_LAYOUTS = [
+        cards_layout::class,
+        cards_slider_layout::class,
+        cards_masonry_layout::class,
+    ];
 
     /**
      * Select options.
@@ -141,6 +161,34 @@ abstract class select_filter extends filter {
     }
 
     /**
+     * Whether the options are displayed as buttons instead of a select box.
+     *
+     * The layout of the block has to be enabled for buttons, and there must be no more options than the configured
+     * maximum. The "All" option is not counted, as it is not displayed as a button.
+     *
+     * @param filter_collection_interface $filtercollection
+     * @param array $options The visible options, keyed by value.
+     * @return bool
+     */
+    protected function display_as_buttons(filter_collection_interface $filtercollection, array $options): bool {
+        $maxcount = get_config('block_dash', 'filterbuttonscount');
+        $maxcount = ($maxcount === false) ? self::DEFAULT_BUTTONS_COUNT : (int) $maxcount;
+
+        $layouts = get_config('block_dash', 'filterbuttonslayouts');
+        $layouts = ($layouts === false) ? self::DEFAULT_BUTTONS_LAYOUTS : array_filter(explode(',', $layouts));
+
+        $layout = layout_factory::normalise_identifier((string) ($filtercollection->layout ?? ''));
+        if ($maxcount <= 0 || !in_array($layout, $layouts)) {
+            return false;
+        }
+
+        $buttons = $options;
+        unset($buttons[self::ALL_OPTION]);
+
+        return count($options) > 1 && count($buttons) <= $maxcount;
+    }
+
+    /**
      * Override this method and call it after creating a form element.
      *
      * @param filter_collection_interface $filtercollection
@@ -162,11 +210,7 @@ abstract class select_filter extends filter {
             $options = $alloption + array_intersect_key($options, array_flip($activevalues));
         }
 
-        // Display the select box as tags only for grid layouts.
-        $tags = ($filtercollection->layout == 'local_dash\layout\cards_layout'
-            && count($options) > 1
-            && count($options) <= BLOCK_DASH_FILTER_TABS_COUNT
-            ) ? true : false;
+        $tags = $this->display_as_buttons($filtercollection, $options);
 
         // If All option is present, send it to top.
         if (isset($options[self::ALL_OPTION])) {

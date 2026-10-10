@@ -521,7 +521,28 @@ class block_dash extends block_base {
                     get_string('importblock', 'block_dash'),
                     ['data-action' => 'block_dash-import', 'data-blockid' => $this->instance->id]
                 );
+                $newcontrols[] = new action_menu_link_secondary(
+                    new moodle_url($this->page->url),
+                    new pix_icon('i/addblock', ''),
+                    get_string('gallerychoose', 'block_dash'),
+                    ['data-action' => 'block_dash-gallery-choose', 'data-blockid' => $this->instance->id]
+                );
+                if ($datasource && has_capability('block/dash:managegallery', context_system::instance())) {
+                    $newcontrols[] = new action_menu_link_secondary(
+                        new moodle_url($this->page->url),
+                        new pix_icon('i/repository', ''),
+                        get_string('gallerysave', 'block_dash'),
+                        [
+                            'data-action' => 'block_dash-modalform',
+                            'data-formclass' => \block_dash\form\gallery_save::class,
+                            'data-args' => json_encode(['blockid' => $this->instance->id]),
+                            'data-title' => get_string('gallerysave', 'block_dash'),
+                        ]
+                    );
+                }
                 $this->page->requires->js_call_amd('block_dash/import_block', 'init');
+                $this->page->requires->js_call_amd('block_dash/gallery_picker', 'init');
+                $this->page->requires->js_call_amd('block_dash/modal_form', 'init');
             }
         }
         $bc->controls = $newcontrols;

@@ -2838,3 +2838,8 @@ tr.dash-details-expanded {
     height: 100%;
     object-fit: cover;
 }
+/* Gallery picker preview. */
+.block-dash-gallery-preview {
+    max-height: 60vh;
+    overflow: auto;
+}

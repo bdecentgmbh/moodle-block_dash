@@ -227,7 +227,13 @@ function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forced
 
     require_login();
 
-    if ($filearea == 'images' || $filearea == 'categoryimg') {
+    // Gallery preview images and the background images of gallery items, both in the system context.
+    $galleryareas = ['gallerypreview', 'galleryimages'];
+    if (in_array($filearea, $galleryareas) && $context->contextlevel != CONTEXT_SYSTEM) {
+        return false;
+    }
+
+    if ($filearea == 'images' || $filearea == 'categoryimg' || in_array($filearea, $galleryareas)) {
         $relativepath = implode('/', $args);
 
         $fullpath = "/$context->id/block_dash/$filearea/$relativepath";

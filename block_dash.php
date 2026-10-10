@@ -511,7 +511,7 @@ class block_dash extends block_base {
                 if ($datasource) {
                     $newcontrols[] = new action_menu_link_secondary(
                         new moodle_url('/blocks/dash/export.php', ['id' => $this->instance->id, 'sesskey' => sesskey()]),
-                        new pix_icon('t/download', ''),
+                        new pix_icon('i/export', ''),
                         get_string('exportblock', 'block_dash')
                     );
                 }

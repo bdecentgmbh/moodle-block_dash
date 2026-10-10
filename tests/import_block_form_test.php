@@ -62,10 +62,11 @@ final class import_block_form_test extends \advanced_testcase {
             'filename' => 'block.json',
         ], $content);
 
+        // Moodle 5.1 and older set arg_separator.output to '&amp;', which parse_str() doesn't read back.
         return dynamic_form::execute(import_block::class, http_build_query(import_block::mock_ajax_submit([
             'blockid' => $block->instance->id,
             'importfile' => $draftitemid,
-        ])));
+        ]), '', '&'));
     }
 
     /**

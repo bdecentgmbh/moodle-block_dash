@@ -184,10 +184,12 @@ if ($ADMIN->fulltree) {
     ");
 }
 
-// Gallery of ready-made Dash setups.
+// Add the settings page before the gallery page, so "Dash" stays the first entry named Dash.
+$ADMIN->add('blocksettings', $settings);
 $ADMIN->add('blocksettings', new admin_externalpage(
     'block_dash_gallery',
     get_string('gallerymanage', 'block_dash'),
     new moodle_url('/blocks/dash/gallery.php'),
     'block/dash:managegallery'
 ));
+$settings = null;

@@ -3,7 +3,7 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
     function ($, UI, Log, Ajax, Notification, ModalEvents, PreferencesModal, DatePicker, Select2, Fragment, Templates) {
 
         var DashInstance = function (root, blockInstanceId, blockContextid, editing, istotara, pagelayout,
-            pagecontext, sortDirections = {}) {
+            pagecontext, sortDirections = {}, galleryItem = '') {
 
             this.root = $(root);
             this.blockInstanceId = blockInstanceId;
@@ -16,6 +16,8 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
             this.isTotara = istotara;
             this.pageLayout = pagelayout;
             this.pageContext = pagecontext;
+            // Gallery items embedded outside a block region are rendered again from the item and its context.
+            this.galleryItem = galleryItem || '';
             this.init();
         };
 
@@ -235,6 +237,8 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     "sort_direction": sortDirection,
                     "pagelayout": this.pageLayout,
                     "pagecontext": this.pageContext,
+                    "gallery_item": this.galleryItem,
+                    "context_id": this.galleryItem ? this.blockContextid : 0,
                 }
             };
             return Ajax.call([request])[0];
@@ -370,6 +374,8 @@ define(['jquery', 'jqueryui', 'core/log', 'core/ajax', 'core/notification', 'cor
                     "sort_direction": sortDirection,
                     "pagelayout": this.pageLayout,
                     "pagecontext": this.pageContext,
+                    "gallery_item": this.galleryItem,
+                    "context_id": this.galleryItem ? this.blockContextid : 0,
                 }
             };
 

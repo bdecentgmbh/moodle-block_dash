@@ -296,10 +296,26 @@ class block_dash extends block_base {
             $this->content->text = $OUTPUT->notification($e->getMessage() . $e->getTraceAsString(), 'error');
         }
 
-        $this->page->requires->css(new \moodle_url('/blocks/dash/styles/select2.min.css'));
-        $this->page->requires->css(new \moodle_url('/blocks/dash/styles/datepicker.css'));
-        $this->page->requires->css(new \moodle_url('/blocks/dash/styles/slick.css'));
+        // Gallery items embedded in text render after the head, and bring their own stylesheet links.
+        if (!$this->page->requires->is_head_done()) {
+            foreach (self::get_extra_stylesheets() as $stylesheet) {
+                $this->page->requires->css($stylesheet);
+            }
+        }
         return $this->content;
+    }
+
+    /**
+     * Stylesheets of the libraries Dash blocks use, beside the plugin's styles.css.
+     *
+     * @return moodle_url[]
+     */
+    public static function get_extra_stylesheets(): array {
+        return [
+            new moodle_url('/blocks/dash/styles/select2.min.css'),
+            new moodle_url('/blocks/dash/styles/datepicker.css'),
+            new moodle_url('/blocks/dash/styles/slick.css'),
+        ];
     }
 
     /**

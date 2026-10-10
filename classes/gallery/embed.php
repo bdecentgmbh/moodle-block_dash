@@ -75,6 +75,28 @@ class embed {
         $attributes['class'] .= ' card mb-3 dash-embed';
         $attributes['data-gallery-item'] = $item->get_shortname();
 
-        return html_writer::tag('section', html_writer::div($title . $content->text, 'card-body'), $attributes);
+        return self::get_stylesheet_links()
+            . html_writer::tag('section', html_writer::div($title . $content->text, 'card-body'), $attributes);
+    }
+
+    /**
+     * Links to the stylesheets Dash blocks need, once per request, when the page head is already printed.
+     *
+     * @return string HTML.
+     */
+    protected static function get_stylesheet_links(): string {
+        global $PAGE;
+        static $done = false;
+
+        if ($done || !$PAGE->requires->is_head_done()) {
+            return '';
+        }
+        $done = true;
+
+        $links = '';
+        foreach (\block_dash::get_extra_stylesheets() as $stylesheet) {
+            $links .= html_writer::empty_tag('link', ['rel' => 'stylesheet', 'href' => $stylesheet->out(false)]);
+        }
+        return $links;
     }
 }

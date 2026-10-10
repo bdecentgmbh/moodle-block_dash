@@ -60,6 +60,8 @@ class external extends external_api {
             'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
             'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
             'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
+            'gallery_item' => new \external_value(PARAM_RAW_TRIMMED, 'Shortname of an embedded gallery item', VALUE_DEFAULT, ''),
+            'context_id' => new \external_value(PARAM_INT, 'Context the gallery item is embedded in', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -73,6 +75,8 @@ class external extends external_api {
      * @param string $sortdirection
      * @param string $pagelayout
      * @param int $pagecontext
+     * @param string $galleryitem Shortname of an embedded gallery item.
+     * @param int $contextid Context the gallery item is embedded in.
      *
      * @return array
      * @throws \coding_exception
@@ -87,7 +91,9 @@ class external extends external_api {
         $sortfield,
         $sortdirection,
         $pagelayout = '',
-        $pagecontext = 0
+        $pagecontext = 0,
+        $galleryitem = '',
+        $contextid = 0
     ) {
         global $PAGE, $DB, $OUTPUT, $SITE;
 
@@ -99,6 +105,8 @@ class external extends external_api {
             $sortdirection,
             $pagelayout,
             $pagecontext,
+            $galleryitem,
+            $contextid,
             true
         );
     }
@@ -128,6 +136,8 @@ class external extends external_api {
             'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
             'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
             'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
+            'gallery_item' => new \external_value(PARAM_RAW_TRIMMED, 'Shortname of an embedded gallery item', VALUE_DEFAULT, ''),
+            'context_id' => new \external_value(PARAM_INT, 'Context the gallery item is embedded in', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -141,6 +151,8 @@ class external extends external_api {
      * @param string $sortdirection
      * @param string $pagelayout
      * @param int $pagecontext
+     * @param string $galleryitem Shortname of an embedded gallery item, rendered instead of a block.
+     * @param int $contextid Context the gallery item is embedded in.
      * @param bool $returnpagination If true, only return the pagination html.
      *
      * @return array
@@ -157,6 +169,8 @@ class external extends external_api {
         $sortdirection,
         $pagelayout = '',
         $pagecontext = 0,
+        $galleryitem = '',
+        $contextid = 0,
         $returnpagination = false
     ) {
         global $PAGE, $DB, $OUTPUT, $SITE;
@@ -169,6 +183,8 @@ class external extends external_api {
             'sort_direction' => $sortdirection,
             'pagelayout' => $pagelayout,
             'pagecontext' => $pagecontext,
+            'gallery_item' => $galleryitem,
+            'context_id' => $contextid,
         ]);
 
         if ($pagecontext) {
@@ -179,8 +195,22 @@ class external extends external_api {
             $PAGE->set_pagelayout($pagelayout);
         }
         $public = false;
-        $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
-        $block = block_instance($blockinstance->blockname, $blockinstance);
+        if ($params['gallery_item'] !== '') {
+            // An embedded gallery item has no block row: rebuild it from the item, in its context.
+            $item = \block_dash\gallery\gallery::get_item($params['gallery_item']);
+            if (!$item || $item->is_hidden() || !$item->is_embeddable() || !$item->is_available()) {
+                throw new \moodle_exception('galleryerrornotusable', 'block_dash');
+            }
+            $block = \block_dash\gallery\embed_block::create(
+                $item,
+                \context::instance_by_id($params['context_id']),
+                $PAGE,
+                $params['block_instance_id']
+            );
+        } else {
+            $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
+            $block = block_instance($blockinstance->blockname, $blockinstance);
+        }
         if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
             if (
                 $dashboard = \dashaddon_dashboard\model\dashboard::get_record(

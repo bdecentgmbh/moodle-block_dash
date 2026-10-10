@@ -50,16 +50,21 @@ class embed_block extends \block_dash {
      * @param item $item
      * @param \context $context Context to render in.
      * @param \moodle_page $page
+     * @param int|null $id Id the page gave the block, when it is rendered again for paging, filters or sorting.
      * @return embed_block
      */
-    public static function create(item $item, \context $context, \moodle_page $page): embed_block {
+    public static function create(item $item, \context $context, \moodle_page $page, ?int $id = null): embed_block {
         $block = new embed_block();
         $block->item = $item;
         $block->page = $page;
         $block->context = $context;
         $block->config = (object) ($item->get_data()['config'] ?? []);
+        // Data downloads load the block from the database, which an embedded item doesn't have.
+        if (isset($block->config->preferences) && is_array($block->config->preferences)) {
+            $block->config->preferences['exportdata'] = 0;
+        }
         $block->instance = (object) [
-            'id' => --self::$lastid,
+            'id' => $id !== null && $id < 0 ? $id : --self::$lastid,
             'blockname' => 'dash',
             'parentcontextid' => $context->id,
             'showinsubcontexts' => 0,

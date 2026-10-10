@@ -116,6 +116,7 @@ class block_builder {
             'pagelayout' => $this->blockinstance->page->pagelayout,
             'pagecontext' => $this->blockinstance->page->context->id,
             'collapseaction' => $this->is_collapsible_content_addon(),
+            'gallery_item' => $embedded ? $this->blockinstance->get_item()->get_shortname() : '',
         ];
 
         if ($this->configuration->is_fully_configured()) {

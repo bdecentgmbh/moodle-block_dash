@@ -2838,8 +2838,12 @@ tr.dash-details-expanded {
     height: 100%;
     object-fit: cover;
 }
-/* Gallery picker preview. */
+/* Gallery picker and preview: use most of the page width. */
+.block-dash-gallery-modal .modal-dialog {
+    max-width: 90vw;
+}
+
 .block-dash-gallery-preview {
-    max-height: 60vh;
+    max-height: 65vh;
     overflow: auto;
 }

@@ -35,6 +35,18 @@ import {getString} from 'core/str';
 let initialised = false;
 
 /**
+ * Make a gallery modal use most of the page width, then show it.
+ *
+ * @param {Modal} modal
+ * @returns {Modal}
+ */
+const showWide = (modal) => {
+    modal.getRoot().addClass('block-dash-gallery-modal');
+    modal.show();
+    return modal;
+};
+
+/**
  * Render an item.
  *
  * @param {String} shortname
@@ -62,8 +74,8 @@ const openPicker = async(trigger) => {
         large: true,
         removeOnClose: true,
         returnElement: trigger,
-        show: true,
     });
+    showWide(modal);
     await modal.getBodyPromise();
 
     const root = modal.getRoot()[0];
@@ -124,14 +136,13 @@ const openPicker = async(trigger) => {
  * @param {HTMLElement} trigger
  */
 const openPreview = async(trigger) => {
-    await Modal.create({
+    showWide(await Modal.create({
         title: trigger.dataset.title,
         body: renderItem(trigger.dataset.item, 0),
         large: true,
         removeOnClose: true,
         returnElement: trigger,
-        show: true,
-    });
+    }));
 };
 
 /**

@@ -52,17 +52,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function get_block_pagination_parameters() {
-        return new \external_function_parameters([
-            'block_instance_id' => new \external_value(PARAM_INT),
-            'filter_form_data' => new \external_value(PARAM_RAW),
-            'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
-            'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
-            'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
-            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
-            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
-            'gallery_item' => new \external_value(PARAM_RAW_TRIMMED, 'Shortname of an embedded gallery item', VALUE_DEFAULT, ''),
-            'context_id' => new \external_value(PARAM_INT, 'Context the gallery item is embedded in', VALUE_DEFAULT, 0),
-        ]);
+        return self::get_block_content_parameters();
     }
 
     /**

@@ -58,13 +58,11 @@ export const renderItem = (args) => Ajax.call([{
 }])[0].then((result) => result.html);
 
 /**
- * Let a picker's options be searched, and its items be selected to preview them.
- *
- * Search also filters other options of the picker, such as core's list of blocks.
+ * Let a picker's options be searched, and selected to preview them.
  *
  * @param {HTMLElement} root The picker.
- * @param {Function} render Promise of an item's HTML, given its shortname.
- * @param {Function} onSelect Called with the shortname of the selected item.
+ * @param {Function} render Promise of the preview's HTML, given the option element.
+ * @param {Function} onSelect Called with the selected option element.
  */
 export const bindPicker = (root, render, onSelect) => {
     const preview = root.querySelector('[data-gallery-preview]');
@@ -72,19 +70,19 @@ export const bindPicker = (root, render, onSelect) => {
     let selected = null;
 
     root.addEventListener('click', (e) => {
-        const option = e.target.closest('[data-gallery-option]');
+        const option = e.target.closest('[data-picker-option]');
         if (!option) {
             return;
         }
-        root.querySelectorAll('[data-gallery-option]').forEach((other) => {
+        root.querySelectorAll('[data-picker-option]').forEach((other) => {
             other.classList.toggle('active', other === option);
             other.setAttribute('aria-selected', other === option ? 'true' : 'false');
         });
-        selected = option.dataset.galleryOption;
-        onSelect(selected);
+        selected = option;
+        onSelect(option);
         description.textContent = option.dataset.description;
-        render(selected).then((html) => {
-            if (selected === option.dataset.galleryOption) {
+        render(option).then((html) => {
+            if (selected === option) {
                 preview.innerHTML = html;
             }
             return html;
@@ -95,9 +93,8 @@ export const bindPicker = (root, render, onSelect) => {
     if (search) {
         search.addEventListener('input', () => {
             const query = search.value.trim().toLowerCase();
-            root.querySelectorAll('[data-gallery-option], .list-group-item[data-blockname]').forEach((option) => {
-                const text = option.dataset.search ?? option.textContent;
-                option.hidden = query !== '' && !text.toLowerCase().includes(query);
+            root.querySelectorAll('[data-picker-option]').forEach((option) => {
+                option.hidden = query !== '' && !option.dataset.search.toLowerCase().includes(query);
             });
         });
     }
@@ -126,8 +123,8 @@ const openPicker = async(trigger) => {
     const save = modal.getFooter()[0].querySelector('[data-action="save"]');
     let selected = null;
     save.disabled = true;
-    bindPicker(modal.getRoot()[0], (shortname) => renderItem({shortname, blockid}), (shortname) => {
-        selected = shortname;
+    bindPicker(modal.getRoot()[0], (option) => renderItem({shortname: option.dataset.pickerOption, blockid}), (option) => {
+        selected = option.dataset.pickerOption;
         save.disabled = false;
     });
 

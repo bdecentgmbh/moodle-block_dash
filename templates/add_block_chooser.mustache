@@ -17,13 +17,13 @@
 {{!
     @template block_dash/add_block_chooser
 
-    Body of Dash's "Add a block" modal: the gallery items and the blocks, with a live preview of
-    the selected item. The blocks are core's list, so they are added as in core.
+    Body of Dash's "Add a block" modal: the gallery items and the blocks that can be added. The
+    selected one shows on the right, gallery items with a live preview.
 
     Context variables required for this template:
     * hasitems - Whether there are gallery items to choose from.
     * items - Gallery items, see block_dash/gallery_options.
-    * blocks, url, blockregion, pagehash - As for core/add_block_body.
+    * blocks - Blocks that can be added, from core_block_fetch_addable_blocks.
 
     Example context (json):
     {
@@ -31,13 +31,14 @@
         "items": [
             {"shortname": "block_dash:my-learning", "name": "My learning", "description": "Your courses.", "source": "Dash"}
         ],
-        "blocks": [{"name": "html", "title": "Text", "blockform": "block_edit_form"}],
-        "url": "?a=b",
-        "blockregion": "side-pre"
+        "blocks": [
+            {"name": "calendar_month", "title": "Calendar"},
+            {"name": "html", "title": "Text", "blockform": "block_html\\form\\edit_form"}
+        ]
     }
 }}
 <div class="block-dash-gallery-picker block-dash-addblock row">
-    <div class="{{#hasitems}}col-md-4 col-xl-3{{/hasitems}}{{^hasitems}}col-12{{/hasitems}} mb-3">
+    <div class="col-md-4 col-xl-3 mb-3">
         <input type="search" class="form-control mb-3" data-gallery-search
             placeholder="{{#str}} addblocksearch, block_dash {{/str}}" aria-label="{{#str}} addblocksearch, block_dash {{/str}}">
         {{#hasitems}}
@@ -45,14 +46,21 @@
         {{> block_dash/gallery_options }}
         <h3 class="h6 mt-3">{{#str}} blocks {{/str}}</h3>
         {{/hasitems}}
-        {{> core/add_block_body }}
+        <div class="list-group" role="listbox" aria-label="{{#str}} blocks {{/str}}">
+            {{#blocks}}
+            <button type="button" class="list-group-item list-group-item-action" role="option" aria-selected="false"
+                data-picker-option="{{name}}" data-blockname="{{name}}" data-blocktitle="{{title}}"
+                {{#blockform}}data-blockform="{{blockform}}"{{/blockform}} data-description="" data-search="{{title}}">{{title}}</button>
+            {{/blocks}}
+        </div>
+        {{^blocks}}
+        <div class="alert alert-primary" role="alert">{{#str}} noblockstoaddhere {{/str}}</div>
+        {{/blocks}}
     </div>
-    {{#hasitems}}
     <div class="col-md-8 col-xl-9">
         <p class="text-muted" data-gallery-description></p>
         <div class="block-dash-gallery-preview" data-gallery-preview>
             <p class="text-muted">{{#str}} addblockselect, block_dash {{/str}}</p>
         </div>
     </div>
-    {{/hasitems}}
 </div>

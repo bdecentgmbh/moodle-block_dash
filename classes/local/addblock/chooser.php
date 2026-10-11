@@ -66,6 +66,25 @@ class chooser {
     }
 
     /**
+     * What a block does, for the chooser.
+     *
+     * Blocks can describe themselves with a pluginname_desc string, as enrol plugins do. Dash
+     * describes Moodle's own blocks.
+     *
+     * @param string $blockname Name of the block, without block_.
+     * @return string Plain text, or empty when there is no description.
+     */
+    public static function get_block_description(string $blockname): string {
+        $strings = get_string_manager();
+        foreach ([['pluginname_desc', 'block_' . $blockname], ['addblockdesc:' . $blockname, 'block_dash']] as [$key, $component]) {
+            if ($strings->string_exists($key, $component)) {
+                return trim(strip_tags(get_string($key, $component)));
+            }
+        }
+        return '';
+    }
+
+    /**
      * Set up a Dash block that was just added from the chooser with the chosen gallery item.
      *
      * Problems are shown as notifications; the block then stays empty, offering its own ways to set it up.

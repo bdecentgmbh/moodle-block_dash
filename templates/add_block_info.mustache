@@ -21,17 +21,19 @@
 
     Context variables required for this template:
     * title - Name of the block.
+    * description - What the block does, or empty.
     * blockform - Whether a form to set the block up opens before it is added.
 
     Example context (json):
     {
         "title": "Text",
+        "description": "Shows text, pictures or media that you write, with an optional title.",
         "blockform": true
     }
 }}
 <div class="block-dash-addblock-info">
     <h3 class="h5">{{title}}</h3>
-    <p>{{#str}} addblockinfo, block_dash, {{title}} {{/str}}</p>
+    <p>{{#description}}{{description}}{{/description}}{{^description}}{{#str}} addblockinfo, block_dash, {{title}} {{/str}}{{/description}}</p>
     {{#blockform}}
     <p>{{#str}} addblockinfoform, block_dash {{/str}}</p>
     {{/blockform}}

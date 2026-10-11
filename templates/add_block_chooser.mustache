@@ -23,7 +23,7 @@
     Context variables required for this template:
     * hasitems - Whether there are gallery items to choose from.
     * items - Gallery items, see block_dash/gallery_options.
-    * blocks - Blocks that can be added, from core_block_fetch_addable_blocks.
+    * blocks - Blocks that can be added, with name, title, blockform and description.
 
     Example context (json):
     {
@@ -32,8 +32,8 @@
             {"shortname": "block_dash:my-learning", "name": "My learning", "description": "Your courses.", "source": "Dash"}
         ],
         "blocks": [
-            {"name": "calendar_month", "title": "Calendar"},
-            {"name": "html", "title": "Text", "blockform": "block_html\\form\\edit_form"}
+            {"name": "calendar_month", "title": "Calendar", "description": "Shows a month calendar."},
+            {"name": "html", "title": "Text", "blockform": "block_html\\form\\edit_form", "description": ""}
         ]
     }
 }}
@@ -50,7 +50,8 @@
             {{#blocks}}
             <button type="button" class="list-group-item list-group-item-action" role="option" aria-selected="false"
                 data-picker-option="{{name}}" data-blockname="{{name}}" data-blocktitle="{{title}}"
-                {{#blockform}}data-blockform="{{blockform}}"{{/blockform}} data-description="" data-search="{{title}}">{{title}}</button>
+                data-blockdescription="{{description}}" {{#blockform}}data-blockform="{{blockform}}"{{/blockform}}
+                data-description="" data-search="{{title}} {{description}}">{{title}}</button>
             {{/blocks}}
         </div>
         {{^blocks}}

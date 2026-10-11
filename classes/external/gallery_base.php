@@ -28,6 +28,8 @@ use block_dash\gallery\gallery;
 use block_dash\gallery\item;
 use block_dash\local\porter;
 use core_external\external_api;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
 use core_external\external_value;
 
 /**
@@ -87,17 +89,39 @@ abstract class gallery_base extends external_api {
     }
 
     /**
-     * Parameter for the page a block is added to.
+     * Items for a picker.
      *
-     * @return external_value
+     * @param item[] $items
+     * @return array See items_structure().
      */
-    protected static function pagehash_parameter(): external_value {
-        return new external_value(
-            PARAM_ALPHANUM,
-            'Hash of the page a Dash block would be added to, instead of a block',
-            VALUE_DEFAULT,
-            ''
-        );
+    protected static function export_items(array $items): array {
+        $exported = [];
+        foreach ($items as $item) {
+            $preview = $item->get_preview_url();
+            $exported[] = [
+                'shortname' => $item->get_shortname(),
+                'name' => $item->get_name(),
+                'description' => $item->get_description(),
+                'source' => $item->get_source_name(),
+                'previewurl' => $preview ? $preview->out(false) : '',
+            ];
+        }
+        return $exported;
+    }
+
+    /**
+     * Returned structure of items for a picker.
+     *
+     * @return external_multiple_structure
+     */
+    protected static function items_structure(): external_multiple_structure {
+        return new external_multiple_structure(new external_single_structure([
+            'shortname' => new external_value(PARAM_RAW, 'Shortname'),
+            'name' => new external_value(PARAM_TEXT, 'Name'),
+            'description' => new external_value(PARAM_TEXT, 'Description'),
+            'source' => new external_value(PARAM_TEXT, 'Site, or the shipping plugin\'s name'),
+            'previewurl' => new external_value(PARAM_URL, 'Preview image, or empty'),
+        ]));
     }
 
     /**

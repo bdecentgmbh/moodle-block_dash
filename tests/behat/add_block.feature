@@ -22,12 +22,15 @@ Feature: Add blocks and Dash gallery items with Dash's "Add a block" chooser
 
   Scenario: Blocks are selected and added like gallery items
     When I click on "Add a block" "link"
+    And I set the field "Search blocks and gallery" to "activity dates"
+    And I should not see "Text" in the "Add a block" "dialogue"
     And I click on "Calendar" "button" in the "Add a block" "dialogue"
-    Then I should see "Adds a \"Calendar\" block to this page." in the "Add a block" "dialogue"
+    Then I should see "Displays events from the calendar, such as activity dates" in the "Add a block" "dialogue"
     And I click on "Add to page" "button" in the "Add a block" "dialogue"
     And "Calendar" "block" should exist
     And I click on "Add a block" "link"
     And I click on "Text" "button" in the "Add a block" "dialogue"
+    And I should see "Adds text, multimedia or widgets to the page." in the "Add a block" "dialogue"
     And I should see "You set it up before it is added." in the "Add a block" "dialogue"
     And I click on "Add to page" "button" in the "Add a block" "dialogue"
     And "Add a block" "dialogue" should not be visible

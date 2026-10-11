@@ -47,14 +47,7 @@ let initialised = false;
  */
 const openChooser = async(trigger) => {
     const {url, pagehash, blockregion} = trigger.dataset;
-    const [blocks, gallery] = await Promise.all(Ajax.call([
-        {
-            methodname: 'core_block_fetch_addable_blocks',
-            args: {pagecontextid: 0, pagetype: '', pagelayout: '', subpage: '', pagehash},
-        },
-        {methodname: 'block_dash_gallery_list', args: {pagehash}},
-    ]));
-    const items = blocks.some((block) => block.name === 'dash') ? gallery.items : [];
+    const {blocks, items} = await Ajax.call([{methodname: 'block_dash_addblock_options', args: {pagehash}}])[0];
 
     const modal = await ModalSaveCancel.create({
         title: getString('addblock'),
@@ -80,6 +73,7 @@ const openChooser = async(trigger) => {
         if (option.dataset.blockname) {
             return Templates.render('block_dash/add_block_info', {
                 title: option.dataset.blocktitle,
+                description: option.dataset.blockdescription,
                 blockform: !!option.dataset.blockform,
             });
         }

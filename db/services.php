@@ -84,6 +84,13 @@ $functions = [
         'loginrequired' => false,
     ],
 
+    'block_dash_addblock_options' => [
+        'classname'   => 'block_dash\\external\\addblock_options',
+        'description' => 'List the blocks and Dash gallery items that can be added to a page.',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+
     'block_dash_gallery_list' => [
         'classname'   => 'block_dash\\external\\gallery_list',
         'description' => 'List the gallery items the user may put into a Dash block.',

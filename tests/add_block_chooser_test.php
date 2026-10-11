@@ -24,7 +24,7 @@
 
 namespace block_dash;
 
-use block_dash\external\gallery_list;
+use block_dash\external\addblock_options;
 use block_dash\external\gallery_preview;
 use block_dash\gallery\gallery;
 use block_dash\local\addblock\chooser;
@@ -36,6 +36,7 @@ use block_dash\local\addblock\hook_callbacks;
  * @covers \block_dash\local\addblock\hook_callbacks
  * @covers \block_dash\local\addblock\chooser
  * @covers \block_dash\external\gallery_base
+ * @covers \block_dash\external\addblock_options
  */
 final class add_block_chooser_test extends \advanced_testcase {
     /** @var \stdClass */
@@ -145,13 +146,38 @@ final class add_block_chooser_test extends \advanced_testcase {
     }
 
     /**
+     * Blocks are described by their own pluginname_desc string, else by Dash for Moodle's blocks.
+     */
+    public function test_block_descriptions(): void {
+        $this->assertSame(get_string('pluginname_desc', 'block_dash'), chooser::get_block_description('dash'));
+        $this->assertSame(get_string('addblockdesc:html', 'block_dash'), chooser::get_block_description('html'));
+        $this->assertSame('', chooser::get_block_description('nosuchblock'));
+    }
+
+    /**
+     * The chooser gets core's addable blocks with their descriptions, and the gallery items.
+     */
+    public function test_options_for_page(): void {
+        $result = addblock_options::clean_returnvalue(
+            addblock_options::execute_returns(),
+            addblock_options::execute($this->get_page()->get_edited_page_hash())
+        );
+
+        $blocks = array_column($result['blocks'], null, 'name');
+        $this->assertSame(get_string('addblockdesc:html', 'block_dash'), $blocks['html']['description']);
+        $this->assertNotEmpty($blocks['html']['blockform']);
+        $this->assertSame(get_string('pluginname_desc', 'block_dash'), $blocks['dash']['description']);
+        $this->assertContains('block_dash:my-learning', array_column($result['items'], 'shortname'));
+    }
+
+    /**
      * The chooser lists and previews the items for the page a block is added to.
      */
     public function test_list_and_preview_for_page(): void {
         $pagehash = $this->get_page()->get_edited_page_hash();
         gallery::update_settings(gallery::get_item('block_dash:participants'), ['hidden' => true]);
 
-        $result = gallery_list::clean_returnvalue(gallery_list::execute_returns(), gallery_list::execute(0, $pagehash));
+        $result = addblock_options::clean_returnvalue(addblock_options::execute_returns(), addblock_options::execute($pagehash));
         $shortnames = array_column($result['items'], 'shortname');
         $this->assertContains('block_dash:my-learning', $shortnames);
         $this->assertNotContains('block_dash:participants', $shortnames);
@@ -182,7 +208,7 @@ final class add_block_chooser_test extends \advanced_testcase {
         assign_capability('moodle/site:manageblocks', CAP_PROHIBIT, $roleid, \context_course::instance($this->course->id));
 
         $this->expectException(\moodle_exception::class);
-        gallery_list::execute(0, $pagehash);
+        addblock_options::execute($pagehash);
     }
 
     /**

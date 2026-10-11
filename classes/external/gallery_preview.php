@@ -53,7 +53,12 @@ class gallery_preview extends gallery_base {
                 VALUE_DEFAULT,
                 0
             ),
-            'pagehash' => self::pagehash_parameter(),
+            'pagehash' => new external_value(
+                PARAM_ALPHANUM,
+                'Hash of the page a Dash block would be added to, instead of a block',
+                VALUE_DEFAULT,
+                ''
+            ),
         ]);
     }
 

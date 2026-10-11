@@ -28,6 +28,9 @@ use block_dash\gallery\gallery;
 use block_dash\gallery\item;
 use block_dash\local\porter;
 use core_external\external_api;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * Shared checks of the gallery web services.
@@ -54,6 +57,71 @@ abstract class gallery_base extends external_api {
         }
 
         return [$block, \context::instance_by_id($instance->parentcontextid)];
+    }
+
+    /**
+     * Context of a page the current user is adding a block to, for the "Add a block" chooser.
+     *
+     * @param string $pagehash From moodle_page::get_edited_page_hash().
+     * @return \context Context the new block would go into.
+     */
+    protected static function get_editable_page_context(string $pagehash): \context {
+        $page = \moodle_page::retrieve_edited_page($pagehash, MUST_EXIST);
+        self::validate_context($page->context);
+        if (!$page->user_can_edit_blocks()) {
+            throw new \moodle_exception('nopermissions', '', '', get_string('addblock'));
+        }
+        return $page->context;
+    }
+
+    /**
+     * Context a picker works in: the parent of a Dash block, or a page a block is added to.
+     *
+     * @param int $blockid
+     * @param string $pagehash
+     * @return \context
+     */
+    protected static function get_target_context(int $blockid, string $pagehash): \context {
+        if ($pagehash !== '') {
+            return self::get_editable_page_context($pagehash);
+        }
+        return self::get_editable_block($blockid)[1];
+    }
+
+    /**
+     * Items for a picker.
+     *
+     * @param item[] $items
+     * @return array See items_structure().
+     */
+    protected static function export_items(array $items): array {
+        $exported = [];
+        foreach ($items as $item) {
+            $preview = $item->get_preview_url();
+            $exported[] = [
+                'shortname' => $item->get_shortname(),
+                'name' => $item->get_name(),
+                'description' => $item->get_description(),
+                'source' => $item->get_source_name(),
+                'previewurl' => $preview ? $preview->out(false) : '',
+            ];
+        }
+        return $exported;
+    }
+
+    /**
+     * Returned structure of items for a picker.
+     *
+     * @return external_multiple_structure
+     */
+    protected static function items_structure(): external_multiple_structure {
+        return new external_multiple_structure(new external_single_structure([
+            'shortname' => new external_value(PARAM_RAW, 'Shortname'),
+            'name' => new external_value(PARAM_TEXT, 'Name'),
+            'description' => new external_value(PARAM_TEXT, 'Description'),
+            'source' => new external_value(PARAM_TEXT, 'Site, or the shipping plugin\'s name'),
+            'previewurl' => new external_value(PARAM_URL, 'Preview image, or empty'),
+        ]));
     }
 
     /**

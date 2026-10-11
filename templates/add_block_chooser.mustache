@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_dash/add_block_chooser
+
+    Body of Dash's "Add a block" modal: the gallery items and the blocks that can be added. The
+    selected one shows on the right, gallery items with a live preview.
+
+    Context variables required for this template:
+    * hasitems - Whether there are gallery items to choose from.
+    * items - Gallery items, see block_dash/gallery_options.
+    * blocks - Blocks that can be added, with name, title, blockform and description.
+
+    Example context (json):
+    {
+        "hasitems": true,
+        "items": [
+            {"shortname": "block_dash:my-learning", "name": "My learning", "description": "Your courses.", "source": "Dash"}
+        ],
+        "blocks": [
+            {"name": "calendar_month", "title": "Calendar", "description": "Shows a month calendar."},
+            {"name": "html", "title": "Text", "blockform": "block_html\\form\\edit_form", "description": ""}
+        ]
+    }
+}}
+<div class="block-dash-gallery-picker block-dash-addblock row">
+    <div class="col-md-4 col-xl-3 mb-3" data-region="picker-list">
+        <input type="search" class="form-control mb-3" data-gallery-search
+            placeholder="{{#str}} addblocksearch, block_dash {{/str}}" aria-label="{{#str}} addblocksearch, block_dash {{/str}}">
+        {{#hasitems}}
+        <h3 class="h6">{{#str}} gallerymanage, block_dash {{/str}}</h3>
+        {{> block_dash/gallery_options }}
+        <h3 class="h6 mt-3">{{#str}} blocks {{/str}}</h3>
+        {{/hasitems}}
+        <div class="list-group" role="listbox" aria-label="{{#str}} blocks {{/str}}">
+            {{#blocks}}
+            <button type="button" class="list-group-item list-group-item-action" role="option" aria-selected="false"
+                data-picker-option="{{name}}" data-blockname="{{name}}" data-blocktitle="{{title}}"
+                data-blockdescription="{{description}}" {{#blockform}}data-blockform="{{blockform}}"{{/blockform}}
+                data-description="" data-search="{{title}} {{description}}">
+                <span class="d-flex align-items-center">
+                    <span class="flex-grow-1">{{title}}</span>
+                    <span class="d-md-none">{{#pix}} i/next, core {{/pix}}</span>
+                </span>
+            </button>
+            {{/blocks}}
+        </div>
+        {{^blocks}}
+        <div class="alert alert-primary" role="alert">{{#str}} noblockstoaddhere {{/str}}</div>
+        {{/blocks}}
+    </div>
+    {{< block_dash/picker_detail }}
+        {{$hint}}{{#str}} addblockselect, block_dash {{/str}}{{/hint}}
+    {{/ block_dash/picker_detail }}
+</div>

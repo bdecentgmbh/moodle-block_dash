@@ -26,7 +26,6 @@ namespace block_dash\external;
 
 use block_dash\gallery\gallery;
 use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 
@@ -57,18 +56,7 @@ class gallery_list extends gallery_base {
         ['blockid' => $blockid] = self::validate_parameters(self::execute_parameters(), ['blockid' => $blockid]);
         [, $parentcontext] = self::get_editable_block($blockid);
 
-        $items = [];
-        foreach (gallery::get_usable_items($parentcontext) as $item) {
-            $preview = $item->get_preview_url();
-            $items[] = [
-                'shortname' => $item->get_shortname(),
-                'name' => $item->get_name(),
-                'description' => $item->get_description(),
-                'source' => $item->get_source_name(),
-                'previewurl' => $preview ? $preview->out(false) : '',
-            ];
-        }
-        return ['items' => $items];
+        return ['items' => self::export_items(gallery::get_usable_items($parentcontext))];
     }
 
     /**
@@ -78,13 +66,7 @@ class gallery_list extends gallery_base {
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
-            'items' => new external_multiple_structure(new external_single_structure([
-                'shortname' => new external_value(PARAM_RAW, 'Shortname'),
-                'name' => new external_value(PARAM_TEXT, 'Name'),
-                'description' => new external_value(PARAM_TEXT, 'Description'),
-                'source' => new external_value(PARAM_TEXT, 'Site, or the shipping plugin\'s name'),
-                'previewurl' => new external_value(PARAM_URL, 'Preview image, or empty'),
-            ])),
+            'items' => self::items_structure(),
         ]);
     }
 }

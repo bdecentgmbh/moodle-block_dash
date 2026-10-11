@@ -33,8 +33,8 @@ use core_external\external_value;
 /**
  * Web service rendering a gallery item, for previews.
  *
- * With a block, the item renders in the block's context, for the picker. Without one, it renders
- * in the system context, for the gallery page.
+ * With a block, or the hash of a page a block is added to, the item renders in that context, for
+ * the pickers. Without either, it renders in the system context, for the gallery page.
  *
  * @package    block_dash
  */
@@ -53,6 +53,12 @@ class gallery_preview extends gallery_base {
                 VALUE_DEFAULT,
                 0
             ),
+            'pagehash' => new external_value(
+                PARAM_ALPHANUM,
+                'Hash of the page a Dash block would be added to, instead of a block',
+                VALUE_DEFAULT,
+                ''
+            ),
         ]);
     }
 
@@ -61,16 +67,17 @@ class gallery_preview extends gallery_base {
      *
      * @param string $shortname
      * @param int $blockid
+     * @param string $pagehash
      * @return array
      */
-    public static function execute(string $shortname, int $blockid = 0): array {
-        ['shortname' => $shortname, 'blockid' => $blockid] = self::validate_parameters(
+    public static function execute(string $shortname, int $blockid = 0, string $pagehash = ''): array {
+        ['shortname' => $shortname, 'blockid' => $blockid, 'pagehash' => $pagehash] = self::validate_parameters(
             self::execute_parameters(),
-            ['shortname' => $shortname, 'blockid' => $blockid]
+            ['shortname' => $shortname, 'blockid' => $blockid, 'pagehash' => $pagehash]
         );
 
-        if ($blockid) {
-            [, $context] = self::get_editable_block($blockid);
+        if ($blockid || $pagehash !== '') {
+            $context = self::get_target_context($blockid, $pagehash);
             $item = self::get_usable_item($shortname, $context);
         } else {
             $context = \context_system::instance();

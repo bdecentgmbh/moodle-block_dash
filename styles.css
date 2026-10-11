@@ -2847,3 +2847,15 @@ tr.dash-details-expanded {
     max-height: 65vh;
     overflow: auto;
 }
+
+/* Pickers on narrow screens show the list or the selected option, one at a time. */
+@media (max-width: 767.98px) {
+    .block-dash-gallery-picker.show-detail [data-region="picker-list"],
+    .block-dash-gallery-picker:not(.show-detail) [data-region="picker-detail"] {
+        display: none;
+    }
+}
+
+.dir-rtl .block-dash-gallery-picker .icon {
+    transform: scaleX(-1);
+}

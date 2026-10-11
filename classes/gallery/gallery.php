@@ -27,6 +27,7 @@ namespace block_dash\gallery;
 use block_dash\hook\gallery_items;
 use block_dash\local\gallery\host_block;
 use block_dash\local\gallery\site_item;
+use block_dash\local\porter;
 use moodle_exception;
 
 /**
@@ -92,6 +93,26 @@ class gallery {
         return array_filter(self::get_items(), function (item $item) use ($context) {
             return $item->can_use($context);
         });
+    }
+
+    /**
+     * Replace a block's setup with an item's, as Import does, and queue notices about how it went.
+     *
+     * @param item $item An item the user may use in the block's parent context, see item::can_use().
+     * @param \block_base $block
+     * @return string[] Warnings about what could not be carried over.
+     * @throws moodle_exception When the user may not use the item's data source.
+     */
+    public static function copy_into_block(item $item, \block_base $block): array {
+        $data = $item->get_data();
+        porter::validate($data, $block);
+        $warnings = porter::import($block, $data);
+
+        \core\notification::success(get_string('gallerychosen', 'block_dash', $item->get_name()));
+        foreach ($warnings as $warning) {
+            \core\notification::warning($warning);
+        }
+        return $warnings;
     }
 
     /**

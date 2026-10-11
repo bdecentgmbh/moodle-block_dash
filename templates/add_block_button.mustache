@@ -1,0 +1,47 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_dash/add_block_button
+
+    Dash's "Add a block" button of a block region, opening a chooser with the blocks and the Dash
+    gallery. Same markup as core/add_block_button, so themes and Behat steps treat it alike.
+
+    Context variables required for this template:
+    * link - URL of core's page for adding a block.
+    * escapedlink - The same URL's query string, for adding blocks from the chooser.
+    * pagehash - Hash of the edited page.
+    * blockregion - Region the block is added to.
+
+    Example context (json):
+    {
+        "link": "/my/index.php?bui_addblock&bui_blockregion=content&sesskey=M3mes",
+        "escapedlink": "?bui_addblock&bui_blockregion=content&sesskey=M3mes",
+        "pagehash": "abcdefgh",
+        "blockregion": "side-pre"
+    }
+}}
+<div class="d-grid" data-region="add-block-button">
+    <a href="{{link}}" id="addblock-{{uniqid}}" class="btn btn-add-content mb-3" data-key="addblock" data-action="block_dash-addblock"
+            data-url="{{escapedlink}}" data-blockregion="{{blockregion}}" data-pagehash="{{pagehash}}">
+        <i class="fa fa-plus py-2 me-2" aria-hidden="true"></i>{{#str}}addblock{{/str}}
+    </a>
+</div>
+{{#js}}
+    require(['block_dash/add_block'], function(addBlock) {
+        addBlock.init();
+    });
+{{/js}}

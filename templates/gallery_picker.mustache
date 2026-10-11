@@ -32,28 +32,17 @@
     }
 }}
 <div class="block-dash-gallery-picker row">
-    <div class="col-md-4 col-xl-3 mb-3">
+    <div class="col-md-4 col-xl-3 mb-3" data-region="picker-list">
         {{#hasitems}}
         <input type="search" class="form-control mb-2" data-gallery-search
             placeholder="{{#str}} gallerysearch, block_dash {{/str}}" aria-label="{{#str}} gallerysearch, block_dash {{/str}}">
-        <div class="list-group" role="listbox" aria-label="{{#str}} gallery, block_dash {{/str}}">
-            {{#items}}
-            <button type="button" class="list-group-item list-group-item-action" role="option" aria-selected="false"
-                data-gallery-option="{{shortname}}" data-description="{{description}}" data-search="{{name}} {{description}} {{source}}">
-                <span class="d-block font-weight-bold fw-bold">{{name}}</span>
-                <small class="text-muted">{{source}}</small>
-            </button>
-            {{/items}}
-        </div>
+        {{> block_dash/gallery_options }}
         {{/hasitems}}
         {{^hasitems}}
         <p>{{#str}} gallerynoitems, block_dash {{/str}}</p>
         {{/hasitems}}
     </div>
-    <div class="col-md-8 col-xl-9">
-        <p class="text-muted" data-gallery-description></p>
-        <div class="block-dash-gallery-preview" data-gallery-preview>
-            <p class="text-muted">{{#str}} galleryselect, block_dash {{/str}}</p>
-        </div>
-    </div>
+    {{< block_dash/picker_detail }}
+        {{$hint}}{{#str}} galleryselect, block_dash {{/str}}{{/hint}}
+    {{/ block_dash/picker_detail }}
 </div>

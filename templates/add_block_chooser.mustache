@@ -38,7 +38,7 @@
     }
 }}
 <div class="block-dash-gallery-picker block-dash-addblock row">
-    <div class="col-md-4 col-xl-3 mb-3">
+    <div class="col-md-4 col-xl-3 mb-3" data-region="picker-list">
         <input type="search" class="form-control mb-3" data-gallery-search
             placeholder="{{#str}} addblocksearch, block_dash {{/str}}" aria-label="{{#str}} addblocksearch, block_dash {{/str}}">
         {{#hasitems}}
@@ -51,17 +51,19 @@
             <button type="button" class="list-group-item list-group-item-action" role="option" aria-selected="false"
                 data-picker-option="{{name}}" data-blockname="{{name}}" data-blocktitle="{{title}}"
                 data-blockdescription="{{description}}" {{#blockform}}data-blockform="{{blockform}}"{{/blockform}}
-                data-description="" data-search="{{title}} {{description}}">{{title}}</button>
+                data-description="" data-search="{{title}} {{description}}">
+                <span class="d-flex align-items-center">
+                    <span class="flex-grow-1">{{title}}</span>
+                    <span class="d-md-none">{{#pix}} i/next, core {{/pix}}</span>
+                </span>
+            </button>
             {{/blocks}}
         </div>
         {{^blocks}}
         <div class="alert alert-primary" role="alert">{{#str}} noblockstoaddhere {{/str}}</div>
         {{/blocks}}
     </div>
-    <div class="col-md-8 col-xl-9">
-        <p class="text-muted" data-gallery-description></p>
-        <div class="block-dash-gallery-preview" data-gallery-preview>
-            <p class="text-muted">{{#str}} addblockselect, block_dash {{/str}}</p>
-        </div>
-    </div>
+    {{< block_dash/picker_detail }}
+        {{$hint}}{{#str}} addblockselect, block_dash {{/str}}{{/hint}}
+    {{/ block_dash/picker_detail }}
 </div>

@@ -33,8 +33,13 @@
     {{#items}}
     <button type="button" class="list-group-item list-group-item-action" role="option" aria-selected="false"
         data-picker-option="{{shortname}}" data-description="{{description}}" data-search="{{name}} {{description}} {{source}}">
-        <strong class="d-block">{{name}}</strong>
-        <small class="text-muted">{{source}}</small>
+        <span class="d-flex align-items-center">
+            <span class="flex-grow-1">
+                <strong class="d-block">{{name}}</strong>
+                <small class="text-muted">{{source}}</small>
+            </span>
+            <span class="d-md-none">{{#pix}} i/next, core {{/pix}}</span>
+        </span>
     </button>
     {{/items}}
 </div>

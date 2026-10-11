@@ -54,6 +54,16 @@ Feature: Add blocks and Dash gallery items with Dash's "Add a block" chooser
     And I should see "Set up from the gallery item \"Course participants\"."
     And "Participants" "block" should exist
 
+  Scenario: On narrow screens the selected option replaces the list
+    When I click on "Add a block" "link"
+    And I change window size to "mobile"
+    And I click on "Calendar" "button" in the "Add a block" "dialogue"
+    Then I should see "Displays events from the calendar" in the "Add a block" "dialogue"
+    And "Text" "button" in the "Add a block" "dialogue" should not be visible
+    And I click on "Back" "button" in the "Add a block" "dialogue"
+    And "Text" "button" in the "Add a block" "dialogue" should be visible
+    And I should not see "Displays events from the calendar" in the "Add a block" "dialogue"
+
   Scenario: Without the setting, the button is core's
     Given the following config values are set as admin:
       | replaceaddblock | 0 | block_dash |

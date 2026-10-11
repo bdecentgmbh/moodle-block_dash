@@ -60,19 +60,34 @@ export const renderItem = (args) => Ajax.call([{
 /**
  * Let a picker's options be searched, and selected to preview them.
  *
+ * On narrow screens the preview replaces the list, until the user goes back.
+ *
  * @param {HTMLElement} root The picker.
  * @param {Function} render Promise of the preview's HTML, given the option element.
  * @param {Function} onSelect Called with the selected option element.
  */
 export const bindPicker = (root, render, onSelect) => {
+    const picker = root.querySelector('.block-dash-gallery-picker');
     const preview = root.querySelector('[data-gallery-preview]');
     const description = root.querySelector('[data-gallery-description]');
     let selected = null;
 
     root.addEventListener('click', (e) => {
+        if (e.target.closest('[data-action="picker-back"]')) {
+            picker.classList.remove('show-detail');
+            selected?.focus();
+            return;
+        }
         const option = e.target.closest('[data-picker-option]');
         if (!option) {
             return;
+        }
+        picker.classList.add('show-detail');
+        picker.closest('.modal-body')?.scrollTo(0, 0);
+        const back = picker.querySelector('[data-action="picker-back"]');
+        if (back.offsetParent) {
+            // The list is hidden now, so focus moves to the way back to it.
+            back.focus();
         }
         root.querySelectorAll('[data-picker-option]').forEach((other) => {
             other.classList.toggle('active', other === option);

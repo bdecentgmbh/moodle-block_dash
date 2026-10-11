@@ -185,7 +185,7 @@ class block_builder {
                     foreach ($actions as $action => $label) {
                         $buttons .= html_writer::tag('button', get_string($label, 'block_dash'), [
                             'type' => 'button',
-                            'class' => 'btn btn-secondary btn-sm ms-2 ml-2',
+                            'class' => 'btn btn-secondary btn-sm ms-2',
                             'data-action' => $action,
                             'data-blockid' => $this->blockinstance->instance->id,
                         ]);

@@ -119,7 +119,7 @@ foreach (gallery::get_items() as $item) {
         return new moodle_url($url, ['action' => $action, 'item' => $shortname, 'sesskey' => sesskey()]);
     };
 
-    $name = html_writer::div(s($item->get_name()), 'font-weight-bold fw-bold')
+    $name = html_writer::tag('strong', s($item->get_name()), ['class' => 'd-block'])
         . html_writer::div(s($item->get_description()), 'small')
         . html_writer::tag('code', s($shortname), ['class' => 'small']);
 

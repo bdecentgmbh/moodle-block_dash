@@ -37,16 +37,22 @@ trait gallery_form_trait {
      * Add name, shortname and description fields for a site item.
      *
      * @param \MoodleQuickForm $mform
+     * @param bool $required Whether name and shortname always need a value. Forms that hide them in
+     *     some modes check them in validation() instead, as required rules also apply to hidden fields.
      */
-    protected function add_details_fields(\MoodleQuickForm $mform): void {
+    protected function add_details_fields(\MoodleQuickForm $mform, bool $required = true): void {
         $mform->addElement('text', 'name', get_string('galleryname', 'block_dash'), ['size' => 50]);
         $mform->setType('name', PARAM_TEXT);
-        $mform->addRule('name', null, 'required', null, 'client');
+        if ($required) {
+            $mform->addRule('name', null, 'required', null, 'client');
+        }
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('text', 'shortname', get_string('galleryshortname', 'block_dash'), ['size' => 30]);
         $mform->setType('shortname', PARAM_TEXT);
-        $mform->addRule('shortname', null, 'required', null, 'client');
+        if ($required) {
+            $mform->addRule('shortname', null, 'required', null, 'client');
+        }
         $mform->addHelpButton('shortname', 'galleryshortname', 'block_dash');
 
         $mform->addElement('textarea', 'description', get_string('description'), ['rows' => 3, 'cols' => 50]);

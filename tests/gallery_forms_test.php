@@ -152,6 +152,38 @@ final class gallery_forms_test extends \advanced_testcase {
     }
 
     /**
+     * An untitled block can replace an existing item; a new item still needs a name.
+     */
+    public function test_save_from_untitled_block(): void {
+        gallery::create_site_item('existing', 'Existing', '', \block_dash\local\porter::export($this->create_block()));
+        $untitled = $this->getDataGenerator()->get_plugin_generator('block_dash')->create_dash_block([
+            'configdata' => (object) ['data_source_idnumber' => users_data_source::class],
+        ]);
+
+        // The hidden name and shortname keep their empty values, as in the browser.
+        $result = $this->submit(gallery_save::class, [
+            'blockid' => $untitled->instance->id,
+            'mode' => gallery_save::MODE_REPLACE,
+            'replace' => 'existing',
+            'name' => '',
+            'shortname' => '',
+            'embedrolecontext' => 1,
+        ]);
+        $this->assertTrue($result['submitted']);
+        $this->assertSame(users_data_source::class, gallery::get_item('existing')->get_data_source());
+
+        $result = $this->submit(gallery_save::class, [
+            'blockid' => $untitled->instance->id,
+            'mode' => gallery_save::MODE_NEW,
+            'name' => '',
+            'shortname' => 'unnamed',
+            'embedrolecontext' => 1,
+        ]);
+        $this->assertFalse($result['submitted']);
+        $this->assertNull(gallery::get_item('unnamed'));
+    }
+
+    /**
      * Upload item adds an export file to the gallery.
      */
     public function test_upload(): void {

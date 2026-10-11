@@ -25,6 +25,7 @@
 namespace block_dash\form;
 
 use block_dash\gallery\gallery;
+use block_dash\local\data_source\data_source_factory;
 use block_dash\local\porter;
 use context;
 use core_form\dynamic_form;
@@ -92,7 +93,13 @@ class gallery_save extends dynamic_form {
      * Default name: the block's title.
      */
     public function set_data_for_dynamic_submission(): void {
-        $title = trim((string) ($this->get_block()->config->title ?? ''));
+        // An untitled block suggests its data source's name, e.g. "Hero".
+        $config = $this->get_block()->config;
+        $title = trim((string) ($config->title ?? ''));
+        if ($title === '') {
+            $info = data_source_factory::get_data_source_info($config->data_source_idnumber ?? '');
+            $title = trim((string) ($info['name'] ?? ''));
+        }
         $this->set_data([
             'blockid' => $this->optional_param('blockid', 0, PARAM_INT),
             'mode' => self::MODE_NEW,
@@ -133,7 +140,7 @@ class gallery_save extends dynamic_form {
         }
         $mform->setType('mode', PARAM_ALPHA);
 
-        $this->add_details_fields($mform);
+        $this->add_details_fields($mform, false);
         $this->add_embed_fields($mform);
 
         foreach (['name', 'shortname', 'description', 'embeddable', 'embedroles', 'embedrolecontext'] as $field) {
@@ -154,7 +161,10 @@ class gallery_save extends dynamic_form {
         $errors = parent::validation($data, $files);
 
         if (($data['mode'] ?? self::MODE_NEW) === self::MODE_NEW) {
-            if ($error = $this->validate_shortname((string) $data['shortname'])) {
+            if (trim((string) ($data['name'] ?? '')) === '') {
+                $errors['name'] = get_string('required');
+            }
+            if ($error = $this->validate_shortname((string) ($data['shortname'] ?? ''))) {
                 $errors['shortname'] = $error;
             }
         } else if (!gallery::get_item((string) ($data['replace'] ?? ''))) {

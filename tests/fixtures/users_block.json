@@ -1,0 +1,21 @@
+{
+    "format": "block_dash",
+    "version": 1,
+    "exported": "2026-10-10T12:00:00+00:00",
+    "requires": [
+        "block_dash"
+    ],
+    "name": "Imported users",
+    "config": {
+        "title": "Imported users",
+        "data_source_idnumber": "block_dash\\local\\data_source\\users_data_source",
+        "preferences": {
+            "layout": "block_dash\\local\\layout\\grid_layout",
+            "perpage": 10
+        },
+        "showheader": 1,
+        "width": 100
+    },
+    "files": [],
+    "datasource_data": []
+}

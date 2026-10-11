@@ -174,9 +174,22 @@ class block_builder {
                 $form = new \block_dash\form\block_dash_featuresform(null, ['block' => $this->blockinstance->context]);
 
                 $desc = html_writer::tag('p', get_string('choosefeature', 'block_dash'));
+
+                $import = '';
+                if ($this->blockinstance->user_can_edit()) {
+                    $button = html_writer::tag('button', get_string('importfromfile', 'block_dash'), [
+                        'type' => 'button',
+                        'class' => 'btn btn-secondary btn-sm ms-2 ml-2',
+                        'data-action' => 'block_dash-import',
+                        'data-blockid' => $this->blockinstance->instance->id,
+                    ]);
+                    $import = html_writer::tag('p', get_string('importfromfiledesc', 'block_dash') . $button, ['class' => 'mt-3']);
+                    $this->blockinstance->page->requires->js_call_amd('block_dash/import_block', 'init');
+                }
+
                 $data['preloaded'] = html_writer::tag(
                     'div',
-                    $desc . $form->render(),
+                    $desc . $form->render() . $import,
                     ['class' => 'dash-configuration-form hide']
                 );
                 $text .= $OUTPUT->render_from_template('block_dash/block', $data);

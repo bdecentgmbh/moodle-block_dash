@@ -494,25 +494,7 @@ class block_dash extends block_base {
         $bc = parent::get_content_for_output($output);
 
         $datasource = $this->config->data_source_idnumber ?? '';
-
-        if ($datasource) {
-            $info = \block_dash\local\data_source\data_source_factory::get_data_source_info($datasource);
-            $type = $info['type'] ?? 'datasource';
-
-            switch ($type) {
-                case 'datasource':
-                    $hascapability = has_capability('block/dash:managedatasource', $this->context);
-                    break;
-                case 'widget':
-                    $hascapability = has_capability('block/dash:managewidget', $this->context);
-                    break;
-                case 'custom':
-                    $hascapability = $datasource::has_capbility($this->context);
-                    break;
-            }
-        } else {
-            $hascapability = true;
-        }
+        $hascapability = !$datasource || data_source_factory::can_manage($datasource, $this->context);
 
         if (!isset($bc->controls) || !$hascapability) {
             return $bc;
@@ -526,6 +508,20 @@ class block_dash extends block_base {
             $newcontrols[] = $controls;
             if ($controls->text instanceof lang_string && $controls->text->get_identifier() == 'configureblock') {
                 $newcontrols[] = html_writer::link('javascript:void(0);', $icon . $str, ['class' => 'dash-edit-preferences']);
+                if ($datasource) {
+                    $newcontrols[] = new action_menu_link_secondary(
+                        new moodle_url('/blocks/dash/export.php', ['id' => $this->instance->id, 'sesskey' => sesskey()]),
+                        new pix_icon('i/export', ''),
+                        get_string('exportblock', 'block_dash')
+                    );
+                }
+                $newcontrols[] = new action_menu_link_secondary(
+                    new moodle_url($this->page->url),
+                    new pix_icon('i/import', ''),
+                    get_string('importblock', 'block_dash'),
+                    ['data-action' => 'block_dash-import', 'data-blockid' => $this->instance->id]
+                );
+                $this->page->requires->js_call_amd('block_dash/import_block', 'init');
             }
         }
         $bc->controls = $newcontrols;

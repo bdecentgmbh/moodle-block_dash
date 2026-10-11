@@ -38,7 +38,7 @@ class block_dash_generator extends component_generator_base {
      *
      * @param array $data
      * @param moodle_page|null $page
-     * @return void
+     * @return block_base|false The new block.
      */
     public function create_dash_block($data, $page = null) {
         global $DB;
@@ -68,6 +68,8 @@ class block_dash_generator extends component_generator_base {
         if ($block = block_instance($data->blockname, $data)) {
             $block->instance_create();
         }
+
+        return $block;
     }
 
     /**

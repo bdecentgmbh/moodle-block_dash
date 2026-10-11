@@ -119,6 +119,26 @@ class data_source_factory implements data_source_factory_interface {
     }
 
     /**
+     * Whether the current user may set up and change blocks using a data source.
+     *
+     * @param string $identifier
+     * @param \context $context
+     * @return bool
+     */
+    public static function can_manage($identifier, \context $context) {
+        $type = self::get_data_source_info($identifier)['type'] ?? 'datasource';
+
+        switch ($type) {
+            case 'widget':
+                return has_capability('block/dash:managewidget', $context);
+            case 'custom':
+                return $identifier::has_capbility($context);
+            default:
+                return has_capability('block/dash:managedatasource', $context);
+        }
+    }
+
+    /**
      * Build data source.
      *
      * @param string $identifier

@@ -32,8 +32,9 @@ use moodle_exception;
 /**
  * Export a Dash block's setup to a file and import it into another block.
  *
- * The file is the block's config as JSON, plus the background image and whatever the
- * data source exports itself. Data sources that keep data outside the block config can
+ * The file is the block's config as JSON, plus every file stored in the block's context (the
+ * background image, and pictures that widgets keep in their own file areas) and whatever the data
+ * source exports itself. Data sources that keep data outside the block config and its context can
  * implement two optional methods, called only when they exist:
  *
  * - export_instance_data(): array
@@ -95,16 +96,6 @@ class porter {
             }
         }
 
-        $files = [];
-        $fs = get_file_storage();
-        foreach ($fs->get_area_files($block->context->id, 'block_dash', 'images', 0, 'id ASC', false) as $file) {
-            $files[] = [
-                'area' => 'images',
-                'filename' => $file->get_filename(),
-                'content' => base64_encode($file->get_content()),
-            ];
-        }
-
         $datasourcedata = [];
         $datasource = self::get_data_source($block);
         if ($datasource && method_exists($datasource, 'export_instance_data')) {
@@ -118,8 +109,9 @@ class porter {
             'site' => self::site_hash(),
             'requires' => self::get_required_components($config),
             'name' => $config['title'] ?? '',
+            'source' => ['blockid' => (int) $block->instance->id, 'contextid' => (int) $block->context->id],
             'config' => $config,
-            'files' => $files,
+            'files' => self::export_files($block->context),
             'datasource_data' => $datasourcedata,
         ];
     }
@@ -234,10 +226,21 @@ class porter {
             }
         }
 
+        // Pictures that widgets link to from their preferences now live in this block's context.
+        $source = $data['source'] ?? [];
+        if (!empty($source['contextid'])) {
+            $config = (object) self::rewrite_file_urls(
+                (array) $config,
+                (int) $source['contextid'],
+                (int) ($source['blockid'] ?? 0),
+                $block
+            );
+        }
+
         $block->config = $config;
         $block->instance_config_commit();
 
-        self::import_files($block, $data['files'] ?? [], $warnings);
+        self::import_files($block, $data['files'] ?? [], (int) ($source['blockid'] ?? 0), $warnings);
 
         $datasource = self::get_data_source($block);
         if ($datasource && method_exists($datasource, 'import_instance_data')) {
@@ -339,39 +342,142 @@ class porter {
     }
 
     /**
-     * Replace the block's background image with the one from the file.
+     * Every file stored in a block's context, whichever plugin it belongs to.
+     *
+     * @param \context $context The block's context.
+     * @return array
+     */
+    protected static function export_files(\context $context): array {
+        global $DB;
+
+        $fs = get_file_storage();
+        $files = [];
+        $areas = $DB->get_recordset_sql(
+            "SELECT DISTINCT component, filearea FROM {files} WHERE contextid = :contextid AND filename <> '.'
+           ORDER BY component, filearea",
+            ['contextid' => $context->id]
+        );
+        foreach ($areas as $area) {
+            $sort = 'itemid, filepath, filename';
+            foreach ($fs->get_area_files($context->id, $area->component, $area->filearea, false, $sort, false) as $file) {
+                $files[] = [
+                    'component' => $file->get_component(),
+                    'area' => $file->get_filearea(),
+                    'itemid' => (int) $file->get_itemid(),
+                    'filepath' => $file->get_filepath(),
+                    'filename' => $file->get_filename(),
+                    'content' => base64_encode($file->get_content()),
+                ];
+            }
+        }
+        $areas->close();
+
+        return $files;
+    }
+
+    /**
+     * Replace the files in the block's context with the ones from the file.
+     *
+     * Files of plugins that aren't installed are skipped. Item ids equal to the exporting block's id
+     * become the importing block's id, as some plugins key their files by block.
      *
      * @param \block_base $block
      * @param array $files
+     * @param int $sourceblockid Id of the exporting block, 0 when unknown.
      * @param array $warnings
      */
-    protected static function import_files(\block_base $block, array $files, array &$warnings): void {
+    protected static function import_files(\block_base $block, array $files, int $sourceblockid, array &$warnings): void {
         $fs = get_file_storage();
-        $fs->delete_area_files($block->context->id, 'block_dash', 'images');
+        $fs->delete_area_files($block->context->id);
 
+        $hasbackground = false;
         foreach ($files as $file) {
-            if (($file['area'] ?? '') !== 'images' || empty($file['filename']) || !isset($file['content'])) {
+            // Files of DASH-1296 exports have no component: they are the block's background image.
+            $component = clean_param($file['component'] ?? 'block_dash', PARAM_COMPONENT);
+            $area = clean_param($file['area'] ?? '', PARAM_AREA);
+            $filename = clean_param($file['filename'] ?? '', PARAM_FILE);
+            if (
+                !$component || !$area || !$filename || !isset($file['content'])
+                    || !\core_component::get_component_directory($component)
+            ) {
                 continue;
             }
 
+            $isbackground = $component === 'block_dash' && $area === 'images';
+            if ($isbackground && $hasbackground) {
+                continue;
+            }
+
+            $itemid = (int) ($file['itemid'] ?? 0);
+            if ($sourceblockid && $itemid === $sourceblockid) {
+                $itemid = (int) $block->instance->id;
+            }
+            $filepath = '/' . trim(clean_param($file['filepath'] ?? '/', PARAM_PATH), '/') . '/';
+            $filepath = $filepath === '//' ? '/' : $filepath;
+
+            if ($fs->file_exists($block->context->id, $component, $area, $itemid, $filepath, $filename)) {
+                continue;
+            }
             $stored = $fs->create_file_from_string([
                 'contextid' => $block->context->id,
-                'component' => 'block_dash',
-                'filearea' => 'images',
-                'itemid' => 0,
-                'filepath' => '/',
-                'filename' => clean_param($file['filename'], PARAM_FILE) ?: 'image',
+                'component' => $component,
+                'filearea' => $area,
+                'itemid' => $itemid,
+                'filepath' => $filepath,
+                'filename' => $filename,
             ], (string) base64_decode($file['content']));
 
-            if (!$stored->is_valid_image()) {
-                $stored->delete();
-                $warnings[] = get_string('importwarningimage', 'block_dash');
-                continue;
+            if ($isbackground) {
+                if (!$stored->is_valid_image()) {
+                    $stored->delete();
+                    $warnings[] = get_string('importwarningimage', 'block_dash');
+                    continue;
+                }
+                // The block shows one background image.
+                $hasbackground = true;
             }
-
-            // The block shows one background image.
-            break;
         }
+    }
+
+    /**
+     * Point pluginfile URLs at the exporting block's context to the importing block's context.
+     *
+     * Covers absolute and root-relative URLs, and the escaped form inside JSON strings that some
+     * widgets keep in their preferences. Absolute URLs get this site's address.
+     *
+     * @param mixed $value Config, or a part of it.
+     * @param int $sourcecontextid Context id of the exporting block.
+     * @param int $sourceblockid Id of the exporting block, 0 when unknown.
+     * @param \block_base $block The importing block.
+     * @return mixed
+     */
+    protected static function rewrite_file_urls($value, int $sourcecontextid, int $sourceblockid, \block_base $block) {
+        global $CFG;
+
+        if (is_array($value) || is_object($value)) {
+            $isobject = is_object($value);
+            $value = (array) $value;
+            foreach ($value as $key => $item) {
+                $value[$key] = self::rewrite_file_urls($item, $sourcecontextid, $sourceblockid, $block);
+            }
+            return $isobject ? (object) $value : $value;
+        }
+        if (!is_string($value) || strpos($value, 'pluginfile.php') === false) {
+            return $value;
+        }
+
+        foreach (['/', '\\/'] as $separator) {
+            $s = preg_quote($separator, '~');
+            $pattern = '~(?:https?:' . $s . $s . '[^\s"\'<>]*?)?' . $s . 'pluginfile\.php' . $s . $sourcecontextid . $s
+                . '([a-z0-9_]+)' . $s . '([A-Za-z0-9_-]+)' . $s . '(\d+)' . $s . '~';
+            $value = preg_replace_callback($pattern, function ($match) use ($separator, $sourceblockid, $block, $CFG) {
+                $itemid = $sourceblockid && (int) $match[3] === $sourceblockid ? $block->instance->id : $match[3];
+                return str_replace('/', $separator, $CFG->wwwroot . '/pluginfile.php/' . $block->context->id . '/'
+                    . $match[1] . '/' . $match[2] . '/' . $itemid . '/');
+            }, $value);
+        }
+
+        return $value;
     }
 
     /**

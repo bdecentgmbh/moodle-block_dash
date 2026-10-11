@@ -387,6 +387,100 @@ final class porter_test extends \advanced_testcase {
     }
 
     /**
+     * Store a file in a block's context, in another plugin's file area, as widgets do with their pictures.
+     *
+     * @param \block_base $block
+     * @param string $filename
+     * @param int $itemid
+     * @return \stored_file
+     */
+    private function add_widget_file(\block_base $block, string $filename, int $itemid = 0): \stored_file {
+        return get_file_storage()->create_file_from_string([
+            'contextid' => $block->context->id,
+            'component' => 'block_html',
+            'filearea' => 'content',
+            'itemid' => $itemid,
+            'filepath' => '/',
+            'filename' => $filename,
+        ], 'Picture ' . $filename);
+    }
+
+    /**
+     * Files that widgets keep in their own areas of the block's context travel with the block.
+     */
+    public function test_files_of_other_plugins_are_carried(): void {
+        $source = $this->create_block($this->sample_config());
+        $this->add_background_image($source);
+        $this->add_widget_file($source, 'hero.png');
+        $this->add_widget_file($source, 'keyed.png', $source->instance->id);
+        $target = $this->create_block();
+        $this->add_widget_file($target, 'stale.png');
+
+        $data = porter::export($source);
+        $this->assertCount(3, $data['files']);
+        $this->assertSame(
+            ['blockid' => (int) $source->instance->id, 'contextid' => (int) $source->context->id],
+            $data['source']
+        );
+
+        porter::import($target, $data);
+
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($target->context->id, 'block_html', 'content', false, 'filename', false);
+        $this->assertSame(['hero.png', 'keyed.png'], array_values(array_map(function ($file) {
+            return $file->get_filename();
+        }, $files)));
+        $this->assertTrue($fs->file_exists($target->context->id, 'block_html', 'content', 0, '/', 'hero.png'));
+        $this->assertTrue($fs->file_exists($target->context->id, 'block_html', 'content', $target->instance->id, '/', 'keyed.png'));
+        $this->assertCount(1, $fs->get_area_files($target->context->id, 'block_dash', 'images', 0, 'id', false));
+    }
+
+    /**
+     * Pluginfile URLs in the config are pointed at the importing block.
+     */
+    public function test_import_rewrites_file_urls(): void {
+        global $CFG;
+
+        $source = $this->create_block($this->sample_config());
+        $url = \moodle_url::make_pluginfile_url($source->context->id, 'block_html', 'content', 0, '/', 'a.png')->out(false);
+        $keyed = '/pluginfile.php/' . $source->context->id . '/block_html/content/' . $source->instance->id . '/b.png';
+        $data = porter::export($source);
+        $data['config']['preferences']['image'] = $url;
+        $data['config']['preferences']['items_json'] = json_encode([['image' => $url], ['image' => $keyed]]);
+        $target = $this->create_block();
+
+        porter::import($target, $data);
+
+        $preferences = $this->reload($target)->config->preferences;
+        $expected = $CFG->wwwroot . '/pluginfile.php/' . $target->context->id . '/block_html/content/0/a.png';
+        $this->assertSame($expected, $preferences['image']);
+        $items = json_decode($preferences['items_json'], true);
+        $this->assertSame($expected, $items[0]['image']);
+        $this->assertSame($CFG->wwwroot . '/pluginfile.php/' . $target->context->id . '/block_html/content/'
+            . $target->instance->id . '/b.png', $items[1]['image']);
+    }
+
+    /**
+     * Files of DASH-1296 exports carry no component and are the block's background image.
+     */
+    public function test_import_files_without_component(): void {
+        global $CFG;
+
+        $data = porter::export($this->create_block($this->sample_config()));
+        unset($data['source']);
+        $data['files'] = [[
+            'area' => 'images',
+            'filename' => 'background.jpg',
+            'content' => base64_encode(file_get_contents($CFG->dirroot . '/blocks/dash/tests/assets/background.jpg')),
+        ]];
+        $target = $this->create_block();
+
+        porter::import($target, $data);
+
+        $this->assertTrue(get_file_storage()->file_exists($target->context->id, 'block_dash', 'images', 0, '/', 'background.jpg'));
+    }
+
+    /**
      * Only users who may edit a block can export it or import into it.
      */
     public function test_can_edit_block(): void {

@@ -24,6 +24,8 @@
 
 namespace block_dash\gallery;
 
+use block_dash\local\gallery\host_block;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
@@ -32,8 +34,10 @@ require_once($CFG->dirroot . '/blocks/dash/block_dash.php');
 /**
  * A Dash block built in memory from a gallery item, to render it outside a block region.
  *
- * It has no database row and no block context: its parent context is the context it is rendered
- * in, and its id is negative and unique within the request.
+ * Its setup and its block context are the item's host block's (see \block_dash\local\gallery\host_block),
+ * so widgets find the pictures they keep in their block's context. Its parent context is the context
+ * it is rendered in, which decides the data it shows, and its id is negative and unique within the
+ * request.
  *
  * @package    block_dash
  */
@@ -54,11 +58,13 @@ class embed_block extends \block_dash {
      * @return embed_block
      */
     public static function create(item $item, \context $context, \moodle_page $page, ?int $id = null): embed_block {
+        $host = host_block::get($item);
+
         $block = new embed_block();
         $block->item = $item;
         $block->page = $page;
-        $block->context = $context;
-        $block->config = (object) ($item->get_data()['config'] ?? []);
+        $block->context = $host->context;
+        $block->config = clone $host->config;
         // Data downloads load the block from the database, which an embedded item doesn't have.
         if (isset($block->config->preferences) && is_array($block->config->preferences)) {
             $block->config->preferences['exportdata'] = 0;
@@ -106,45 +112,5 @@ class embed_block extends \block_dash {
      */
     public function instance_config_save($data, $nolongerused = false) {
         throw new \coding_exception('A gallery item rendered outside a block can\'t be saved.');
-    }
-
-    /**
-     * The item's background image, unpacked into the gallery images area so it can be served.
-     *
-     * @return \stored_file|null
-     */
-    public function get_background_image() {
-        $fs = get_file_storage();
-        $contextid = \context_system::instance()->id;
-
-        foreach ($this->item->get_data()['files'] ?? [] as $file) {
-            // Items also carry the pictures widgets keep in their own areas; only block_dash's images are the background.
-            $component = $file['component'] ?? 'block_dash';
-            if (
-                $component !== 'block_dash' || ($file['area'] ?? '') !== 'images' || empty($file['filename'])
-                    || !isset($file['content'])
-            ) {
-                continue;
-            }
-            $filepath = '/' . sha1($file['content']) . '/';
-            $filename = clean_param($file['filename'], PARAM_FILE) ?: 'image';
-
-            $stored = $fs->get_file($contextid, 'block_dash', 'galleryimages', 0, $filepath, $filename);
-            if (!$stored) {
-                $stored = $fs->create_file_from_string([
-                    'contextid' => $contextid,
-                    'component' => 'block_dash',
-                    'filearea' => 'galleryimages',
-                    'itemid' => 0,
-                    'filepath' => $filepath,
-                    'filename' => $filename,
-                ], (string) base64_decode($file['content']));
-            }
-            if ($stored->is_valid_image()) {
-                return $stored;
-            }
-        }
-
-        return null;
     }
 }

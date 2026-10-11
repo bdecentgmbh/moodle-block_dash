@@ -185,46 +185,48 @@ class external extends external_api {
             $PAGE->set_pagelayout($pagelayout);
         }
         $public = false;
+        $item = null;
         if ($params['gallery_item'] !== '') {
-            // An embedded gallery item has no block row: rebuild it from the item, in its context.
+            // An embedded gallery item has no block row: it is rebuilt from the item below, and access
+            // is checked against the context it is embedded in, not against its host block.
             $item = \block_dash\gallery\gallery::get_item($params['gallery_item']);
             if (!$item || $item->is_hidden() || !$item->is_embeddable() || !$item->is_available()) {
                 throw new \moodle_exception('galleryerrornotusable', 'block_dash');
             }
-            $block = \block_dash\gallery\embed_block::create(
-                $item,
-                \context::instance_by_id($params['context_id']),
-                $PAGE,
-                $params['block_instance_id']
-            );
+            $accesscontext = \context::instance_by_id($params['context_id']);
         } else {
             $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
             $block = block_instance($blockinstance->blockname, $blockinstance);
-        }
-        if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
-            if (
-                $dashboard = \dashaddon_dashboard\model\dashboard::get_record(
-                    ['shortname' => $block->instance->defaultregion]
-                )
-            ) {
-                if ($dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC) {
-                    $public = true;
+            $accesscontext = $block->context;
+            if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
+                if (
+                    $dashboard = \dashaddon_dashboard\model\dashboard::get_record(
+                        ['shortname' => $block->instance->defaultregion]
+                    )
+                ) {
+                    if ($dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC) {
+                        $public = true;
+                    }
                 }
             }
         }
 
         if (!$public) {
             // Verify the block created for frontpage. and user not loggedin allow to access the block content.
-            [$unused, $course, $cm] = get_context_info_array($block->context->id);
+            [$unused, $course, $cm] = get_context_info_array($accesscontext->id);
             if (isset($course->id) && $course->id == $SITE->id && !isloggedin()) {
                 require_course_login($course);
                 $coursecontext = \context_course::instance($course->id);
                 $PAGE->set_context($coursecontext);
             } else {
-                self::validate_context($block->context);
+                self::validate_context($accesscontext);
             }
         } else {
-            $PAGE->set_context($block->context);
+            $PAGE->set_context($accesscontext);
+        }
+
+        if ($item) {
+            $block = \block_dash\gallery\embed_block::create($item, $accesscontext, $PAGE, $params['block_instance_id']);
         }
 
         /** @var renderer $renderer */

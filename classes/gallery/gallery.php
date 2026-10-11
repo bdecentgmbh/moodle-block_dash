@@ -25,6 +25,7 @@
 namespace block_dash\gallery;
 
 use block_dash\hook\gallery_items;
+use block_dash\local\gallery\host_block;
 use block_dash\local\gallery\site_item;
 use moodle_exception;
 
@@ -138,7 +139,9 @@ class gallery {
         self::apply_settings($record, $settings);
         $record->create();
 
-        return item::from_site_item($record);
+        $item = item::from_site_item($record);
+        host_block::get($item);
+        return $item;
     }
 
     /**
@@ -159,7 +162,9 @@ class gallery {
         $record->set('data', json_encode($data));
         $record->update();
 
-        return item::from_site_item($record);
+        $item = item::from_site_item($record);
+        host_block::get($item);
+        return $item;
     }
 
     /**
@@ -189,6 +194,7 @@ class gallery {
                 if ($error = self::validate_shortname($settings['shortname'], $record->get('id'))) {
                     throw new moodle_exception($error, 'block_dash');
                 }
+                host_block::rename($record->get('shortname'), $settings['shortname']);
                 $record->set('shortname', $settings['shortname']);
             }
             foreach (['name', 'description'] as $key) {
@@ -217,6 +223,7 @@ class gallery {
 
         $record = $item->get_record();
         get_file_storage()->delete_area_files(\context_system::instance()->id, 'block_dash', 'gallerypreview', $record->get('id'));
+        host_block::delete($item->get_shortname());
         $record->delete();
     }
 

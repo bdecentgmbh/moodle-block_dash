@@ -25,6 +25,7 @@
 namespace block_dash;
 
 use block_dash\gallery\embed;
+use block_dash\gallery\embed_block;
 use block_dash\gallery\gallery;
 use block_dash\gallery\item;
 use block_dash\hook\gallery_items;
@@ -276,10 +277,10 @@ final class gallery_test extends \advanced_testcase {
     }
 
     /**
-     * An item's background image is served from the gallery images area.
+     * An item's background image is served from its host block.
      */
     public function test_render_serves_background_image(): void {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $data = $this->export_users_block();
         $data['files'] = [[
@@ -287,12 +288,71 @@ final class gallery_test extends \advanced_testcase {
             'filename' => 'background.jpg',
             'content' => base64_encode(file_get_contents($CFG->dirroot . '/blocks/dash/tests/assets/background.jpg')),
         ]];
-        gallery::create_site_item('pictured', 'Pictured', '', $data, ['embeddable' => true]);
+        $item = gallery::create_site_item('pictured', 'Pictured', '', $data, ['embeddable' => true]);
 
         $html = embed::render('pictured', \context_system::instance());
 
-        $this->assertStringContainsString('/block_dash/galleryimages/0/', $html);
-        $files = get_file_storage()->get_area_files(\context_system::instance()->id, 'block_dash', 'galleryimages', 0, 'id', false);
-        $this->assertCount(1, $files);
+        $hostcontext = embed_block::create($item, \context_system::instance(), $PAGE)->context;
+        $this->assertStringContainsString('/pluginfile.php/' . $hostcontext->id . '/block_dash/images/0/background.jpg', $html);
+    }
+
+    /**
+     * Items render with their host block's context, where the pictures widgets keep are found.
+     */
+    public function test_host_block_holds_widget_files(): void {
+        global $DB, $PAGE;
+
+        $source = $this->getDataGenerator()->get_plugin_generator('block_dash')->create_dash_block([
+            'configdata' => (object) ['title' => 'Hero', 'data_source_idnumber' => users_data_source::class],
+        ]);
+        get_file_storage()->create_file_from_string(['contextid' => $source->context->id, 'component' => 'block_html',
+            'filearea' => 'content', 'itemid' => 0, 'filepath' => '/', 'filename' => 'hero.png'], 'Picture');
+        $data = porter::export($source);
+        $data['config']['preferences']['image'] = \moodle_url::make_pluginfile_url(
+            $source->context->id,
+            'block_html',
+            'content',
+            0,
+            '/',
+            'hero.png'
+        )->out(false);
+        $item = gallery::create_site_item('hero', 'Hero', '', $data);
+
+        $course = $this->getDataGenerator()->create_course();
+        $block = embed_block::create($item, \context_course::instance($course->id), $PAGE);
+
+        $this->assertSame(CONTEXT_BLOCK, $block->context->contextlevel);
+        $this->assertSame(
+            \block_dash\local\gallery\host_block::PAGETYPE,
+            $DB->get_field('block_instances', 'pagetypepattern', ['id' => $block->context->instanceid])
+        );
+        $this->assertSame((int) \context_course::instance($course->id)->id, (int) $block->instance->parentcontextid);
+        $this->assertTrue(get_file_storage()->file_exists($block->context->id, 'block_html', 'content', 0, '/', 'hero.png'));
+        $this->assertStringContainsString(
+            '/pluginfile.php/' . $block->context->id . '/block_html/content/0/hero.png',
+            $block->config->preferences['image']
+        );
+    }
+
+    /**
+     * The host block follows its item when the item's setup changes, it is renamed or deleted.
+     */
+    public function test_host_block_follows_item(): void {
+        global $DB, $PAGE;
+
+        $context = \context_system::instance();
+        $item = gallery::create_site_item('people', 'People', '', $this->export_users_block());
+        $hostid = embed_block::create($item, $context, $PAGE)->context->instanceid;
+
+        $item = gallery::replace_data($item, $this->export_users_block(['title' => 'Staff']));
+        $block = embed_block::create($item, $context, $PAGE);
+        $this->assertSame('Staff', $block->config->title);
+        $this->assertEquals($hostid, $block->context->instanceid);
+
+        $item = gallery::update_settings($item, ['shortname' => 'staff']);
+        $this->assertEquals($hostid, embed_block::create($item, $context, $PAGE)->context->instanceid);
+
+        gallery::delete($item);
+        $this->assertFalse($DB->record_exists('block_instances', ['id' => $hostid]));
     }
 }

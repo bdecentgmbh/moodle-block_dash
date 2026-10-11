@@ -36,6 +36,8 @@ use moodle_url;
  * @package    block_dash
  */
 class import_block extends dynamic_form {
+    use uploaded_file_trait;
+
     /**
      * The block being imported into.
      *
@@ -143,27 +145,5 @@ class import_block extends dynamic_form {
         }
 
         return ['result' => true];
-    }
-
-    /**
-     * Content of the file in the file picker's draft area.
-     *
-     * @param int $draftitemid
-     * @return string
-     */
-    protected function get_uploaded_content(int $draftitemid): string {
-        global $USER;
-
-        $files = get_file_storage()->get_area_files(
-            \context_user::instance($USER->id)->id,
-            'user',
-            'draft',
-            $draftitemid,
-            'id DESC',
-            false
-        );
-        $file = reset($files);
-
-        return $file ? $file->get_content() : '';
     }
 }

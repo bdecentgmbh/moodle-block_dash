@@ -133,4 +133,14 @@ $capabilities = [
             'teacher' => CAP_ALLOW,
         ],
     ],
+
+    // Manage the gallery of ready-made Dash setups.
+    'block/dash:managegallery' => [
+        'riskbitmask' => RISK_XSS | RISK_CONFIG,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 ];

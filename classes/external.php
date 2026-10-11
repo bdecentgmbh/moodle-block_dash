@@ -52,15 +52,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function get_block_pagination_parameters() {
-        return new \external_function_parameters([
-            'block_instance_id' => new \external_value(PARAM_INT),
-            'filter_form_data' => new \external_value(PARAM_RAW),
-            'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
-            'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
-            'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
-            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
-            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
-        ]);
+        return self::get_block_content_parameters();
     }
 
     /**
@@ -73,6 +65,8 @@ class external extends external_api {
      * @param string $sortdirection
      * @param string $pagelayout
      * @param int $pagecontext
+     * @param string $galleryitem Shortname of an embedded gallery item.
+     * @param int $contextid Context the gallery item is embedded in.
      *
      * @return array
      * @throws \coding_exception
@@ -87,7 +81,9 @@ class external extends external_api {
         $sortfield,
         $sortdirection,
         $pagelayout = '',
-        $pagecontext = 0
+        $pagecontext = 0,
+        $galleryitem = '',
+        $contextid = 0
     ) {
         global $PAGE, $DB, $OUTPUT, $SITE;
 
@@ -99,6 +95,8 @@ class external extends external_api {
             $sortdirection,
             $pagelayout,
             $pagecontext,
+            $galleryitem,
+            $contextid,
             true
         );
     }
@@ -128,6 +126,8 @@ class external extends external_api {
             'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
             'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
             'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
+            'gallery_item' => new \external_value(PARAM_RAW_TRIMMED, 'Shortname of an embedded gallery item', VALUE_DEFAULT, ''),
+            'context_id' => new \external_value(PARAM_INT, 'Context the gallery item is embedded in', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -141,6 +141,8 @@ class external extends external_api {
      * @param string $sortdirection
      * @param string $pagelayout
      * @param int $pagecontext
+     * @param string $galleryitem Shortname of an embedded gallery item, rendered instead of a block.
+     * @param int $contextid Context the gallery item is embedded in.
      * @param bool $returnpagination If true, only return the pagination html.
      *
      * @return array
@@ -157,6 +159,8 @@ class external extends external_api {
         $sortdirection,
         $pagelayout = '',
         $pagecontext = 0,
+        $galleryitem = '',
+        $contextid = 0,
         $returnpagination = false
     ) {
         global $PAGE, $DB, $OUTPUT, $SITE;
@@ -169,6 +173,8 @@ class external extends external_api {
             'sort_direction' => $sortdirection,
             'pagelayout' => $pagelayout,
             'pagecontext' => $pagecontext,
+            'gallery_item' => $galleryitem,
+            'context_id' => $contextid,
         ]);
 
         if ($pagecontext) {
@@ -179,32 +185,48 @@ class external extends external_api {
             $PAGE->set_pagelayout($pagelayout);
         }
         $public = false;
-        $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
-        $block = block_instance($blockinstance->blockname, $blockinstance);
-        if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
-            if (
-                $dashboard = \dashaddon_dashboard\model\dashboard::get_record(
-                    ['shortname' => $block->instance->defaultregion]
-                )
-            ) {
-                if ($dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC) {
-                    $public = true;
+        $item = null;
+        if ($params['gallery_item'] !== '') {
+            // An embedded gallery item has no block row: it is rebuilt from the item below, and access
+            // is checked against the context it is embedded in, not against its host block.
+            $item = \block_dash\gallery\gallery::get_item($params['gallery_item']);
+            if (!$item || $item->is_hidden() || !$item->is_embeddable() || !$item->is_available()) {
+                throw new \moodle_exception('galleryerrornotusable', 'block_dash');
+            }
+            $accesscontext = \context::instance_by_id($params['context_id']);
+        } else {
+            $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
+            $block = block_instance($blockinstance->blockname, $blockinstance);
+            $accesscontext = $block->context;
+            if (strpos($block->instance->pagetypepattern, 'dashaddon-dashboard') !== false) {
+                if (
+                    $dashboard = \dashaddon_dashboard\model\dashboard::get_record(
+                        ['shortname' => $block->instance->defaultregion]
+                    )
+                ) {
+                    if ($dashboard->get('permission') == \dashaddon_dashboard\model\dashboard::PERMISSION_PUBLIC) {
+                        $public = true;
+                    }
                 }
             }
         }
 
         if (!$public) {
             // Verify the block created for frontpage. and user not loggedin allow to access the block content.
-            [$unused, $course, $cm] = get_context_info_array($block->context->id);
+            [$unused, $course, $cm] = get_context_info_array($accesscontext->id);
             if (isset($course->id) && $course->id == $SITE->id && !isloggedin()) {
                 require_course_login($course);
                 $coursecontext = \context_course::instance($course->id);
                 $PAGE->set_context($coursecontext);
             } else {
-                self::validate_context($block->context);
+                self::validate_context($accesscontext);
             }
         } else {
-            $PAGE->set_context($block->context);
+            $PAGE->set_context($accesscontext);
+        }
+
+        if ($item) {
+            $block = \block_dash\gallery\embed_block::create($item, $accesscontext, $PAGE, $params['block_instance_id']);
         }
 
         /** @var renderer $renderer */

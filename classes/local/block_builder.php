@@ -103,7 +103,9 @@ class block_builder {
         $renderer = $this->blockinstance->page->get_renderer('block_dash');
 
         $text = '';
-        $editing = ($this->blockinstance->page->user_is_editing() &&
+        // Gallery items rendered outside a block region never show editing controls.
+        $embedded = $this->blockinstance instanceof \block_dash\gallery\embed_block;
+        $editing = (!$embedded && $this->blockinstance->page->user_is_editing() &&
             has_capability('block/dash:addinstance', $this->blockinstance->context));
 
         $data = [
@@ -114,6 +116,7 @@ class block_builder {
             'pagelayout' => $this->blockinstance->page->pagelayout,
             'pagecontext' => $this->blockinstance->page->context->id,
             'collapseaction' => $this->is_collapsible_content_addon(),
+            'gallery_item' => $embedded ? $this->blockinstance->get_item()->get_shortname() : '',
         ];
 
         if ($this->configuration->is_fully_configured()) {
@@ -131,7 +134,7 @@ class block_builder {
                 $preload = $renderer->render_data_source($source);
             }
 
-            $editing = ($this->blockinstance->page->user_is_editing() &&
+            $editing = (!$embedded && $this->blockinstance->page->user_is_editing() &&
                 has_capability('block/dash:addinstance', $this->blockinstance->context) && $prefernece);
             $data += [
                 'preloaded' => $preload,
@@ -177,14 +180,19 @@ class block_builder {
 
                 $import = '';
                 if ($this->blockinstance->user_can_edit()) {
-                    $button = html_writer::tag('button', get_string('importfromfile', 'block_dash'), [
-                        'type' => 'button',
-                        'class' => 'btn btn-secondary btn-sm ms-2 ml-2',
-                        'data-action' => 'block_dash-import',
-                        'data-blockid' => $this->blockinstance->instance->id,
-                    ]);
-                    $import = html_writer::tag('p', get_string('importfromfiledesc', 'block_dash') . $button, ['class' => 'mt-3']);
+                    $buttons = '';
+                    $actions = ['block_dash-gallery-choose' => 'gallerychoose', 'block_dash-import' => 'importfromfile'];
+                    foreach ($actions as $action => $label) {
+                        $buttons .= html_writer::tag('button', get_string($label, 'block_dash'), [
+                            'type' => 'button',
+                            'class' => 'btn btn-secondary btn-sm ms-2 ml-2',
+                            'data-action' => $action,
+                            'data-blockid' => $this->blockinstance->instance->id,
+                        ]);
+                    }
+                    $import = html_writer::tag('p', get_string('startfromdesc', 'block_dash') . $buttons, ['class' => 'mt-3']);
                     $this->blockinstance->page->requires->js_call_amd('block_dash/import_block', 'init');
+                    $this->blockinstance->page->requires->js_call_amd('block_dash/gallery_picker', 'init');
                 }
 
                 $data['preloaded'] = html_writer::tag(

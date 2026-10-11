@@ -1,0 +1,22 @@
+{
+    "format": "block_dash",
+    "version": 1,
+    "requires": [
+        "block_dash"
+    ],
+    "name": "My learning",
+    "config": {
+        "title": "My learning",
+        "data_source_idnumber": "block_dash\\local\\widget\\mylearning\\mylearning_widget",
+        "preferences": [],
+        "showheader": 1,
+        "width": 100,
+        "hide_when_empty": 0,
+        "emptystate": {
+            "text": "You aren't enrolled in any courses yet.",
+            "format": "1"
+        }
+    },
+    "files": [],
+    "datasource_data": []
+}

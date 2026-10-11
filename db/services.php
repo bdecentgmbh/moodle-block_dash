@@ -83,4 +83,25 @@ $functions = [
         'ajax'          => true,
         'loginrequired' => false,
     ],
+
+    'block_dash_gallery_list' => [
+        'classname'   => 'block_dash\\external\\gallery_list',
+        'description' => 'List the gallery items the user may put into a Dash block.',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+
+    'block_dash_gallery_preview' => [
+        'classname'   => 'block_dash\\external\\gallery_preview',
+        'description' => 'Render a gallery item, for previews.',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+
+    'block_dash_gallery_use' => [
+        'classname'   => 'block_dash\\external\\gallery_use',
+        'description' => 'Copy a gallery item into a Dash block.',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 ];

@@ -29,4 +29,9 @@ $callbacks = [
         'hook' => \block_dash\hook\gallery_items::class,
         'callback' => [\block_dash\local\gallery\hook_callbacks::class, 'gallery_items'],
     ],
+    // Boost Union's hook; ignored on sites without that theme.
+    [
+        'hook' => \theme_boost_union\hook\output\add_block_button::class,
+        'callback' => [\block_dash\local\addblock\hook_callbacks::class, 'add_block_button'],
+    ],
 ];

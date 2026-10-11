@@ -43,7 +43,8 @@ class gallery_list extends gallery_base {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
-            'blockid' => new external_value(PARAM_INT, 'Id of the Dash block the item would go into'),
+            'blockid' => new external_value(PARAM_INT, 'Id of the Dash block the item would go into', VALUE_DEFAULT, 0),
+            'pagehash' => self::pagehash_parameter(),
         ]);
     }
 
@@ -51,14 +52,18 @@ class gallery_list extends gallery_base {
      * List the items.
      *
      * @param int $blockid
+     * @param string $pagehash
      * @return array
      */
-    public static function execute(int $blockid): array {
-        ['blockid' => $blockid] = self::validate_parameters(self::execute_parameters(), ['blockid' => $blockid]);
-        [, $parentcontext] = self::get_editable_block($blockid);
+    public static function execute(int $blockid = 0, string $pagehash = ''): array {
+        ['blockid' => $blockid, 'pagehash' => $pagehash] = self::validate_parameters(
+            self::execute_parameters(),
+            ['blockid' => $blockid, 'pagehash' => $pagehash]
+        );
+        $context = self::get_target_context($blockid, $pagehash);
 
         $items = [];
-        foreach (gallery::get_usable_items($parentcontext) as $item) {
+        foreach (gallery::get_usable_items($context) as $item) {
             $preview = $item->get_preview_url();
             $items[] = [
                 'shortname' => $item->get_shortname(),

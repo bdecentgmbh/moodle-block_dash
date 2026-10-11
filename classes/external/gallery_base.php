@@ -28,6 +28,7 @@ use block_dash\gallery\gallery;
 use block_dash\gallery\item;
 use block_dash\local\porter;
 use core_external\external_api;
+use core_external\external_value;
 
 /**
  * Shared checks of the gallery web services.
@@ -54,6 +55,49 @@ abstract class gallery_base extends external_api {
         }
 
         return [$block, \context::instance_by_id($instance->parentcontextid)];
+    }
+
+    /**
+     * Context of a page the current user is adding a block to, for the "Add a block" chooser.
+     *
+     * @param string $pagehash From moodle_page::get_edited_page_hash().
+     * @return \context Context the new block would go into.
+     */
+    protected static function get_editable_page_context(string $pagehash): \context {
+        $page = \moodle_page::retrieve_edited_page($pagehash, MUST_EXIST);
+        self::validate_context($page->context);
+        if (!$page->user_can_edit_blocks()) {
+            throw new \moodle_exception('nopermissions', '', '', get_string('addblock'));
+        }
+        return $page->context;
+    }
+
+    /**
+     * Context a picker works in: the parent of a Dash block, or a page a block is added to.
+     *
+     * @param int $blockid
+     * @param string $pagehash
+     * @return \context
+     */
+    protected static function get_target_context(int $blockid, string $pagehash): \context {
+        if ($pagehash !== '') {
+            return self::get_editable_page_context($pagehash);
+        }
+        return self::get_editable_block($blockid)[1];
+    }
+
+    /**
+     * Parameter for the page a block is added to.
+     *
+     * @return external_value
+     */
+    protected static function pagehash_parameter(): external_value {
+        return new external_value(
+            PARAM_ALPHANUM,
+            'Hash of the page a Dash block would be added to, instead of a block',
+            VALUE_DEFAULT,
+            ''
+        );
     }
 
     /**

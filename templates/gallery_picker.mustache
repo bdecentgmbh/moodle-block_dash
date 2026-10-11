@@ -36,15 +36,7 @@
         {{#hasitems}}
         <input type="search" class="form-control mb-2" data-gallery-search
             placeholder="{{#str}} gallerysearch, block_dash {{/str}}" aria-label="{{#str}} gallerysearch, block_dash {{/str}}">
-        <div class="list-group" role="listbox" aria-label="{{#str}} gallery, block_dash {{/str}}">
-            {{#items}}
-            <button type="button" class="list-group-item list-group-item-action" role="option" aria-selected="false"
-                data-gallery-option="{{shortname}}" data-description="{{description}}" data-search="{{name}} {{description}} {{source}}">
-                <span class="d-block font-weight-bold fw-bold">{{name}}</span>
-                <small class="text-muted">{{source}}</small>
-            </button>
-            {{/items}}
-        </div>
+        {{> block_dash/gallery_options }}
         {{/hasitems}}
         {{^hasitems}}
         <p>{{#str}} gallerynoitems, block_dash {{/str}}</p>

@@ -44,6 +44,16 @@ class block_dash extends block_base {
     }
 
     /**
+     * Set up a block added from Dash's "Add a block" chooser with the chosen gallery item.
+     *
+     * @return bool
+     */
+    public function instance_create() {
+        \block_dash\local\addblock\chooser::import_requested_item($this);
+        return true;
+    }
+
+    /**
      * This block supports configuration fields.
      *
      * @return bool

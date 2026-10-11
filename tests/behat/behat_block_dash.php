@@ -59,6 +59,19 @@ class behat_block_dash extends behat_base {
     }
 
     /**
+     * Skip the scenario unless the theme Boost Union lets plugins replace the "Add a block" button.
+     *
+     * @Given Boost Union lets plugins replace the add block button
+     */
+    public function boost_union_lets_plugins_replace_the_add_block_button(): void {
+        if (!class_exists(\theme_boost_union\hook\output\add_block_button::class)) {
+            throw new \Moodle\BehatExtension\Exception\SkippedException(
+                'Needs the theme Boost Union with its add_block_button hook.'
+            );
+        }
+    }
+
+    /**
      * Turns block editing mode on.
      *
      * @Given I turn dash block editing mode on

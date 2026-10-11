@@ -40,7 +40,7 @@ let initialised = false;
  * @param {Modal} modal
  * @returns {Modal}
  */
-const showWide = (modal) => {
+export const showWide = (modal) => {
     modal.getRoot().addClass('block-dash-gallery-modal');
     modal.show();
     return modal;
@@ -49,14 +49,59 @@ const showWide = (modal) => {
 /**
  * Render an item.
  *
- * @param {String} shortname
- * @param {Number} blockid Block it would go into, 0 for the gallery page.
+ * @param {Object} args Parameters of block_dash_gallery_preview: the shortname, and the block or page it would go into.
  * @returns {Promise<String>} HTML.
  */
-const renderItem = (shortname, blockid) => Ajax.call([{
+export const renderItem = (args) => Ajax.call([{
     methodname: 'block_dash_gallery_preview',
-    args: {shortname, blockid},
+    args,
 }])[0].then((result) => result.html);
+
+/**
+ * Let a picker's options be searched, and its items be selected to preview them.
+ *
+ * Search also filters other options of the picker, such as core's list of blocks.
+ *
+ * @param {HTMLElement} root The picker.
+ * @param {Function} render Promise of an item's HTML, given its shortname.
+ * @param {Function} onSelect Called with the shortname of the selected item.
+ */
+export const bindPicker = (root, render, onSelect) => {
+    const preview = root.querySelector('[data-gallery-preview]');
+    const description = root.querySelector('[data-gallery-description]');
+    let selected = null;
+
+    root.addEventListener('click', (e) => {
+        const option = e.target.closest('[data-gallery-option]');
+        if (!option) {
+            return;
+        }
+        root.querySelectorAll('[data-gallery-option]').forEach((other) => {
+            other.classList.toggle('active', other === option);
+            other.setAttribute('aria-selected', other === option ? 'true' : 'false');
+        });
+        selected = option.dataset.galleryOption;
+        onSelect(selected);
+        description.textContent = option.dataset.description;
+        render(selected).then((html) => {
+            if (selected === option.dataset.galleryOption) {
+                preview.innerHTML = html;
+            }
+            return html;
+        }).catch(Notification.exception);
+    });
+
+    const search = root.querySelector('[data-gallery-search]');
+    if (search) {
+        search.addEventListener('input', () => {
+            const query = search.value.trim().toLowerCase();
+            root.querySelectorAll('[data-gallery-option], .list-group-item[data-blockname]').forEach((option) => {
+                const text = option.dataset.search ?? option.textContent;
+                option.hidden = query !== '' && !text.toLowerCase().includes(query);
+            });
+        });
+    }
+};
 
 /**
  * Show the picker for a block.
@@ -78,42 +123,13 @@ const openPicker = async(trigger) => {
     showWide(modal);
     await modal.getBodyPromise();
 
-    const root = modal.getRoot()[0];
     const save = modal.getFooter()[0].querySelector('[data-action="save"]');
-    const preview = root.querySelector('[data-gallery-preview]');
-    const description = root.querySelector('[data-gallery-description]');
     let selected = null;
     save.disabled = true;
-
-    root.addEventListener('click', (e) => {
-        const option = e.target.closest('[data-gallery-option]');
-        if (!option) {
-            return;
-        }
-        root.querySelectorAll('[data-gallery-option]').forEach((other) => {
-            other.classList.toggle('active', other === option);
-            other.setAttribute('aria-selected', other === option ? 'true' : 'false');
-        });
-        selected = option.dataset.galleryOption;
+    bindPicker(modal.getRoot()[0], (shortname) => renderItem({shortname, blockid}), (shortname) => {
+        selected = shortname;
         save.disabled = false;
-        description.textContent = option.dataset.description;
-        renderItem(selected, blockid).then((html) => {
-            if (selected === option.dataset.galleryOption) {
-                preview.innerHTML = html;
-            }
-            return html;
-        }).catch(Notification.exception);
     });
-
-    const search = root.querySelector('[data-gallery-search]');
-    if (search) {
-        search.addEventListener('input', () => {
-            const query = search.value.trim().toLowerCase();
-            root.querySelectorAll('[data-gallery-option]').forEach((option) => {
-                option.hidden = query !== '' && !option.dataset.search.toLowerCase().includes(query);
-            });
-        });
-    }
 
     modal.getRoot().on(ModalEvents.save, (e) => {
         e.preventDefault();
@@ -138,7 +154,7 @@ const openPicker = async(trigger) => {
 const openPreview = async(trigger) => {
     showWide(await Modal.create({
         title: trigger.dataset.title,
-        body: renderItem(trigger.dataset.item, 0),
+        body: renderItem({shortname: trigger.dataset.item}),
         large: true,
         removeOnClose: true,
         returnElement: trigger,

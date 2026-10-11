@@ -24,7 +24,7 @@
 
 namespace block_dash\external;
 
-use block_dash\local\porter;
+use block_dash\gallery\gallery;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
@@ -66,16 +66,7 @@ class gallery_use extends gallery_base {
         [$block, $parentcontext] = self::get_editable_block($blockid);
         $item = self::get_usable_item($shortname, $parentcontext);
 
-        $data = $item->get_data();
-        porter::validate($data, $block);
-        $warnings = porter::import($block, $data);
-
-        \core\notification::success(get_string('gallerychosen', 'block_dash', $item->get_name()));
-        foreach ($warnings as $warning) {
-            \core\notification::warning($warning);
-        }
-
-        return ['warnings' => $warnings];
+        return ['warnings' => gallery::copy_into_block($item, $block)];
     }
 
     /**

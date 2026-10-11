@@ -132,6 +132,30 @@ final class gallery_test extends \advanced_testcase {
     }
 
     /**
+     * Saved items keep the pictures widgets store in their own areas, without taking them as the background.
+     */
+    public function test_saved_item_keeps_widget_files(): void {
+        $block = $this->getDataGenerator()->get_plugin_generator('block_dash')->create_dash_block([
+            'configdata' => (object) ['title' => 'Hero', 'data_source_idnumber' => users_data_source::class],
+        ]);
+        get_file_storage()->create_file_from_string([
+            'contextid' => $block->context->id,
+            'component' => 'block_html',
+            'filearea' => 'content',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'hero.png',
+        ], 'Picture');
+
+        $item = gallery::create_site_item('hero', 'Hero', '', porter::export($block), ['embeddable' => true]);
+
+        $file = $item->get_data()['files'][0];
+        $this->assertSame(['block_html', 'content', 'hero.png'], [$file['component'], $file['area'], $file['filename']]);
+        $this->assertNull(\block_dash\gallery\embed_block::create($item, \context_system::instance(), $GLOBALS['PAGE'])
+            ->get_background_image());
+    }
+
+    /**
      * Shortnames of site items are checked.
      */
     public function test_validate_shortname(): void {

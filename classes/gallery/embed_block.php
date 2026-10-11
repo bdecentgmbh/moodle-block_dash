@@ -118,7 +118,12 @@ class embed_block extends \block_dash {
         $contextid = \context_system::instance()->id;
 
         foreach ($this->item->get_data()['files'] ?? [] as $file) {
-            if (($file['area'] ?? '') !== 'images' || empty($file['filename']) || !isset($file['content'])) {
+            // Items also carry the pictures widgets keep in their own areas; only block_dash's images are the background.
+            $component = $file['component'] ?? 'block_dash';
+            if (
+                $component !== 'block_dash' || ($file['area'] ?? '') !== 'images' || empty($file['filename'])
+                    || !isset($file['content'])
+            ) {
                 continue;
             }
             $filepath = '/' . sha1($file['content']) . '/';

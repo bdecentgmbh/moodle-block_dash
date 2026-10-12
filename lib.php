@@ -385,34 +385,31 @@ function block_dash_get_data_collection() {
 }
 
 /**
- * Return the dash addon visible staus.
+ * Whether the block's edit form offers a data source or widget.
  *
- * @param int $id ID
+ * The plugin providing it can hide it: a subplugin that is disabled, such as a disabled Dash
+ * addon, or any plugin whose extend_added_dependencies callback returns a message, for example
+ * because a plugin it needs isn't installed.
+ *
+ * @param string $id Identifier of the data source or widget, starting with the providing
+ *     plugin's component, such as a class name.
  * @return bool
  */
 function block_dash_visible_addons($id) {
-    global $CFG;
-    preg_match('/(dashaddon_[a-zA-Z_]+)/', $id, $matches);
-    if ($matches) {
-        $value = $matches[1];
-        $parts = explode('\\', $value);
-        if ($parts) {
-            $addon = $parts[0];
-            $addondependencies = $addon . "_extend_added_dependencies";
-            if (get_config($addon, 'enabled')) {
-                $addonplugin = explode("dashaddon_", $addon)[1];
-                if (file_exists($CFG->dirroot . "/local/dash/addon/$addonplugin/lib.php")) {
-                    require_once($CFG->dirroot . "/local/dash/addon/$addonplugin/lib.php");
-                    if (function_exists($addondependencies) && !empty($addondependencies())) {
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
-        }
+    if (!preg_match('/^\\\\?([a-z][a-z0-9]*_[a-z0-9_]+)/', $id, $matches)) {
+        return true;
     }
-    return true;
+    $component = $matches[1];
+    if (!core_component::get_component_directory($component)) {
+        return true;
+    }
+
+    $plugin = core_plugin_manager::instance()->get_plugin_info($component);
+    if ($plugin && $plugin->get_parent_plugin() && $plugin->is_enabled() === false) {
+        return false;
+    }
+
+    return empty(component_callback($component, 'extend_added_dependencies', [], ''));
 }
 
 /**

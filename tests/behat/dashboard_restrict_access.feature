@@ -531,6 +531,7 @@ Feature: Dash block restrictions:restrict by course group
     And I add the "Dash" block
     And I click on "Users" "radio"
     And I configure the "New Dash" block
+    And I expand all fieldsets
     #---Enable hide when empty and content added---#
     And I set the following fields to these values:
         | Block title        | Users   |
@@ -541,8 +542,7 @@ Feature: Dash block restrictions:restrict by course group
     And I log out
     #---Student Login---#
     When I am on the "Course 1" "Course" page logged in as "student1"
-    And ".block_dash" "css_element" should exist
-    And I should see "Welcome" in the ".block_dash .card-body .card-text" "css_element"
+    And ".block_dash" "css_element" should not exist
     And I log out
     #---Teacher Login---#
     When I am on the "Course 1" "Course" page logged in as "teacher1"

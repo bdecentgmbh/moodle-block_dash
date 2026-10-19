@@ -25,12 +25,12 @@
  */
 define([
     'jquery',
-    'core/modal_factory',
+    'core/modal_cancel',
     'core/modal_events',
     'core/templates',
     'core/str',
     'core/notification'
-], function($, Modal, ModalEvents, Templates, Str, Notification) {
+], function($, ModalCancel, ModalEvents, Templates, Str, Notification) {
 
     /** Track which containers have been initialised to prevent double-bind. */
     // eslint-disable-next-line no-unused-vars
@@ -162,13 +162,12 @@ define([
      *
      * @param {Object} templatecontext Rendered context.
      */
-    var openModal = function(templatecontext) {
-        Modal.create({
-            title: Str.get_string('strinfo', 'block_dash'),
-            type: Modal.types.CANCEL,
-            body: renderDetailArea(templatecontext),
-            large: true
-        }).then(function(modal) {
+        var openModal = function(templatecontext) {
+            ModalCancel.create({
+                title: Str.get_string('strinfo', 'block_dash'),
+                body: renderDetailArea(templatecontext),
+                large: true
+            }).then(function(modal) {
             modal.show();
             modal.getRoot().on(ModalEvents.hidden, function() {
                 modal.destroy();

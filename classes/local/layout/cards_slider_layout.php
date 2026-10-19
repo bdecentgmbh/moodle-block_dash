@@ -104,6 +104,9 @@ class cards_slider_layout extends cards_layout {
         $mform->setType('config_preferences[fade]', PARAM_BOOL);
         $mform->addHelpButton('config_preferences[fade]', 'fade', 'block_dash');
         $mform->setDefault('config_preferences[fade]', false);
+        // Hide fade when vertical or verticalSwiping is active.
+        $mform->hideIf('config_preferences[fade]', 'config_preferences[vertical]', 'checked');
+        $mform->hideIf('config_preferences[fade]', 'config_preferences[verticalSwiping]', 'checked');
 
         $mform->addElement('advcheckbox', 'config_preferences[infinite]', get_string('infinite', 'block_dash'));
         $mform->setType('config_preferences[infinite]', PARAM_BOOL);

@@ -127,6 +127,14 @@ interface filter_collection_interface {
     public function get_required_filters();
 
     /**
+     * Get SQL query and parameters for all filters except the one specified.
+     *
+     * @param string $excludefiltername Name of filter to exclude.
+     * @return array
+     */
+    public function get_filter_sql_excluding(string $excludefiltername): array;
+
+    /**
      * Get SQL query and parameters.
      *
      * @return array

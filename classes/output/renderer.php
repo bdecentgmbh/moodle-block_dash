@@ -93,17 +93,28 @@ class renderer extends \plugin_renderer_base {
                 $helpers['flex_icon'] = [$flexhelper, 'flex_icon'];
             }
 
-            $this->mustache = new Mustache_Engine([
-                'cache' => $cachedir,
-                'escape' => 's',
-                'loader' => $loader,
-                'helpers' => $helpers,
-                'pragmas' => [\Mustache_Engine::PRAGMA_BLOCKS],
-                // Don't allow the JavaScript helper to be executed from within another
-                // helper. If it's allowed it can be used by users to inject malicious
-                // JS into the page.
-                'blacklistednestedhelpers' => ['js'],
-            ]);
+            if ($CFG->branch >= 502) { // Moodle 5.2+.
+                $this->mustache = new \core\output\mustache_engine([
+                    'cache' => $cachedir,
+                    'escape' => 's',
+                    'loader' => $loader,
+                    'helpers' => $helpers,
+                    'pragmas' => [\Mustache\Engine::PRAGMA_BLOCKS],
+                    'disallowednestedhelpers' => ['js'],
+                ]);
+            } else {
+                $this->mustache = new \Mustache_Engine([
+                    'cache' => $cachedir,
+                    'escape' => 's',
+                    'loader' => $loader,
+                    'helpers' => $helpers,
+                    'pragmas' => [\Mustache_Engine::PRAGMA_BLOCKS],
+                    // Don't allow the JavaScript helper to be executed from within another
+                    // helper. If it's allowed it can be used by users to inject malicious
+                    // JS into the page.
+                    'blacklistednestedhelpers' => ['js'],
+                ]);
+            }
         }
 
         return $this->mustache;

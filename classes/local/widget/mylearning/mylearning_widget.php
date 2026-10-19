@@ -552,5 +552,4 @@ class mylearning_widget extends abstract_widget {
     public function get_preferences_form_tabs(): array {
         return [\block_dash\local\data_source\form\preferences_form::TAB_GENERAL];
     }
-
 }

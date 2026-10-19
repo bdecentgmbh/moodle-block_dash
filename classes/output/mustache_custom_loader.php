@@ -30,7 +30,16 @@ use core\output\mustache_template_finder;
  *
  * @package block_dash
  */
-class mustache_custom_loader extends \Mustache_Loader_FilesystemLoader {
+if (!class_exists('block_dash_mustache_loader_base')) {
+    global $CFG;
+    if ($CFG->branch >= 502) { // Moodle 5.2+
+        class block_dash_mustache_loader_base extends \Mustache\Loader\FilesystemLoader {}
+    } else {
+        class block_dash_mustache_loader_base extends \Mustache_Loader_FilesystemLoader {}
+    }
+}
+
+class mustache_custom_loader extends block_dash_mustache_loader_base {
     /**
      * Provide a default no-args constructor (we don't really need anything).
      */

@@ -39,8 +39,6 @@ use block_dash\local\widget\groups\groups_widget;
 use block_dash\local\widget\contacts\contacts_widget;
 use block_dash\local\widget\skillprogress\skillprogress_widget;
 
-define("BLOCK_DASH_FILTER_TABS_COUNT", 4);
-
 /**
  * Register field definitions.
  *

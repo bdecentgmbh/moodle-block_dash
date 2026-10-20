@@ -33,6 +33,7 @@ use block_dash\local\data_grid\field\attribute\linked_data_attribute;
 use block_dash\local\data_grid\field\attribute\linked_icon_attribute;
 use block_dash\local\data_grid\field\attribute\moodle_url_attribute;
 use block_dash\local\data_grid\field\attribute\rename_group_ids_attribute;
+use block_dash\local\data_grid\field\attribute\user_privacy_attribute;
 use block_dash\local\data_grid\field\attribute\user_image_url_attribute;
 use block_dash\local\data_grid\field\attribute\bool_attribute;
 use block_dash\local\dash_framework\query_builder\join_raw;
@@ -86,22 +87,43 @@ class user_table extends table {
                 ],
                 ['supports_sorting' => false]
             ),
-            new field('email', new lang_string('email'), $this),
-            new field('username', new lang_string('username'), $this),
-            new field('idnumber', new lang_string('idnumber'), $this),
-            new field('city', new lang_string('city'), $this),
-            new field('country', new lang_string('country'), $this),
+            // Personal details stay hidden from viewers core would not show them to, see user_privacy_attribute.
+            new field('email', new lang_string('email'), $this, null, [
+                new user_privacy_attribute(['identity' => 'email']),
+            ]),
+            new field('username', new lang_string('username'), $this, null, [
+                new user_privacy_attribute(['identity' => 'username']),
+            ]),
+            new field('idnumber', new lang_string('idnumber'), $this, null, [
+                new user_privacy_attribute(['identity' => 'idnumber']),
+            ]),
+            new field('city', new lang_string('city'), $this, null, [
+                new user_privacy_attribute(['hidden' => 'city']),
+            ]),
+            new field('country', new lang_string('country'), $this, null, [
+                new user_privacy_attribute(['hidden' => 'country']),
+            ]),
             new field('lastlogin', new lang_string('lastlogin'), $this, null, [
                 new date_attribute(),
+                new user_privacy_attribute(['hidden' => 'lastaccess']),
             ]),
-            new field('department', new lang_string('department'), $this),
-            new field('institution', new lang_string('institution'), $this),
-            new field('address', new lang_string('address'), $this),
+            new field('department', new lang_string('department'), $this, null, [
+                new user_privacy_attribute(['identity' => 'department']),
+            ]),
+            new field('institution', new lang_string('institution'), $this, null, [
+                new user_privacy_attribute(['identity' => 'institution']),
+            ]),
+            new field('address', new lang_string('address'), $this, null, [
+                new user_privacy_attribute(['identity' => 'address']),
+            ]),
             new field('alternatename', new lang_string('alternatename'), $this),
             new field('firstaccess', new lang_string('firstaccess'), $this, null, [
                 new date_attribute(),
+                new user_privacy_attribute(['hidden' => 'firstaccess']),
             ]),
-            new field('description', new lang_string('description'), $this),
+            new field('description', new lang_string('description'), $this, null, [
+                new user_privacy_attribute(['hidden' => 'description']),
+            ]),
             new field('picture_url', new lang_string('pictureofuserurl', 'block_dash'), $this, 'u.id', [
                 new image_url_attribute(),
                 new user_image_url_attribute(),
@@ -141,6 +163,7 @@ class user_table extends table {
                     'field' => 'name',
                     'delimiter' => ',', // Separator between each ID in SQL select.
                 ]),
+                new user_privacy_attribute(['hidden' => 'groups']),
             ], [], field_interface::VISIBILITY_VISIBLE, ''),
         ];
 
@@ -163,6 +186,7 @@ class user_table extends table {
                 case 'textarea':
                     break;
             }
+            $profileattributes[] = new user_privacy_attribute(['profilefield' => (int) $customfield->visible]);
 
             $fields[] = new field(
                 $name,

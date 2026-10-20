@@ -49,10 +49,19 @@ class linked_data_attribute extends abstract_field_attribute {
                 }
             }
 
-            $data = \html_writer::link($url, $data);
+            $data = \html_writer::link($url, $this->format_text_content($data));
         }
 
         return $data;
+    }
+
+    /**
+     * With a URL this attribute builds HTML markup and escapes the value it contains.
+     *
+     * @return bool
+     */
+    public function returns_html(): bool {
+        return (bool) $this->get_option('url');
     }
 
     /**

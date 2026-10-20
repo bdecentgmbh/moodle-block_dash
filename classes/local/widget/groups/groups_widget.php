@@ -131,7 +131,9 @@ class groups_widget extends abstract_widget {
                     $coursecontext->id
                 ) : '';
 
-            $group->name = format_string($group->name);
+            // The plain name is for the leave confirmation, which escapes it.
+            $group->plainname = format_string($group->name, true, ['context' => $coursecontext, 'escape' => false]);
+            $group->name = format_string($group->name, true, ['context' => $coursecontext]);
             $group->chaturl = ($conversation && $conversation->enabled)
                 ? new \moodle_url('/message/index.php', ['convid' => $conversation->id]) : '';
 

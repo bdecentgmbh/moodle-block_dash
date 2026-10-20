@@ -42,10 +42,20 @@ class linked_icon_attribute extends abstract_field_attribute {
         global $OUTPUT;
 
         if ($data) {
-            return \html_writer::link($data, $OUTPUT->pix_icon($this->get_option('icon'), $this->get_option('title')));
+            $url = $this->link_url($data);
+            return $url ? \html_writer::link($url, $OUTPUT->pix_icon($this->get_option('icon'), $this->get_option('title'))) : '';
         }
 
         return $data;
+    }
+
+    /**
+     * This attribute builds HTML markup and escapes the values it contains.
+     *
+     * @return bool
+     */
+    public function returns_html(): bool {
+        return true;
     }
 
     /**

@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/blocks/dash/lib.php');
 
+use block_dash\local\data_grid\field\attribute\abstract_field_attribute;
 use block_dash\local\data_grid\data\data_collection;
 use block_dash\local\data_grid\data\data_collection_interface;
 use block_dash\local\data_grid\data\field;
@@ -99,7 +100,8 @@ class grouped_strategy implements data_strategy_interface {
                     $alias,
                     $fielddefinition->transform_data($record->$alias, $fullrecord),
                     $fielddefinition->get_visibility(),
-                    $fielddefinition->get_title()
+                    $fielddefinition->get_title(),
+                    abstract_field_attribute::any_returns_html($fielddefinition->get_attributes())
                 ));
             }
 

@@ -136,7 +136,9 @@ define(['jquery', 'core/str', 'core/modal', 'core/modal_save_cancel', 'core/moda
                         }).catch(Notification.exception);
                         modal.show();
 
-                        Str.get_string('confirmleavegroup', 'block_dash', groupname).then((html) => {
+                        // The group name is text; the confirmation string is HTML.
+                        var escapedname = $('<div>').text(groupname).html();
+                        Str.get_string('confirmleavegroup', 'block_dash', escapedname).then((html) => {
                             modal.setBody(html);
                             return html;
                         }).catch(Notification.exception);

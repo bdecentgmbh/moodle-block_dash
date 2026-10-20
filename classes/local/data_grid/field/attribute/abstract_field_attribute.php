@@ -91,6 +91,86 @@ abstract class abstract_field_attribute implements field_attribute_interface {
         return $data;
     }
 
+    // Region Output safety.
+
+    /**
+     * Whether this attribute builds HTML markup.
+     *
+     * The value of a field with such an attribute is output unchanged, so the attribute must escape every value it
+     * puts into its markup. Values of all other fields are cleaned when they are output.
+     *
+     * @return bool
+     */
+    public function returns_html(): bool {
+        return false;
+    }
+
+    /**
+     * Whether any of the given attributes builds HTML markup.
+     *
+     * @param field_attribute_interface[] $attributes
+     * @return bool
+     */
+    public static function any_returns_html(array $attributes): bool {
+        foreach ($attributes as $attribute) {
+            if ($attribute instanceof self && $attribute->returns_html()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether the data this attribute receives was built as HTML by an earlier attribute of the same field.
+     *
+     * @return bool
+     */
+    protected function receives_html(): bool {
+        if (!$this->field) {
+            return false;
+        }
+        foreach ($this->field->get_attributes() as $attribute) {
+            if ($attribute === $this) {
+                break;
+            }
+            if ($attribute instanceof self && $attribute->returns_html()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Prepares a value as the text of this attribute's markup.
+     *
+     * Plain values are formatted like names, which escapes them. Markup an earlier attribute built stays as it is.
+     *
+     * @param mixed $text
+     * @return string
+     */
+    protected function format_text_content($text): string {
+        if ($text instanceof \lang_string) {
+            return s($text->out());
+        }
+        return $this->receives_html() ? (string) $text : format_string((string) $text, true);
+    }
+
+    /**
+     * Returns a URL for a link or button of this attribute, or null if it is neither a web address nor relative.
+     *
+     * @param mixed $url
+     * @return \moodle_url|string|null
+     */
+    protected function link_url($url) {
+        if ($url instanceof \moodle_url) {
+            return $url;
+        }
+        $url = trim((string) $url);
+        return preg_match('~^(https?://|/(?!/)|#|\?)~i', $url) ? $url : null;
+    }
+
+    // Endregion.
+
     // Region Options.
 
     /**

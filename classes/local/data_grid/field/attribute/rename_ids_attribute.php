@@ -51,7 +51,7 @@ class rename_ids_attribute extends abstract_field_attribute {
                 if ($this->check_id($id) && $id != '') {
                     $fields = self::get_fields($this->get_option('table'), $this->get_option('field'));
                     if (isset($fields[$id])) {
-                        $groups[] = $fields[$id];
+                        $groups[] = format_string($fields[$id], true);
                     }
                 }
             }

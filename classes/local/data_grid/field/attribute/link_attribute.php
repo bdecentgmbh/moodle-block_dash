@@ -44,20 +44,43 @@ class link_attribute extends abstract_field_attribute {
 
         if ($data) {
             if ($label = $this->get_option('label')) {
-                return \html_writer::link($data, $label);
+                return $this->link($this->link_url($data), $this->format_text_content($label));
             }
 
             if (($url = $this->get_option('customurl')) && ($labelfield = $this->get_option('label_field'))) {
-                $url = $this->update_placeholders($record, urldecode($url));
-                return \html_writer::link($url, $record->$labelfield);
+                $url = $this->link_url($this->update_placeholders($record, urldecode($url)));
+                return $this->link($url, format_string((string) $record->$labelfield, true));
             }
 
             if ($labelfield = $this->get_option('label_field')) {
-                return \html_writer::link($data, $record->$labelfield);
+                return $this->link($this->link_url($data), format_string((string) $record->$labelfield, true));
             }
+
+            // Without a label the data stays as it is, but it is output unchanged like the links.
+            return $this->format_text_content($data);
         }
 
         return $data;
+    }
+
+    /**
+     * Builds the link, or only its text when the URL is neither a web address nor relative.
+     *
+     * @param \moodle_url|string|null $url
+     * @param string $text Escaped link text.
+     * @return string
+     */
+    protected function link($url, string $text): string {
+        return $url ? \html_writer::link($url, $text) : $text;
+    }
+
+    /**
+     * This attribute builds HTML markup and escapes the values it contains.
+     *
+     * @return bool
+     */
+    public function returns_html(): bool {
+        return true;
     }
 
     /**

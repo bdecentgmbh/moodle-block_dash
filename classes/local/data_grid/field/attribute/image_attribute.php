@@ -61,6 +61,15 @@ class image_attribute extends abstract_field_attribute {
     }
 
     /**
+     * This attribute builds HTML markup and escapes the values it contains.
+     *
+     * @return bool
+     */
+    public function returns_html(): bool {
+        return true;
+    }
+
+    /**
      * Need custom value for transform data, which table uses the attribute dynamically.
      *
      * @return bool

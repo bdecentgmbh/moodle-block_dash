@@ -225,7 +225,7 @@ class mylearning_widget extends abstract_widget {
                 'alt' => fullname($user),
                 'role' => "presentation",
             ]);
-            $link .= html_writer::tag('span', fullname($user));
+            $link .= html_writer::tag('span', s(fullname($user)));
 
             $html = html_writer::start_tag('li', ['class' => 'contact-user']);
             $html .= html_writer::link($profileurl, $link);

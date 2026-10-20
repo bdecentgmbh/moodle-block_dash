@@ -47,22 +47,34 @@ class button_attribute extends abstract_field_attribute {
                 $params = ['aria-label' => $record->$arialabel];
             }
 
+            // The single button template escapes the label. Without a web or relative URL there is no button.
             if ($label = $this->get_option('label')) {
-                return $OUTPUT->single_button($data, $label, 'get', $params);
+                $url = $this->link_url($data);
+                return $url ? $OUTPUT->single_button($url, $label, 'get', $params) : '';
             }
 
             // Support for dynamic field setup.
             if (($url = $this->get_option('customurl')) && ($labelfield = $this->get_option('label_field'))) {
-                $url = $this->update_placeholders($record, urldecode($url));
-                return $OUTPUT->single_button($url, $record->$labelfield, 'get', $params);
+                $url = $this->link_url($this->update_placeholders($record, urldecode($url)));
+                return $url ? $OUTPUT->single_button($url, $record->$labelfield, 'get', $params) : '';
             }
 
             if ($labelfield = $this->get_option('label_field')) {
-                return $OUTPUT->single_button($data, $record->$labelfield, 'get', $params);
+                $url = $this->link_url($data);
+                return $url ? $OUTPUT->single_button($url, $record->$labelfield, 'get', $params) : '';
             }
         }
 
         return $data;
+    }
+
+    /**
+     * This attribute builds HTML markup and escapes the values it contains.
+     *
+     * @return bool
+     */
+    public function returns_html(): bool {
+        return true;
     }
 
     /**

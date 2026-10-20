@@ -288,7 +288,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
                 }
             }
             if ($content) {
-                $childcollection->add_data(new field('customcontent', $content, false));
+                // Rendered from a template, which escapes the values it shows.
+                $childcollection->add_data(new field('customcontent', $content, false, '', true));
             }
         }
     }
@@ -728,14 +729,15 @@ abstract class abstract_layout implements layout_interface, \templatable {
      * @return data_collection_interface
      */
     protected function map_data($mapping, data_collection_interface $datacollection, bool $visible = true) {
+        // The collection hands out output values, which are already cleaned or escaped.
         foreach ($mapping as $newname => $fieldname) {
             if ($fieldname && !is_array($fieldname) && isset($datacollection[$fieldname])) {
-                $datacollection->add_data(new field($newname, $datacollection[$fieldname], $visible));
+                $datacollection->add_data(new field($newname, $datacollection[$fieldname], $visible, '', true));
             } else if ($fieldname && is_array($fieldname)) {
                 $value = array_map(function ($field) use ($datacollection) {
                     return $datacollection[$field];
                 }, $fieldname);
-                $datacollection->add_data(new field($newname, implode(" ", $value), $visible));
+                $datacollection->add_data(new field($newname, implode(" ", $value), $visible, '', true));
             }
         }
         return $datacollection;

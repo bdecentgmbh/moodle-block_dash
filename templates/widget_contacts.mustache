@@ -53,13 +53,13 @@
                             <h3 class="user-letter-circle">{{profiletext}}</h3>
                             {{/profiletext}}
                             {{^profiletext}}
-                            <img src="{{{profileimageurl}}}" alt="{{{fullname}}}" title="{{{fullname}}}" role="presentation"> <!--Contact User img-->
+                            <img src="{{profileimageurl}}" alt="{{fullname}}" title="{{fullname}}" role="presentation"> <!--Contact User img-->
                             {{/profiletext}}
                         </div>
 
                         <!--Contact User name-->
                         <div class="title-block">
-                            <h4>{{{fullname}}}<h4>
+                            <h4>{{fullname}}<h4>
                         </div>
                     </div>
                 </div>
@@ -79,16 +79,16 @@
                                 <h3 class="user-letter-circle">{{profiletext}}</h3>
                                 {{/profiletext}}
                                 {{^profiletext}}
-                                <img src="{{{profileimageurl}}}" alt="{{{fullname}}}" title="{{{fullname}}}" role="presentation"> <!--Contact User img-->
+                                <img src="{{profileimageurl}}" alt="{{fullname}}" title="{{fullname}}" role="presentation"> <!--Contact User img-->
                                 {{/profiletext}}
                             </div>
                             <div class="suggested-element">
                                 <div class="info">
                                     {{#suggestinfo}}
-                                    <h6> {{{.}}} </h6>
+                                    <h6> {{.}} </h6>
                                     {{/suggestinfo}}
                                 </div>
-                                <h5>{{{fullname}}}</h5>
+                                <h5>{{fullname}}</h5>
                                 <div class="btn-block">
                                     <a data-currentuserid="{{data.currentuser}}" data-userid="{{id}}" class="ajax-contact-button btn toggle-contact-button"  >
                                         {{#addcontacticon}} {{{addcontacticon}}} {{/addcontacticon}}

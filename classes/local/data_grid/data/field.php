@@ -50,18 +50,27 @@ class field implements field_interface {
     private $visible;
 
     /**
+     * @var bool Whether the value is markup built by an attribute that escapes what it contains.
+     */
+    private $ishtml;
+
+    /**
      * Create a new field.
      *
      * @param string $name
      * @param string $value
      * @param string $visible
      * @param string $label
+     * @param bool $ishtml Whether the value is markup built by an attribute that escapes what it contains, see
+     *                     {@see \block_dash\local\data_grid\field\attribute\abstract_field_attribute::returns_html()}.
+     *                     Other values are cleaned when they are output.
      */
-    public function __construct($name, $value, $visible, $label = '') {
+    public function __construct($name, $value, $visible, $label = '', bool $ishtml = false) {
         $this->name = $name;
         $this->value = $value;
         $this->visible = $visible;
         $this->label = $label;
+        $this->ishtml = $ishtml;
     }
 
     /**
@@ -79,10 +88,27 @@ class field implements field_interface {
      * @return mixed|string
      */
     public function get_value() {
-        if (!filter_var($this->value, FILTER_VALIDATE_URL)) {
-            return format_text($this->value, FORMAT_HTML, ['noclean' => true]);
+        if ($this->ishtml || !is_string($this->value) || is_numeric($this->value) || $this->value === '') {
+            // Markup of an attribute, numbers, and objects that escape themselves, such as moodle_url.
+            return $this->value;
         }
-        return $this->value;
+        if (preg_match('~^https?://~i', $this->value) && filter_var($this->value, FILTER_VALIDATE_URL)) {
+            return self::escape_url($this->value);
+        }
+        // Values from the database can contain anything their authors typed, so they are cleaned like any user text.
+        return format_text($this->value, FORMAT_HTML);
+    }
+
+    /**
+     * Escapes a URL for HTML text, HTML attributes and CSS url() alike.
+     *
+     * @param string $url
+     * @return string
+     */
+    protected static function escape_url(string $url): string {
+        $url = html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $url = str_replace(['"', "'", '<', '>', '(', ')', '\\', '`'], ['%22', '%27', '%3C', '%3E', '%28', '%29', '%5C', '%60'], $url);
+        return s($url);
     }
 
     /**

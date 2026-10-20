@@ -53,7 +53,7 @@
             <div class="list-block">
                 <div class="left-block">
                     <h6>{{{course}}}</h6>
-                    <h3>{{name}}</h3>
+                    <h3>{{plainname}}</h3>
                 </div>
                 <div class="right-block">
                     <div class="img-element">
@@ -61,7 +61,7 @@
                         {{#members}}
                         <div class="img-block">
                             <a href="{{{profileurl}}}">
-                                <img src="{{{profileimage}}}" alt="{{{fullname}}}" title="{{{fullname}}}" role="presentation">
+                                <img src="{{profileimage}}" alt="{{fullname}}" title="{{fullname}}" role="presentation">
                             </a>
                         </div>
                         {{/members}}
@@ -93,7 +93,7 @@
                                 </a>
                                 {{/data.viewmembers}}
                                 {{#data.leavegroup}}
-                                <a class="dropdown-item group-widget-leavegroup" data-groupname="{{{name}}}" data-group="{{id}}" href="#">
+                                <a class="dropdown-item group-widget-leavegroup" data-groupname="{{plainname}}" data-group="{{id}}" href="#">
                                     {{#str}} widget:groups:leavegroup, block_dash {{/str}}
                                 </a>
                                 {{/data.leavegroup}}

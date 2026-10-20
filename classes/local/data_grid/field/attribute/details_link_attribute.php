@@ -57,6 +57,15 @@ class details_link_attribute extends abstract_field_attribute {
     }
 
     /**
+     * This attribute builds HTML markup and escapes the values it contains.
+     *
+     * @return bool
+     */
+    public function returns_html(): bool {
+        return true;
+    }
+
+    /**
      * Build a deterministic, page-unique detail ID from the block instance and record.
      *
      * The ID is used both as the URL fragment and as a data attribute so that

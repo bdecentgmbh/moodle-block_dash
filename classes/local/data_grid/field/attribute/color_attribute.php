@@ -54,9 +54,18 @@ class color_attribute extends abstract_field_attribute {
         $result .= $data;
 
         if ($this->get_option('badgemode')) {
-            $result = " " . html_writer::tag('span', $result, ['class' => 'badge dash-color-badge-mode ' . $result]);
+            $result = " " . html_writer::tag('span', s($result), ['class' => 'badge dash-color-badge-mode ' . $result]);
         }
 
         return $result;
+    }
+
+    /**
+     * In badge mode this attribute builds HTML markup and escapes the value it contains.
+     *
+     * @return bool
+     */
+    public function returns_html(): bool {
+        return (bool) $this->get_option('badgemode');
     }
 }

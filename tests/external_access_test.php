@@ -156,6 +156,48 @@ final class external_access_test extends \advanced_testcase {
         external::get_block_content($restricted->instanceid, '[]', 0, '', '');
     }
 
+    public function test_content_on_an_activity_page_checks_that_activity(): void {
+        global $CFG, $DB;
+        require_once($CFG->libdir . '/completionlib.php');
+
+        $DB->set_field('course', 'enablecompletion', 1, ['id' => $this->course->id]);
+        $page = $this->getDataGenerator()->create_module(
+            'page',
+            ['course' => $this->course->id],
+            ['completion' => COMPLETION_TRACKING_MANUAL]
+        );
+        $modulecontext = \context_module::instance($page->cmid);
+        $id = $DB->insert_record('block_instances', (object) [
+            'blockname' => 'dash',
+            'parentcontextid' => $modulecontext->id,
+            'showinsubcontexts' => 0,
+            'pagetypepattern' => 'mod-page-*',
+            'defaultregion' => 'side-pre',
+            'defaultweight' => 0,
+            'configdata' => base64_encode(serialize((object) [
+                'data_source_idnumber' => groups_widget::class,
+                'restrict_activitycompletion' => 'complete',
+            ])),
+            'timecreated' => time(),
+            'timemodified' => time(),
+        ]);
+        $other = $this->getDataGenerator()->create_and_enrol($this->course, 'student');
+
+        // Restricted to those who completed the activity of the page.
+        $completion = new \completion_info(get_course($this->course->id));
+        [, $cm] = get_course_and_cm_from_cmid($page->cmid);
+        $completion->update_state($cm, COMPLETION_COMPLETE, $this->student->id);
+
+        $this->setUser($this->student);
+        $this->assertArrayHasKey('html', external::get_block_content($id, '[]', 0, '', '', '', $modulecontext->id));
+
+        // Each web service call is a request of its own, with a fresh page.
+        $GLOBALS['PAGE'] = new \moodle_page();
+        $this->setUser($other);
+        $this->expectException(\moodle_exception::class);
+        external::get_block_content($id, '[]', 0, '', '', '', $modulecontext->id);
+    }
+
     public function test_content_only_of_dash_blocks(): void {
         $html = $this->create_block([], 'html');
         $this->setUser($this->student);

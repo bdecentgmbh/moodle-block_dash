@@ -120,6 +120,39 @@ class external extends external_api {
     }
 
     /**
+     * Returns a page as the one a block is shown on, for checking the block's restrictions.
+     *
+     * That is the block's parent context, or the page the request comes from when the block is shown there: the
+     * parent context itself, or one of its children when the block is shown in sub contexts.
+     *
+     * @param \block_base $block
+     * @param int $pagecontextid Context of the page the request comes from, if known.
+     * @return \moodle_page
+     */
+    protected static function get_block_page(\block_base $block, int $pagecontextid): \moodle_page {
+        $context = $block->context->get_parent_context();
+        if ($pagecontextid && ($pagecontext = \context::instance_by_id($pagecontextid, IGNORE_MISSING))) {
+            if (
+                $pagecontext->id == $context->id
+                || (!empty($block->instance->showinsubcontexts) && $pagecontext->is_child_of($context, false))
+            ) {
+                $context = $pagecontext;
+            }
+        }
+
+        $page = new \moodle_page();
+        [$context, $course, $cm] = get_context_info_array($context->id);
+        if ($cm) {
+            $page->set_cm($cm, $course);
+        } else if ($course) {
+            $page->set_course($course);
+        }
+        $page->set_context($context);
+
+        return $page;
+    }
+
+    /**
      * Returns description of get_database_schema_structure() parameters.
      *
      * @return external_function_parameters
@@ -207,9 +240,13 @@ class external extends external_api {
             $PAGE->set_context($block->context);
         }
 
-        // The block's own restrictions apply here as they do when the page shows the block.
+        // The block's own restrictions apply here as they do when the page shows the block. They depend on that page,
+        // for example on the activity of an activity page, so they are checked for the page the block is shown on.
         require_capability('moodle/block:view', $block->context);
-        if (!$block->verify_access_restrictions()) {
+        $block->page = self::get_block_page($block, (int) $params['pagecontext']);
+        $visible = $block->verify_access_restrictions();
+        $block->page = $PAGE;
+        if (!$visible) {
             throw new \moodle_exception('nopermissions', 'error', '', get_string('view'));
         }
 

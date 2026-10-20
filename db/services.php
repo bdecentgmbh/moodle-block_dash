@@ -46,33 +46,37 @@ $functions = [
     'block_dash_groups_get_non_members' => [
         'classname' => 'block_dash\local\widget\groups\external',
         'methodname' => 'get_non_members',
-        'description' => 'Generate a course backup file and return a link.',
+        'description' => 'Search the users of a group\'s course who can be added to the group from the My groups widget.',
         'type' => 'read',
         'ajax' => true,
+        'capabilities' => 'block/dash:mygroups_addusers',
     ],
 
     'block_dash_groups_add_members' => [
-       'classname' => 'block_dash\local\widget\groups\external',
-       'methodname' => 'add_members',
-       'description' => 'Generate a course backup file and return a link.',
-       'type' => 'read',
-       'ajax'        => true,
+        'classname' => 'block_dash\local\widget\groups\external',
+        'methodname' => 'add_members',
+        'description' => 'Add users to a group from the My groups widget.',
+        'type' => 'write',
+        'ajax' => true,
+        'capabilities' => 'block/dash:mygroups_addusers',
     ],
 
     'block_dash_groups_leave_group' => [
-       'classname' => 'block_dash\local\widget\groups\external',
-       'methodname' => 'leave_group',
-       'description' => 'Generate a course backup file and return a link.',
-       'type' => 'read',
-       'ajax'        => true,
+        'classname' => 'block_dash\local\widget\groups\external',
+        'methodname' => 'leave_group',
+        'description' => 'Leave one of the current user\'s groups from the My groups widget.',
+        'type' => 'write',
+        'ajax' => true,
+        'capabilities' => 'block/dash:mygroups_leavegroup',
     ],
 
     'block_dash_groups_create_group' => [
-       'classname' => 'block_dash\local\widget\groups\external',
-       'methodname' => 'create_group',
-       'description' => 'Generate a course backup file and return a link.',
-       'type' => 'read',
-       'ajax'        => true,
+        'classname' => 'block_dash\local\widget\groups\external',
+        'methodname' => 'create_group',
+        'description' => 'Create a group in one of the current user\'s courses from the My groups widget.',
+        'type' => 'write',
+        'ajax' => true,
+        'capabilities' => 'block/dash:mygroups_creategroup',
     ],
 
     'block_dash_get_block_pagination' => [

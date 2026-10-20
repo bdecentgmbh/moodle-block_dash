@@ -305,29 +305,64 @@ function block_dash_is_disabled() {
 }
 
 /**
+ * Returns the Dash block a block context belongs to.
+ *
+ * Fragments and web services receive their context from the request. They use this before loading the block, so a
+ * course or user context, or the context of another block, cannot stand in for the context of a Dash block.
+ *
+ * @param context $context
+ * @return stdClass The block_instances record.
+ * @throws invalid_parameter_exception If the context is not the context of a Dash block.
+ */
+function block_dash_get_block_instance_by_context(context $context): stdClass {
+    global $DB;
+
+    if (
+        $context->contextlevel != CONTEXT_BLOCK
+        || !$blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid, 'blockname' => 'dash'])
+    ) {
+        throw new invalid_parameter_exception('The context is not the context of a Dash block.');
+    }
+
+    return $blockinstance;
+}
+
+/**
  * Fragment to load the widget methods.
+ *
+ * Only the methods a widget offers through get_fragment_methods() can be called, each with the capability the widget
+ * names for it.
  *
  * @param stdclass $args
  * @return string Returns the widget content.
  */
 function block_dash_output_fragment_loadwidget($args) {
-    global $DB;
     $args = (object) $args;
     $context = $args->context;
 
-    $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
-    $block = block_instance($blockinstance->blockname, $blockinstance);
+    $blockinstance = block_dash_get_block_instance_by_context($context);
+    require_capability('moodle/block:view', $context);
+    $block = block_instance('dash', $blockinstance);
     $datasource = block_dash\local\block_builder::create($block)->get_configuration()->get_data_source();
 
-    if (isset($datasource->iswidget)) {
-        $method = $args->method;
-        $params = json_decode($args->args);
-        if (isset($params->page)) {
-            $datasource->get_paginator()->set_current_page($params->page);
-        }
-        return (method_exists($datasource, $method)) ? $datasource->$method($context, $params) : '';
+    if (!$datasource instanceof \block_dash\local\widget\abstract_widget) {
+        return null;
     }
-    return null;
+
+    $methods = $datasource->get_fragment_methods();
+    $method = clean_param($args->method, PARAM_ALPHANUMEXT);
+    if (!array_key_exists($method, $methods)) {
+        throw new invalid_parameter_exception('The widget offers no method ' . $method . '.');
+    }
+    if ($methods[$method] !== null) {
+        require_capability($methods[$method], $context);
+    }
+
+    $params = json_decode($args->args);
+    if (isset($params->page)) {
+        $datasource->get_paginator()->set_current_page((int) $params->page);
+    }
+    return $datasource->$method($context, $params);
 }
 
 /**
@@ -337,13 +372,29 @@ function block_dash_output_fragment_loadwidget($args) {
  * @return string
  */
 function block_dash_output_fragment_loadtable($args) {
-    global $DB;
-
     $args = (object) $args;
     $context = $args->context;
 
+    // The tables that page through this fragment, with the capability each needs in its block.
+    $handlers = [
+        'groups_totara' => null,
+        'members_totara' => 'block/dash:mygroups_viewmembers',
+    ];
+    if (!array_key_exists($args->handler, $handlers)) {
+        throw new invalid_parameter_exception('Unknown table ' . $args->handler . '.');
+    }
+
+    $blockinstance = block_dash_get_block_instance_by_context($context);
+    if ((int) $args->uniqueid !== (int) $blockinstance->id) {
+        throw new invalid_parameter_exception('The table does not belong to this block.');
+    }
+    require_capability('moodle/block:view', $context);
+    if ($handlers[$args->handler] !== null) {
+        require_capability($handlers[$args->handler], $context);
+    }
+
     $classstr = 'block_dash\table\\' . $args->handler;
-    $table = new $classstr($args->uniqueid);
+    $table = new $classstr($blockinstance->id);
     $table->set_filterset(json_decode($args->filter));
     $table->set_sort_column($args->sort);
     $table->currentpage = isset($args->page) ? $args->page : 0;

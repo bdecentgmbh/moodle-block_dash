@@ -50,6 +50,7 @@ class add_members extends \moodleform {
 
         $groupid = isset($this->_customdata['groupid']) ? $this->_customdata['groupid'] : '';
         $courseid = isset($this->_customdata['courseid']) ? $this->_customdata['courseid'] : '';
+        $contextid = isset($this->_customdata['contextid']) ? $this->_customdata['contextid'] : '';
 
         $potentialmembersselector = new \group_non_members_selector('addselect', [
             'groupid' => $groupid, 'courseid' => $courseid,
@@ -60,6 +61,7 @@ class add_members extends \moodleform {
             'multiple' => true,
             'noselectionstring' => get_string('users'),
             'data-groupid' => $groupid,
+            'data-contextid' => $contextid,
         ];
         $mform->addElement('autocomplete', 'users', get_string('user'), [], $options);
         $mform->addRule('users', get_string('required'), 'required', '', 'client');

@@ -24,221 +24,270 @@
 
 namespace block_dash\local\widget\groups;
 
-defined('MOODLE_INTERNAL') || die('No direct access');
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
-require_once($CFG->libdir . '/externallib.php');
-use external_api;
+defined('MOODLE_INTERNAL') || die('No direct access');
 
 require_once($CFG->dirroot . '/user/selector/lib.php');
 require_once($CFG->dirroot . '/group/lib.php');
+require_once($CFG->dirroot . '/blocks/dash/lib.php');
 
 /**
  * Group widget external function definitions.
+ *
+ * Each function is called from a My groups widget in a Dash block. It checks the widget's capability in that block,
+ * and then what the current user may do with the group or course concerned, see {@see access}.
  */
 class external extends external_api {
     /**
+     * Validates the block a request comes from and the capability the widget needs there.
+     *
+     * @param int $contextid Context of the Dash block that shows the widget.
+     * @param string $capability
+     * @return \context_block
+     */
+    protected static function validate_widget_context(int $contextid, string $capability): \context_block {
+        $context = \context::instance_by_id($contextid);
+        block_dash_get_block_instance_by_context($context);
+        self::validate_context($context);
+        require_capability($capability, $context);
+
+        return $context;
+    }
+
+    /**
      * Get the users details if not assigned to the group.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function get_non_members_parameters() {
 
-        return new \external_function_parameters([
-            'query' => new \external_value(
+        return new external_function_parameters([
+            'contextid' => new external_value(PARAM_INT, 'Context of the Dash block that shows the widget'),
+            'query' => new external_value(
                 PARAM_RAW,
                 'Query string (full or partial user full name or other details)'
             ),
-            'groupid' => new \external_value(PARAM_INT, 'group id (0 if none)'),
+            'groupid' => new external_value(PARAM_INT, 'group id'),
         ]);
     }
 
     /**
      * Returns result type for get_relevant_users function.
      *
-     * @return \external_description Result type
+     * @return \core_external\external_description Result type
      */
     public static function get_non_members_returns() {
-        return new \external_multiple_structure(
-            new \external_single_structure([
-                    'id' => new \external_value(PARAM_INT, 'User id'),
-                    'fullname' => new \external_value(PARAM_RAW, 'Full name as text'),
+        return new external_multiple_structure(
+            new external_single_structure([
+                    'id' => new external_value(PARAM_INT, 'User id'),
+                    'fullname' => new external_value(PARAM_RAW, 'Full name as text'),
             ])
         );
     }
 
     /**
-     * Searches for users given a query, taking into account the current user's permissions and
-     * possibly a course to check within.
+     * Searches the users of the group's course who are not members of the group yet.
      *
+     * @param int $contextid Context of the Dash block that shows the widget.
      * @param string $query Query text
-     * @param int $groupid Course id or 0 if no restriction
+     * @param int $groupid
      * @return array Defined return structure
      */
-    public static function get_non_members($query, $groupid) {
-        global $CFG, $PAGE;
-
-        // Validate parameter.
+    public static function get_non_members($contextid, $query, $groupid) {
         [
+            'contextid' => $contextid,
             'query' => $query,
             'groupid' => $groupid,
         ] = self::validate_parameters(self::get_non_members_parameters(), [
+            'contextid' => $contextid,
             'query' => $query,
             'groupid' => $groupid,
         ]);
 
-        // Validate the context (search page is always system context).
-        $systemcontext = \context_system::instance();
-        self::validate_context($systemcontext);
-        $group = groups_get_group($groupid);
-        $courseid = $group->courseid;
-        if ($group) {
-            $potentialmembersselector = new \group_non_members_selector('addselect', [
-                'groupid' => $groupid, 'courseid' => $courseid,
-            ]);
-            $users = $potentialmembersselector->find_users($query);
-            $list = [];
-            foreach ($users as $role => $user) {
-                $list = array_merge($list, $user);
-            }
-            array_walk($list, function (&$user) use ($potentialmembersselector) {
-                $user = ['id' => $user->id, 'fullname' => fullname($user)];
-            });
+        self::validate_widget_context($contextid, 'block/dash:mygroups_addusers');
+        $group = access::require_can_add_members($groupid);
 
-            return $list;
+        $potentialmembersselector = new \group_non_members_selector('addselect', [
+            'groupid' => $group->id, 'courseid' => $group->courseid,
+        ]);
+        $list = [];
+        foreach ($potentialmembersselector->find_users($query) as $users) {
+            foreach ($users as $user) {
+                $list[] = ['id' => $user->id, 'fullname' => fullname($user)];
+            }
         }
-        return ['id' => '0', 'fullname' => 'No source'];
+
+        return $list;
     }
 
     /**
      * Add members.
      *
-     * @return void
+     * @return external_function_parameters
      */
     public static function add_members_parameters() {
 
-        return new \external_function_parameters(
+        return new external_function_parameters(
             [
-                'formdata' => new \external_value(PARAM_RAW, 'The data from the user notes'),
+                'contextid' => new external_value(PARAM_INT, 'Context of the Dash block that shows the widget'),
+                'formdata' => new external_value(PARAM_RAW, 'The data from the user notes'),
             ]
         );
     }
     /**
      * Retuns the redirect course url and created pulse id for save method.
      *
-     * @return void
+     * @return external_value
      */
     public static function add_members_returns() {
-        return new \external_value(PARAM_BOOL, 'Result of members added.');
+        return new external_value(PARAM_BOOL, 'Result of members added.');
     }
 
     /**
-     * Add memebers to the selected group.
+     * Add members to the selected group.
      *
-     * @param \stdclass $formdata
+     * Only users enrolled in the group's course can be added.
+     *
+     * @param int $contextid Context of the Dash block that shows the widget.
+     * @param string $formdata
      * @return bool
      */
-    public static function add_members($formdata) {
-        // Validate parameter.
+    public static function add_members($contextid, $formdata) {
         [
+            'contextid' => $contextid,
             'formdata' => $formdata,
         ] = self::validate_parameters(self::add_members_parameters(), [
+            'contextid' => $contextid,
             'formdata' => $formdata,
         ]);
+
+        self::validate_widget_context($contextid, 'block/dash:mygroups_addusers');
         parse_str($formdata, $data);
-        $groupid = $data['groupid'];
-        $users = $data['users'];
-        if (!empty($users) && is_array($users)) {
-            foreach ($users as $user) {
-                groups_add_member($groupid, $user);
-            }
-            return true;
+        $group = access::require_can_add_members(clean_param($data['groupid'] ?? 0, PARAM_INT));
+        $userids = array_filter(clean_param_array((array) ($data['users'] ?? []), PARAM_INT));
+        if (!$userids) {
+            return false;
         }
-        return false;
+
+        $coursecontext = \context_course::instance($group->courseid);
+        foreach ($userids as $userid) {
+            if (!is_enrolled($coursecontext, $userid)) {
+                throw new \invalid_parameter_exception('User ' . $userid . ' is not enrolled in the course of the group.');
+            }
+        }
+        foreach ($userids as $userid) {
+            groups_add_member($group, $userid);
+        }
+
+        return true;
     }
 
     /**
      * Prameters definition that helps to leave from the own group.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function leave_group_parameters() {
-        return new \external_function_parameters([
-            'groupid' => new \external_value(PARAM_INT, 'group id (0 if none)'),
+        return new external_function_parameters([
+            'contextid' => new external_value(PARAM_INT, 'Context of the Dash block that shows the widget'),
+            'groupid' => new external_value(PARAM_INT, 'group id'),
         ]);
     }
 
     /**
      * Return data of leave group service.
      *
-     * @return \external_value
+     * @return external_value
      */
     public static function leave_group_returns() {
-        return new \external_value(PARAM_BOOL, 'Result of members added.');
+        return new external_value(PARAM_BOOL, 'Result of members added.');
     }
 
     /**
-     * Remove the user from the own group.
+     * Remove the current user from one of their groups, unless the membership is managed by a plugin.
      *
+     * @param int $contextid Context of the Dash block that shows the widget.
      * @param int $groupid
-     * @return void
+     * @return bool
      */
-    public static function leave_group($groupid) {
+    public static function leave_group($contextid, $groupid) {
         global $USER;
 
-        ['groupid' => $groupid] = self::validate_parameters(self::leave_group_parameters(), [
+        ['contextid' => $contextid, 'groupid' => $groupid] = self::validate_parameters(self::leave_group_parameters(), [
+            'contextid' => $contextid,
             'groupid' => $groupid,
         ]);
 
-        if ($groupid && isloggedin()) {
-            return groups_remove_member($groupid, $USER->id);
+        self::validate_widget_context($contextid, 'block/dash:mygroups_leavegroup');
+        $group = groups_get_group($groupid, '*', MUST_EXIST);
+        if (!groups_is_member($group->id, $USER->id) || !groups_remove_member_allowed($group, $USER->id)) {
+            return false;
         }
 
-        return false;
+        return groups_remove_member($group, $USER->id);
     }
 
     /**
      * Prameters definition that helps to create groups in the selected course.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function create_group_parameters() {
-        return new \external_function_parameters([
-            'formdata' => new \external_value(PARAM_RAW, 'The data from the user notes'),
+        return new external_function_parameters([
+            'contextid' => new external_value(PARAM_INT, 'Context of the Dash block that shows the widget'),
+            'formdata' => new external_value(PARAM_RAW, 'The data from the user notes'),
         ]);
     }
 
     /**
      * Returns the status of group creation in course.
      *
-     * @return void
+     * @return external_value
      */
     public static function create_group_returns() {
-        return new \external_value(PARAM_BOOL, 'Result of members added.');
+        return new external_value(PARAM_BOOL, 'Result of members added.');
     }
 
     /**
-     * Create the group in the selected course.
+     * Create a group in one of the current user's courses, with the user as its first member.
      *
-     * @param stdclass $formdata
-     * @return void
+     * The group gets a name and nothing else; everything else stays for the course's teachers to set.
+     *
+     * @param int $contextid Context of the Dash block that shows the widget.
+     * @param string $formdata
+     * @return bool
      */
-    public static function create_group($formdata) {
+    public static function create_group($contextid, $formdata) {
         global $USER;
 
         [
+            'contextid' => $contextid,
             'formdata' => $formdata,
-        ] = self::validate_parameters(self::add_members_parameters(), [
+        ] = self::validate_parameters(self::create_group_parameters(), [
+            'contextid' => $contextid,
             'formdata' => $formdata,
         ]);
 
-        if ($formdata) {
-            parse_str($formdata, $data);
-            $data = (object) $data;
-            if ($groupid = groups_create_group($data)) {
-                groups_add_member($groupid, $USER->id);
-                return true;
-            }
+        self::validate_widget_context($contextid, 'block/dash:mygroups_creategroup');
+        parse_str($formdata, $data);
+        $courseid = clean_param($data['courseid'] ?? 0, PARAM_INT);
+        $name = \core_text::substr(trim(clean_param($data['name'] ?? '', PARAM_TEXT)), 0, 254);
+        if (!$courseid || $name === '') {
+            return false;
         }
-        return false;
+        access::require_can_create_group($courseid);
+        if (groups_get_group_by_name($courseid, $name)) {
+            throw new \moodle_exception('groupnameexists', 'group', '', $name);
+        }
+
+        $groupid = groups_create_group((object) ['courseid' => $courseid, 'name' => $name]);
+        groups_add_member($groupid, $USER->id);
+
+        return true;
     }
 }

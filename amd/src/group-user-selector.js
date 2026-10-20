@@ -41,7 +41,7 @@ define(['jquery', 'core/ajax', 'core/templates'], function ($, Ajax, Templates) 
 
             // Search within specific course if known and if the 'search within' dropdown is set
             // to search within course or activity.
-            var args = { query: query };
+            var args = { query: query, contextid: $(selector).data('contextid') };
 
             var groupid = $(selector).data('groupid');
             if (typeof groupid !== "undefined" && $('#id_searchwithin').val() !== '') {

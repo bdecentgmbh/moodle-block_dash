@@ -139,6 +139,6 @@ class members extends \table_sql implements dynamic_table {
      * @return bool
      */
     public function has_capability(): bool {
-        return true;
+        return has_capability('block/dash:mygroups_viewmembers', $this->get_context());
     }
 }

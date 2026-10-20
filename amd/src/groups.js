@@ -95,7 +95,7 @@ define(['jquery', 'core/str', 'core/modal', 'core/modal_save_cancel', 'core/moda
                         var formdatastr = new URLSearchParams(formdata).toString();
                         var promises = AJAX.call([{
                             methodname: 'block_dash_groups_add_members',
-                            args: { formdata: formdatastr }
+                            args: { contextid: contextID, formdata: formdatastr }
                         }]);
 
                         promises[0].done((response) => {
@@ -145,7 +145,7 @@ define(['jquery', 'core/str', 'core/modal', 'core/modal_save_cancel', 'core/moda
                             e.preventDefault();
                             var promises = AJAX.call([{
                                 methodname: 'block_dash_groups_leave_group',
-                                args: { groupid: group }
+                                args: { contextid: contextID, groupid: group }
                             }]);
 
                             promises[0].done((response) => {
@@ -231,7 +231,7 @@ define(['jquery', 'core/str', 'core/modal', 'core/modal_save_cancel', 'core/moda
                         var formdatastr = new URLSearchParams(formdata).toString();
                         var promises = AJAX.call([{
                             methodname: 'block_dash_groups_create_group',
-                            args: { formdata: formdatastr }
+                            args: { contextid: contextID, formdata: formdatastr }
                         }]);
 
                         promises[0].done((response) => {

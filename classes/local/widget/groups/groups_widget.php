@@ -217,11 +217,24 @@ class groups_widget extends abstract_widget {
      * @return \moodleform
      */
     public function addmembers($context, $args) {
-        $group = groups_get_group($args->group);
+        $group = access::require_can_add_members((int) $args->group);
         $memberform = new \block_dash\local\widget\groups\add_members(null, [
-            'groupid' => $args->group, 'courseid' => $group->courseid,
+            'groupid' => $group->id, 'courseid' => $group->courseid, 'contextid' => $context->id,
         ]);
         return $memberform->render();
+    }
+
+    /**
+     * Methods the loadwidget fragment may call, with the capability each needs in the block.
+     *
+     * @return array
+     */
+    public function get_fragment_methods(): array {
+        return [
+            'viewmembers' => 'block/dash:mygroups_viewmembers',
+            'addmembers' => 'block/dash:mygroups_addusers',
+            'creategroup' => 'block/dash:mygroups_creategroup',
+        ];
     }
 
     /**

@@ -330,6 +330,16 @@ class contacts_widget extends abstract_widget {
     }
 
     /**
+     * Methods the loadwidget fragment may call, with the capability each needs in the block.
+     *
+     * @return array
+     */
+    public function get_fragment_methods(): array {
+        // The table lists only groups the current user shares with the contact.
+        return ['load_groups' => null];
+    }
+
+    /**
      * Load groups that the contact user and the loggedin user in same group.
      *
      * @param context_block $context

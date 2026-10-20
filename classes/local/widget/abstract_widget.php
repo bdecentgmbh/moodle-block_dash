@@ -115,6 +115,18 @@ abstract class abstract_widget extends abstract_data_source implements data_sour
     }
 
     /**
+     * Methods of this widget the loadwidget fragment may call, with the capability each needs in the block.
+     *
+     * Each method receives the block context and the decoded arguments of the request, and must check anything else
+     * about the objects it is asked for itself.
+     *
+     * @return array Method name => capability, or null for no capability beyond viewing the block.
+     */
+    public function get_fragment_methods(): array {
+        return [];
+    }
+
+    /**
      * Prefence form for widget. We make the fields disable other than the general.
      *
      * @param \moodleform $form

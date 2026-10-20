@@ -183,8 +183,12 @@ class external extends external_api {
         if ($pagelayout) {
             $PAGE->set_pagelayout($pagelayout);
         }
-        $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id'], 'blockname' => 'dash'], '*',
-            MUST_EXIST);
+        $blockinstance = $DB->get_record(
+            'block_instances',
+            ['id' => $params['block_instance_id'], 'blockname' => 'dash'],
+            '*',
+            MUST_EXIST
+        );
         $block = block_instance('dash', $blockinstance);
 
         $public = dashboard_lookup::is_public_dashboard($blockinstance);

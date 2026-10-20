@@ -182,6 +182,8 @@ final class access_test extends \advanced_testcase {
     }
 
     /**
+     * The widget's services refuse contexts that are not the context of a Dash block.
+     *
      * @dataProvider foreign_context_provider
      * @param string $kind
      */

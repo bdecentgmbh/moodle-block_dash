@@ -107,7 +107,9 @@ class field implements field_interface {
      */
     protected static function escape_url(string $url): string {
         $url = html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $url = str_replace(['"', "'", '<', '>', '(', ')', '\\', '`'], ['%22', '%27', '%3C', '%3E', '%28', '%29', '%5C', '%60'], $url);
+        $url = strtr($url, [
+            '"' => '%22', "'" => '%27', '<' => '%3C', '>' => '%3E', '(' => '%28', ')' => '%29', '\\' => '%5C', "\x60" => '%60',
+        ]);
         return s($url);
     }
 

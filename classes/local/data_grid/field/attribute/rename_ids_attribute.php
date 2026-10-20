@@ -45,18 +45,23 @@ class rename_ids_attribute extends abstract_field_attribute {
      * @throws \moodle_exception
      */
     final public function transform_data($data, \stdClass $record) {
-        $groups = [];
+        $names = [];
         if ($data) {
+            $ids = [];
             foreach (explode($this->get_option('delimiter'), $data) as $id) {
-                if ($this->check_id($id) && $id != '') {
-                    $fields = self::get_fields($this->get_option('table'), $this->get_option('field'));
-                    if (isset($fields[$id])) {
-                        $groups[] = format_string($fields[$id], true);
-                    }
+                $id = trim($id);
+                if ($id !== '' && $this->check_id($id)) {
+                    $ids[] = (int) $id;
+                }
+            }
+            $fields = self::get_fields($this->get_option('table'), $this->get_option('field'), $ids);
+            foreach ($ids as $id) {
+                if (isset($fields[$id])) {
+                    $names[] = format_string($fields[$id], true);
                 }
             }
         }
-        return implode($this->get_option('delimiter') . ' ', $groups);
+        return implode($this->get_option('delimiter') . ' ', $names);
     }
 
     /**
@@ -70,24 +75,27 @@ class rename_ids_attribute extends abstract_field_attribute {
     }
 
     /**
-     * Get the fields used in this table.
+     * Get the field of the given records of a table, loading only those not loaded before.
      *
      * @param string $table
      * @param string $field
-     * @return mixed
+     * @param int[] $ids
+     * @return array Record id => field value, for the ids that exist.
      * @throws dml_exception
      */
-    protected static function get_fields($table, $field) {
+    protected static function get_fields($table, $field, array $ids) {
         global $DB;
 
         if (!isset(self::$fieldstore[$table][$field])) {
-            if (!isset(self::$fieldstore[$table])) {
-                self::$fieldstore[$table] = [];
-            }
             self::$fieldstore[$table][$field] = [];
-
-            foreach ($DB->get_recordset($table, null, '', 'id, ' . $field) as $record) {
-                self::$fieldstore[$table][$field][$record->id] = $record->$field;
+        }
+        $missing = array_diff(array_unique($ids), array_keys(self::$fieldstore[$table][$field]));
+        if ($missing) {
+            [$insql, $params] = $DB->get_in_or_equal($missing);
+            $values = $DB->get_records_select_menu($table, "id $insql", $params, '', 'id, ' . $field);
+            foreach ($missing as $id) {
+                // Remember ids without a record too, so they are not looked up again.
+                self::$fieldstore[$table][$field][$id] = $values[$id] ?? null;
             }
         }
 

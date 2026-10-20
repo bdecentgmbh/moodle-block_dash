@@ -464,9 +464,12 @@ function block_dash_output_fragment_loadtable($args) {
 function block_dash_get_suggest_users() {
     global $DB, $CFG;
 
-    $users = $DB->get_records_sql("SELECT *
-                                   FROM {user}
-                                  WHERE confirmed = 1 AND deleted = 0 AND id <> ?", [$CFG->siteguest]);
+    // Only what fullname() needs: the setting lists every user, so whole records would not fit on large sites.
+    $namefields = \core_user\fields::for_name()->get_sql('u')->selects;
+    $users = $DB->get_records_sql("SELECT u.id $namefields
+                                   FROM {user} u
+                                  WHERE u.confirmed = 1 AND u.deleted = 0 AND u.id <> ?
+                               ORDER BY u.lastname, u.firstname", [$CFG->siteguest]);
     foreach ($users as $user) {
         $list[$user->id] = fullname($user);
     }

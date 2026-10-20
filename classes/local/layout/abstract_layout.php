@@ -614,7 +614,8 @@ abstract class abstract_layout implements layout_interface, \templatable {
     protected function get_custom_content_options(array $options): array {
         global $DB;
 
-        if (block_dash_has_pro() && $DB->get_manager()->table_exists('dashaddon_developer_layout')) {
+        // The developer addon's tables exist once it is installed, which its version in the config tells cheaply.
+        if (block_dash_has_pro() && get_config('dashaddon_developer', 'version')) {
             $layouts = $DB->get_records('dashaddon_developer_layout');
             foreach ($layouts as $layout) {
                 if (in_array($layout->type, ['detailsarea', 'both'])) {

@@ -25,12 +25,6 @@
 require(__DIR__ . '/../../config.php');
 require($CFG->dirroot . '/blocks/dash/locallib.php');
 
-if (!defined('AJAX_SCRIPT')) {
-    define('AJAX_SCRIPT', true);
-}
-
-require_login();
-
 use block_dash\local\block_builder;
 
 $download = optional_param('download', 'csv', PARAM_TEXT);
@@ -40,12 +34,21 @@ $currentpage = optional_param('page', 0, PARAM_INT);
 $sortfield = optional_param('sort_field', '', PARAM_TEXT);
 $sortdir = optional_param('sort_direction', '', PARAM_TEXT);
 
-$PAGE->set_context(context_system::instance());
+$binstance = $DB->get_record('block_instances', ['id' => $instanceid, 'blockname' => 'dash'], '*', MUST_EXIST);
+$block = block_instance('dash', $binstance);
+
+// Whoever downloads a block's data must be able to see the block where it is.
+[$context, $course, $cm] = get_context_info_array($block->context->id);
+require_login($course, false, $cm);
+require_capability('moodle/block:view', $block->context);
+if (!$block->verify_access_restrictions()) {
+    throw new moodle_exception('nopermissions', 'error', '', get_string('enabledownload', 'block_dash'));
+}
+
+$PAGE->set_context($block->context);
 $PAGE->set_url('/blocks/dash/download.php', ['block_instance_id' => $instanceid]);
 
 $renderer = $PAGE->get_renderer('block_dash');
-$binstance = $DB->get_record('block_instances', ['id' => $instanceid]);
-$block = block_instance($binstance->blockname, $binstance);
 if ($sortfield) {
     $block->set_sort($sortfield, $sortdir);
 }
@@ -64,7 +67,8 @@ foreach (json_decode($filterformdata, true) as $filter) {
 
 $bbdownloadsource = $bbdownload->get_configuration()->get_data_source();
 $bbdownloadsource->set_data_pagination(); // Set before data method to apply filters first.
-$bbdownloadsource->get_query()->limitfrom(0)->limitnum(0);
+// All rows, not only the current page, but no more than the block shows at most.
+$bbdownloadsource->get_query()->limitfrom(0)->limitnum((int) $bbdownloadsource->get_preferences('maxlimit'));
 
 // Fetch the list of fields to show. List the fields as headers and columns.
 $headers = [];

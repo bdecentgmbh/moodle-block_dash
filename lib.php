@@ -157,8 +157,12 @@ function block_dash_output_fragment_block_preferences_form($args) {
     $args = (object) $args;
     $context = $args->context;
 
-    $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
-    $block = block_instance($blockinstance->blockname, $blockinstance);
+    $blockinstance = block_dash_get_block_instance_by_context($context);
+    $block = block_instance('dash', $blockinstance);
+    require_capability('block/dash:addinstance', $context);
+    if (!block_dash_user_can_edit_block($block)) {
+        throw new required_capability_exception($context, 'moodle/block:edit', 'nopermissions', '');
+    }
 
     if (!$args->tab) {
         $args->tab = preferences_form::TAB_GENERAL;
@@ -168,8 +172,6 @@ function block_dash_output_fragment_block_preferences_form($args) {
         'class' => 'dash-preferences-form',
         'data-double-submit-protection' => 'off',
     ]);
-
-    require_capability('block/dash:addinstance', $context);
 
     if (isset($block->config->preferences)) {
         $data = block_dash_flatten_array($block->config->preferences, 'config_preferences');
@@ -225,7 +227,16 @@ function block_dash_pluginfile($course, $cm, $context, $filearea, $args, $forced
         return false;
     }
 
-    require_login();
+    if ($context->contextlevel == CONTEXT_BLOCK) {
+        // A block's images are for those who can see the block: anybody on a public dashboard, else the block's audience.
+        $blockinstance = block_dash_get_block_instance_by_context($context);
+        if (!\block_dash\local\dashboard_lookup::is_public_dashboard($blockinstance)) {
+            require_login($course, false, $cm);
+            require_capability('moodle/block:view', $context);
+        }
+    } else {
+        require_login();
+    }
 
     if ($filearea == 'images' || $filearea == 'categoryimg') {
         $relativepath = implode('/', $args);
@@ -325,6 +336,44 @@ function block_dash_get_block_instance_by_context(context $context): stdClass {
     }
 
     return $blockinstance;
+}
+
+/**
+ * Whether the current user may change a Dash block's configuration, as its edit form on the block's page would allow.
+ *
+ * Mirrors block_base::user_can_edit() for requests that do not run on the block's page: on the user's own
+ * Dashboard, managing its blocks is enough.
+ *
+ * @param block_base $block
+ * @return bool
+ */
+function block_dash_user_can_edit_block(block_base $block): bool {
+    global $USER;
+
+    if (has_capability('moodle/block:edit', $block->context)) {
+        return true;
+    }
+    $parent = $block->context->get_parent_context();
+    return $parent && $parent->contextlevel == CONTEXT_USER && $parent->instanceid == $USER->id
+        && has_capability('moodle/my:manageblocks', $parent);
+}
+
+/**
+ * Data sources and widgets the current user may choose for a block, as the block's edit form offers them.
+ *
+ * @param context $context The block context.
+ * @return string[] Identifiers.
+ */
+function block_dash_choosable_data_sources(context $context): array {
+    $options = [];
+    if (has_capability('block/dash:managedatasource', $context)) {
+        $options += \block_dash\local\data_source\data_source_factory::get_data_source_form_options();
+    }
+    if (has_capability('block/dash:managewidget', $context)) {
+        $options += \block_dash\local\data_source\data_source_factory::get_data_source_form_options('widget');
+    }
+
+    return array_values(array_filter(array_keys($options), 'block_dash_visible_addons'));
 }
 
 /**

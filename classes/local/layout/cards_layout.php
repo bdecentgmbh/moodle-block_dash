@@ -118,6 +118,10 @@ class cards_layout extends abstract_layout {
                 }
                 $preferences['centerPadding'] = isset($preferences['centerPadding']) ?
                     intval($preferences['centerPadding']) : '';
+                // The slider script gets these numbers as code, so they must be numbers.
+                foreach (['slidesToShow', 'slidesToScroll', 'autoplaySpeed', 'rows', 'slidesPerRow', 'speed'] as $name) {
+                    $preferences[$name] = (int) ($preferences[$name] ?? 0);
+                }
                 $preferences['sliderclass'] = $sliderclass;
             } else if ($preferences['layoutmode'] == CARD_LAYOUT_MASONRY_MODE) {
                 $preferences['layout_masonry'] = true;

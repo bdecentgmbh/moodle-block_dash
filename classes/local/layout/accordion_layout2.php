@@ -190,6 +190,9 @@ class accordion_layout2 extends accordion_layout {
                     $parts = explode(':', $preferences["field{$i}_icon"]);
                     if (count($parts) == 2) {
                         $preferences["field{$i}_icon"] = $OUTPUT->pix_icon($parts[1], '', $parts[0]);
+                    } else {
+                        // The template outputs the icon as markup, so only a rendered icon may stay.
+                        unset($preferences["field{$i}_icon"]);
                     }
                 }
             }

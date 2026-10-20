@@ -26,7 +26,7 @@ namespace block_dash;
 
 defined('MOODLE_INTERNAL') || die('No direct access');
 
-require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->dirroot/blocks/dash/lib.php");
 
 use block_dash\local\block_builder;
 use block_dash\local\dashboard_lookup;
@@ -35,7 +35,11 @@ use block_dash\output\renderer;
 use block_dash\local\configuration\configuration;
 use block_dash\local\data_source\data_source_factory;
 use block_dash\local\paginator;
-use external_api;
+use core_external\external_api;
+use core_external\external_description;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * External API class.
@@ -50,17 +54,17 @@ class external extends external_api {
     /**
      * Returns description of get_database_schema_structure() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function get_block_pagination_parameters() {
-        return new \external_function_parameters([
-            'block_instance_id' => new \external_value(PARAM_INT),
-            'filter_form_data' => new \external_value(PARAM_RAW),
-            'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
-            'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
-            'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
-            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
-            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
+        return new external_function_parameters([
+            'block_instance_id' => new external_value(PARAM_INT),
+            'filter_form_data' => new external_value(PARAM_RAW),
+            'page' => new external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
+            'sort_field' => new external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
+            'sort_direction' => new external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
+            'pagelayout' => new external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
+            'pagecontext' => new external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -107,28 +111,28 @@ class external extends external_api {
     /**
      * Returns description of get_block_content() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function get_block_pagination_returns() {
-        return new \external_single_structure([
-            'html' => new \external_value(PARAM_RAW),
+        return new external_single_structure([
+            'html' => new external_value(PARAM_RAW),
         ]);
     }
 
     /**
      * Returns description of get_database_schema_structure() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function get_block_content_parameters() {
-        return new \external_function_parameters([
-            'block_instance_id' => new \external_value(PARAM_INT),
-            'filter_form_data' => new \external_value(PARAM_RAW),
-            'page' => new \external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
-            'sort_field' => new \external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
-            'sort_direction' => new \external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
-            'pagelayout' => new \external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
-            'pagecontext' => new \external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
+        return new external_function_parameters([
+            'block_instance_id' => new external_value(PARAM_INT),
+            'filter_form_data' => new external_value(PARAM_RAW),
+            'page' => new external_value(PARAM_INT, 'Paginator page.', VALUE_DEFAULT, 0),
+            'sort_field' => new external_value(PARAM_TEXT, 'Field to sort by', VALUE_DEFAULT, null),
+            'sort_direction' => new external_value(PARAM_TEXT, 'Sort direction of field', VALUE_DEFAULT, null),
+            'pagelayout' => new external_value(PARAM_TEXT, 'pagelayout', VALUE_DEFAULT, ''),
+            'pagecontext' => new external_value(PARAM_INT, 'Page Context', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -179,8 +183,9 @@ class external extends external_api {
         if ($pagelayout) {
             $PAGE->set_pagelayout($pagelayout);
         }
-        $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
-        $block = block_instance($blockinstance->blockname, $blockinstance);
+        $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id'], 'blockname' => 'dash'], '*',
+            MUST_EXIST);
+        $block = block_instance('dash', $blockinstance);
 
         $public = dashboard_lookup::is_public_dashboard($blockinstance);
 
@@ -196,6 +201,12 @@ class external extends external_api {
             }
         } else {
             $PAGE->set_context($block->context);
+        }
+
+        // The block's own restrictions apply here as they do when the page shows the block.
+        require_capability('moodle/block:view', $block->context);
+        if (!$block->verify_access_restrictions()) {
+            throw new \moodle_exception('nopermissions', 'error', '', get_string('view'));
         }
 
         /** @var renderer $renderer */
@@ -254,13 +265,13 @@ class external extends external_api {
     /**
      * Returns description of get_block_content() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function get_block_content_returns() {
-        return new \external_single_structure([
-            'html' => new \external_value(PARAM_RAW),
-            'scripts' => new \external_value(PARAM_RAW),
-            'layoutclass' => new \external_value(PARAM_TEXT, 'Layout class'),
+        return new external_single_structure([
+            'html' => new external_value(PARAM_RAW),
+            'scripts' => new external_value(PARAM_RAW),
+            'layoutclass' => new external_value(PARAM_TEXT, 'Layout class'),
         ]);
     }
 
@@ -270,12 +281,12 @@ class external extends external_api {
 
     /**
      * Describes the parameters for submit_create_group_form webservice.
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function submit_preferences_form_parameters() {
-        return new \external_function_parameters([
-            'contextid' => new \external_value(PARAM_INT, 'The context id for the block'),
-            'jsonformdata' => new \external_value(PARAM_RAW, 'The form data encoded as a json array'),
+        return new external_function_parameters([
+            'contextid' => new external_value(PARAM_INT, 'The context id for the block'),
+            'jsonformdata' => new external_value(PARAM_RAW, 'The form data encoded as a json array'),
         ]);
     }
 
@@ -299,15 +310,18 @@ class external extends external_api {
         ]);
 
         $context = \context::instance_by_id($params['contextid'], MUST_EXIST);
+        $blockinstance = block_dash_get_block_instance_by_context($context);
 
         self::validate_context($context);
         require_capability('block/dash:addinstance', $context);
+        $block = block_instance('dash', $blockinstance);
+        if (!block_dash_user_can_edit_block($block)) {
+            throw new \required_capability_exception($context, 'moodle/block:edit', 'nopermissions', '');
+        }
 
         $serialiseddata = json_decode($params['jsonformdata']);
         $data = [];
         parse_str($serialiseddata, $data);
-        $blockinstance = $DB->get_record('block_instances', ['id' => $context->instanceid]);
-        $block = block_instance($blockinstance->blockname, $blockinstance);
         if (!empty($block->config)) {
             $config = clone($block->config);
         } else {
@@ -323,6 +337,14 @@ class external extends external_api {
         }
 
         if (isset($data['config_data_source_idnumber'])) {
+            // A block gets only the data sources and widgets its edit form would offer this user.
+            $current = $config->data_source_idnumber ?? null;
+            if (
+                $data['config_data_source_idnumber'] !== $current
+                && !in_array($data['config_data_source_idnumber'], block_dash_choosable_data_sources($context), true)
+            ) {
+                throw new \required_capability_exception($context, 'block/dash:managedatasource', 'nopermissions', '');
+            }
             $config->data_source_idnumber = $data['config_data_source_idnumber'];
             $datasource = data_source_factory::build_data_source(
                 $config->data_source_idnumber,
@@ -402,12 +424,12 @@ class external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return \external_description
+     * @return external_description
      * @since Moodle 3.0
      */
     public static function submit_preferences_form_returns() {
-        return new \external_single_structure([
-            'validationerrors' => new \external_value(PARAM_BOOL, 'Were there validation errors', VALUE_REQUIRED),
+        return new external_single_structure([
+            'validationerrors' => new external_value(PARAM_BOOL, 'Were there validation errors', VALUE_REQUIRED),
         ]);
     }
 

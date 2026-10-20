@@ -266,6 +266,9 @@ class timeline_layout extends abstract_layout {
                 $parts = explode(':', $preferences["subheadingfield_icon"]);
                 if (count($parts) == 2) {
                     $preferences["subheadingfield_icon"] = $OUTPUT->pix_icon($parts[1], '', $parts[0]);
+                } else {
+                    // The template outputs the icon as markup, so only a rendered icon may stay.
+                    unset($preferences["subheadingfield_icon"]);
                 }
             }
         }

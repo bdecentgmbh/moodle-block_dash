@@ -101,7 +101,13 @@ class date_filter extends filter {
 
         foreach ($values as $key => $value) {
             if (!empty($value)) {
-                $values[$key] = $this->to_timestamp($value);
+                $timestamp = $this->to_timestamp($value);
+                if ($timestamp === null) {
+                    // Not a date, so it cannot filter anything.
+                    unset($values[$key]);
+                } else {
+                    $values[$key] = $timestamp;
+                }
             }
         }
 
@@ -112,11 +118,14 @@ class date_filter extends filter {
      * Convert user submitted value to a unix timestamp in user's timezone.
      *
      * @param string $value
-     * @return int
+     * @return int|null Null when the value is not a date.
      */
     protected function to_timestamp($value) {
         // User submitted date in user's timezone.
         $date = \DateTime::createFromFormat('d/m/Y', $value, \core_date::get_user_timezone_object());
+        if (!$date) {
+            return null;
+        }
 
         switch ($this->function) {
             case self::DATE_FUNCTION_FLOOR:

@@ -293,7 +293,9 @@ class block_dash extends block_base {
                 $this->content->text .= $css;
             }
         } catch (\Exception $e) {
-            $this->content->text = $OUTPUT->notification($e->getMessage() . $e->getTraceAsString(), 'error');
+            // Details are for developers only; they can contain server paths and query fragments.
+            $this->content->text = $OUTPUT->notification(get_string('databaseerror', 'block_dash'), 'error');
+            debugging($e->getMessage() . "\n" . $e->getTraceAsString(), DEBUG_DEVELOPER);
         }
 
         $this->page->requires->css(new \moodle_url('/blocks/dash/styles/select2.min.css'));
@@ -646,7 +648,7 @@ class block_dash extends block_base {
 
             // Verify the default user role is set to view the dashboard.
             $defaultuserroleid = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
-            if ($defaultuserroleid && in_array($defaultuserroleid, $roles) && !empty($user->id) && !isguestuser($USER->id)) {
+            if ($defaultuserroleid && in_array($defaultuserroleid, $roles) && !empty($USER->id) && !isguestuser($USER->id)) {
                 return true;
             }
 

@@ -419,7 +419,7 @@ class field implements field_interface {
         if (is_null($sort)) {
             return $this->get_select();
         }
-        return empty($sort) ? $this->get_alias() : '';
+        return empty($sort) ? $this->get_alias() : $sort;
     }
 
     // Endregion.

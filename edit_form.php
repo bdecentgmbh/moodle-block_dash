@@ -412,6 +412,44 @@ class block_dash_edit_form extends block_edit_form {
     }
 
     /**
+     * Resolve a widget help declaration into a string identifier and its component.
+     *
+     * Widgets registered via register_widget() may declare help either as
+     * ['name' => ..., 'component' => ...] or as a plain string identifier. A plain
+     * string is looked up in the component owning the widget class first, then in
+     * block_dash, which is where the shipped addons keep their help strings. Both
+     * the identifier and its _help counterpart must exist in the same component,
+     * otherwise no icon is rendered rather than one that debugging() would flag.
+     *
+     * @param array|string $help Help declaration from the widget registration.
+     * @param string $identifier Widget class name the help belongs to.
+     * @return array ['name' => string, 'component' => string], or empty if unresolvable.
+     */
+    protected static function resolve_widget_help($help, $identifier) {
+        if (is_array($help)) {
+            return $help;
+        }
+
+        if (empty($help)) {
+            return [];
+        }
+
+        $stringmanager = get_string_manager();
+        $owner = explode('\\', ltrim($identifier, '\\'))[0];
+
+        foreach ([$owner, 'block_dash'] as $component) {
+            if (
+                $stringmanager->string_exists($help, $component)
+                && $stringmanager->string_exists($help . '_help', $component)
+            ) {
+                return ['name' => $help, 'component' => $component];
+            }
+        }
+
+        return [];
+    }
+
+    /**
      * Data features list.
      *
      * @param \moodleform $mform
@@ -460,11 +498,11 @@ class block_dash_edit_form extends block_edit_form {
                 if (block_dash_visible_addons($id)) {
                     $widgets[] = $mform->createElement('html', html_writer::start_div('datasource-item'));
                     $widgets[] = $mform->createElement('radio', 'config_data_source_idnumber', '', $source['name'], $id);
-                    if ($source['help']) {
+                    if ($help = self::resolve_widget_help($source['help'], $id)) {
                         $widgets[] = $mform->createElement('html', $OUTPUT->help_icon(
-                            $source['help'],
-                            'block_dash',
-                            $source['help']
+                            $help['name'],
+                            $help['component'],
+                            $help['name']
                         ));
                     }
                     $widgets[] = $mform->createElement('html', html_writer::end_div());

@@ -333,7 +333,6 @@ class mylearning_widget extends abstract_widget {
         // Include library files.
         require_once($CFG->dirroot . "/course/lib.php");
         require_once($CFG->libdir . '/completionlib.php');
-        require_once($CFG->libdir . '/externallib.php');
 
         $filters = [];
         // Retrieve the course.
@@ -376,10 +375,10 @@ class mylearning_widget extends abstract_widget {
 
                 $options = (object) ['noclean' => true];
                 [$sectionvalues['summary'], $sectionvalues['summaryformat']] =
-                        external_format_text(
+                        \core_external\util::format_text(
                             $section->summary,
                             $section->summaryformat,
-                            $context->id,
+                            $context,
                             'course',
                             'section',
                             $section->id,
@@ -412,7 +411,7 @@ class mylearning_widget extends abstract_widget {
                         $modcontext = context_module::instance($cm->id);
 
                         $module['id'] = $cm->id;
-                        $module['name'] = external_format_string($cm->name, $modcontext->id);
+                        $module['name'] = \core_external\util::format_string($cm->name, $modcontext);
                         $module['instance'] = $cm->instance;
                         $module['contextid'] = $modcontext->id;
                         $module['modname'] = (string) $cm->modname;
@@ -446,10 +445,10 @@ class mylearning_widget extends abstract_widget {
                             // We want to use the external format. However from reading get_formatted_content(), $cm->content
                             // Format is always FORMAT_HTML.
                             $options = ['noclean' => true];
-                            [$module['description'], $descriptionformat] = external_format_text(
+                            [$module['description'], $descriptionformat] = \core_external\util::format_text(
                                 $cm->content,
                                 FORMAT_HTML,
-                                $modcontext->id,
+                                $modcontext,
                                 $cm->modname,
                                 'intro',
                                 $cm->id,

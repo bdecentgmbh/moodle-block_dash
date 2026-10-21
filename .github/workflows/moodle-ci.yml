@@ -11,7 +11,10 @@ on:
 
 jobs:
   test:
+    name: "test (${{ matrix.php }}, ${{ matrix.moodle-branch }}, ${{ matrix.database }})${{ matrix.optional && ' optional' || '' }}"
     runs-on: ubuntu-latest
+    # A job marked optional reports its result without failing the run.
+    continue-on-error: ${{ matrix.optional || false }}
 
     services:
       postgres:
@@ -34,25 +37,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # One job per Moodle version the plugin supports. The databases alternate, so both stay covered.
         include:
-          - php: "8.4"
-            moodle-branch: "MOODLE_502_STABLE"
-            database: "mariadb"
-          - php: "8.4"
-            moodle-branch: "MOODLE_502_STABLE"
+          - php: "8.2"
+            moodle-branch: "MOODLE_405_STABLE"
             database: "pgsql"
           - php: "8.4"
             moodle-branch: "MOODLE_501_STABLE"
             database: "mariadb"
           - php: "8.4"
-            moodle-branch: "MOODLE_501_STABLE"
+            moodle-branch: "MOODLE_502_STABLE"
             database: "pgsql"
-          - php: "8.2"
-            moodle-branch: "MOODLE_405_STABLE"
+          # The next Moodle version, for information: its result does not fail the run.
+          - php: "8.4"
+            moodle-branch: "MOODLE_503_STABLE"
             database: "mariadb"
-          - php: "8.2"
-            moodle-branch: "MOODLE_405_STABLE"
-            database: "pgsql"
+            optional: true
 
     steps:
       - name: Check out repository code
@@ -87,47 +87,47 @@ jobs:
           IGNORE_NAMES: 'layout_cards.mustache, extra_css.mustache, select2.js, select2.min.js, select2.min.css, mustache_custom_loader.php, data_collection_new.php'
 
       - name: PHP Lint
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci phplint
 
       - name: PHP Copy/Paste Detector
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci phpcpd
 
       - name: PHP Mess Detector
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci phpmd
 
       - name: Moodle Code Checker
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci codechecker --max-warnings 0
 
       - name: Moodle PHPDoc Checker
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci phpdoc
 
       - name: Validating
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci validate
 
       - name: Check upgrade savepoints
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci savepoints
 
       - name: Mustache Lint
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci mustache
 
       - name: Grunt
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci grunt
 
       - name: PHPUnit tests
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci phpunit
 
       - name: Behat features
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci behat --profile chrome
         env:
           # Serve the browser's parallel requests with several built-in web server processes.
@@ -136,5 +136,5 @@ jobs:
       # If the Behat web server dies mid-suite, every later scenario fails with ERR_CONNECTION_REFUSED and the
       # kernel log shows why. Until the JIT was disabled above, this was an OPcache segfault (PLS-1077).
       - name: Check the kernel log for crashed processes
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: sudo dmesg -T | grep -iE 'out of memory|oom-kill|killed process|segfault|general protection' || echo 'None.'

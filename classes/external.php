@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die('No direct access');
 require_once("$CFG->libdir/externallib.php");
 
 use block_dash\local\block_builder;
+use block_dash\local\compose_page_lookup;
 use block_dash\local\dashboard_lookup;
 use block_dash\local\data_source\form\preferences_form;
 use block_dash\output\renderer;
@@ -182,7 +183,9 @@ class external extends external_api {
         $blockinstance = $DB->get_record('block_instances', ['id' => $params['block_instance_id']]);
         $block = block_instance($blockinstance->blockname, $blockinstance);
 
-        $public = dashboard_lookup::is_public_dashboard($blockinstance);
+        // Blocks on a public dashboard or on a Compose page are shown to visitors who are not logged in.
+        $public = dashboard_lookup::is_public_dashboard($blockinstance)
+            || compose_page_lookup::is_public_page($blockinstance);
 
         if (!$public) {
             // Verify the block created for frontpage. and user not loggedin allow to access the block content.

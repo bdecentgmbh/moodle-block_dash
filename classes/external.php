@@ -160,7 +160,7 @@ class external extends external_api {
         $pagecontext = 0,
         $returnpagination = false
     ) {
-        global $PAGE, $DB, $OUTPUT, $SITE;
+        global $CFG, $PAGE, $DB, $OUTPUT, $SITE;
 
         $params = self::validate_parameters(self::get_block_content_parameters(), [
             'block_instance_id' => $blockinstanceid,
@@ -192,6 +192,11 @@ class external extends external_api {
                 $coursecontext = \context_course::instance($course->id);
                 $PAGE->set_context($coursecontext);
             } else {
+                if (!isloggedin() && !empty($CFG->autologinguests)) {
+                    // Log the visitor in as guest, as require_login() does for pages that welcome guests, so that
+                    // the context check below lets them through. A stopgap for blocks on pages that need no login.
+                    require_login(null, true, null, false, true);
+                }
                 self::validate_context($block->context);
             }
         } else {

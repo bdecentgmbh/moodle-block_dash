@@ -101,7 +101,24 @@ class data_source_factory implements data_source_factory_interface {
      * @return bool
      */
     public static function exists($identifier) {
-        return isset(self::get_data_source_registry()[$identifier]);
+        return isset(self::get_data_source_registry()[self::resolve_identifier($identifier)]);
+    }
+
+    /**
+     * The identifier a data source is registered under, also for the name of a class that has since been renamed.
+     *
+     * Block configurations name their data source, often by its class. Configurations from before a plugin renamed its
+     * classes, as in backups, keep working through the plugin's db/renamedclasses.php.
+     *
+     * @param string $identifier
+     * @return string
+     */
+    protected static function resolve_identifier($identifier) {
+        if (!is_string($identifier) || isset(self::get_data_source_registry()[$identifier]) || !class_exists($identifier)) {
+            return $identifier;
+        }
+        $name = (new \ReflectionClass($identifier))->getName();
+        return isset(self::get_data_source_registry()[$name]) ? $name : $identifier;
     }
 
     /**
@@ -112,7 +129,7 @@ class data_source_factory implements data_source_factory_interface {
      */
     public static function get_data_source_info($identifier) {
         if (self::exists($identifier)) {
-            return self::get_data_source_registry()[$identifier];
+            return self::get_data_source_registry()[self::resolve_identifier($identifier)];
         }
 
         return null;
@@ -126,6 +143,7 @@ class data_source_factory implements data_source_factory_interface {
      * @return data_source_interface
      */
     public static function build_data_source($identifier, \context $context) {
+        $identifier = self::resolve_identifier($identifier);
         if (!self::exists($identifier)) {
             return null;
         }

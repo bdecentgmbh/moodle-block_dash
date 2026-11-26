@@ -2075,7 +2075,10 @@ tr.dash-details-expanded {
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default.fit-content > .card-block,
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout_masonry.fit-content > .card-block {
+    /* Reset Bootstrap col-sm-* sizing: the grid track already sets the column width. */
     width: 100%;
+    max-width: none;
+    flex: none;
 }
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout-default > .card-block,
 .block_dash .dash-container .dash-block-content .card-layout-row.card-layout_masonry > .card-block {

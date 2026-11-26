@@ -162,20 +162,36 @@ class block_dash extends block_base {
             unset($data->dash_configure_options);
         }
 
-        // To do - move to learning path widget.
-
-        $learningpaths = [
-            'desktop_learningpath',
-            'tablet_learningpath',
-            'mobile_learningpath',
-        ];
-
         if (!property_exists($data, 'parentblkcontextid')) {
             $data->orgparentblkcontextid = $this->context->id;
         }
 
+        // Let the data source save what its part of the configuration form added, such as files.
+        $identifier = $data->data_source_idnumber ?? $this->config->data_source_idnumber ?? null;
+        $datasource = $identifier ? data_source_factory::build_data_source($identifier, $this->context) : null;
+        if ($datasource && method_exists($datasource, 'instance_config_save')) {
+            $datasource->instance_config_save($data);
+        } else {
+            $this->save_former_learningpath_files($data);
+        }
+
+        parent::instance_config_save($data, $nolongerused);
+    }
+
+    /**
+     * Save the files of the learning path widget of local_dash, which doesn't save them itself.
+     *
+     * Only for sites that still have that widget. Learning Paths saves its files in its own data source.
+     *
+     * @param object $data
+     * @return void
+     */
+    protected function save_former_learningpath_files($data) {
+        if (!\core_component::get_component_directory('dashaddon_learningpath')) {
+            return;
+        }
         $syscontext = \context_system::instance();
-        foreach ($learningpaths as $area) {
+        foreach (['desktop_learningpath', 'tablet_learningpath', 'mobile_learningpath'] as $area) {
             if (!empty($data->{$area})) {
                 file_save_draft_area_files(
                     $data->{$area},
@@ -187,8 +203,6 @@ class block_dash extends block_base {
                 );
             }
         }
-
-        parent::instance_config_save($data, $nolongerused);
     }
 
     /**

@@ -1105,11 +1105,6 @@ tr.dash-details-expanded {
 .dash-details-expand-row > td {
     background: transparent;
 }
-.dash-details-size-like-item.accordion-layout .dash-details-expand-panel .card-body a,
-.block_dash .dash-container .dash-block-content .card-layout-row .card-block .card-body a,
-.dash-details-expand-row .dash-details-expand-content .details-area-block .card-body a {
-    color: var(--bs-heading-color);
-}
 .dash-details-expand-row .dash-details-expand-content .details-area-block {
     margin: 0;
     border-radius: 0;

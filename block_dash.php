@@ -234,6 +234,20 @@ class block_dash extends block_base {
     }
 
     /**
+     * Let the data source delete what it stores for the block.
+     *
+     * @return bool
+     */
+    public function instance_delete() {
+        $identifier = $this->config->data_source_idnumber ?? null;
+        $datasource = $identifier ? data_source_factory::build_data_source($identifier, $this->context) : null;
+        if ($datasource && method_exists($datasource, 'instance_delete')) {
+            $datasource->instance_delete((int) $this->instance->id);
+        }
+        return true;
+    }
+
+    /**
      * Dashes are suitable on all page types.
      *
      * @return array
